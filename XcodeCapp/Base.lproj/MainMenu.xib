@@ -11,9 +11,13 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customObject id="Kof-Go-xQ9" customClass="Cappuccino"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="aboutWindow" destination="EMp-Db-uhU" id="tnK-oP-g4I"/>
+                <outlet property="cappuccino" destination="Kof-Go-xQ9" id="4Qj-0W-Ket"/>
+                <outlet property="preferencesController" destination="GHK-nR-IEq" id="O3E-dL-6Fq"/>
+                <outlet property="preferencesWindow" destination="ekp-cc-W2F" id="c14-w5-R7V"/>
                 <outlet property="splitView" destination="tld-4e-icT" id="zNd-Dy-Rxw"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -32,28 +36,16 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
-                            <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW"/>
+                            <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
+                                <connections>
+                                    <action selector="openPreferences:" target="Voe-Tx-rLC" id="s5c-ub-L21"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
-                            <menuItem title="Services" id="NMo-om-nkz">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                            <menuItem title="Hide XcodeCapp" keyEquivalent="h" id="Olw-nP-bQN">
-                                <connections>
-                                    <action selector="hide:" target="-1" id="PnN-Uc-m68"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Hide Others" keyEquivalent="h" id="Vdr-fp-XzO">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="hideOtherApplications:" target="-1" id="VT4-aY-XCT"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Show All" id="Kd2-mp-pUS">
+                            <menuItem title="Update Cappuccino" id="Olw-nP-bQN">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="unhideAllApplications:" target="-1" id="Dhg-Le-xox"/>
+                                    <action selector="update:" target="Kof-Go-xQ9" id="AIP-pA-0lQ"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
@@ -677,7 +669,7 @@
                 <rect key="frame" x="0.0" y="-4" width="815" height="538"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <splitView dividerStyle="thin" vertical="YES" id="tld-4e-icT">
+                    <splitView autosaveName="main-splitView" dividerStyle="thin" vertical="YES" id="tld-4e-icT">
                         <rect key="frame" x="0.0" y="0.0" width="815" height="538"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -700,7 +692,7 @@
                     </splitView>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="338.5" y="807"/>
+            <point key="canvasLocation" x="36.5" y="520"/>
         </window>
         <window title="About" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="EMp-Db-uhU" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
@@ -752,8 +744,133 @@ Original Cocoa version developed by:
                     </imageView>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="296" y="44.5"/>
         </window>
-        <userDefaultsController representsSharedInstance="YES" id="GHK-nR-IEq"/>
+        <userDefaultsController representsSharedInstance="YES" id="GHK-nR-IEq" userLabel="User Defaults Controller"/>
+        <window title="XcodeCapp Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="xcc-prefs" animationBehavior="default" id="ekp-cc-W2F">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
+            <rect key="contentRect" x="534" y="231" width="389" height="246"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="79d-AB-fk4">
+                <rect key="frame" x="0.0" y="-5" width="389" height="246"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <box autoresizesSubviews="NO" title="Projects" borderType="line" id="9b3-Uc-gJL">
+                        <rect key="frame" x="17" y="83" width="355" height="148"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <view key="contentView">
+                            <rect key="frame" x="1" y="1" width="353" height="132"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <button id="csz-aF-YT7">
+                                    <rect key="frame" x="16" y="74" width="271" height="18"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <buttonCell key="cell" type="check" title="Load the most recent project on launch" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="Jgo-Nd-39U">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="save:" target="GHK-nR-IEq" id="sPA-N0-TKd"/>
+                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCReopenLastProject" id="H31-KU-men">
+                                            <dictionary key="options">
+                                                <bool key="NSValidatesImmediately" value="YES"/>
+                                            </dictionary>
+                                        </binding>
+                                    </connections>
+                                </button>
+                                <button toolTip="If this is checked, when a Cappuccino project is opened, the project’s Xcode support project will be opened automatically" id="QGE-Iy-i46">
+                                    <rect key="frame" x="16" y="44" width="241" height="18"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <buttonCell key="cell" type="check" title="Automatically open Xcode projects" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="VNE-DB-5fX">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="save:" target="GHK-nR-IEq" id="fuj-dR-oLv"/>
+                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCAutoOpenXcodeProject" id="p9U-vM-aMX">
+                                            <dictionary key="options">
+                                                <bool key="NSValidatesImmediately" value="YES"/>
+                                            </dictionary>
+                                        </binding>
+                                    </connections>
+                                </button>
+                                <button id="Czp-aZ-oHX">
+                                    <rect key="frame" x="16" y="102" width="298" height="18"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <buttonCell key="cell" type="check" title="Symlink frameworks when creating projects" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="7fQ-0l-5Zv">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="save:" target="GHK-nR-IEq" id="pL4-sf-8qb"/>
+                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCUseSymlinkWhenCreatingProject" id="Hch-bv-rjT"/>
+                                    </connections>
+                                </button>
+                                <textField verticalHuggingPriority="750" id="geH-k1-u2T">
+                                    <rect key="frame" x="16" y="17" width="106" height="17"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Recent projects:" id="C7d-ND-qh3">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <popUpButton verticalHuggingPriority="750" id="Bcc-Sb-5oD">
+                                    <rect key="frame" x="125" y="11" width="56" height="26"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <popUpButtonCell key="cell" type="push" title="30" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tkT-Hu-nS8" id="7dg-Ob-WKI">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="menu"/>
+                                        <menu key="menu" title="OtherViews" id="00P-eQ-b9h">
+                                            <items>
+                                                <menuItem title="10" id="QQl-Qa-y5y"/>
+                                                <menuItem title="20" id="MDL-Lu-rAH"/>
+                                                <menuItem title="30" state="on" id="tkT-Hu-nS8"/>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxRecentProjects" id="SOq-yu-ip6"/>
+                                    </connections>
+                                </popUpButton>
+                            </subviews>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </box>
+                    <box autoresizesSubviews="NO" title="Update" borderType="line" id="zOQ-ZA-LTE">
+                        <rect key="frame" x="17" y="16" width="355" height="54"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <view key="contentView">
+                            <rect key="frame" x="1" y="1" width="353" height="38"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <button toolTip="If this is checked, xCodeCapp will take the last version of Cappuccino on the master branch to install Cappuccino" id="MFY-d8-XH1">
+                                    <rect key="frame" x="16" y="12" width="226" height="18"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <buttonCell key="cell" type="check" title="Use latest master branch version" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="92N-UF-g0r">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="save:" target="GHK-nR-IEq" id="9Fg-rU-KPQ"/>
+                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCUpdateCappuccinoWithLastVersionOfMasterBranch" id="idL-Er-JbB">
+                                            <dictionary key="options">
+                                                <bool key="NSValidatesImmediately" value="YES"/>
+                                            </dictionary>
+                                        </binding>
+                                    </connections>
+                                </button>
+                            </subviews>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </box>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="-176.5" y="44"/>
+        </window>
     </objects>
     <resources>
         <image name="icon_128x128" width="128" height="128"/>

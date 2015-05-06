@@ -9,13 +9,25 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreServices/CoreServices.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSSplitViewDelegate>
+@class Cappuccino;
 
-@property (strong) IBOutlet NSSplitView    *splitView;
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
+{
+    
+}
+
+@property (strong) IBOutlet NSUserDefaultsController    *preferencesController;
 
 @property (strong) IBOutlet NSPanel    *aboutWindow;
+@property (strong) IBOutlet NSWindow   *preferencesWindow;
+
+@property (strong) IBOutlet NSSplitView    *splitView;
+@property (strong) IBOutlet NSTableView    *projectTableView;
+
+@property (strong) IBOutlet Cappuccino *cappuccino;
 
 - (IBAction)openAbout:(id)aSender;
+- (IBAction)openPreferences:(id)aSender;
 
 @end
 
