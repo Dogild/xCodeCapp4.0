@@ -17,7 +17,7 @@
                                 @"~/narwhal/bin",
                                 ];
     
-    if (self = [self initWithEnvironementsPaths:environmentPaths])
+    if (self = [self initWithEnvironementPaths:environmentPaths])
     {
         
     }
@@ -25,19 +25,19 @@
     return self;
 }
 
-- (id)initWithEnvironementsPaths:(NSArray*)environementsPaths
+- (id)initWithEnvironementPaths:(NSArray*)environementPaths
 {
     if (self = [super init])
     {
-        DDLogError(@"Init task manager with  environements %@", environementsPaths);
-        
         // Add possible executable paths to PATH
         self.environment = [NSProcessInfo processInfo].environment.mutableCopy;
-        self.environmentPaths = [environementsPaths mutableCopy];
+        self.environmentPaths = [environementPaths mutableCopy];
         
         [self.environmentPaths addObject:@"/usr/bin"];
         [self.environmentPaths addObject:@"/usr/local/bin"];
         [self.environmentPaths addObject:@"~/bin"];
+        
+        DDLogError(@"Init task manager with  environements %@", self.environmentPaths);
         
         NSMutableArray *paths = [self.environmentPaths mutableCopy];
         
@@ -71,7 +71,7 @@
         if ([response length] == 0 || [taskResult[@"status"] intValue] == -1)
             _isCappBuildDefined = NO;
         
-        self.taskManagerIsValid = [self executablesAreAccessible];
+        self.isValid = [self executablesAreAccessible];
     }
     
     return self;
@@ -130,7 +130,7 @@
     // TODO : need to change
     NSString *launchPath = self.executablePaths[aCommand];
     
-    if (launchPath)
+    if (!launchPath)
         launchPath = aCommand;
     
     task.launchPath = launchPath;

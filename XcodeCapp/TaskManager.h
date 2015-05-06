@@ -22,13 +22,15 @@ typedef enum XCCTaskReturnType XCCTaskReturnType;
     BOOL _isCappBuildDefined;
 }
 
-@property BOOL taskManagerIsValid;
+@property BOOL isValid;
 
 @property NSMutableArray *environmentPaths;
 @property NSMutableDictionary *environment;
 
 @property NSArray *executables;
 @property NSMutableDictionary *executablePaths;
+
+- (id)initWithEnvironementPaths:(NSArray*)environementPaths;
 
 - (BOOL)executablesAreAccessible;
 

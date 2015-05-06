@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "Cappuccino.h"
+#import "CappuccinoProject.h"
 #import "UserDefaults.h"
 
 @interface AppDelegate ()
@@ -128,7 +129,15 @@
 
 - (void)fetchProjects
 {
+    [self.cappuccinoProjects removeAllObjects];
+    
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
+    
+    for (NSString *path in projectHistory)
+    {
+        CappuccinoProject *cappuccinoProject = [[CappuccinoProject alloc] initWithPath:path];
+        [self.cappuccinoProjects addObject:cappuccinoProject];
+    }
 }
 
 #pragma mark - Logging methods

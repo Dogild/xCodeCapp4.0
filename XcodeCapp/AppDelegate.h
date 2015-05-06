@@ -26,6 +26,8 @@
 
 @property (strong) IBOutlet Cappuccino *cappuccino;
 
+@property (strong) NSMutableArray *cappuccinoProjects;
+
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;
 

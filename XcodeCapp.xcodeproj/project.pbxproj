@@ -37,6 +37,7 @@
 		6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2B61AFA83D500CFE60E /* UserDefaults.m */; };
 		6841F2BC1AFA905100CFE60E /* Cappuccino.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BB1AFA905100CFE60E /* Cappuccino.m */; };
 		6841F2BF1AFA965300CFE60E /* TaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BE1AFA965300CFE60E /* TaskManager.m */; };
+		6841F2C41AFABD7200CFE60E /* CappuccinoProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C31AFABD7200CFE60E /* CappuccinoProject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,8 @@
 		6841F2BB1AFA905100CFE60E /* Cappuccino.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cappuccino.m; sourceTree = "<group>"; };
 		6841F2BD1AFA965300CFE60E /* TaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskManager.h; sourceTree = "<group>"; };
 		6841F2BE1AFA965300CFE60E /* TaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskManager.m; sourceTree = "<group>"; };
+		6841F2C21AFABD7200CFE60E /* CappuccinoProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappuccinoProject.h; sourceTree = "<group>"; };
+		6841F2C31AFABD7200CFE60E /* CappuccinoProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappuccinoProject.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,12 +145,9 @@
 				6841F2411AF98CE600CFE60E /* AppDelegate.m */,
 				6841F2BA1AFA905100CFE60E /* Cappuccino.h */,
 				6841F2BB1AFA905100CFE60E /* Cappuccino.m */,
-				6841F2BD1AFA965300CFE60E /* TaskManager.h */,
-				6841F2BE1AFA965300CFE60E /* TaskManager.m */,
-				6841F2B61AFA83D500CFE60E /* UserDefaults.m */,
-				6841F2B81AFA83E900CFE60E /* UserDefaults.h */,
-				6841F2761AF98FA300CFE60E /* DDLogLevel.h */,
-				6841F2771AF98FA300CFE60E /* DDLogLevel.m */,
+				6841F2C21AFABD7200CFE60E /* CappuccinoProject.h */,
+				6841F2C31AFABD7200CFE60E /* CappuccinoProject.m */,
+				6841F2C01AFABD0900CFE60E /* Utils */,
 				6841F2681AF98DDD00CFE60E /* Scripts */,
 				6841F25E1AF98DCB00CFE60E /* Lumberjack */,
 				6841F23E1AF98CE600CFE60E /* Supporting Files */,
@@ -226,6 +226,19 @@
 				6841F2991AF9932300CFE60E /* XcodeCapp.iconset */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		6841F2C01AFABD0900CFE60E /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6841F2B61AFA83D500CFE60E /* UserDefaults.m */,
+				6841F2B81AFA83E900CFE60E /* UserDefaults.h */,
+				6841F2BD1AFA965300CFE60E /* TaskManager.h */,
+				6841F2BE1AFA965300CFE60E /* TaskManager.m */,
+				6841F2761AF98FA300CFE60E /* DDLogLevel.h */,
+				6841F2771AF98FA300CFE60E /* DDLogLevel.m */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -347,6 +360,7 @@
 			files = (
 				6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */,
 				6841F2BF1AFA965300CFE60E /* TaskManager.m in Sources */,
+				6841F2C41AFABD7200CFE60E /* CappuccinoProject.m in Sources */,
 				6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,
 				6841F2441AF98CE600CFE60E /* main.m in Sources */,
