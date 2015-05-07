@@ -15,6 +15,7 @@ enum XCCTaskReturnType {
     kTaskReturnTypeStdError,
     kTaskReturnTypeAny
 };
+
 typedef enum XCCTaskReturnType XCCTaskReturnType;
 
 @interface TaskManager : NSObject

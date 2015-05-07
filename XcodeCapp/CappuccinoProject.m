@@ -9,6 +9,9 @@
 #include <fcntl.h>
 
 #import "CappuccinoProject.h"
+#import "CappuccinoUtils.h"
+#import "FindSourceFilesOperation.h"
+#import "ProcessSourceOperation.h"
 #import "TaskManager.h"
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_6
@@ -24,6 +27,10 @@
 #   define kFSEventStreamEventFlagItemXattrMod      0x00008000
 #endif
 
+// We replace "/" in a path with this. It looks like "/",
+// but is actually an obscure Unicode character we hope no one uses in a filename.
+static NSString * const XCCSlashReplacement = @"∕";  // DIVISION SLASH, Unicode: U+2215
+
 // Where we put the generated Cocoa class files
 static NSString * const XCCSupportFolderName = @".XcodeSupport";
 
@@ -31,22 +38,20 @@ static NSString * const XCCSupportFolderName = @".XcodeSupport";
 // If the version is less than the version in XcodeCapp's Info.plist, we regenerate .XcodeSupport.
 static NSString * const XCCCompatibilityVersionKey = @"XCCCompatibilityVersion";
 
-// Paths used by this project
+// Bin paths used by this project
 static NSString * const XCCCappuccinoProjectBinPaths = @"XCCCappuccinoProjectBinPaths";
+
+// Project should process capp lint or not
+static NSString * const XCCCappuccinoProcessCappLint = @"XCCCappuccinoProcessCappLint";
+
+// Project should process capp lint or not
+static NSString * const XCCCappuccinoProcessObjj = @"XCCCappuccinoProcessObjj";
 
 // Default environement paths
 static NSArray* XCCDefaultEnvironmentPaths;
 
-
-// When scanning the project, we immediately ignore directories that match this regex.
-static NSString * const XCCDirectoriesToIgnorePattern = @"^(?:Build|F(?:rameworks|oundation)|AppKit|Objective-J|(?:Browser|CommonJS)\\.environment|Resources|XcodeSupport|.+\\.xcodeproj)$";
-
-// The regex above is used with this predicate for testing.
-static NSPredicate * XCCDirectoriesToIgnorePredicate = nil;
-
-// An array of the default predicates used to ignore paths.
-static NSArray *XCCDefaultIgnoredPathPredicates = nil;
-
+// Default info plist XCCDefaultInfoPlistConfigurations
+static NSDictionary* XCCDefaultInfoPlistConfigurations;
 
 NSString * const XCCCappLintDidStartNotification = @"XCCCappLintDidStartNotification";
 NSString * const XCCCappLintDidEndNotification = @"XCCCappLintDidEndNotification";
@@ -58,10 +63,11 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
 
 @property NSFileManager *fm;
 
-@property (nonatomic) TaskManager *taskManager;
-
 // Full path to .xcodecapp-ignore
 @property NSString *xcodecappIgnorePath;
+
+// A queue for threaded operations to perform
+@property NSOperationQueue *operationQueue;
 
 @end
 
@@ -77,72 +83,13 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
     
     XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:@"/usr/local/narwhal/bin", @"~/narwhal/bin", nil];
     
-    // Initialize static values that can't be initialized in their declarations
-    
-    XCCDirectoriesToIgnorePredicate = [NSPredicate predicateWithFormat:@"SELF matches %@", XCCDirectoriesToIgnorePattern];
-    
-    NSArray *defaultIgnoredPaths = @[
-                                     @"*/Frameworks/",
-                                     @"!*/Frameworks/Debug/",
-                                     @"!*/Frameworks/Source/",
-                                     @"*/AppKit/",
-                                     @"*/Foundation/",
-                                     @"*/Objective-J/",
-                                     @"*/*.environment/",
-                                     @"*/Build/",
-                                     @"*/*.xcodeproj/",
-                                     @"*/.*/",
-                                     @"*/NS_*.j",
-                                     @"*/main.j",
-                                     @"*/.*",
-                                     @"!*/.xcodecapp-ignore"
-                                     ];
-    
-    XCCDefaultIgnoredPathPredicates = [self parseIgnorePaths:defaultIgnoredPaths];
+    NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
+                    
+    XCCDefaultInfoPlistConfigurations = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
+                                          XCCCappuccinoProcessCappLint: @YES,
+                                          XCCCappuccinoProcessObjj: @YES,
+                                          XCCCappuccinoProjectBinPaths: XCCDefaultEnvironmentPaths};
 }
-
-+ (NSArray *)parseIgnorePaths:(NSArray *)paths
-{
-    NSMutableArray *parsedPaths = [NSMutableArray array];
-    NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
-    
-    for (NSString *pattern in paths)
-    {
-        if ([pattern stringByTrimmingCharactersInSet:whitespace].length == 0)
-            continue;
-        
-        NSString *regexPattern = [self globToRegexPattern:pattern];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF matches %@", regexPattern];
-        [parsedPaths addObject:@{ @"predicate": predicate, @"exclude": @([pattern characterAtIndex:0] != '!') }];
-    }
-    
-    return parsedPaths;
-}
-
-+ (NSString *)globToRegexPattern:(NSString *)glob
-{
-    NSMutableString *regex = [glob mutableCopy];
-    
-    if ([regex characterAtIndex:0] == '!')
-        [regex deleteCharactersInRange:NSMakeRange(0, 1)];
-    
-    [regex replaceOccurrencesOfString:@"."
-                           withString:@"\\."
-                              options:0
-                                range:NSMakeRange(0, [regex length])];
-    
-    [regex replaceOccurrencesOfString:@"*"
-                           withString:@".*"
-                              options:0
-                                range:NSMakeRange(0, [regex length])];
-    
-    // If the glob ends with "/", match that directory and anything below it.
-    if ([regex characterAtIndex:regex.length - 1] == '/')
-        [regex replaceCharactersInRange:NSMakeRange(regex.length - 1, 1) withString:@"(?:/.*)?"];
-    
-    return [NSString stringWithFormat:@"^%@$", regex];
-}
-
 
 #pragma mark - Init methods
 
@@ -164,10 +111,13 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
         self.supportPath = [self.projectPath stringByAppendingPathComponent:XCCSupportFolderName];
         self.infoPlistPath = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
         
+        self.projectPathsForSourcePaths = [NSMutableDictionary new];
+        
+        self.operationQueue = [NSOperationQueue new];
+        
         self.errorList = [NSMutableArray array];
         self.warningList = [NSMutableArray array];
-        self.processingFilesList = [NSMutableArray array];
-        
+        self.currentOperations = [NSMutableArray array];
         
         self.isLoadingProject = NO;
         self.isListeningProject = NO;
@@ -209,11 +159,28 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
     DDLogInfo(@"Loading project: %@", self.projectPath);
     self.isLoadingProject = YES;
     
+    [self initObservers];
+    [self prepareIgnoredPaths];
     [self prepareXcodeSupport];
     [self initTaskManager];
     [self populateXcodeProject];
-//    [self populatexCodeCappTargetedFiles];
-//    [self waitForOperationQueueToFinishWithSelector:@selector(projectDidFinishLoading)];
+    //[self populatexCodeCappTargetedFiles];
+    //[self waitForOperationQueueToFinishWithSelector:@selector(projectDidFinishLoading)];
+}
+
+- (void)prepareIgnoredPaths
+{
+    self.ignoredPathPredicates = [NSMutableArray new];
+    
+    if ([self.fm fileExistsAtPath:self.xcodecappIgnorePath])
+    {
+        NSString *ignoreFileContent = [NSString stringWithContentsOfFile:self.xcodecappIgnorePath encoding:NSUTF8StringEncoding error:nil];
+        NSArray *ignoredPatterns = [ignoreFileContent componentsSeparatedByString:@"\n"];
+        NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
+        [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
+    }
+    
+    DDLogVerbose(@"Ignoring file paths: %@", self.ignoredPathPredicates);
 }
 
 /*!
@@ -284,8 +251,7 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
     
     [self.fm createDirectoryAtPath:self.supportPath withIntermediateDirectories:YES attributes:nil error:nil];
     
-    NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:@{ XCCCompatibilityVersionKey:appCompatibilityVersion}
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:XCCDefaultInfoPlistConfigurations
                                                               format:NSPropertyListXMLFormat_v1_0
                                                     errorDescription:nil];
     
@@ -311,10 +277,113 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
 
 - (void)populateXcodeProjectWithProjectRelativePath:(NSString *)path
 {
-    FindSourceFilesOperation *op = [[FindSourceFilesOperation alloc] initWithXCC:self projectId:[NSNumber numberWithInteger:self.projectId] path:path];
+    FindSourceFilesOperation *op = [[FindSourceFilesOperation alloc] initWithCappuccinoProject:self path:path];
     [self.operationQueue addOperation:op];
 }
 
+#pragma mark - Observers methods
+
+- (void)initObservers
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(addSourceToProjectPathMappingHandler:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
+    
+    [center addObserver:self selector:@selector(sourceConversionDidStartHandler:) name:XCCConversionDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionDidEndHandler:) name:XCCConversionDidEndNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCConversionDidGenerateErrorNotification object:nil];
+}
+
+- (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
+{
+    return note.userInfo[@"cappuccinoProject"] == self;
+}
+
+- (void)addSourceToProjectPathMappingHandler:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self performSelectorOnMainThread:@selector(addSourceToProjectPathMapping:) withObject:note waitUntilDone:NO];
+}
+
+- (void)addSourceToProjectPathMapping:(NSNotification *)note
+{
+    NSDictionary *info = note.userInfo;
+    NSString *sourcePath = info[@"sourcePath"];
+    
+    DDLogVerbose(@"Adding source to project mapping: %@ -> %@", sourcePath, info[@"projectPath"]);
+    
+    self.projectPathsForSourcePaths[info[@"sourcePath"]] = info[@"projectPath"];
+}
+
+- (void)sourceConversionDidStartHandler:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self performSelectorOnMainThread:@selector(sourceConversionDidStart:) withObject:note waitUntilDone:NO];
+}
+
+- (void)sourceConversionDidStart:(NSNotification *)note
+{
+    NSDictionary *info = note.userInfo;
+    NSString *sourcePath = info[@"sourcePath"];
+    
+    DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), sourcePath);
+    
+    [self.currentOperations addObject:info[@"operation"]];
+    
+    //[self pruneProcessingErrorsForProjectPath:sourcePath];
+}
+
+- (void)sourceConversionDidEndHandler:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self performSelectorOnMainThread:@selector(sourceConversionDidEnd:) withObject:note waitUntilDone:NO];
+}
+
+- (void)sourceConversionDidEnd:(NSNotification *)note
+{
+    NSDictionary *info = note.userInfo;
+    NSString *path = info[@"sourcePath"];
+    
+    [self.currentOperations addObject:info[@"operation"]];
+    
+    if ([CappuccinoUtils isObjjFile:path])
+    {
+//        NSMutableArray *addPaths = [self.pbxOperations[@"add"] mutableCopy];
+//        
+//        if (!addPaths)
+//            self.pbxOperations[@"add"] = @[path];
+//        else
+//        {
+//            [addPaths addObject:path];
+//            self.pbxOperations[@"add"] = addPaths;
+//        }
+    }
+    
+    DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), path);
+}
+
+- (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:note waitUntilDone:NO];
+}
+
+- (void)sourceConversionDidGenerateError:(NSNotification *)note
+{
+    NSMutableDictionary *info = [note.userInfo mutableCopy];
+    
+    DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), info[@"sourcePath"]);
+    
+    //[self.errorListController addObject:info];
+}
 
 #pragma mark - task managers methods
 
@@ -332,6 +401,32 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
 }
 
 
+#pragma mark path methods
+
+- (NSString *)projectRelativePathForPath:(NSString *)path
+{
+    return [path substringFromIndex:self.projectPath.length + 1];
+}
+
+- (BOOL)isXCCIgnoreFile:(NSString *)path
+{
+    return [path isEqualToString:self.xcodecappIgnorePath];
+}
+
+
+#pragma mark - Shadow Files Management
+
+- (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path
+{
+    if (path.isAbsolutePath)
+        path = [self projectRelativePathForPath:path];
+    
+    NSString *filename = [path.stringByDeletingPathExtension stringByReplacingOccurrencesOfString:@"/" withString:XCCSlashReplacement];
+    
+    return [self.supportPath stringByAppendingPathComponent:filename];
+}
+
+
 #pragma mark - Events methods
 
 - (void)startListenProject
@@ -344,6 +439,20 @@ NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
 {
     DDLogInfo(@"Stop listen project: %@", self.projectPath);
     self.isListeningProject = NO;
+}
+
+#pragma mark - Info plist configurations
+
+- (BOOL)shouldProcessWithObjjWarnings
+{
+    NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
+    return !!info[XCCCappuccinoProcessObjj];
+}
+
+- (BOOL)shouldProcessWithCappLint
+{
+    NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
+    return !!info[XCCCappuccinoProcessCappLint];
 }
 
 @end

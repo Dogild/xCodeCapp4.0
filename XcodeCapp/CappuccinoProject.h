@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class TaskManager;
+
 @interface CappuccinoProject : NSObject
 {
     
@@ -56,11 +58,24 @@
 @property NSMutableArray *warningList;
 
 // A list of files currently processing
-@property NSMutableArray *processingFilesList;
+@property NSMutableArray *currentOperations;
+
+// A list of ignoredPaths from xcodecapp-ignore
+@property NSMutableArray *ignoredPathPredicates;
+
+// Task manager of the project
+@property TaskManager *taskManager;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)loadProject;
 - (void)startListenProject;
 - (void)stopListenProject;
+
+- (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path;
+
+- (BOOL)isXCCIgnoreFile:(NSString *)path;
+
+- (BOOL)shouldProcessWithObjjWarnings;
+- (BOOL)shouldProcessWithCappLint;
 
 @end
