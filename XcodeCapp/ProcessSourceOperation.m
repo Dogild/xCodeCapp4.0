@@ -21,6 +21,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 @property CappuccinoProjectController *controller;
 @property CappuccinoProject *cappuccinoProject;
 @property NSString *sourcePath;
+@property NSTask *task;
 
 @end
 
@@ -46,6 +47,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     if (self.isCancelled)
         return;
     
+    [self.task interrupt];
     [super cancel];
     
     NSDictionary *info =
@@ -111,9 +113,8 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 
         DDLogVerbose(@"Running processing task: %@", command);
 
-        NSDictionary *taskResult = [self.controller.taskManager runTaskWithCommand:command
-                                                                                arguments:arguments
-                                                                               returnType:kTaskReturnTypeAny];
+        self.task = [self.controller.taskManager taskWithCommand:command arguments:arguments];
+        NSDictionary *taskResult = [self.controller.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
 
         status = [taskResult[@"status"] intValue];
         response = taskResult[@"response"];

@@ -35,8 +35,12 @@ typedef enum XCCTaskReturnType XCCTaskReturnType;
 
 - (BOOL)executablesAreAccessible;
 
+- (NSTask*)taskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments;
+- (NSTask*)taskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments currentDirectoryPath:(NSString*)aCurrentDirectoryPath;
+
 - (NSDictionary *)runTaskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments returnType:(XCCTaskReturnType)returnType;
 - (NSDictionary *)runTaskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments returnType:(XCCTaskReturnType)returnType currentDirectoryPath:(NSString*)aCurrentDirectoryPath;
+- (NSDictionary*)runTask:(NSTask*)aTask returnType:(XCCTaskReturnType)returnType;
 - (NSDictionary*)runJakeTaskWithArguments:(NSMutableArray*)arguments currentDirectoryPath:(NSString*)aCurrentDirectoryPath;
 
 @end

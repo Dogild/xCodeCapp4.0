@@ -101,6 +101,33 @@
     return YES;
 }
 
+- (NSTask*)taskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments
+{
+    return [self taskWithCommand:aCommand arguments:arguments currentDirectoryPath:nil];
+}
+
+- (NSTask*)taskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments currentDirectoryPath:(NSString*)aCurrentDirectoryPath
+{
+    NSTask *task = [NSTask new];
+    
+    // TODO : need to change
+    NSString *launchPath = self.executablePaths[aCommand];
+    
+    if (!launchPath)
+        launchPath = aCommand;
+    
+    task.launchPath = launchPath;
+    task.arguments = arguments;
+    task.environment = self.environment;
+    task.standardOutput = [NSPipe pipe];
+    task.standardError = [NSPipe pipe];
+    
+    if (aCurrentDirectoryPath)
+        task.currentDirectoryPath = aCurrentDirectoryPath;
+    
+    return task;
+}
+
 /*!
  Run an NSTask with the given arguments
  
@@ -142,33 +169,36 @@
     if (aCurrentDirectoryPath)
         task.currentDirectoryPath = aCurrentDirectoryPath;
     
-    [task launch];
+    return [self runTask:task returnType:returnType];
+}
+
+- (NSDictionary*)runTask:(NSTask*)aTask returnType:(XCCTaskReturnType)returnType
+{
+    [aTask launch];
     
-    DDLogVerbose(@"Task launched: %@\n%@", launchPath, arguments);
+    DDLogVerbose(@"Task launched: %@\n%@", aTask.launchPath, aTask.arguments);
     
     if (returnType != kTaskReturnTypeNone)
     {
-        [task waitUntilExit];
+        [aTask waitUntilExit];
         
-        DDLogVerbose(@"Task exited: %@:%d", launchPath, task.terminationStatus);
+        DDLogVerbose(@"Task exited: %@:%d", aTask.launchPath, aTask.terminationStatus);
         
         NSData *data = nil;
         
         if (returnType == kTaskReturnTypeStdOut || returnType == kTaskReturnTypeAny)
-            data = [[task.standardOutput fileHandleForReading] availableData];
+            data = [[aTask.standardOutput fileHandleForReading] availableData];
         
         if (returnType == kTaskReturnTypeStdError || (returnType == kTaskReturnTypeAny && [data length] == 0))
-            data = [[task.standardError fileHandleForReading] availableData];
+            data = [[aTask.standardError fileHandleForReading] availableData];
         
         NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSNumber *status = [NSNumber numberWithInt:task.terminationStatus];
+        NSNumber *status = [NSNumber numberWithInt:aTask.terminationStatus];
         
         return @{ @"status":status, @"response":response };
     }
-    else
-    {
-        return @{ @"status":@0, @"response":@"" };
-    }
+    
+    return @{ @"status":@0, @"response":@"" };
 }
 
 /*!
