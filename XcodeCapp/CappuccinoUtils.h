@@ -8,12 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+@class CappuccinoProject;
+
 @interface CappuccinoUtils : NSObject
 
 + (BOOL)isObjjFile:(NSString *)path;
 + (BOOL)isXibFile:(NSString *)path;
++ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProjectXcodecappIgnorePath:(NSString*)xcodecappIgnorePath;
++ (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 + (NSArray *)parseIgnorePaths:(NSArray *)paths;
 + (BOOL)pathMatchesIgnoredPaths:(NSString*)aPath cappuccinoProjectIgnoredPathPredicates:(NSMutableArray*)cappuccinoProjectIgnoredPathPredicates;
 + (BOOL)shouldIgnoreDirectoryNamed:(NSString *)filename;
+
++ (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage;
 
 @end

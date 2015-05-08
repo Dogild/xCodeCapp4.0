@@ -8,6 +8,7 @@
 
 #import "ProcessSourceOperation.h"
 #import "CappuccinoProject.h"
+#import "CappuccinoProjectController.h"
 #import "CappuccinoUtils.h"
 #import "TaskManager.h"
 
@@ -17,6 +18,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 
 @interface ProcessSourceOperation ()
 
+@property CappuccinoProjectController *controller;
 @property CappuccinoProject *cappuccinoProject;
 @property NSString *sourcePath;
 
@@ -25,12 +27,13 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 
 @implementation ProcessSourceOperation
 
-- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject sourcePath:(NSString *)sourcePath
+- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject controller:(CappuccinoProjectController*)aCappuccinoController sourcePath:(NSString *)sourcePath
 {
     self = [super init];
 
     if (self)
     {
+        self.controller = aCappuccinoController;
         self.cappuccinoProject = aCappuccinoProject;
         self.sourcePath = sourcePath;
     }
@@ -47,6 +50,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     
     NSDictionary *info =
     @{
+      @"controller":self.controller,
       @"cappuccinoProject":self.cappuccinoProject,
       @"sourcePath":self.sourcePath,
       @"operation":self
@@ -62,7 +66,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    NSDictionary *info = @{ @"cappuccinoProject":self.cappuccinoProject, @"path":self.sourcePath, @"operation":self};
+    NSDictionary *info = @{ @"controller":self.controller, @"cappuccinoProject":self.cappuccinoProject, @"path":self.sourcePath};
     [center postNotificationName:XCCConversionDidStartNotification object:self userInfo:info];
 
     DDLogVerbose(@"Conversion started: %@", self.sourcePath);
@@ -70,9 +74,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     NSString *command = nil;
     NSArray *arguments = nil;
     NSString *response = nil;
-    NSString *projectRelativePath = [self.sourcePath substringFromIndex:self.cappuccinoProject.projectPath.length + 1];
     NSString *notificationTitle = nil;
-    NSString *notificationMessage = projectRelativePath.lastPathComponent;
     
     BOOL isXibFile = [CappuccinoUtils isXibFile:self.sourcePath];
     BOOL isObjjFile = [CappuccinoUtils isObjjFile:self.sourcePath];
@@ -91,7 +93,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     {
         command = @"objj";
         arguments = @[
-                        self.cappuccinoProject.parserPath,
+                        self.controller.parserPath,
                         self.cappuccinoProject.projectPath,
                         self.sourcePath
                      ];
@@ -109,7 +111,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 
         DDLogVerbose(@"Running processing task: %@", command);
 
-        NSDictionary *taskResult = [self.cappuccinoProject.taskManager runTaskWithCommand:command
+        NSDictionary *taskResult = [self.controller.taskManager runTaskWithCommand:command
                                                                                 arguments:arguments
                                                                                returnType:kTaskReturnTypeAny];
 
@@ -133,11 +135,11 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 
                 NSDictionary *info =
                     @{
+                        @"controller":self.controller,
                         @"cappuccinoProject":self.cappuccinoProject,
                         @"message":message,
                         @"sourcePath":self.sourcePath,
-                        @"status":taskResult[@"status"],
-                        @"operation":self
+                        @"status":taskResult[@"status"]
                     };
 
                 if (self.isCancelled)
@@ -164,7 +166,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
                 }
             }
         }
-        else if (!self.cappuccinoProject.isLoadingProject)
+        else if (!self.controller.isLoadingProject)
         {
 //            BOOL showFinalNotification = YES;
 //            
@@ -190,16 +192,17 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     {
         DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
 
-        [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:@{ @"cappuccinoProject":self.cappuccinoProject, @"path":self.sourcePath }];
+        [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:@{ @"cappuccinoProject":self.cappuccinoProject, @"path":self.sourcePath, @"controller":self.controller}];
     }
 }
 
 - (void)postErrorNotificationForPath:(NSString *)path line:(int)line message:(NSString *)message status:(NSInteger)status
 {
-    NSDictionary *info = @{@"sourcePath":path,
+    NSDictionary *info = @{
+                           @"controller":self.controller,
+                           @"sourcePath":path,
                            @"line":[NSNumber numberWithInt:line],
                            @"status":[NSNumber numberWithInteger:status],
-                           @"operation":self,
                            @"cappuccinoProject":self.cappuccinoProject,
                            @"message":[NSString stringWithFormat:@"Compilation issue: %@, line %d\n%@", [self.sourcePath lastPathComponent], 0, message]
                            };

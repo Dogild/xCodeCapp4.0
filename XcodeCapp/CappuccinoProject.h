@@ -15,14 +15,11 @@
     
 }
 
-// XcodeCapp is listening the event of this project
-@property BOOL isListeningProject;
+extern NSString * const XCCCompatibilityVersionKey;
+extern NSString * const XCCCappuccinoProjectBinPaths;
 
-// Whether we are in the process of loading a project
-@property BOOL isLoadingProject;
-
-// Whether we are currently processing source files
-@property BOOL isProcessingProject;
+extern NSString * const XCCProjectDidFinishLoadingNotification;
+extern NSString * const XCCProjectDidStartLoadingNotification;
 
 // Full path to .XcodeSupport
 @property NSString *supportPath;
@@ -33,14 +30,11 @@
 // Full path to the <project>.xcodeproj
 @property NSString *xcodeProjectPath;
 
-// Full path to parser.j
-@property NSString *parserPath;
-
-// Full path to pbxprojModifier.py
-@property NSString *pbxModifierScriptPath;
-
 // Full path to .XcodeSupport/Info.plist
 @property NSString *infoPlistPath;
+
+// Full path to .xcodecapp-ignore
+@property NSString *xcodecappIgnorePath;
 
 // Environment paths used by this project
 @property NSArray *environementsPaths;
@@ -51,31 +45,17 @@
 // A list of files name who can be processed, based on xcapp-ignore and path pf the project
 @property NSMutableArray *xCodeCappTargetedFiles;
 
-// A list of errors generated from the current batch of source processing
-@property NSMutableArray *errorList;
-
-// A list of warning generated from the current batch of source processing
-@property NSMutableArray *warningList;
-
-// A list of files currently processing
-@property NSMutableArray *currentOperations;
-
 // A list of ignoredPaths from xcodecapp-ignore
 @property NSMutableArray *ignoredPathPredicates;
 
-// Task manager of the project
-@property TaskManager *taskManager;
++ (NSArray*)defaultEnvironmentPaths;
 
 - (id)initWithPath:(NSString*)aPath;
-- (void)loadProject;
-- (void)startListenProject;
-- (void)stopListenProject;
+- (void)initIgnoredPaths;
+- (id)settingValueForKey:(NSString*)aKey;
+- (id)defaultSettings;
 
+- (NSString *)projectRelativePathForPath:(NSString *)path;
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path;
-
-- (BOOL)isXCCIgnoreFile:(NSString *)path;
-
-- (BOOL)shouldProcessWithObjjWarnings;
-- (BOOL)shouldProcessWithCappLint;
 
 @end

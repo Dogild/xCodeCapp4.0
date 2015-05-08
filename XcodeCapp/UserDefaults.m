@@ -16,3 +16,5 @@ NSString * const kDefaultXCCUpdateCappuccinoWithLastVersionOfMasterBranch = @"XC
 NSString * const kDefaultXCCUseSymlinkWhenCreatingProject = @"XCCUseSymlinkWhenCreatingProject";
 
 NSString * const kDefaultXCCLogLevel = @"XCCLogLevel";
+
+NSString * const kDefaultXCCLastOpenedProjectPath = @"XCCLastOpenedProjectPath";

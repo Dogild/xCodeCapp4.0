@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class CappuccinoProject;
+@class CappuccinoProjectController;
 
 extern NSString * const XCCConversionDidStartNotification;
 extern NSString * const XCCConversionDidGenerateErrorNotification;
@@ -23,6 +24,6 @@ enum {
 @interface ProcessSourceOperation : NSOperation
 
 // sourcePath should be a path within the project (no resolved symlinks)
-- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject sourcePath:(NSString *)sourcePath;
+- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject controller:(CappuccinoProjectController*)aCappuccinoController sourcePath:(NSString *)sourcePath;
 
 @end

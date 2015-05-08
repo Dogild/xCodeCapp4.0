@@ -9,6 +9,7 @@
 #import "FindSourceFilesOperation.h"
 #import "ProcessSourceOperation.h"
 #import "CappuccinoProject.h"
+#import "CappuccinoProjectController.h"
 #import "CappuccinoUtils.h"
 
 NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSourceToProjectPathMappingNotification";
@@ -16,6 +17,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 @interface FindSourceFilesOperation ()
 
 @property CappuccinoProject *cappuccinoProject;
+@property CappuccinoProjectController *controller;
 @property NSString *projectPathToSearch;
 
 @end
@@ -23,13 +25,14 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 @implementation FindSourceFilesOperation
 
-- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject path:(NSString *)path
+- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject controller:(CappuccinoProjectController*)aCappuccinoProjectController path:(NSString *)path
 {
     self = [super init];
     
     if (self)
     {
         self.cappuccinoProject = aCappuccinoProject;
+        self.controller = aCappuccinoProjectController;
         self.projectPathToSearch = path;
     }
     
@@ -111,9 +114,11 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
                     NSDictionary *info =
                           @{
+                                @"controller":self.controller,
                                 @"cappuccinoProject":self.cappuccinoProject,
                                 @"sourcePath":realPath,
-                                @"projectPath":fullProjectPath
+                                @"projectPath":fullProjectPath,
+                                @"operation":self
                            };
 
                     if (self.isCancelled)
@@ -159,7 +164,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     if (self.isCancelled)
         return;
 
-    ProcessSourceOperation *op = [[ProcessSourceOperation alloc] initWithCappuccinoProject:self.cappuccinoProject sourcePath:projectSourcePath];
+    ProcessSourceOperation *op = [[ProcessSourceOperation alloc] initWithCappuccinoProject:self.cappuccinoProject controller:self.controller sourcePath:projectSourcePath];
     [[NSOperationQueue currentQueue] addOperation:op];
 }
 

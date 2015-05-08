@@ -7,6 +7,7 @@
 //
 
 #import "CappuccinoUtils.h"
+#import "CappuccinoProject.h"
 
 // The regex above is used with this predicate for testing.
 static NSPredicate * XCCDirectoriesToIgnorePredicate = nil;
@@ -64,6 +65,16 @@ static NSArray *XCCDefaultIgnoredPathPredicates = nil;
     }
     
     return NO;
+}
+
++ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProjectXcodecappIgnorePath:(NSString*)xcodecappIgnorePath
+{
+    return [path isEqualToString:xcodecappIgnorePath];
+}
+
++ (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(CappuccinoProject*)aCappuccinoProject
+{
+    return ([self isXibFile:path] || [self isObjjFile:path] || [self isXCCIgnoreFile:path cappuccinoProjectXcodecappIgnorePath:aCappuccinoProject.xcodecappIgnorePath]) && ![self pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:aCappuccinoProject.ignoredPathPredicates];
 }
 
 + (BOOL)shouldIgnoreDirectoryNamed:(NSString *)filename
@@ -129,6 +140,17 @@ static NSArray *XCCDefaultIgnoredPathPredicates = nil;
         [regex replaceCharactersInRange:NSMakeRange(regex.length - 1, 1) withString:@"(?:/.*)?"];
     
     return [NSString stringWithFormat:@"^%@$", regex];
+}
+
+
++ (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage
+{
+    NSUserNotification *note = [NSUserNotification new];
+    
+    note.title = aTitle;
+    note.informativeText = aMessage;
+    
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:note];
 }
 
 @end

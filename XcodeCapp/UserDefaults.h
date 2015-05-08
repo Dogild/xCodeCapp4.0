@@ -20,4 +20,6 @@ extern NSString * const kDefaultXCCUseSymlinkWhenCreatingProject;
 
 extern NSString * const kDefaultXCCLogLevel;
 
+extern NSString * const kDefaultXCCLastOpenedProjectPath;
+
 #endif
