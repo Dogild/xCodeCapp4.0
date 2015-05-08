@@ -43,6 +43,7 @@
 		6841F2C41AFABD7200CFE60E /* CappuccinoProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C31AFABD7200CFE60E /* CappuccinoProject.m */; };
 		6841F2CA1AFADEBC00CFE60E /* FindSourceFilesOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C71AFADEBC00CFE60E /* FindSourceFilesOperation.m */; };
 		6841F2CB1AFADEBC00CFE60E /* ProcessSourceOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C91AFADEBC00CFE60E /* ProcessSourceOperation.m */; };
+		6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6863FBA21AFD55A900040C8E /* LogUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +113,8 @@
 		6841F2C71AFADEBC00CFE60E /* FindSourceFilesOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FindSourceFilesOperation.m; sourceTree = "<group>"; };
 		6841F2C81AFADEBC00CFE60E /* ProcessSourceOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSourceOperation.h; sourceTree = "<group>"; };
 		6841F2C91AFADEBC00CFE60E /* ProcessSourceOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProcessSourceOperation.m; sourceTree = "<group>"; };
+		6863FBA11AFD55A900040C8E /* LogUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
+		6863FBA21AFD55A900040C8E /* LogUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +262,8 @@
 				6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */,
 				6815BBE91AFC24430030D8BB /* XcodeProjectCloser.h */,
 				6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */,
+				6863FBA11AFD55A900040C8E /* LogUtils.h */,
+				6863FBA21AFD55A900040C8E /* LogUtils.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -399,6 +404,7 @@
 				6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */,
 				6841F2CB1AFADEBC00CFE60E /* ProcessSourceOperation.m in Sources */,
 				6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */,
+				6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,
 				6841F2441AF98CE600CFE60E /* main.m in Sources */,
 				6841F2CA1AFADEBC00CFE60E /* FindSourceFilesOperation.m in Sources */,
@@ -527,6 +533,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = XcodeCapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -538,6 +545,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = XcodeCapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

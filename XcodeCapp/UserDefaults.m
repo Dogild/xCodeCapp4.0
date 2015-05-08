@@ -18,3 +18,5 @@ NSString * const kDefaultXCCUseSymlinkWhenCreatingProject = @"XCCUseSymlinkWhenC
 NSString * const kDefaultXCCLogLevel = @"XCCLogLevel";
 
 NSString * const kDefaultXCCLastOpenedProjectPath = @"XCCLastOpenedProjectPath";
+
+NSString * const kDefaultXCCLastEventId = @"XCCLastEventId";

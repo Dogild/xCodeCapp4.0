@@ -22,4 +22,6 @@ extern NSString * const kDefaultXCCLogLevel;
 
 extern NSString * const kDefaultXCCLastOpenedProjectPath;
 
+extern NSString * const kDefaultXCCLastEventId;
+
 #endif

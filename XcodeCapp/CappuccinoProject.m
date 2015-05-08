@@ -151,6 +151,13 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     return [path substringFromIndex:self.projectPath.length + 1];
 }
 
+- (NSString *)projectPathForSourcePath:(NSString *)path
+{
+    NSString *base = path.stringByDeletingLastPathComponent;
+    NSString *projectPath = self.projectPathsForSourcePaths[base];
+    
+    return projectPath ? [projectPath stringByAppendingPathComponent:path.lastPathComponent] : path;
+}
 
 #pragma mark - Shadow Files Management
 
@@ -164,6 +171,13 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     return [self.supportPath stringByAppendingPathComponent:filename];
 }
 
+- (NSString *)sourcePathForShadowPath:(NSString *)path
+{
+    NSString *filename = [path stringByReplacingOccurrencesOfString:XCCSlashReplacement withString:@"/"];
+    filename = [filename.stringByDeletingPathExtension stringByAppendingPathExtension:@"j"];
+    
+    return [self.projectPath stringByAppendingPathComponent:filename];
+}
 
 #pragma mark - Info plist configurations
 

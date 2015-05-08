@@ -14,6 +14,8 @@
 
 + (BOOL)isObjjFile:(NSString *)path;
 + (BOOL)isXibFile:(NSString *)path;
++ (BOOL)isCibFile:(NSString *)path;
++ (BOOL)isHeaderFile:(NSString *)path;
 + (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProjectXcodecappIgnorePath:(NSString*)xcodecappIgnorePath;
 + (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 + (NSArray *)parseIgnorePaths:(NSArray *)paths;
@@ -21,5 +23,12 @@
 + (BOOL)shouldIgnoreDirectoryNamed:(NSString *)filename;
 
 + (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage;
+
++ (NSArray *)getPathsToWatchForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
+
++ (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
+
++ (void)removeAllCibsAtPath:(NSString *)path;
++ (void)removeSupportFilesForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 
 @end

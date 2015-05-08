@@ -8,6 +8,7 @@
 
 #import "CappuccinoUtils.h"
 #import "CappuccinoProject.h"
+#import "XcodeProjectCloser.h"
 
 // The regex above is used with this predicate for testing.
 static NSPredicate * XCCDirectoriesToIgnorePredicate = nil;
@@ -50,6 +51,16 @@ static NSArray *XCCDefaultIgnoredPathPredicates = nil;
 + (BOOL)isObjjFile:(NSString *)path
 {
     return [path.pathExtension.lowercaseString isEqual:@"j"];
+}
+
++ (BOOL)isCibFile:(NSString *)path
+{
+    return [path.pathExtension.lowercaseString isEqual:@"cib"];
+}
+
++ (BOOL)isHeaderFile:(NSString *)path
+{
+    return [path.pathExtension.lowercaseString isEqual:@"h"];
 }
 
 + (BOOL)isXibFile:(NSString *)path
@@ -142,6 +153,90 @@ static NSArray *XCCDefaultIgnoredPathPredicates = nil;
     return [NSString stringWithFormat:@"^%@$", regex];
 }
 
++ (NSArray *)getPathsToWatchForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject
+{
+    NSMutableArray *pathsToWatch = [NSMutableArray arrayWithObject:aCappuccinoProject.projectPath];
+    NSArray *otherPathsToWatch = @[@"", @"Frameworks/Debug", @"Frameworks/Source"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    for (NSString *path in otherPathsToWatch)
+    {
+        NSString *fullPath = [aCappuccinoProject.projectPath stringByAppendingPathComponent:path];
+        
+        BOOL exists, isDirectory;
+        exists = [fm fileExistsAtPath:fullPath isDirectory:&isDirectory];
+        
+        if (exists && isDirectory)
+            [self watchSymlinkedDirectoriesAtPath:path pathsToWatch:pathsToWatch cappuccinoProject:aCappuccinoProject];
+    }
+    
+    return [pathsToWatch copy];
+}
+
++ (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(CappuccinoProject*)aCappuccinoProject
+{
+    NSString *fullProjectPath = [aCappuccinoProject.projectPath stringByAppendingPathComponent:projectPath];
+    NSError *error = NULL;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    NSArray *urls = [fm contentsOfDirectoryAtURL:[NSURL fileURLWithPath:fullProjectPath]
+                      includingPropertiesForKeys:@[NSURLIsDirectoryKey, NSURLIsSymbolicLinkKey]
+                                         options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                           error:&error];
+    
+    for (NSURL *url in urls)
+    {
+        NSNumber *isSymlink;
+        [url getResourceValue:&isSymlink forKey:NSURLIsSymbolicLinkKey error:nil];
+        
+        if (isSymlink.boolValue == NO)
+            continue;
+        
+        NSURL *resolvedURL = [url URLByResolvingSymlinksInPath];
+        
+        if (![resolvedURL checkResourceIsReachableAndReturnError:nil])
+            continue;
+        
+        NSNumber *isDirectory;
+        [resolvedURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+        
+        if (isDirectory.boolValue == NO)
+            continue;
+        
+        NSString *path = resolvedURL.path;
+        NSString *filename = path.lastPathComponent;
+        
+        if (![self shouldIgnoreDirectoryNamed:filename] && ![self pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:aCappuccinoProject.ignoredPathPredicates])
+        {
+            DDLogVerbose(@"Watching symlinked directory: %@", path);
+            
+            [pathsToWatch addObject:path];
+        }
+    }
+}
+
++ (void)removeAllCibsAtPath:(NSString *)path
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    NSArray *paths = [fm contentsOfDirectoryAtPath:path error:nil];
+    
+    for (NSString *filePath in paths)
+    {
+        if ([self isCibFile:filePath])
+            [fm removeItemAtPath:[path stringByAppendingPathComponent:filePath] error:nil];
+    }
+}
+
++ (void)removeSupportFilesForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    [XcodeProjectCloser closeXcodeProjectForProject:aCappuccinoProject.projectPath];
+    
+    [fm removeItemAtPath:aCappuccinoProject.xcodeProjectPath error:nil];
+    [fm removeItemAtPath:aCappuccinoProject.supportPath error:nil];
+}
 
 + (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage
 {

@@ -57,5 +57,7 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 
 - (NSString *)projectRelativePathForPath:(NSString *)path;
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path;
+- (NSString *)sourcePathForShadowPath:(NSString *)path;
+- (NSString *)projectPathForSourcePath:(NSString *)path;
 
 @end
