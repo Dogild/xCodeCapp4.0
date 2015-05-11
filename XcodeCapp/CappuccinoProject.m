@@ -70,7 +70,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:@"/usr/local/narwhal/bin", @"~/narwhal/bin", nil];
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
-                    
+    
     XCCDefaultInfoPlistConfigurations = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
                                           XCCCappuccinoProcessCappLint: @YES,
                                           XCCCappuccinoProcessObjj: @YES,
@@ -135,7 +135,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 - (id)settingValueForKey:(NSString*)aKey
 {
-    return [self.projectPath valueForKey:aKey];
+    return [self.projectSettings valueForKey:aKey];
 }
 
 - (id)defaultSettings
@@ -145,6 +145,11 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 
 #pragma mark path methods
+
+- (NSString *)projectName
+{
+    return [self.projectPath lastPathComponent];
+}
 
 - (NSString *)projectRelativePathForPath:(NSString *)path
 {

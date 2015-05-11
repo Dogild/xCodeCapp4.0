@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "Cappuccino.h"
 #import "CappuccinoProject.h"
+#import "CappuccinoProjectController.h"
+#import "CappuccinoProjectViewCell.h"
 #import "UserDefaults.h"
 
 @interface AppDelegate ()
@@ -129,15 +131,17 @@
 
 - (void)fetchProjects
 {
-    [self.cappuccinoProjects removeAllObjects];
+    self.cappuccinoProjectController = [NSMutableArray new];
     
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
     
     for (NSString *path in projectHistory)
     {
-        CappuccinoProject *cappuccinoProject = [[CappuccinoProject alloc] initWithPath:path];
-        [self.cappuccinoProjects addObject:cappuccinoProject];
+        CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
+        [self.cappuccinoProjectController addObject:cappuccinoProjectController];
     }
+    
+    [self.projectTableView reloadData];
 }
 
 #pragma mark - Logging methods
@@ -173,6 +177,37 @@
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
     return 200;
+}
+
+#pragma mark - TableView delegate
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return [self.cappuccinoProjectController count];
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    CappuccinoProjectViewCell *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
+    
+    CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectController objectAtIndex:row] cappuccinoProject];
+    
+    [cellView.textField setStringValue:[cappuccinoProject projectName]];
+    [cellView.pathTextField setStringValue:[cappuccinoProject projectPath]];
+    
+    // No idea why I have to that here, does not work from the xib...
+    [cellView.loadButton setAction:@selector(loadProject:)];
+    [cellView.loadButton setTarget:self];
+    
+    return cellView;
+}
+
+- (IBAction)loadProject:(id)aSender
+{
+    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:[self.projectTableView rowForView:aSender]];
+    
+    [cappuccinoProjectController loadProject];
+    
 }
 
 @end

@@ -789,7 +789,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     // See pbxprojModifier.py for info on the arguments
     NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
-        
+    
     for (NSString *action in self.pbxOperations)
     {
         NSArray *paths = self.pbxOperations[action];

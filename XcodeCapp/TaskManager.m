@@ -79,6 +79,8 @@
 
 - (BOOL)executablesAreAccessible
 {
+    self.executablePaths = [NSMutableDictionary new];
+    
     for (NSString *executable in self.executables)
     {
         NSDictionary *response = [self runTaskWithCommand:@"/usr/bin/which"

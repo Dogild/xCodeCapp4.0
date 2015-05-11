@@ -192,7 +192,7 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     {
         DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
 
-        [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:@{ @"cappuccinoProject":self.cappuccinoProject, @"path":self.sourcePath, @"controller":self.controller}];
+        [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:@{ @"cappuccinoProject":self.cappuccinoProject, @"sourcePath":self.sourcePath, @"controller":self.controller}];
     }
 }
 

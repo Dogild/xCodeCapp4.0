@@ -26,10 +26,12 @@
 
 @property (strong) IBOutlet Cappuccino *cappuccino;
 
-@property (strong) NSMutableArray *cappuccinoProjects;
+@property (strong) NSMutableArray *cappuccinoProjectController;
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;
+
+- (IBAction)loadProject:(id)aSender;
 
 @end
 

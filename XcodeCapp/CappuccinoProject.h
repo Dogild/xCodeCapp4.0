@@ -55,6 +55,8 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (id)settingValueForKey:(NSString*)aKey;
 - (id)defaultSettings;
 
+- (NSString *)projectName;
+
 - (NSString *)projectRelativePathForPath:(NSString *)path;
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path;
 - (NSString *)sourcePathForShadowPath:(NSString *)path;

@@ -51,4 +51,7 @@
 // Task manager of the project
 @property TaskManager *taskManager;
 
+- (id)initWithPath:(NSString*)aPath;
+- (void)loadProject;
+
 @end
