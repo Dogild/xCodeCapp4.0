@@ -93,11 +93,10 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     }
     else if (isObjjFile)
     {
-        command = @"objj";
+        command = @"objj2objcskeleton";
         arguments = @[
-                        self.controller.parserPath,
-                        self.cappuccinoProject.projectPath,
-                        self.sourcePath
+                        self.sourcePath,
+                        self.cappuccinoProject.supportPath
                      ];
 
         notificationTitle = @"Objective-J source processed";

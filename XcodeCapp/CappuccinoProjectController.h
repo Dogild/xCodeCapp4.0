@@ -27,9 +27,6 @@
 // Whether we are currently processing source files
 @property BOOL isProcessingProject;
 
-// Full path to parser.j
-@property NSString *parserPath;
-
 // Full path to pbxprojModifier.py
 @property NSString *pbxModifierScriptPath;
 

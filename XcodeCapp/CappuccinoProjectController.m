@@ -76,8 +76,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         
         self.pbxModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
         
-        self.parserPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"parser.j"];
-        
         [self _init];
     }
     
