@@ -54,4 +54,6 @@
 - (id)initWithPath:(NSString*)aPath;
 - (void)loadProject;
 
+- (void)stopListenProject;
+
 @end

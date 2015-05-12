@@ -55,6 +55,13 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (id)settingValueForKey:(NSString*)aKey;
 - (id)defaultSettings;
 
+- (void)fetchProjectSettings;
+
+- (BOOL)shouldProcessWithObjjWarnings;
+- (BOOL)shouldProcessWithCappLint;
+- (BOOL)shouldProcessWithObjj2ObjcSkeleton;
+- (BOOL)shouldProcessWithNib2Cib;
+
 - (NSString *)projectName;
 
 - (NSString *)projectRelativePathForPath:(NSString *)path;

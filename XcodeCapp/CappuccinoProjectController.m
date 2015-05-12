@@ -143,10 +143,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
     
+    if (self.isProjectLoaded)
+    {
+        [self startListenProject];
+        return;
+    }
+    
     [self _init];
     
     self.isLoadingProject = YES;
-    self.isProjectLoaded = NO;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidStartLoadingNotification object:self];
     
@@ -411,6 +416,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     CFTimeInterval latency = 2.0;
     UInt64 lastEventId = self.lastEventId.unsignedLongLongValue;
     
+    NSLog(@"coucou");
+    NSLog(@"%llu", lastEventId);
+    
     self.stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
@@ -436,10 +444,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)stopListenProject
 {
-    DDLogInfo(@"Stop listen project: %@", self.cappuccinoProject.projectPath);
-    
     if (self.stream)
     {
+        DDLogInfo(@"Stop listen project: %@", self.cappuccinoProject.projectPath);
+        
         [self updateUserDefaultsWithLastEventId];
         [self stopFSEventStream];
         FSEventStreamUnscheduleFromRunLoop(self.stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
@@ -758,6 +766,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)projectDidFinishLoading
 {
     [self updatePbxFile];
+    [self.cappuccinoProject fetchProjectSettings];
     
     self.isLoadingProject = NO;
     self.isProjectLoaded = YES;
@@ -790,6 +799,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     // See pbxprojModifier.py for info on the arguments
     NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
     
+    BOOL shouldLaunchTask = NO;
+    
     for (NSString *action in self.pbxOperations)
     {
         NSArray *paths = self.pbxOperations[action];
@@ -798,9 +809,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         {
             [arguments addObject:action];
             [arguments addObjectsFromArray:paths];
+            
+            shouldLaunchTask = YES;
         }
     }
     
+    if (!shouldLaunchTask)
+        return;
+
     // This task takes less than a second to execute, no need to put it a separate thread
     NSDictionary *taskResult = [self.taskManager runTaskWithCommand:@"python"
                                                  arguments:arguments

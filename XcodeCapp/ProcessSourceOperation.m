@@ -16,6 +16,22 @@ NSString * const XCCConversionDidEndNotification = @"XCCConversionDidStopNotific
 NSString * const XCCConversionDidGenerateErrorNotification = @"XCCConversionDidGenerateErrorNotification";
 NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNotification";
 
+NSString * const XCCObjjDidStartNotification = @"XCCObjjDidStartNotification";
+NSString * const XCCObjjDidGenerateErrorNotification = @"XCCObjjDidGenerateErrorNotification";
+NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
+
+NSString * const XCCCappLintDidStartNotification = @"XCCCappLintDidStartNotification";
+NSString * const XCCCappLintDidGenerateErrorNotification = @"XCCCappLintDidGenerateErrorNotification";
+NSString * const XCCCappLintDidEndNotification = @"XCCCappLintDidEndNotification";
+
+NSString * const XCCObjj2ObjcSkeletonDidStartNotification = @"XCCObjj2ObjcSkeletonDidStartNotification";
+NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification = @"XCCObjj2ObjcSkeletonDidGenerateErrorNotification";
+NSString * const XCCObjj2ObjcSkeletonDidEndNotification = @"XCCObjj2ObjcSkeletonDidEndNotification";
+
+NSString * const XCCNib2CibDidStartNotification = @"XCCNib2CibDidStartNotification";
+NSString * const XCCNib2CibDidGenerateErrorNotification = @"XCCNib2CibDidGenerateErrorNotification";
+NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
+
 @interface ProcessSourceOperation ()
 
 @property CappuccinoProjectController *controller;
@@ -42,23 +58,32 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
     return self;
 }
 
+- (NSDictionary*)defaultUserInfo
+{
+    return @{
+      @"controller":self.controller,
+      @"cappuccinoProject":self.cappuccinoProject,
+      @"sourcePath":self.sourcePath,
+      @"operation":self
+      };
+}
+
 - (void)cancel
 {
     if (self.isCancelled)
         return;
     
     [self.task interrupt];
+    [self cancelWithUserInfo:[self defaultUserInfo] notificationName:XCCConversionDidGenerateErrorNotification];
+}
+
+- (void)cancelWithUserInfo:(NSDictionary*)userInfo notificationName:(NSString*)notificationName
+{
+    if (self.isCancelled)
+        return;
+    
     [super cancel];
-    
-    NSDictionary *info =
-    @{
-      @"controller":self.controller,
-      @"cappuccinoProject":self.cappuccinoProject,
-      @"sourcePath":self.sourcePath,
-      @"operation":self
-      };
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCConversionDidGenerateErrorNotification object:self userInfo:info];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
 }
 
 - (void)main
@@ -68,149 +93,148 @@ NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNoti
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    NSDictionary *info = @{ @"controller":self.controller, @"cappuccinoProject":self.cappuccinoProject, @"path":self.sourcePath};
+    NSDictionary *info = [self defaultUserInfo];
+    
     [center postNotificationName:XCCConversionDidStartNotification object:self userInfo:info];
 
     DDLogVerbose(@"Conversion started: %@", self.sourcePath);
-
-    NSString *command = nil;
-    NSArray *arguments = nil;
-    NSString *response = nil;
-    NSString *notificationTitle = nil;
     
     BOOL isXibFile = [CappuccinoUtils isXibFile:self.sourcePath];
     BOOL isObjjFile = [CappuccinoUtils isObjjFile:self.sourcePath];
 
     if (isXibFile)
     {
-        command = @"nib2cib";
-        arguments = @[
-                        @"--no-colors",
-                        self.sourcePath
-                    ];
-
-        notificationTitle = @"Xib converted";
+        [self launchNib2CibCommandForPath:self.sourcePath];
     }
     else if (isObjjFile)
     {
-        command = @"objj2objcskeleton";
-        arguments = @[
-                        self.sourcePath,
-                        self.cappuccinoProject.supportPath
-                     ];
-
-        notificationTitle = @"Objective-J source processed";
-    }
-
-    // Run the task and get the response if needed
-    NSInteger status = 0;
-
-    if (arguments)
-    {
-        if (self.isCancelled)
-            return;
-
-        DDLogVerbose(@"Running processing task: %@", command);
-
-        self.task = [self.controller.taskManager taskWithCommand:command arguments:arguments];
-        NSDictionary *taskResult = [self.controller.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
-
-        status = [taskResult[@"status"] intValue];
-        response = taskResult[@"response"];
-
-        DDLogInfo(@"Processed %@: [%ld, %@]", self.sourcePath, status, status ? response : @"");
-
-        if (self.isCancelled)
-            return;
-
-        if (status != 0)
+        [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
+        
+        if (!self.controller.isLoadingProject)
         {
-            if (isXibFile)
+            if (!isXibFile)
             {
-                if (response.length == 0)
-                    response = @"An unspecified error occurred";
-
-                notificationTitle = @"Error converting xib";
-                NSString *message = [NSString stringWithFormat:@"%@\n%@", self.sourcePath.lastPathComponent, response];
-
-                NSDictionary *info =
-                    @{
-                        @"controller":self.controller,
-                        @"cappuccinoProject":self.cappuccinoProject,
-                        @"message":message,
-                        @"sourcePath":self.sourcePath,
-                        @"status":taskResult[@"status"]
-                    };
-
-                if (self.isCancelled)
-                    return;
-
-                [center postNotificationName:XCCConversionDidGenerateErrorNotification object:self userInfo:info];
-            }
-            else
-            {
-                notificationTitle = [(status == XCCStatusCodeError ? @"Error" : @"Warning") stringByAppendingString:@" parsing Objective-J source"];
-
-                @try
-                {
-                    NSArray *errors = [response propertyList];
-
-                    for (NSDictionary *error in errors)
-                    {
-                        [self postErrorNotificationForPath:error[@"path"] line:[error[@"line"] intValue] message:error[@"message"] status:status];
-                    }
-                }
-                @catch (NSException *exception)
-                {
-                    [self postErrorNotificationForPath:self.sourcePath line:0 message:response status:status];
-                }
+                [self launchObjjCommandForPath:self.sourcePath];
+                [self launchCappLintCommandForPath:self.sourcePath];
             }
         }
-        else if (!self.controller.isLoadingProject)
-        {
-//            BOOL showFinalNotification = YES;
-//            
-//            // At this point, we should only detect warnings
-//            if (!isXibFile && [self.cappuccinoProject shouldProcessWithObjjWarnings])
-//            {
-//                showFinalNotification = [self.xcc checkObjjWarningsForPath:[NSArray arrayWithObject:self.sourcePath]];
-//                [self.xcc showObjjWarnings];
-//            }
-//            
-//            if (!isXibFile && [self.cappuccinoProject shouldProcessWithCappLint])
-//            {
-//                showFinalNotification = [self.xcc checkCappLintForPath:[NSArray arrayWithObject:self.sourcePath]] && showFinalNotification;
-//                [self.xcc showCappLintWarnings];
-//            }
-//
-//            if (showFinalNotification)
-//                [self notifyUserWithTitle:notificationTitle message:notificationMessage];
-        }
     }
 
-    if (!self.isCancelled)
-    {
-        DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
+    DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
 
-        [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:@{ @"cappuccinoProject":self.cappuccinoProject, @"sourcePath":self.sourcePath, @"controller":self.controller}];
-    }
+    [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:info];
 }
 
-- (void)postErrorNotificationForPath:(NSString *)path line:(int)line message:(NSString *)message status:(NSInteger)status
+- (NSDictionary*)launchTaskForCommand:(NSString*)aCommand arguments:(NSArray*)arguments
 {
-    NSDictionary *info = @{
-                           @"controller":self.controller,
-                           @"sourcePath":path,
-                           @"line":[NSNumber numberWithInt:line],
-                           @"status":[NSNumber numberWithInteger:status],
-                           @"cappuccinoProject":self.cappuccinoProject,
-                           @"message":[NSString stringWithFormat:@"Compilation issue: %@, line %d\n%@", [self.sourcePath lastPathComponent], 0, message]
-                           };
-
-    if (self.isCancelled)
-        return;
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCConversionDidGenerateErrorNotification object:self userInfo:info];
+    DDLogVerbose(@"Running processing task: %@", aCommand);
+    
+    self.task = [self.controller.taskManager taskWithCommand:aCommand arguments:arguments];
+    NSDictionary *taskResult = [self.controller.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
+    
+    DDLogInfo(@"Processed %@:", self.sourcePath);
+    
+    return taskResult;
 }
 
+- (void)launchObjj2ObjcSkeletonCommandForPath:(NSString*)aPath
+{
+    if (![self.cappuccinoProject shouldProcessWithObjj2ObjcSkeleton] || self.isCancelled)
+        return;
+    
+    NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidStartNotification object:self userInfo:info];
+
+    NSString *command = @"objj2objcskeleton";
+    NSArray *arguments = @[
+                  self.sourcePath,
+                  self.cappuccinoProject.supportPath
+                  ];
+    
+    NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
+    
+    int status = [result[@"status"] intValue];
+    
+    if (status != 0)
+    {
+        NSString *response = result[@"response"];
+        NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
+        
+        @try
+        {
+            errorInfo[@"errors"] = [response propertyList];
+        }
+        @catch (NSException *exception)
+        {
+            errorInfo[@"message"] = response;
+        }
+        
+        [self cancelWithUserInfo:errorInfo notificationName:XCCObjj2ObjcSkeletonDidGenerateErrorNotification];
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidEndNotification object:self userInfo:info];
+}
+
+
+- (void)launchNib2CibCommandForPath:(NSString*)aPath
+{
+    if (![self.cappuccinoProject shouldProcessWithNib2Cib] || self.isCancelled)
+        return;
+    
+    NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidStartNotification object:self userInfo:info];
+    
+    NSString *command = @"nib2cib";
+    NSArray *arguments = @[
+                  @"--no-colors",
+                  self.sourcePath
+                  ];
+    
+    NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
+    
+    int status = [result[@"status"] intValue];
+    
+    if (status != 0)
+    {
+        NSString *response = result[@"response"];
+        
+        if (response.length == 0)
+            response = @"An unspecified error occurred";
+        
+        NSString *message = [NSString stringWithFormat:@"%@\n%@", self.sourcePath.lastPathComponent, response];
+        
+        NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
+        errorInfo[@"message"] = message;
+        
+        [self cancelWithUserInfo:errorInfo notificationName:XCCNib2CibDidGenerateErrorNotification];
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidEndNotification object:self userInfo:info];
+}
+
+- (void)launchObjjCommandForPath:(NSString*)aPath
+{
+    if (![self.cappuccinoProject shouldProcessWithObjjWarnings] || self.isCancelled)
+        return;
+    
+    NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidStartNotification object:self userInfo:info];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidEndNotification object:self userInfo:info];
+}
+
+- (void)launchCappLintCommandForPath:(NSString*)aPath
+{
+    if (![self.cappuccinoProject shouldProcessWithCappLint] || self.isCancelled)
+        return;
+    
+    NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidStartNotification object:self userInfo:info];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidEndNotification object:self userInfo:info];
+}
 @end

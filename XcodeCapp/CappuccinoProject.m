@@ -24,6 +24,12 @@ static NSString * const XCCCappuccinoProcessCappLint = @"XCCCappuccinoProcessCap
 // Project should process capp lint or not
 static NSString * const XCCCappuccinoProcessObjj = @"XCCCappuccinoProcessObjj";
 
+// Project should process nib2cib or not
+static NSString * const XCCCappuccinoProcessNib2Cib = @"XCCCappuccinoProcessNib2Cib";
+
+// Project should process objj2objcskeleton or not
+static NSString * const XCCCappuccinoProcessObjj2ObjcSkeleton = @"XCCCappuccinoProcessObjj2ObjcSkeleton";
+
 // We store a compatibility version in .XcodeSupport/Info.plist.
 // If the version is less than the version in XcodeCapp's Info.plist, we regenerate .XcodeSupport.
 NSString * const XCCCompatibilityVersionKey = @"XCCCompatibilityVersion";
@@ -36,12 +42,6 @@ static NSArray * XCCDefaultEnvironmentPaths;
 
 // Default info plist XCCDefaultInfoPlistConfigurations
 static NSDictionary* XCCDefaultInfoPlistConfigurations;
-
-
-NSString * const XCCCappLintDidStartNotification = @"XCCCappLintDidStartNotification";
-NSString * const XCCCappLintDidEndNotification = @"XCCCappLintDidEndNotification";
-NSString * const XCCObjjDidStartNotification = @"XCCObjjDidStartNotification";
-NSString * const XCCObjjDidEndNotification = @"XCCObjjDidEndNotification";
 
 NSString * const XCCProjectDidFinishLoadingNotification = @"XCCProjectDidFinishLoadingNotification";
 NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoadingNotification";
@@ -74,6 +74,8 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     XCCDefaultInfoPlistConfigurations = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
                                           XCCCappuccinoProcessCappLint: @YES,
                                           XCCCappuccinoProcessObjj: @YES,
+                                          XCCCappuccinoProcessNib2Cib: @YES,
+                                          XCCCappuccinoProcessObjj2ObjcSkeleton: @YES,
                                           XCCCappuccinoProjectBinPaths: XCCDefaultEnvironmentPaths};
 }
 
@@ -194,6 +196,16 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (BOOL)shouldProcessWithCappLint
 {
     return !![self settingValueForKey:XCCCappuccinoProcessCappLint];
+}
+
+- (BOOL)shouldProcessWithObjj2ObjcSkeleton
+{
+    return !![self settingValueForKey:XCCCappuccinoProcessObjj2ObjcSkeleton];
+}
+
+- (BOOL)shouldProcessWithNib2Cib
+{
+    return !![self settingValueForKey:XCCCappuccinoProcessNib2Cib];
 }
 
 @end

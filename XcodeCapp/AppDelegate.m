@@ -35,6 +35,11 @@
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
     
+    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
+    {
+        [controller stopListenProject];
+    }
+    
     DDLogVerbose(@"\n******************************\n**    XcodeCapp stopped     **\n******************************\n");
 }
 

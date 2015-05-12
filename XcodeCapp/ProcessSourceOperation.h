@@ -14,6 +14,18 @@
 extern NSString * const XCCConversionDidStartNotification;
 extern NSString * const XCCConversionDidGenerateErrorNotification;
 extern NSString * const XCCConversionDidEndNotification;
+extern NSString * const XCCObjjDidStartNotification;
+extern NSString * const XCCObjjDidEndNotification;
+extern NSString * const XCCCappLintDidStartNotification;
+extern NSString * const XCCCappLintDidEndNotification;
+extern NSString * const XCCObjj2ObjcSkeletonDidStartNotification;
+extern NSString * const XCCObjj2ObjcSkeletonDidEndNotification;
+extern NSString * const XCCNib2CibDidStartNotification;
+extern NSString * const XCCNib2CibDidEndNotification;
+extern NSString * const XCCObjjDidGenerateErrorNotification;
+extern NSString * const XCCCappLintDidGenerateErrorNotification;
+extern NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification;
+extern NSString * const XCCNib2CibDidGenerateErrorNotification;
 
 // Status codes returned by support scripts run as tasks
 enum {
