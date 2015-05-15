@@ -37,6 +37,9 @@ NSString * const XCCCompatibilityVersionKey = @"XCCCompatibilityVersion";
 // Bin paths used by this project
 NSString * const XCCCappuccinoProjectBinPaths = @"XCCCappuccinoProjectBinPaths";
 
+// Path used by objj
+NSString *const XCCCappuccinoObjjIncludePath = @"XCCCappuccinoObjjIncludePath";
+
 // Default environement paths
 static NSArray * XCCDefaultEnvironmentPaths;
 
@@ -76,7 +79,8 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
                                           XCCCappuccinoProcessObjj: @YES,
                                           XCCCappuccinoProcessNib2Cib: @YES,
                                           XCCCappuccinoProcessObjj2ObjcSkeleton: @YES,
-                                          XCCCappuccinoProjectBinPaths: XCCDefaultEnvironmentPaths};
+                                          XCCCappuccinoProjectBinPaths: XCCDefaultEnvironmentPaths,
+                                          XCCCappuccinoObjjIncludePath: @""};
 }
 
 + (NSArray*)defaultEnvironmentPaths
@@ -142,9 +146,12 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 - (id)defaultSettings
 {
-    return XCCDefaultInfoPlistConfigurations;
+    NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
+    
+    defaultSettings[XCCCappuccinoObjjIncludePath] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
+    
+    return defaultSettings;
 }
-
 
 #pragma mark path methods
 
@@ -164,6 +171,11 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     NSString *projectPath = self.projectPathsForSourcePaths[base];
     
     return projectPath ? [projectPath stringByAppendingPathComponent:path.lastPathComponent] : path;
+}
+
+- (NSString *)objjIncludePath
+{
+    return [self settingValueForKey:XCCCappuccinoObjjIncludePath];
 }
 
 #pragma mark - Shadow Files Management

@@ -58,9 +58,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     return self;
 }
 
-- (NSDictionary*)defaultUserInfo
+- (NSMutableDictionary*)defaultUserInfo
 {
-    return @{
+    return (NSMutableDictionary*) @{
       @"controller":self.controller,
       @"cappuccinoProject":self.cappuccinoProject,
       @"sourcePath":self.sourcePath,
@@ -74,15 +74,21 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         return;
     
     [self.task interrupt];
-    [self cancelWithUserInfo:[self defaultUserInfo] notificationName:XCCConversionDidGenerateErrorNotification];
+    [self cancelWithUserInfo:[self defaultUserInfo] response:@"Operation canceled" notificationName:XCCConversionDidGenerateErrorNotification];
 }
 
-- (void)cancelWithUserInfo:(NSDictionary*)userInfo notificationName:(NSString*)notificationName
+- (void)cancelWithUserInfo:(NSMutableDictionary*)userInfo response:(NSString*)aResponse notificationName:(NSString*)notificationName
 {
     if (self.isCancelled)
         return;
     
     [super cancel];
+    
+    if (aResponse.length == 0)
+        aResponse = @"An unspecified error occurred";
+    
+    userInfo[@"errors"] = aResponse;
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
 }
 
@@ -154,23 +160,11 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
     
-    int status = [result[@"status"] intValue];
-    
-    if (status != 0)
+    if ([result[@"status"] intValue] != 0)
     {
-        NSString *response = result[@"response"];
         NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
         
-        @try
-        {
-            errorInfo[@"errors"] = [response propertyList];
-        }
-        @catch (NSException *exception)
-        {
-            errorInfo[@"message"] = response;
-        }
-        
-        [self cancelWithUserInfo:errorInfo notificationName:XCCObjj2ObjcSkeletonDidGenerateErrorNotification];
+        [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCObjj2ObjcSkeletonDidGenerateErrorNotification];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidEndNotification object:self userInfo:info];
@@ -194,21 +188,11 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
     
-    int status = [result[@"status"] intValue];
-    
-    if (status != 0)
+    if ([result[@"status"] intValue] != 0)
     {
-        NSString *response = result[@"response"];
-        
-        if (response.length == 0)
-            response = @"An unspecified error occurred";
-        
-        NSString *message = [NSString stringWithFormat:@"%@\n%@", self.sourcePath.lastPathComponent, response];
-        
         NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
-        errorInfo[@"message"] = message;
         
-        [self cancelWithUserInfo:errorInfo notificationName:XCCNib2CibDidGenerateErrorNotification];
+        [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCNib2CibDidGenerateErrorNotification];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidEndNotification object:self userInfo:info];
@@ -223,6 +207,22 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidStartNotification object:self userInfo:info];
     
+    NSString *command = @"objj";
+    NSArray *arguments = @[
+                           @"-I",
+                           [self.cappuccinoProject objjIncludePath],
+                           self.sourcePath
+                           ];
+    
+    NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
+    
+    if ([result[@"status"] intValue] != 0)
+    {
+        NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
+        
+        [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCObjjDidGenerateErrorNotification];
+    }
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidEndNotification object:self userInfo:info];
 }
 
@@ -234,6 +234,22 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidStartNotification object:self userInfo:info];
+    
+    NSString *command = @"capp_lint";
+    NSString *baseDirectory = [NSString stringWithFormat:@"--basedir='%@'", self.cappuccinoProject.projectPath];
+    NSArray *arguments = @[
+                           baseDirectory,
+                           self.sourcePath
+                           ];
+    
+    NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
+    
+    if ([result[@"status"] intValue] != 0)
+    {
+        NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
+        
+        [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCCappLintDidGenerateErrorNotification];
+    }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidEndNotification object:self userInfo:info];
 }
