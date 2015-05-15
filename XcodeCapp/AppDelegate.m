@@ -16,6 +16,7 @@
 @interface AppDelegate ()
 
 @property (weak) IBOutlet NSWindow *window;
+@property (weak) IBOutlet CappuccinoProjectController *currentCappuccinoProjectController;
 @end
 
 @implementation AppDelegate
@@ -30,6 +31,7 @@
     self.aboutWindow.backgroundColor = [NSColor whiteColor];
     [self pruneProjectHistory];
     [self fetchProjects];
+    [self selectLastProjectSelected];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
@@ -136,6 +138,8 @@
 
 - (void)fetchProjects
 {
+    DDLogVerbose(@"Start : fetching historic projects");
+    
     self.cappuccinoProjectController = [NSMutableArray new];
     
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
@@ -147,6 +151,33 @@
     }
     
     [self.projectTableView reloadData];
+    
+    DDLogVerbose(@"Stop : fetching historic projects");
+}
+
+- (void)selectLastProjectSelected
+{
+    DDLogVerbose(@"Start : selecting last selected project");
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
+    NSString *lastSelectedProjectPath = [defaults valueForKey:kDefaultXCCLastSelectedProjectPath];
+    NSInteger indexToSelect = 0;
+        
+    if (lastSelectedProjectPath)
+    {
+        for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
+        {
+            if ([controller.cappuccinoProject.projectPath isEqualToString:lastSelectedProjectPath])
+            {
+                indexToSelect = [self.cappuccinoProjectController indexOfObject:controller];
+                break;
+            }
+        }
+    }
+    
+    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
+    
+    DDLogVerbose(@"Start : selecting last selected project");
 }
 
 #pragma mark - Logging methods
@@ -205,6 +236,15 @@
     [cellView.loadButton setTarget:self];
     
     return cellView;
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
+    self.currentCappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject];
+    
+    // This can't be bound because we can't save an indexSet in a plis
+    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
 }
 
 - (IBAction)loadProject:(id)aSender

@@ -99,7 +99,8 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
         self.fm = [NSFileManager defaultManager];
         self.projectPath = aPath;
         self.xcodecappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
-        
+        self.projectName = [self.projectPath lastPathComponent];
+    
         NSString *projectName = [self.projectPath.lastPathComponent stringByAppendingString:@".xcodeproj"];
         
         self.xcodeProjectPath = [self.projectPath stringByAppendingPathComponent:projectName];
@@ -134,6 +135,16 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     DDLogVerbose(@"Ignoring file paths: %@", self.ignoredPathPredicates);
 }
 
+- (void)initEnvironmentPaths
+{
+    NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
+    
+    if ([paths count])
+        self.environementsPaths = [paths copy];
+    else
+        self.environementsPaths = [CappuccinoProject defaultEnvironmentPaths];
+}
+
 - (void)fetchProjectSettings
 {
     self.projectSettings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
@@ -154,11 +165,6 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 }
 
 #pragma mark path methods
-
-- (NSString *)projectName
-{
-    return [self.projectPath lastPathComponent];
-}
 
 - (NSString *)projectRelativePathForPath:(NSString *)path
 {

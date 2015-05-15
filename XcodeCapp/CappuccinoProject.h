@@ -27,6 +27,9 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // Full path to the Cappuccino project root directory
 @property NSString *projectPath;
 
+// Project name
+@property NSString *projectName;
+
 // Full path to the <project>.xcodeproj
 @property NSString *xcodeProjectPath;
 
@@ -48,10 +51,12 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // A list of ignoredPaths from xcodecapp-ignore
 @property NSMutableArray *ignoredPathPredicates;
 
+
 + (NSArray*)defaultEnvironmentPaths;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)initIgnoredPaths;
+- (void)initEnvironmentPaths;
 - (id)settingValueForKey:(NSString*)aKey;
 - (id)defaultSettings;
 

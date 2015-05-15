@@ -665,35 +665,35 @@
         <window title="XcodeCapp" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="815" height="538"/>
+            <rect key="contentRect" x="335" y="390" width="991" height="665"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="-4" width="815" height="538"/>
+                <rect key="frame" x="0.0" y="0.0" width="991" height="665"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <splitView autosaveName="main-splitView" dividerStyle="thin" vertical="YES" id="tld-4e-icT">
-                        <rect key="frame" x="0.0" y="0.0" width="815" height="538"/>
+                        <rect key="frame" x="0.0" y="0.0" width="991" height="665"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <customView id="EWg-n1-sFa">
-                                <rect key="frame" x="0.0" y="0.0" width="248" height="538"/>
+                                <rect key="frame" x="0.0" y="0.0" width="301.5" height="665"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="82" horizontalPageScroll="10" verticalLineScroll="82" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="UZ4-kJ-krj">
-                                        <rect key="frame" x="0.0" y="24" width="248" height="514"/>
+                                        <rect key="frame" x="0.0" y="29.5" width="301.5" height="635.5"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                         <clipView key="contentView" id="Zlj-Y5-TaS">
-                                            <rect key="frame" x="0.0" y="0.0" width="248" height="514"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="301.5" height="635.5"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="80" rowSizeStyle="automatic" viewBased="YES" id="Mss-Tu-7kR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="248" height="0.0"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="301.5" height="635.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
-                                                        <tableColumn identifier="MainCell" editable="NO" width="245" minWidth="40" maxWidth="1000" id="UKo-y4-Q5Q">
+                                                        <tableColumn identifier="MainCell" editable="NO" width="298.5" minWidth="40" maxWidth="1000" id="UKo-y4-Q5Q">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -707,7 +707,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="MainCell" id="QnM-Kd-OyB" customClass="CappuccinoProjectViewCell">
-                                                                    <rect key="frame" x="1" y="1" width="245" height="80"/>
+                                                                    <rect key="frame" x="1" y="1" width="298.5" height="80"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="UPD-Er-gj0">
@@ -716,7 +716,7 @@
                                                                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon-inactive" id="heQ-6b-MgT"/>
                                                                         </imageView>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" id="nss-wl-6TY">
-                                                                            <rect key="frame" x="86" y="32" width="158" height="17"/>
+                                                                            <rect key="frame" x="86" y="32" width="211.5" height="17"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="HCp-It-Jhp">
                                                                                 <font key="font" metaFont="system"/>
@@ -734,7 +734,7 @@
                                                                             </textFieldCell>
                                                                         </textField>
                                                                         <button verticalHuggingPriority="750" id="RbK-Gd-njS">
-                                                                            <rect key="frame" x="185" y="21" width="58" height="32"/>
+                                                                            <rect key="frame" x="238.5" y="21" width="58" height="32"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                                                                             <buttonCell key="cell" type="push" title="Load" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NgF-ba-Asb">
                                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -772,8 +772,76 @@
                                 </subviews>
                             </customView>
                             <customView id="87a-A4-dGN">
-                                <rect key="frame" x="249" y="0.0" width="566" height="538"/>
+                                <rect key="frame" x="302.5" y="0.0" width="688.5" height="665"/>
                                 <autoresizingMask key="autoresizingMask"/>
+                                <subviews>
+                                    <tabView drawsBackground="NO" initialItem="FZb-Pe-2bs" id="00d-fn-q41">
+                                        <rect key="frame" x="-7" y="-10" width="702.5" height="672"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                        <tabViewItems>
+                                            <tabViewItem label="Configurations" identifier="1" id="FZb-Pe-2bs">
+                                                <view key="view" id="fzz-ID-CMt">
+                                                    <rect key="frame" x="10" y="33" width="682.5" height="626"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <button verticalHuggingPriority="750" id="xGc-ek-lDM">
+                                                            <rect key="frame" x="595" y="10" width="71" height="32"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="push" title="Save" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ml8-3o-7Yu">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="target" keyPath="self.currentCappuccinoProjectController" id="Vr0-tF-eeA">
+                                                                    <dictionary key="options">
+                                                                        <string key="NSSelectorName">save:</string>
+                                                                    </dictionary>
+                                                                </binding>
+                                                            </connections>
+                                                        </button>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="0c3-NS-t4n">
+                                                            <rect key="frame" x="15" y="576" width="662.5" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="Label" id="NvI-dv-Vcf">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.projectPath" id="gJj-en-QyH"/>
+                                                            </connections>
+                                                        </textField>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="krM-95-waf">
+                                                            <rect key="frame" x="15" y="601" width="662.5" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="Label" id="ylH-C3-MHM">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.projectName" id="v3F-7d-mmV"/>
+                                                            </connections>
+                                                        </textField>
+                                                    </subviews>
+                                                </view>
+                                            </tabViewItem>
+                                            <tabViewItem label="Errors" identifier="2" id="l3d-6B-ljl">
+                                                <view key="view" id="atA-yz-Erb">
+                                                    <rect key="frame" x="10" y="33" width="682.5" height="626"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </view>
+                                            </tabViewItem>
+                                            <tabViewItem label="Operations" identifier="" id="j72-7y-dlH">
+                                                <view key="view" id="Bml-cr-57z">
+                                                    <rect key="frame" x="10" y="33" width="682.5" height="626"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </view>
+                                            </tabViewItem>
+                                        </tabViewItems>
+                                    </tabView>
+                                </subviews>
                             </customView>
                         </subviews>
                         <holdingPriorities>
@@ -786,7 +854,7 @@
                     </splitView>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="36.5" y="520"/>
+            <point key="canvasLocation" x="1.5" y="584.5"/>
         </window>
         <window title="About" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="EMp-Db-uhU" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>

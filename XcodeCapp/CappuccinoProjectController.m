@@ -158,7 +158,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self initObservers];
     [self.cappuccinoProject initIgnoredPaths];
     [self prepareXcodeSupport];
-    [self initTaskManager];
+    [self.cappuccinoProject initEnvironmentPaths];
+    
+    self.taskManager = [self makeTaskManager];
+    
     [self populateXcodeProject];
     [self populatexCodeCappTargetedFiles];
     [self waitForOperationQueueToFinishWithSelector:@selector(projectDidFinishLoading)];
@@ -371,21 +374,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), info[@"sourcePath"]);
     
     //[self.errorListController addObject:info];
-}
-
-
-#pragma mark - task managers methods
-
-- (void)initTaskManager
-{
-    NSArray *paths = [self.cappuccinoProject settingValueForKey:XCCCappuccinoProjectBinPaths];
-    
-    if ([paths count])
-        self.cappuccinoProject.environementsPaths = [paths copy];
-    else
-        self.cappuccinoProject.environementsPaths = [CappuccinoProject defaultEnvironmentPaths];
-    
-    self.taskManager = [self makeTaskManager];
 }
 
 
@@ -913,6 +901,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [CappuccinoUtils removeAllCibsAtPath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"]];
     
     [self _init];
+}
+
+- (IBAction)save:(id)sender
+{
+    DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
+    
+    [self.operationQueue cancelAllOperations];
+    self.taskManager = [self makeTaskManager];
+    
+    DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
 }
 
 @end

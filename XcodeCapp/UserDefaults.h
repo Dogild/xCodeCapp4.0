@@ -21,6 +21,7 @@ extern NSString * const kDefaultXCCUseSymlinkWhenCreatingProject;
 extern NSString * const kDefaultXCCLogLevel;
 
 extern NSString * const kDefaultXCCLastOpenedProjectPath;
+extern NSString * const kDefaultXCCLastSelectedProjectPath;
 
 extern NSString * const kDefaultXCCLastEventId;
 
