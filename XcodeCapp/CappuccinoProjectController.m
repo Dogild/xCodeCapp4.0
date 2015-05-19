@@ -908,7 +908,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
     
     [self.operationQueue cancelAllOperations];
-    self.taskManager = [self makeTaskManager];
+    [self.cappuccinoProject saveSettings];
+    
+    if (self.isProjectLoaded)
+        self.taskManager = [self makeTaskManager];
     
     DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
 }

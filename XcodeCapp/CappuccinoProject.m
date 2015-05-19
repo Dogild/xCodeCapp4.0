@@ -139,20 +139,44 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 {
     NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
     
-    if ([paths count])
-        self.environementsPaths = [paths copy];
-    else
-        self.environementsPaths = [CappuccinoProject defaultEnvironmentPaths];
+    if (![paths count])
+        [self setEnvironementsPaths:[CappuccinoProject defaultEnvironmentPaths]];
 }
 
 - (void)fetchProjectSettings
 {
+    [self willChangeValueForKey:@"objjIncludePath"];
+    [self willChangeValueForKey:@"shouldProcessWithObjjWarnings"];
+    [self willChangeValueForKey:@"shouldProcessWithCappLint"];
+    [self willChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
+    [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
+    [self willChangeValueForKey:@"environementsPaths"];
     self.projectSettings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
+    [self didChangeValueForKey:@"objjIncludePath"];
+    [self didChangeValueForKey:@"shouldProcessWithObjjWarnings"];
+    [self didChangeValueForKey:@"shouldProcessWithCappLint"];
+    [self didChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
+    [self didChangeValueForKey:@"shouldProcessWithNib2Cib"];
+    [self didChangeValueForKey:@"environementsPaths"];
 }
 
 - (id)settingValueForKey:(NSString*)aKey
 {
     return [self.projectSettings valueForKey:aKey];
+}
+
+- (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey
+{
+    [self.projectSettings setValue:aValue forKey:aKey];
+}
+
+- (void)saveSettings
+{
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.projectSettings
+                                                              format:NSPropertyListXMLFormat_v1_0
+                                                    errorDescription:nil];
+    
+    [data writeToFile:self.infoPlistPath atomically:YES];
 }
 
 - (id)defaultSettings
@@ -179,11 +203,6 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     return projectPath ? [projectPath stringByAppendingPathComponent:path.lastPathComponent] : path;
 }
 
-- (NSString *)objjIncludePath
-{
-    return [self settingValueForKey:XCCCappuccinoObjjIncludePath];
-}
-
 #pragma mark - Shadow Files Management
 
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path
@@ -204,26 +223,79 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     return [self.projectPath stringByAppendingPathComponent:filename];
 }
 
-#pragma mark - Info plist configurations
+
+#pragma marks Setting accessors
+
+- (NSString *)objjIncludePath
+{
+    return [self settingValueForKey:XCCCappuccinoObjjIncludePath];
+}
+
+- (void)setObjjIncludePath:(NSString *)objjIncludePath
+{
+    [self willChangeValueForKey:@"objjIncludePath"];
+    [self.projectSettings setValue:objjIncludePath forKey:XCCCappuccinoObjjIncludePath];
+    [self didChangeValueForKey:@"objjIncludePath"];
+}
 
 - (BOOL)shouldProcessWithObjjWarnings
 {
-    return !![self settingValueForKey:XCCCappuccinoProcessObjj];
+    return [[self settingValueForKey:XCCCappuccinoProcessObjj] boolValue];
+}
+
+- (void)setShouldProcessWithObjjWarnings:(BOOL)shouldProcessWithObjjWarnings
+{
+    [self willChangeValueForKey:@"shouldProcessWithObjjWarnings"];
+    [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithObjjWarnings] forKey:XCCCappuccinoProcessObjj];
+    [self didChangeValueForKey:@"shouldProcessWithObjjWarnings"];
 }
 
 - (BOOL)shouldProcessWithCappLint
 {
-    return !![self settingValueForKey:XCCCappuccinoProcessCappLint];
+    return [[self settingValueForKey:XCCCappuccinoProcessCappLint] boolValue];
+}
+
+- (void)setShouldProcessWithCappLint:(BOOL)shouldProcessWithCappLint
+{
+    [self willChangeValueForKey:@"shouldProcessWithCappLint"];
+    [self.projectSettings setValue:[NSNumber numberWithInt:shouldProcessWithCappLint] forKey:XCCCappuccinoProcessCappLint];
+    [self didChangeValueForKey:@"shouldProcessWithCappLint"];
 }
 
 - (BOOL)shouldProcessWithObjj2ObjcSkeleton
 {
-    return !![self settingValueForKey:XCCCappuccinoProcessObjj2ObjcSkeleton];
+    return [[self settingValueForKey:XCCCappuccinoProcessObjj2ObjcSkeleton] boolValue];
+}
+
+- (void)setShouldProcessWithObjj2ObjcSkeleton:(BOOL)shouldProcessWithObjj2ObjcSkeleton
+{
+    [self willChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
+    [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithObjj2ObjcSkeleton] forKey:XCCCappuccinoProcessObjj2ObjcSkeleton];
+    [self didChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
 }
 
 - (BOOL)shouldProcessWithNib2Cib
 {
-    return !![self settingValueForKey:XCCCappuccinoProcessNib2Cib];
+    return [[self settingValueForKey:XCCCappuccinoProcessNib2Cib] boolValue];
+}
+
+- (void)setShouldProcessWithNib2Cib:(BOOL)shouldProcessWithNib2Cib
+{
+    [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
+    [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithNib2Cib] forKey:XCCCappuccinoProcessNib2Cib];
+    [self didChangeValueForKey:@"shouldProcessWithNib2Cib"];
+}
+
+- (NSArray*)environementsPaths
+{
+    return [self settingValueForKey:XCCCappuccinoProjectBinPaths];
+}
+
+- (void)setEnvironementsPaths:(NSArray *)environementsPaths
+{
+    [self willChangeValueForKey:@"environementsPaths"];
+    [self.projectSettings setValue:environementsPaths forKey:XCCCappuccinoProjectBinPaths];
+    [self didChangeValueForKey:@"environementsPaths"];
 }
 
 @end

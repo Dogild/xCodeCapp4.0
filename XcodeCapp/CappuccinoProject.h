@@ -39,9 +39,6 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // Full path to .xcodecapp-ignore
 @property NSString *xcodecappIgnorePath;
 
-// Environment paths used by this project
-@property NSArray *environementsPaths;
-
 // A mapping from full paths to project-relative paths
 @property NSMutableDictionary *projectPathsForSourcePaths;
 
@@ -51,29 +48,32 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // A list of ignoredPaths from xcodecapp-ignore
 @property NSMutableArray *ignoredPathPredicates;
 
+// Here we defined some accessors to bind them
+@property NSString *objjIncludePath;
+@property BOOL shouldProcessWithObjjWarnings;
+@property BOOL shouldProcessWithCappLint;
+@property BOOL shouldProcessWithObjj2ObjcSkeleton;
+@property BOOL shouldProcessWithNib2Cib;
+@property NSArray *environementsPaths;
+
 
 + (NSArray*)defaultEnvironmentPaths;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)initIgnoredPaths;
 - (void)initEnvironmentPaths;
-- (id)settingValueForKey:(NSString*)aKey;
-- (id)defaultSettings;
-
-- (void)fetchProjectSettings;
-
-- (BOOL)shouldProcessWithObjjWarnings;
-- (BOOL)shouldProcessWithCappLint;
-- (BOOL)shouldProcessWithObjj2ObjcSkeleton;
-- (BOOL)shouldProcessWithNib2Cib;
 
 - (NSString *)projectName;
-
-- (NSString *)objjIncludePath;
 
 - (NSString *)projectRelativePathForPath:(NSString *)path;
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path;
 - (NSString *)sourcePathForShadowPath:(NSString *)path;
 - (NSString *)projectPathForSourcePath:(NSString *)path;
+
+- (id)settingValueForKey:(NSString*)aKey;
+- (id)defaultSettings;
+- (void)saveSettings;
+- (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey;
+- (void)fetchProjectSettings;;
 
 @end

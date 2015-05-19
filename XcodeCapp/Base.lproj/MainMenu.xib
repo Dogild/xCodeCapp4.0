@@ -687,7 +687,7 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="80" rowSizeStyle="automatic" viewBased="YES" id="Mss-Tu-7kR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="301.5" height="635.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="301.5" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -824,6 +824,59 @@
                                                                 <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.projectName" id="v3F-7d-mmV"/>
                                                             </connections>
                                                         </textField>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="dhg-mV-hHd">
+                                                            <rect key="frame" x="15" y="528" width="157" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Configuration operations" id="mme-DG-mjR">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                        <button id="aE9-oN-5n3">
+                                                            <rect key="frame" x="15" y="504" width="254" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="check" title="Should process nib2cib on the xib file" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FFr-2R-eaa">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithNib2Cib" id="xUc-xi-sxb"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button id="LFe-3o-5zf">
+                                                            <rect key="frame" x="15" y="484" width="226" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="check" title="Should process objj on each files" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Cqv-W8-Z4c">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithObjjWarnings" id="g4E-QW-hxn"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button id="uJJ-bV-Usu">
+                                                            <rect key="frame" x="15" y="464" width="260" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="check" title="Should process capp_lint on each files" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="PIE-fc-BuL">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithCappLint" id="PTP-In-DlZ"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button id="Zir-h6-M5M">
+                                                            <rect key="frame" x="15" y="444" width="312" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="check" title="Should process objj2objcskeleton on each files" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="9GE-Sn-8aR">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithObjj2ObjcSkeleton" id="Kce-CR-hHQ"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                 </view>
                                             </tabViewItem>
