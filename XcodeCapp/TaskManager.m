@@ -33,9 +33,9 @@
         self.environment = [NSProcessInfo processInfo].environment.mutableCopy;
         self.environmentPaths = [environementPaths mutableCopy];
         
-        [self.environmentPaths addObject:@"/usr/bin"];
-        [self.environmentPaths addObject:@"/usr/local/bin"];
-        [self.environmentPaths addObject:@"~/bin"];
+        [self.environmentPaths insertObject:@"/usr/bin" atIndex:0];
+        [self.environmentPaths insertObject:@"/usr/local/bin" atIndex:0];
+        [self.environmentPaths insertObject:@"~/bin" atIndex:0];
         
         DDLogError(@"Init task manager with  environements %@", self.environmentPaths);
         
