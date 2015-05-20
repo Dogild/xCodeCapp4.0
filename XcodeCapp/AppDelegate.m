@@ -249,7 +249,7 @@
     // No idea why I have to that here, does not work from the xib...
     [cellView.loadButton setAction:@selector(loadProject:)];
     [cellView.loadButton setTarget:self];
-    cellView.controller = [self.cappuccinoProjectController objectAtIndex:row];
+    cellView.cappuccinoProject = cappuccinoProject;
     
     return cellView;
 }
@@ -274,7 +274,12 @@
 {
     CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:[self.projectTableView rowForView:aSender]];
     
-    [cappuccinoProjectController loadProject];
+    if (cappuccinoProjectController.cappuccinoProject.isProjectLoaded && cappuccinoProjectController.cappuccinoProject.isListeningProject)
+        [cappuccinoProjectController stopListenProject];
+    else if (cappuccinoProjectController.cappuccinoProject.isProjectLoaded)
+        [cappuccinoProjectController startListenProject];
+    else
+        [cappuccinoProjectController loadProject];
     
 }
 

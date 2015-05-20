@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 
 @class CappuccinoProject;
-@class CappuccinoProjectController;
+@class TaskManager;
 
 extern NSString * const XCCNeedSourceToProjectPathMappingNotification;
 
 @interface FindSourceFilesOperation : NSOperation
 
-- (id)initWithCappuccinoProject:(CappuccinoProject *)cappuccinoProject controller:(CappuccinoProjectController*)cappuccinoProjectController path:(NSString *)path;
+- (id)initWithCappuccinoProject:(CappuccinoProject *)cappuccinoProject taskManager:(TaskManager*)aTaskManager path:(NSString *)path;
 
 @end

@@ -15,19 +15,6 @@
 #import "TaskManager.h"
 #import "UserDefaults.h"
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_6
-#   define kFSEventStreamCreateFlagFileEvents       0x00000010
-#   define kFSEventStreamEventFlagItemIsFile        0x00010000
-#   define kFSEventStreamEventFlagItemRemoved       0x00000200
-#   define kFSEventStreamEventFlagItemCreated       0x00000200
-#   define kFSEventStreamEventFlagItemModified      0x00001000
-#   define kFSEventStreamEventFlagItemInodeMetaMod  0x00000400
-#   define kFSEventStreamEventFlagItemRenamed       0x00000800
-#   define kFSEventStreamEventFlagItemFinderInfoMod 0x00002000
-#   define kFSEventStreamEventFlagItemChangeOwner   0x00004000
-#   define kFSEventStreamEventFlagItemXattrMod      0x00008000
-#endif
-
 @interface CappuccinoProjectController ()
 
 @property NSFileManager *fm;
@@ -88,16 +75,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     self.operationQueue = [NSOperationQueue new];
     
-    self.errors = [NSMutableArray array];
-    self.warnings = [NSMutableArray array];
     self.currentOperations = [NSMutableArray array];
     
     [self _initPbxOperations];
-    
-    self.isLoadingProject = NO;
-    self.isListeningProject = NO;
-    self.isProcessingProject = NO;
-    self.isProjectLoaded = NO;
+    [self.cappuccinoProject _init];
     
     self.lastEventId = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastEventId];
     
@@ -150,7 +131,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
     
-    if (self.isProjectLoaded)
+    if (self.cappuccinoProject.isProjectLoaded)
     {
         [self startListenProject];
         return;
@@ -158,7 +139,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     [self _init];
     
-    self.isLoadingProject = YES;
+    self.cappuccinoProject.isLoadingProject = YES;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidStartLoadingNotification object:self];
     
@@ -266,7 +247,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)populateXcodeProjectWithProjectRelativePath:(NSString *)path
 {
-    FindSourceFilesOperation *op = [[FindSourceFilesOperation alloc] initWithCappuccinoProject:self.cappuccinoProject controller:self path:path];
+    FindSourceFilesOperation *op = [[FindSourceFilesOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager path:path];
     [self.operationQueue addOperation:op];
 }
 
@@ -298,12 +279,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     [center addObserver:self selector:@selector(sourceConversionDidStartHandler:) name:XCCConversionDidStartNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionDidEndHandler:) name:XCCConversionDidEndNotification object:nil];
+    
+    
     [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCConversionDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
 }
 
 - (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
 {
-    return note.userInfo[@"controller"] == self;
+    return note.userInfo[@"cappuccinoProject"] == self.cappuccinoProject;
 }
 
 - (void)addSourceToProjectPathMappingHandler:(NSNotification *)note
@@ -357,7 +344,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     NSDictionary *info = note.userInfo;
     NSString *path = info[@"sourcePath"];
     
-    [self.currentOperations addObject:note.object];
+    [self.currentOperations removeObject:note.object];
     
     if ([CappuccinoUtils isObjjFile:path])
         [self.pbxOperations[@"add"] addObject:path];
@@ -410,9 +397,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     CFTimeInterval latency = 2.0;
     UInt64 lastEventId = self.lastEventId.unsignedLongLongValue;
     
-    NSLog(@"coucou");
-    NSLog(@"%llu", lastEventId);
-    
     self.stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
@@ -429,10 +413,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)startFSEventStream
 {
-    if (self.stream && !self.isListeningProject)
+    if (self.stream && !self.cappuccinoProject.isListeningProject)
     {
         FSEventStreamStart(self.stream);
-        self.isListeningProject = YES;
+        self.cappuccinoProject.isListeningProject = YES;
     }
 }
 
@@ -459,10 +443,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)stopFSEventStream
 {
-    if (self.stream && self.isListeningProject)
+    if (self.stream && self.cappuccinoProject.isListeningProject)
     {
         FSEventStreamStop(self.stream);
-        self.isListeningProject = NO;
+        self.cappuccinoProject.isListeningProject = NO;
     }
 }
 
@@ -629,7 +613,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     NSString *projectPath = [self.cappuccinoProject projectPathForSourcePath:resolvedPath];
     
     ProcessSourceOperation *op = [[ProcessSourceOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
-                                                                   controller:self
+                                                                   taskManager:self.taskManager
                                                                   sourcePath:projectPath];
     [self.operationQueue addOperation:op];
 }
@@ -730,7 +714,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)waitForOperationQueueToFinishWithSelector:(SEL)selector
 {
-    self.isProcessingProject = YES;
+    self.cappuccinoProject.isProcessingProject = YES;
     
     // Poll every half second to see if the queue has finished
     [NSTimer scheduledTimerWithTimeInterval:0.5
@@ -753,7 +737,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         // which has no return value.
         [self performSelectorOnMainThread:selector withObject:nil waitUntilDone:NO];
         
-        self.isProcessingProject = NO;
+        self.cappuccinoProject.isProcessingProject = NO;
     }
 }
 
@@ -762,8 +746,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self updatePbxFile];
     [self.cappuccinoProject fetchProjectSettings];
     
-    self.isLoadingProject = NO;
-    self.isProjectLoaded = YES;
+    self.cappuccinoProject.isLoadingProject = NO;
+    self.cappuccinoProject.isProjectLoaded = YES;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidFinishLoadingNotification object:self];
     [[NSUserDefaults standardUserDefaults] setObject:self.cappuccinoProject.projectPath forKey:kDefaultXCCLastOpenedProjectPath];
@@ -916,7 +900,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.operationQueue cancelAllOperations];
     [self saveSettings];
     
-    if (self.isProjectLoaded)
+    if (self.cappuccinoProject.isProjectLoaded)
     {
         self.taskManager = [self makeTaskManager];
         [self.cappuccinoProject updateIgnoredPath];

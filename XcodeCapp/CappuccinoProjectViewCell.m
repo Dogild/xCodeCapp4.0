@@ -7,7 +7,7 @@
 //
 
 #import "CappuccinoProjectViewCell.h"
-#import "CappuccinoProjectController.h"
+#import "CappuccinoProject.h"
 #import "CappuccinoUtils.h"
 
 @implementation CappuccinoProjectViewCell
@@ -16,38 +16,60 @@
 {
     if (newWindow)
     {
-        [self.controller addObserver:self forKeyPath:@"isListeningProject" options:NSKeyValueObservingOptionNew context:nil];
-        [self.controller addObserver:self forKeyPath:@"isLoadingProject" options:NSKeyValueObservingOptionNew context:nil];
-        [self.controller addObserver:self forKeyPath:@"isProjectLoaded" options:NSKeyValueObservingOptionNew context:nil];
-        [self.controller addObserver:self forKeyPath:@"isProcessingProject" options:NSKeyValueObservingOptionNew context:nil];
-        [self.controller addObserver:self forKeyPath:@"warnings" options:NSKeyValueObservingOptionNew context:nil];
-        [self.controller addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isListeningProject" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isLoadingProject" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isProjectLoaded" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isProcessingProject" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"warnings" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
     }
     else
     {
-        [self.controller removeObserver:self forKeyPath:@"isListeningProject"];
-        [self.controller removeObserver:self forKeyPath:@"isLoadingProject"];
-        [self.controller removeObserver:self forKeyPath:@"isProjectLoaded"];
-        [self.controller removeObserver:self forKeyPath:@"isProcessingProject"];
-        [self.controller removeObserver:self forKeyPath:@"warnings"];
-        [self.controller removeObserver:self forKeyPath:@"errors"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isListeningProject"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isLoadingProject"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isProjectLoaded"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isProcessingProject"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"warnings"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"errors"];
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == self.controller)
+    if (object == self.cappuccinoProject)
     {
-        if (self.controller.isLoadingProject || self.controller.isProcessingProject)
+        if (self.cappuccinoProject.isLoadingProject || self.cappuccinoProject.isProcessingProject)
             self.imageView.image = [CappuccinoUtils iconWorking];
-        else if ([self.controller.errors count])
+        else if ([self.cappuccinoProject.errors count])
             self.imageView.image = [CappuccinoUtils iconError];
-        else if ([self.controller.warnings count])
+        else if ([self.cappuccinoProject.warnings count])
             self.imageView.image = [CappuccinoUtils iconWarning];
-        else if (self.controller.isListeningProject)
+        else if (self.cappuccinoProject.isListeningProject)
             self.imageView.image = [CappuccinoUtils iconActive];
         else
             self.imageView.image = [CappuccinoUtils iconInactive];
+        
+        if (self.cappuccinoProject.isLoadingProject)
+        {
+            [self.loadButton setEnabled:NO];
+            self.loadButton.title = @"Loading";
+        }
+        else if (self.cappuccinoProject.isProjectLoaded)
+        {
+            if (self.cappuccinoProject.isListeningProject)
+                self.loadButton.title = @"Stop listening";
+            else
+                self.loadButton.title = @"Start listening";
+                    
+            [self.loadButton setEnabled:YES];
+        }
+        else
+        {
+            self.loadButton.title = @"Load";
+            [self.loadButton setEnabled:YES];
+        }
+        
+        [self.loadButton sizeToFit];
     }
 }
 

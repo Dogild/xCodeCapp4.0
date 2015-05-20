@@ -8,12 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class CappuccinoProjectController;
+@class CappuccinoProject;
 
 @interface CappuccinoProjectViewCell : NSTableCellView
 
-@property (nonatomic, retain) CappuccinoProjectController *controller;
 @property (nonatomic, retain) IBOutlet NSTextField *pathTextField;
 @property (nonatomic, retain) IBOutlet NSButton *loadButton;
+@property (nonatomic, retain) CappuccinoProject *cappuccinoProject;
 
 @end

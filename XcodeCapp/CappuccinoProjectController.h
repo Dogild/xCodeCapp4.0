@@ -15,26 +15,8 @@
 
 @property CappuccinoProject *cappuccinoProject;
 
-// XcodeCapp is listening the event of this project
-@property BOOL isListeningProject;
-
-// Whether we are in the process of loading a project
-@property BOOL isLoadingProject;
-
-// Whether we have loaded the project
-@property BOOL isProjectLoaded;
-
-// Whether we are currently processing source files
-@property BOOL isProcessingProject;
-
 // Full path to pbxprojModifier.py
 @property NSString *pbxModifierScriptPath;
-
-// A list of errors generated from the current batch of source processing
-@property NSMutableArray *errors;
-
-// A list of warning generated from the current batch of source processing
-@property NSMutableArray *warnings;
 
 // A list of files currently processing
 @property NSMutableArray *currentOperations;
@@ -55,6 +37,7 @@
 - (void)loadProject;
 
 - (void)stopListenProject;
+- (void)startListenProject;
 
 - (IBAction)save:(id)sender;
 

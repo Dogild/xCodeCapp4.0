@@ -48,6 +48,24 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // A list of ignoredPaths from xcodecapp-ignore
 @property NSMutableArray *ignoredPathPredicates;
 
+// Whether we are in the process of loading a project
+@property BOOL isLoadingProject;
+
+// XcodeCapp is listening the event of this project
+@property BOOL isListeningProject;
+
+// Whether we have loaded the project
+@property BOOL isProjectLoaded;
+
+// Whether we are currently processing source files
+@property BOOL isProcessingProject;
+
+// A list of errors generated from the current batch of source processing
+@property NSMutableArray *errors;
+
+// A list of warning generated from the current batch of source processing
+@property NSMutableArray *warnings;
+
 // Here we defined some accessors to bind them
 @property NSString *objjIncludePath;
 @property BOOL shouldProcessWithObjjWarnings;
@@ -62,6 +80,7 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (id)initWithPath:(NSString*)aPath;
 - (void)updateIgnoredPath;
 - (void)initEnvironmentPaths;
+- (void)_init;
 
 - (NSString *)projectName;
 

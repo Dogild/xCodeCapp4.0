@@ -807,21 +807,6 @@
                                                     <rect key="frame" x="10" y="33" width="682.5" height="626"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <button verticalHuggingPriority="750" id="xGc-ek-lDM">
-                                                            <rect key="frame" x="595" y="10" width="71" height="32"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                            <buttonCell key="cell" type="push" title="Save" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ml8-3o-7Yu">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="target" keyPath="self.currentCappuccinoProjectController" id="Vr0-tF-eeA">
-                                                                    <dictionary key="options">
-                                                                        <string key="NSSelectorName">save:</string>
-                                                                    </dictionary>
-                                                                </binding>
-                                                            </connections>
-                                                        </button>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="0c3-NS-t4n">
                                                             <rect key="frame" x="15" y="576" width="662.5" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -1042,6 +1027,21 @@
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                             </scroller>
                                                         </scrollView>
+                                                        <button verticalHuggingPriority="750" id="xGc-ek-lDM">
+                                                            <rect key="frame" x="516" y="10" width="155" height="32"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="push" title="Save cofigurations" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ml8-3o-7Yu">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Voe-Tx-rLC" name="target" keyPath="self.currentCappuccinoProjectController" id="Vr0-tF-eeA">
+                                                                    <dictionary key="options">
+                                                                        <string key="NSSelectorName">save:</string>
+                                                                    </dictionary>
+                                                                </binding>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                 </view>
                                             </tabViewItem>

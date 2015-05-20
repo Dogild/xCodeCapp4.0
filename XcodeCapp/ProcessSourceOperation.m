@@ -8,7 +8,6 @@
 
 #import "ProcessSourceOperation.h"
 #import "CappuccinoProject.h"
-#import "CappuccinoProjectController.h"
 #import "CappuccinoUtils.h"
 #import "TaskManager.h"
 
@@ -34,7 +33,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 @interface ProcessSourceOperation ()
 
-@property CappuccinoProjectController *controller;
+@property TaskManager *taskManager;
 @property CappuccinoProject *cappuccinoProject;
 @property NSString *sourcePath;
 @property NSTask *task;
@@ -44,13 +43,13 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 @implementation ProcessSourceOperation
 
-- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject controller:(CappuccinoProjectController*)aCappuccinoController sourcePath:(NSString *)sourcePath
+- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath
 {
     self = [super init];
 
     if (self)
     {
-        self.controller = aCappuccinoController;
+        self.taskManager = aTaskManager;
         self.cappuccinoProject = aCappuccinoProject;
         self.sourcePath = sourcePath;
     }
@@ -61,7 +60,6 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 - (NSMutableDictionary*)defaultUserInfo
 {
     return (NSMutableDictionary*) @{
-      @"controller":self.controller,
       @"cappuccinoProject":self.cappuccinoProject,
       @"sourcePath":self.sourcePath,
       @"operation":self
@@ -116,7 +114,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     {
         [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
         
-        if (!self.controller.isLoadingProject)
+        if (!self.cappuccinoProject.isLoadingProject)
         {
             if (!isXibFile)
             {
@@ -135,8 +133,8 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 {
     DDLogVerbose(@"Running processing task: %@", aCommand);
     
-    self.task = [self.controller.taskManager taskWithCommand:aCommand arguments:arguments];
-    NSDictionary *taskResult = [self.controller.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
+    self.task = [self.taskManager taskWithCommand:aCommand arguments:arguments];
+    NSDictionary *taskResult = [self.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
     
     DDLogInfo(@"Processed %@:", self.sourcePath);
     
