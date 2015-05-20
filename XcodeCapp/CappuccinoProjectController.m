@@ -88,8 +88,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     self.operationQueue = [NSOperationQueue new];
     
-    self.errorList = [NSMutableArray array];
-    self.warningList = [NSMutableArray array];
+    self.errors = [NSMutableArray array];
+    self.warnings = [NSMutableArray array];
     self.currentOperations = [NSMutableArray array];
     
     [self _initPbxOperations];
@@ -114,7 +114,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (TaskManager*)makeTaskManager
 {
-    TaskManager *taskManager = [[TaskManager alloc] initWithEnvironementPaths:self.cappuccinoProject.environementsPaths];
+    NSArray *environementPaths;
+    
+    if (![self.cappuccinoProject.environementsPaths count])
+        environementPaths = [NSArray array];
+    else
+        environementPaths = [self.cappuccinoProject.environementsPaths valueForKeyPath:@"name"];
+    
+    TaskManager *taskManager = [[TaskManager alloc] initWithEnvironementPaths:environementPaths];
     
     if (!taskManager.isValid)
     {

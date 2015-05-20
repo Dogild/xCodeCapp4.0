@@ -31,4 +31,10 @@
 + (void)removeAllCibsAtPath:(NSString *)path;
 + (void)removeSupportFilesForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 
++ (NSImage *)iconActive;
++ (NSImage *)iconInactive;
++ (NSImage *)iconWorking;
++ (NSImage *)iconError;
++ (NSImage *)iconWarning;
+
 @end

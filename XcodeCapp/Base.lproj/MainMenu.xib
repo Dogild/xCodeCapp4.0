@@ -1451,7 +1451,7 @@ Original Cocoa version developed by:
             </view>
             <point key="canvasLocation" x="-176.5" y="44"/>
         </window>
-        <arrayController objectClassName="Path" automaticallyPreparesContent="YES" preservesSelection="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" automaticallyRearrangesObjects="YES" id="fad-TR-Rcn">
+        <arrayController objectClassName="Path" automaticallyPreparesContent="YES" preservesSelection="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" automaticallyRearrangesObjects="YES" id="fad-TR-Rcn" userLabel="Configurations Array Controller">
             <declaredKeys>
                 <string>name</string>
             </declaredKeys>

@@ -15,6 +15,11 @@
 
 @interface AppDelegate ()
 
+@property (nonatomic) NSImage *iconActive;
+@property (nonatomic) NSImage *iconInactive;
+@property (nonatomic) NSImage *iconWorking;
+@property (nonatomic) NSImage *iconError;
+
 @property (weak) IBOutlet NSWindow *window;
 @property (weak) IBOutlet CappuccinoProjectController *currentCappuccinoProjectController;
 @end
@@ -233,7 +238,7 @@
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
-{
+{    
     CappuccinoProjectViewCell *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
     
     CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectController objectAtIndex:row] cappuccinoProject];
@@ -244,6 +249,7 @@
     // No idea why I have to that here, does not work from the xib...
     [cellView.loadButton setAction:@selector(loadProject:)];
     [cellView.loadButton setTarget:self];
+    cellView.controller = [self.cappuccinoProjectController objectAtIndex:row];
     
     return cellView;
 }
@@ -290,14 +296,14 @@
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     openPanel.title = @"Add a new Cappuccino Project to XcodeCapp";
-    openPanel.canCreateDirectories = NO;
+    openPanel.canCreateDirectories = YES;
     openPanel.canChooseDirectories = YES;
-    openPanel.canChooseFiles = YES;
+    openPanel.canChooseFiles = NO;
     
     if ([openPanel runModal] != NSFileHandlingPanelOKButton)
         return;
     
-    NSString *projectPath = [[openPanel.URL path] stringByStandardizingPath];
+    NSString *projectPath = [[openPanel.URLs[0] path] stringByStandardizingPath];
     
     CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:projectPath];
     [self.cappuccinoProjectController addObject:cappuccinoProjectController];

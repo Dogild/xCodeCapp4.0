@@ -31,10 +31,10 @@
 @property NSString *pbxModifierScriptPath;
 
 // A list of errors generated from the current batch of source processing
-@property NSMutableArray *errorList;
+@property NSMutableArray *errors;
 
 // A list of warning generated from the current batch of source processing
-@property NSMutableArray *warningList;
+@property NSMutableArray *warnings;
 
 // A list of files currently processing
 @property NSMutableArray *currentOperations;

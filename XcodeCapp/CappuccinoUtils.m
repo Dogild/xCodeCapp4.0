@@ -19,6 +19,12 @@ static NSString * const XCCDirectoriesToIgnorePattern = @"^(?:Build|F(?:ramework
 // An array of the default predicates used to ignore paths.
 static NSArray *XCCDefaultIgnoredPathPredicates = nil;
 
+static NSImage *XCCIconError;
+static NSImage *XCCIconActive;
+static NSImage *XCCIconWorking;
+static NSImage *XCCIconInactive;
+static NSImage *XCCIconWarning;
+
 @implementation CappuccinoUtils
 
 + (void)initialize
@@ -46,6 +52,12 @@ static NSArray *XCCDefaultIgnoredPathPredicates = nil;
                                      ];
     
     XCCDefaultIgnoredPathPredicates = [self parseIgnorePaths:defaultIgnoredPaths];
+    
+    XCCIconError = [NSImage imageNamed:@"icon-error"];
+    XCCIconWarning = [NSImage imageNamed:@"icon-warning"];
+    XCCIconActive = [NSImage imageNamed:@"icon-active"];
+    XCCIconInactive = [NSImage imageNamed:@"icon-inactive"];
+    XCCIconWorking = [NSImage imageNamed:@"icon-working"];
 }
 
 + (BOOL)isObjjFile:(NSString *)path
@@ -246,6 +258,33 @@ static NSArray *XCCDefaultIgnoredPathPredicates = nil;
     note.informativeText = aMessage;
     
     [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:note];
+}
+
+#pragma mark - Properties
+
++ (NSImage *)iconActive
+{
+    return XCCIconActive;
+}
+
++ (NSImage *)iconInactive
+{
+    return XCCIconInactive;
+}
+
++ (NSImage *)iconWorking
+{
+    return XCCIconWorking;
+}
+
++ (NSImage *)iconError
+{
+    return XCCIconError;
+}
+
++ (NSImage *)iconWarning
+{
+    return XCCIconWarning;
 }
 
 @end
