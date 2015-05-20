@@ -33,5 +33,8 @@
 
 - (IBAction)loadProject:(id)aSender;
 
+- (IBAction)addProject:(id)aSender;
+- (IBAction)removeProject:(id)aSender;
+
 @end
 

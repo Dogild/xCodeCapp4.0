@@ -776,6 +776,9 @@
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="addProject:" target="Voe-Tx-rLC" id="48s-3K-VEZ"/>
+                                        </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" id="5qE-h2-muz">
                                         <rect key="frame" x="67" y="-2" width="91" height="32"/>
@@ -784,6 +787,9 @@
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="removeProject:" target="Voe-Tx-rLC" id="out-if-35f"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </customView>

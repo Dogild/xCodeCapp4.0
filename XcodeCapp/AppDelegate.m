@@ -155,6 +155,16 @@
     DDLogVerbose(@"Stop : fetching historic projects");
 }
 
+- (void)saveCurrentProjects
+{
+    NSMutableArray *historyProjectPaths = [NSMutableArray array];
+    
+    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
+        [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCProjectHistory];
+}
+
 - (void)selectLastProjectSelected
 {
     DDLogVerbose(@"Start : selecting last selected project");
@@ -241,6 +251,13 @@
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
     NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
+    
+    if (selectedCappuccinoProject == -1)
+    {
+        self.currentCappuccinoProjectController = nil;
+        return;
+    }
+    
     self.currentCappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject];
     
     // This can't be bound because we can't save an indexSet in a plis
@@ -253,6 +270,41 @@
     
     [cappuccinoProjectController loadProject];
     
+}
+
+- (IBAction)removeProject:(id)aSender
+{
+    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
+    
+    if (selectedCappuccinoProject == -1)
+        return;
+    
+    [self.projectTableView deselectRow:selectedCappuccinoProject];
+    [self.cappuccinoProjectController removeObjectAtIndex:selectedCappuccinoProject];
+    [self.projectTableView reloadData];
+    
+    [self saveCurrentProjects];
+}
+
+- (IBAction)addProject:(id)aSender
+{
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    openPanel.title = @"Add a new Cappuccino Project to XcodeCapp";
+    openPanel.canCreateDirectories = NO;
+    openPanel.canChooseDirectories = YES;
+    openPanel.canChooseFiles = YES;
+    
+    if ([openPanel runModal] != NSFileHandlingPanelOKButton)
+        return;
+    
+    NSString *projectPath = [[openPanel.URL path] stringByStandardizingPath];
+    
+    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:projectPath];
+    [self.cappuccinoProjectController addObject:cappuccinoProjectController];
+    
+    [self.projectTableView reloadData];
+    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[self.cappuccinoProjectController indexOfObject:cappuccinoProjectController]] byExtendingSelection:NO];
+    [self saveCurrentProjects];
 }
 
 @end
