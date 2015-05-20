@@ -55,12 +55,12 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 @property BOOL shouldProcessWithObjj2ObjcSkeleton;
 @property BOOL shouldProcessWithNib2Cib;
 @property NSArray *environementsPaths;
-
+@property NSString *ignoredPathsContent;
 
 + (NSArray*)defaultEnvironmentPaths;
 
 - (id)initWithPath:(NSString*)aPath;
-- (void)initIgnoredPaths;
+- (void)updateIgnoredPath;
 - (void)initEnvironmentPaths;
 
 - (NSString *)projectName;
@@ -71,8 +71,8 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (NSString *)projectPathForSourcePath:(NSString *)path;
 
 - (id)settingValueForKey:(NSString*)aKey;
-- (id)defaultSettings;
-- (void)saveSettings;
+- (NSMutableDictionary*)defaultSettings;
+- (NSMutableDictionary*)currentSettings;
 - (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey;
 - (void)fetchProjectSettings;;
 

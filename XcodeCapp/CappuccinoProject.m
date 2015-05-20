@@ -109,6 +109,8 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
         self.infoPlistPath = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
         
         [self fetchProjectSettings];
+        [self updateIgnoredPath];
+        
         [self _init];
     }
     
@@ -120,14 +122,14 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     self.projectPathsForSourcePaths = [NSMutableDictionary new];
 }
 
-- (void)initIgnoredPaths
+- (void)updateIgnoredPath
 {
     self.ignoredPathPredicates = [NSMutableArray new];
     
     if ([self.fm fileExistsAtPath:self.xcodecappIgnorePath])
     {
-        NSString *ignoreFileContent = [NSString stringWithContentsOfFile:self.xcodecappIgnorePath encoding:NSUTF8StringEncoding error:nil];
-        NSArray *ignoredPatterns = [ignoreFileContent componentsSeparatedByString:@"\n"];
+        self.ignoredPathsContent = [NSString stringWithContentsOfFile:self.xcodecappIgnorePath encoding:NSUTF8StringEncoding error:nil];
+        NSArray *ignoredPatterns = [self.ignoredPathsContent componentsSeparatedByString:@"\n"];
         NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
         [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
     }
@@ -183,16 +185,6 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self.projectSettings setValue:aValue forKey:aKey];
 }
 
-- (void)saveSettings
-{
-    [self.projectSettings setValue:[self.environementsPaths valueForKeyPath:@"name"] forKey:XCCCappuccinoProjectBinPaths];
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.projectSettings
-                                                              format:NSPropertyListXMLFormat_v1_0
-                                                    errorDescription:nil];
-    
-    [data writeToFile:self.infoPlistPath atomically:YES];
-}
-
 - (id)defaultSettings
 {
     NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
@@ -200,6 +192,13 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     defaultSettings[XCCCappuccinoObjjIncludePath] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
     
     return defaultSettings;
+}
+
+- (NSMutableDictionary*)currentSettings
+{
+    [self.projectSettings setValue:[self.environementsPaths valueForKeyPath:@"name"] forKey:XCCCappuccinoProjectBinPaths];
+    
+    return [self.projectSettings mutableCopy];
 }
 
 #pragma mark path methods

@@ -156,7 +156,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidStartLoadingNotification object:self];
     
     [self initObservers];
-    [self.cappuccinoProject initIgnoredPaths];
     [self prepareXcodeSupport];
     [self.cappuccinoProject initEnvironmentPaths];
     
@@ -908,12 +907,31 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
     
     [self.operationQueue cancelAllOperations];
-    [self.cappuccinoProject saveSettings];
+    [self saveSettings];
     
     if (self.isProjectLoaded)
+    {
         self.taskManager = [self makeTaskManager];
+        [self.cappuccinoProject updateIgnoredPath];
+    }
     
     DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
+}
+
+- (void)saveSettings
+{
+    NSMutableDictionary *currentSettings = [self.cappuccinoProject currentSettings];
+    
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:currentSettings
+                                                              format:NSPropertyListXMLFormat_v1_0
+                                                    errorDescription:nil];
+    
+    [data writeToFile:self.cappuccinoProject.infoPlistPath atomically:YES];
+    
+    if ([self.cappuccinoProject.ignoredPathsContent length])
+        [self.cappuccinoProject.ignoredPathsContent writeToFile:self.cappuccinoProject.xcodecappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    else if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodecappIgnorePath])
+        [self.fm removeItemAtPath:self.cappuccinoProject.xcodecappIgnorePath error:nil];
 }
 
 @end
