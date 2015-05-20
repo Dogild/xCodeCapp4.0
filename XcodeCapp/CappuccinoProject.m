@@ -10,6 +10,7 @@
 
 #import "CappuccinoProject.h"
 #import "CappuccinoUtils.h"
+#import "Path.h"
 
 // We replace "/" in a path with this. It looks like "/",
 // but is actually an obscure Unicode character we hope no one uses in a filename.
@@ -107,8 +108,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
         self.supportPath = [self.projectPath stringByAppendingPathComponent:XCCSupportFolderName];
         self.infoPlistPath = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
         
-        self.projectSettings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
-        
+        [self fetchProjectSettings];
         [self _init];
     }
     
@@ -152,6 +152,19 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
     [self willChangeValueForKey:@"environementsPaths"];
     self.projectSettings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
+    
+    NSMutableArray *mutablePaths = [NSMutableArray array];
+    NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
+    
+    for (NSString *name in paths)
+    {
+        Path *path = [Path new];
+        [path setName:name];
+        [mutablePaths addObject:path];
+    }
+    
+    self.environementsPaths = mutablePaths;
+    
     [self didChangeValueForKey:@"objjIncludePath"];
     [self didChangeValueForKey:@"shouldProcessWithObjjWarnings"];
     [self didChangeValueForKey:@"shouldProcessWithCappLint"];
@@ -172,6 +185,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 - (void)saveSettings
 {
+    [self.projectSettings setValue:[self.environementsPaths valueForKeyPath:@"name"] forKey:XCCCappuccinoProjectBinPaths];
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.projectSettings
                                                               format:NSPropertyListXMLFormat_v1_0
                                                     errorDescription:nil];
@@ -284,18 +298,6 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
     [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithNib2Cib] forKey:XCCCappuccinoProcessNib2Cib];
     [self didChangeValueForKey:@"shouldProcessWithNib2Cib"];
-}
-
-- (NSArray*)environementsPaths
-{
-    return [self settingValueForKey:XCCCappuccinoProjectBinPaths];
-}
-
-- (void)setEnvironementsPaths:(NSArray *)environementsPaths
-{
-    [self willChangeValueForKey:@"environementsPaths"];
-    [self.projectSettings setValue:environementsPaths forKey:XCCCappuccinoProjectBinPaths];
-    [self didChangeValueForKey:@"environementsPaths"];
 }
 
 @end
