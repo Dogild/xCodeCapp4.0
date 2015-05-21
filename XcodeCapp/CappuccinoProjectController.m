@@ -11,6 +11,7 @@
 #import "CappuccinoUtils.h"
 #import "FindSourceFilesOperation.h"
 #import "LogUtils.h"
+#import "MainController.h"
 #import "OperationViewCell.h"
 #import "ProcessSourceOperation.h"
 #import "TaskManager.h"
@@ -25,9 +26,21 @@
 
 @property FSEventStreamRef stream;
 
+// The last FSEvent id we received. This is stored in the user prefs
+// so we can get all changes since the last time XcodeCapp was launched.
+@property NSNumber *lastEventId;
+
 // We keep a file descriptor open for the project directory
 // so we can locate it if it moves.
 @property int projectPathFileDescriptor;
+
+// A list of files currently processing
+@property NSMutableArray *currentOperations;
+
+// Coalesces the modifications that have to be made to the Xcode project
+// after changes are made to source files. Keys are the actions "add" or "remove",
+// values are arrays of full paths to source files that need to be added or removed.
+@property NSMutableDictionary *pbxOperations;
 
 - (void)handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds;
 
@@ -61,9 +74,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     {
         self.fm = [NSFileManager defaultManager];
         self.cappuccinoProject = [[CappuccinoProject alloc] initWithPath:aPath];
-        
-        self.pbxModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
-        
+                
         [self _init];
     }
     
@@ -328,7 +339,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), sourcePath);
     
     [self.currentOperations addObject:note.object];
-    [self.operationsTableView reloadData];
+    [self.mainController reloadOperationsTableView];
     
     //[self pruneProcessingErrorsForProjectPath:sourcePath];
 }
@@ -347,7 +358,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     NSString *path = info[@"sourcePath"];
     
     [self.currentOperations removeObject:note.object];
-    [self.operationsTableView reloadData];
+    [self.mainController reloadOperationsTableView];
     
     if ([CappuccinoUtils isObjjFile:path])
         [self.pbxOperations[@"add"] addObject:path];
@@ -778,7 +789,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)updatePbxFile
 {
     // See pbxprojModifier.py for info on the arguments
-    NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
+    NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
     
     BOOL shouldLaunchTask = NO;
     
@@ -928,7 +939,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         [self.fm removeItemAtPath:self.cappuccinoProject.xcodecappIgnorePath error:nil];
 }
 
-#pragma mark - Operation tableView dataSource
+#pragma mark - operation delegate and datasource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
@@ -938,9 +949,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     OperationViewCell *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-    
-    ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:row];
-    [cellView.textField bind:@"stringValue" toObject:operation withKeyPath:@"description" options:nil];
+    [cellView setOperation:[self.currentOperations objectAtIndex:row]];
     
     return cellView;
 }

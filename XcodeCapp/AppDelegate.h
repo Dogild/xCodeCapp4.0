@@ -10,8 +10,9 @@
 #import <CoreServices/CoreServices.h>
 
 @class Cappuccino;
+@class MainController;
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate>
 {
     
 }
@@ -21,21 +22,12 @@
 @property (strong) IBOutlet NSPanel    *aboutWindow;
 @property (strong) IBOutlet NSWindow   *preferencesWindow;
 
-@property (strong) IBOutlet NSSplitView    *splitView;
-@property (strong) IBOutlet NSTableView    *projectTableView;
-@property (strong) IBOutlet NSTableView    *operationsTableView;
-
 @property (strong) IBOutlet Cappuccino *cappuccino;
 
-@property (strong) NSMutableArray *cappuccinoProjectController;
+@property (strong) IBOutlet MainController *mainController;
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;
-
-- (IBAction)loadProject:(id)aSender;
-
-- (IBAction)addProject:(id)aSender;
-- (IBAction)removeProject:(id)aSender;
 
 @end
 

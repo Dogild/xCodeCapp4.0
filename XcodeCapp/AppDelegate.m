@@ -8,20 +8,12 @@
 
 #import "AppDelegate.h"
 #import "Cappuccino.h"
-#import "CappuccinoProject.h"
-#import "CappuccinoProjectController.h"
-#import "CappuccinoProjectViewCell.h"
+#import "MainController.h"
 #import "UserDefaults.h"
 
 @interface AppDelegate ()
 
-@property (nonatomic) NSImage *iconActive;
-@property (nonatomic) NSImage *iconInactive;
-@property (nonatomic) NSImage *iconWorking;
-@property (nonatomic) NSImage *iconError;
-
 @property (weak) IBOutlet NSWindow *window;
-@property (weak) IBOutlet CappuccinoProjectController *currentCappuccinoProjectController;
 @end
 
 @implementation AppDelegate
@@ -34,19 +26,15 @@
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
     
     self.aboutWindow.backgroundColor = [NSColor whiteColor];
-    [self pruneProjectHistory];
-    [self fetchProjects];
-    [self selectLastProjectSelected];
+    [self.mainController pruneProjectHistory];
+    [self.mainController fetchProjects];
+    [self.mainController selectLastProjectSelected];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
     
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
-    {
-        [controller stopListenProject];
-    }
-    
+    [self.mainController applicationWillTerminate:aNotification];
     DDLogVerbose(@"\n******************************\n**    XcodeCapp stopped     **\n******************************\n");
 }
 
@@ -109,90 +97,9 @@
 {
     if ([keyPath isEqualToString:kDefaultXCCMaxRecentProjects])
     {
-        [self pruneProjectHistory];
-        [self fetchProjects];
+        [self.mainController pruneProjectHistory];
+        [self.mainController fetchProjects];
     }
-}
-
-
-#pragma mark - Projects history
-
-/*
- This method is used to remove project from the history if needed. 
- It will be removed when having too many projects or when a project does not exist anymore
- */
-- (void)pruneProjectHistory
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSMutableArray *projectHistory = [[defaults arrayForKey:kDefaultXCCProjectHistory] mutableCopy];
-    NSFileManager *fm = [NSFileManager new];
-    
-    for (NSInteger i = projectHistory.count - 1; i >= 0; --i)
-    {
-        if (![fm fileExistsAtPath:projectHistory[i]])
-            [projectHistory removeObjectAtIndex:i];
-    }
-    
-    NSInteger maxProjects = [defaults integerForKey:kDefaultXCCMaxRecentProjects];
-    
-    if (projectHistory.count > maxProjects)
-        [projectHistory removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(maxProjects, projectHistory.count - maxProjects)]];
-    
-    [defaults setObject:projectHistory forKey:kDefaultXCCProjectHistory];
-}
-
-- (void)fetchProjects
-{
-    DDLogVerbose(@"Start : fetching historic projects");
-    self.cappuccinoProjectController = [NSMutableArray new];
-    
-    NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
-    
-    for (NSString *path in projectHistory)
-    {
-        CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
-        [self.cappuccinoProjectController addObject:cappuccinoProjectController];
-        [cappuccinoProjectController setOperationsTableView:self.operationsTableView];
-    }
-    
-    [self.projectTableView reloadData];
-    
-    DDLogVerbose(@"Stop : fetching historic projects");
-}
-
-- (void)saveCurrentProjects
-{
-    NSMutableArray *historyProjectPaths = [NSMutableArray array];
-    
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
-        [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCProjectHistory];
-}
-
-- (void)selectLastProjectSelected
-{
-    DDLogVerbose(@"Start : selecting last selected project");
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
-    NSString *lastSelectedProjectPath = [defaults valueForKey:kDefaultXCCLastSelectedProjectPath];
-    NSInteger indexToSelect = 0;
-        
-    if (lastSelectedProjectPath)
-    {
-        for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
-        {
-            if ([controller.cappuccinoProject.projectPath isEqualToString:lastSelectedProjectPath])
-            {
-                indexToSelect = [self.cappuccinoProjectController indexOfObject:controller];
-                break;
-            }
-        }
-    }
-    
-    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
-    
-    DDLogVerbose(@"Start : selecting last selected project");
 }
 
 #pragma mark - Logging methods
@@ -215,111 +122,6 @@
     
     [DDLogLevel setLogLevel:logLevel];
 #endif
-}
-
-
-#pragma mark - SplitView delegate
-
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
-{
-    return 300;
-}
-
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
-{
-    return 200;
-}
-
-#pragma mark - TableView delegate
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
-{
-    return [self.cappuccinoProjectController count];
-}
-
-- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
-{    
-    CappuccinoProjectViewCell *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
-    
-    CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectController objectAtIndex:row] cappuccinoProject];
-    
-    [cellView.textField setStringValue:[cappuccinoProject projectName]];
-    [cellView.pathTextField setStringValue:[cappuccinoProject projectPath]];
-    
-    // No idea why I have to that here, does not work from the xib...
-    [cellView.loadButton setAction:@selector(loadProject:)];
-    [cellView.loadButton setTarget:self];
-    cellView.cappuccinoProject = cappuccinoProject;
-    
-    return cellView;
-}
-
-- (void)tableViewSelectionDidChange:(NSNotification *)notification
-{
-    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
-    
-    if (selectedCappuccinoProject == -1)
-    {
-        self.currentCappuccinoProjectController = nil;
-        return;
-    }
-    
-    self.currentCappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject];
-    
-    [self.operationsTableView setDataSource:self.currentCappuccinoProjectController];
-    [self.operationsTableView setDelegate:self.currentCappuccinoProjectController];
-    [self.operationsTableView reloadData];
-    
-    // This can't be bound because we can't save an indexSet in a plis
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
-}
-
-- (IBAction)loadProject:(id)aSender
-{
-    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:[self.projectTableView rowForView:aSender]];
-    
-    if (cappuccinoProjectController.cappuccinoProject.isProjectLoaded && cappuccinoProjectController.cappuccinoProject.isListeningProject)
-        [cappuccinoProjectController stopListenProject];
-    else if (cappuccinoProjectController.cappuccinoProject.isProjectLoaded)
-        [cappuccinoProjectController startListenProject];
-    else
-        [cappuccinoProjectController loadProject];
-    
-}
-
-- (IBAction)removeProject:(id)aSender
-{
-    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
-    
-    if (selectedCappuccinoProject == -1)
-        return;
-    
-    [self.projectTableView deselectRow:selectedCappuccinoProject];
-    [self.cappuccinoProjectController removeObjectAtIndex:selectedCappuccinoProject];
-    [self.projectTableView reloadData];
-    
-    [self saveCurrentProjects];
-}
-
-- (IBAction)addProject:(id)aSender
-{
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    openPanel.title = @"Add a new Cappuccino Project to XcodeCapp";
-    openPanel.canCreateDirectories = YES;
-    openPanel.canChooseDirectories = YES;
-    openPanel.canChooseFiles = NO;
-    
-    if ([openPanel runModal] != NSFileHandlingPanelOKButton)
-        return;
-    
-    NSString *projectPath = [[openPanel.URLs[0] path] stringByStandardizingPath];
-    
-    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:projectPath];
-    [self.cappuccinoProjectController addObject:cappuccinoProjectController];
-    
-    [self.projectTableView reloadData];
-    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[self.cappuccinoProjectController indexOfObject:cappuccinoProjectController]] byExtendingSelection:NO];
-    [self saveCurrentProjects];
 }
 
 @end

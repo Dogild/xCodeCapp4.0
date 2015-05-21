@@ -13,6 +13,7 @@
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
 		681ADE8F1B0D032C00FC8E08 /* Path.m in Sources */ = {isa = PBXBuildFile; fileRef = 681ADE8E1B0D032C00FC8E08 /* Path.m */; };
 		6824CDDA1B0D5AA700F73447 /* OperationViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDD91B0D5AA700F73447 /* OperationViewCell.m */; };
+		6824CDDE1B0DA34500F73447 /* MainController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDDD1B0DA34500F73447 /* MainController.m */; };
 		6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2411AF98CE600CFE60E /* AppDelegate.m */; };
 		6841F2441AF98CE600CFE60E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2431AF98CE600CFE60E /* main.m */; };
 		6841F2461AF98CE600CFE60E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2451AF98CE600CFE60E /* Images.xcassets */; };
@@ -87,6 +88,8 @@
 		681ADE8E1B0D032C00FC8E08 /* Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Path.m; path = XcodeCapp/Path.m; sourceTree = "<group>"; };
 		6824CDD81B0D5AA700F73447 /* OperationViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationViewCell.h; sourceTree = "<group>"; };
 		6824CDD91B0D5AA700F73447 /* OperationViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationViewCell.m; sourceTree = "<group>"; };
+		6824CDDC1B0DA34500F73447 /* MainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainController.h; sourceTree = "<group>"; };
+		6824CDDD1B0DA34500F73447 /* MainController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainController.m; sourceTree = "<group>"; };
 		6841F23B1AF98CE600CFE60E /* XcodeCapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XcodeCapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6841F23F1AF98CE600CFE60E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6841F2401AF98CE600CFE60E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -169,6 +172,17 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		6824CDDB1B0D976400F73447 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6824CDDC1B0DA34500F73447 /* MainController.h */,
+				6824CDDD1B0DA34500F73447 /* MainController.m */,
+				6815BBE61AFBE6B00030D8BB /* CappuccinoProjectController.h */,
+				6815BBE71AFBE6B00030D8BB /* CappuccinoProjectController.m */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
 		6841F2321AF98CE600CFE60E = {
 			isa = PBXGroup;
 			children = (
@@ -197,8 +211,7 @@
 				6841F2411AF98CE600CFE60E /* AppDelegate.m */,
 				6841F2BA1AFA905100CFE60E /* Cappuccino.h */,
 				6841F2BB1AFA905100CFE60E /* Cappuccino.m */,
-				6815BBE61AFBE6B00030D8BB /* CappuccinoProjectController.h */,
-				6815BBE71AFBE6B00030D8BB /* CappuccinoProjectController.m */,
+				6824CDDB1B0D976400F73447 /* Controllers */,
 				68F3B95A1B0CFBCF00A7EF70 /* Models */,
 				680621161B015BDB00CB24CD /* Views */,
 				6841F2C51AFADE7D00CFE60E /* Operations */,
@@ -449,6 +462,7 @@
 				6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */,
 				6841F2CB1AFADEBC00CFE60E /* ProcessSourceOperation.m in Sources */,
 				6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */,
+				6824CDDE1B0DA34500F73447 /* MainController.m in Sources */,
 				6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */,
 				680621191B015BF400CB24CD /* CappuccinoProjectViewCell.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,

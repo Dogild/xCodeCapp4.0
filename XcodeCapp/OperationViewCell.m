@@ -7,7 +7,19 @@
 //
 
 #import "OperationViewCell.h"
+#import "ProcessSourceOperation.h"
 
 @implementation OperationViewCell
 
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+    if (newWindow)
+    {
+        [self.textField bind:@"stringValue" toObject:self.operation withKeyPath:@"description" options:nil];
+    }
+    else
+    {
+        [self.textField unbind:@"stringValue"];
+    }
+}
 @end

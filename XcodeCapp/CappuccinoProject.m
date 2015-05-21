@@ -101,7 +101,8 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
         self.projectPath = aPath;
         self.xcodecappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
         self.projectName = [self.projectPath lastPathComponent];
-    
+        self.pbxModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
+        
         NSString *projectName = [self.projectPath.lastPathComponent stringByAppendingString:@".xcodeproj"];
         
         self.xcodeProjectPath = [self.projectPath stringByAppendingPathComponent:projectName];

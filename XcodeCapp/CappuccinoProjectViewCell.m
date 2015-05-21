@@ -12,6 +12,16 @@
 
 @implementation CappuccinoProjectViewCell
 
+- (void)setCappuccinoProject:(CappuccinoProject *)cappuccinoProject
+{
+    [self willChangeValueForKey:@"cappuccinoProject"];
+    _cappuccinoProject = cappuccinoProject;
+    [self didChangeValueForKey:@"cappuccinoProject"];
+    
+    [self.textField setStringValue:[cappuccinoProject projectName]];
+    [self.pathTextField setStringValue:[cappuccinoProject projectPath]];
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
     if (newWindow)

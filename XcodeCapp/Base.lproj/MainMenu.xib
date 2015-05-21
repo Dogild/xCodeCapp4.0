@@ -17,15 +17,20 @@
             <connections>
                 <outlet property="aboutWindow" destination="EMp-Db-uhU" id="tnK-oP-g4I"/>
                 <outlet property="cappuccino" destination="Kof-Go-xQ9" id="4Qj-0W-Ket"/>
-                <outlet property="operationsTableView" destination="MpN-dD-QWe" id="nS8-XS-GZf"/>
+                <outlet property="mainController" destination="923-ke-ovW" id="mth-4T-xZM"/>
                 <outlet property="preferencesController" destination="GHK-nR-IEq" id="O3E-dL-6Fq"/>
                 <outlet property="preferencesWindow" destination="ekp-cc-W2F" id="c14-w5-R7V"/>
-                <outlet property="projectTableView" destination="Mss-Tu-7kR" id="yue-PQ-ViX"/>
-                <outlet property="splitView" destination="tld-4e-icT" id="zNd-Dy-Rxw"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+        <customObject id="923-ke-ovW" customClass="MainController">
+            <connections>
+                <outlet property="operationTableView" destination="MpN-dD-QWe" id="QLA-ap-sXy"/>
+                <outlet property="projectTableView" destination="Mss-Tu-7kR" id="9OL-5g-uCj"/>
+                <outlet property="splitView" destination="tld-4e-icT" id="imM-Zo-TVk"/>
+            </connections>
+        </customObject>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
                 <menuItem title="XcodeCapp" id="1Xt-HY-uBw">
@@ -754,8 +759,8 @@
                                                         </tableColumn>
                                                     </tableColumns>
                                                     <connections>
-                                                        <outlet property="dataSource" destination="Voe-Tx-rLC" id="PPz-fX-U2Z"/>
-                                                        <outlet property="delegate" destination="Voe-Tx-rLC" id="p4h-yr-Otw"/>
+                                                        <outlet property="dataSource" destination="923-ke-ovW" id="03V-nH-jgN"/>
+                                                        <outlet property="delegate" destination="923-ke-ovW" id="4Ez-1r-YwT"/>
                                                     </connections>
                                                 </tableView>
                                             </subviews>
@@ -778,7 +783,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="addProject:" target="Voe-Tx-rLC" id="48s-3K-VEZ"/>
+                                            <action selector="addProject:" target="923-ke-ovW" id="WcS-qH-gsc"/>
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" id="5qE-h2-muz">
@@ -789,7 +794,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="removeProject:" target="Voe-Tx-rLC" id="out-if-35f"/>
+                                            <action selector="removeProject:" target="923-ke-ovW" id="Rde-gu-4ob"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -817,7 +822,7 @@
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.projectPath" id="gJj-en-QyH"/>
+                                                                <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProject.projectPath" id="oOI-JF-vXZ"/>
                                                             </connections>
                                                         </textField>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="krM-95-waf">
@@ -829,7 +834,7 @@
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.projectName" id="v3F-7d-mmV"/>
+                                                                <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProject.projectName" id="6eD-x2-qWc"/>
                                                             </connections>
                                                         </textField>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="dhg-mV-hHd">
@@ -849,7 +854,7 @@
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithNib2Cib" id="xUc-xi-sxb"/>
+                                                                <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProject.shouldProcessWithNib2Cib" id="t5K-LC-2hD"/>
                                                             </connections>
                                                         </button>
                                                         <button id="LFe-3o-5zf">
@@ -860,7 +865,7 @@
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithObjjWarnings" id="g4E-QW-hxn"/>
+                                                                <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProject.shouldProcessWithObjjWarnings" id="yz1-iM-IMR"/>
                                                             </connections>
                                                         </button>
                                                         <button id="uJJ-bV-Usu">
@@ -871,7 +876,7 @@
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithCappLint" id="PTP-In-DlZ"/>
+                                                                <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProject.shouldProcessWithCappLint" id="u0J-e2-nnN"/>
                                                             </connections>
                                                         </button>
                                                         <button id="Zir-h6-M5M">
@@ -882,7 +887,7 @@
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.shouldProcessWithObjj2ObjcSkeleton" id="Kce-CR-hHQ"/>
+                                                                <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProject.shouldProcessWithObjj2ObjcSkeleton" id="h4c-it-4IW"/>
                                                             </connections>
                                                         </button>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="rji-df-OC8">
@@ -962,7 +967,7 @@
                                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.objjIncludePath" id="gti-e6-ixf"/>
+                                                                <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProject.objjIncludePath" id="gXi-OT-Vev"/>
                                                             </connections>
                                                         </textField>
                                                         <button verticalHuggingPriority="750" id="UL4-eG-hIa">
@@ -1013,7 +1018,7 @@
                                                                         <size key="minSize" width="238" height="138"/>
                                                                         <size key="maxSize" width="463" height="10000000"/>
                                                                         <connections>
-                                                                            <binding destination="Voe-Tx-rLC" name="attributedString" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.ignoredPathsContent" id="wxs-fR-F83"/>
+                                                                            <binding destination="923-ke-ovW" name="attributedString" keyPath="self.currentCappuccinoProject.ignoredPathsContent" id="y9f-WD-wK6"/>
                                                                         </connections>
                                                                     </textView>
                                                                 </subviews>
@@ -1028,19 +1033,15 @@
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                             </scroller>
                                                         </scrollView>
-                                                        <button verticalHuggingPriority="750" id="xGc-ek-lDM">
-                                                            <rect key="frame" x="516" y="10" width="155" height="32"/>
+                                                        <button verticalHuggingPriority="750" id="lBM-rR-ONJ">
+                                                            <rect key="frame" x="508" y="10" width="162" height="32"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                            <buttonCell key="cell" type="push" title="Save cofigurations" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ml8-3o-7Yu">
+                                                            <buttonCell key="cell" type="push" title="Save configurations" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FQa-uk-OzR">
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <binding destination="Voe-Tx-rLC" name="target" keyPath="self.currentCappuccinoProjectController" id="Vr0-tF-eeA">
-                                                                    <dictionary key="options">
-                                                                        <string key="NSSelectorName">save:</string>
-                                                                    </dictionary>
-                                                                </binding>
+                                                                <action selector="saveSettings:" target="923-ke-ovW" id="knD-7g-EFs"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
@@ -1158,14 +1159,14 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <scrollView autohidesScrollers="YES" horizontalLineScroll="64" horizontalPageScroll="10" verticalLineScroll="64" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="wuN-gf-f2N">
-                                                            <rect key="frame" x="17" y="17" width="648" height="591"/>
+                                                            <rect key="frame" x="17" y="57" width="648" height="551"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <clipView key="contentView" id="qka-36-yyR">
-                                                                <rect key="frame" x="1" y="1" width="646" height="589"/>
+                                                                <rect key="frame" x="1" y="1" width="646" height="549"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="62" rowSizeStyle="automatic" viewBased="YES" id="MpN-dD-QWe">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="646" height="589"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="646" height="549"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1218,6 +1219,14 @@
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                             </scroller>
                                                         </scrollView>
+                                                        <button verticalHuggingPriority="750" id="ZXn-8W-De2">
+                                                            <rect key="frame" x="498" y="20" width="173" height="32"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="push" title="Cancel all Operations" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gRV-1N-nKs">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                        </button>
                                                     </subviews>
                                                 </view>
                                             </tabViewItem>
@@ -1420,7 +1429,7 @@ Original Cocoa version developed by:
                 <string>name</string>
             </declaredKeys>
             <connections>
-                <binding destination="Voe-Tx-rLC" name="contentArray" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.environementsPaths" id="ln7-mb-Sin">
+                <binding destination="923-ke-ovW" name="contentArray" keyPath="self.currentCappuccinoProject.environementsPaths" id="vh2-1c-qIw">
                     <dictionary key="options">
                         <bool key="NSValidatesImmediately" value="YES"/>
                     </dictionary>

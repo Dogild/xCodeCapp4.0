@@ -8,6 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class ProcessSourceOperation;
+
 @interface OperationViewCell : NSTableCellView
+
+@property (nonatomic, retain) ProcessSourceOperation *operation;
 
 @end

@@ -39,6 +39,9 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // Full path to .xcodecapp-ignore
 @property NSString *xcodecappIgnorePath;
 
+// Full path to pbxprojModifier.py
+@property NSString *pbxModifierScriptPath;
+
 // A mapping from full paths to project-relative paths
 @property NSMutableDictionary *projectPathsForSourcePaths;
 
