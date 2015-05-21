@@ -36,7 +36,6 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 @property TaskManager *taskManager;
 @property CappuccinoProject *cappuccinoProject;
 @property NSString *sourcePath;
-@property NSTask *task;
 
 @end
 
@@ -55,6 +54,11 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     }
 
     return self;
+}
+
+- (NSString*)description
+{
+    return [NSString stringWithFormat:@"%@ %@", self.task.launchPath.lastPathComponent, self.sourcePath];
 }
 
 - (NSMutableDictionary*)defaultUserInfo
@@ -133,7 +137,10 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 {
     DDLogVerbose(@"Running processing task: %@", aCommand);
     
+    [self willChangeValueForKey:@"description"];
     self.task = [self.taskManager taskWithCommand:aCommand arguments:arguments];
+    [self didChangeValueForKey:@"description"];
+    
     NSDictionary *taskResult = [self.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
     
     DDLogInfo(@"Processed %@:", self.sourcePath);

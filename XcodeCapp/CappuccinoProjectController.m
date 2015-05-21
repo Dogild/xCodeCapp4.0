@@ -11,6 +11,7 @@
 #import "CappuccinoUtils.h"
 #import "FindSourceFilesOperation.h"
 #import "LogUtils.h"
+#import "OperationViewCell.h"
 #import "ProcessSourceOperation.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
@@ -327,6 +328,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), sourcePath);
     
     [self.currentOperations addObject:note.object];
+    [self.operationsTableView reloadData];
     
     //[self pruneProcessingErrorsForProjectPath:sourcePath];
 }
@@ -345,6 +347,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     NSString *path = info[@"sourcePath"];
     
     [self.currentOperations removeObject:note.object];
+    [self.operationsTableView reloadData];
     
     if ([CappuccinoUtils isObjjFile:path])
         [self.pbxOperations[@"add"] addObject:path];
@@ -923,6 +926,23 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         [self.cappuccinoProject.ignoredPathsContent writeToFile:self.cappuccinoProject.xcodecappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     else if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodecappIgnorePath])
         [self.fm removeItemAtPath:self.cappuccinoProject.xcodecappIgnorePath error:nil];
+}
+
+#pragma mark - Operation tableView dataSource
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return [self.currentOperations count];
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    OperationViewCell *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
+    
+    ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:row];
+    [cellView.textField bind:@"stringValue" toObject:operation withKeyPath:@"description" options:nil];
+    
+    return cellView;
 }
 
 @end

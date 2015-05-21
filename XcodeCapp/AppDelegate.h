@@ -23,6 +23,7 @@
 
 @property (strong) IBOutlet NSSplitView    *splitView;
 @property (strong) IBOutlet NSTableView    *projectTableView;
+@property (strong) IBOutlet NSTableView    *operationsTableView;
 
 @property (strong) IBOutlet Cappuccino *cappuccino;
 

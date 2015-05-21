@@ -144,7 +144,6 @@
 - (void)fetchProjects
 {
     DDLogVerbose(@"Start : fetching historic projects");
-    
     self.cappuccinoProjectController = [NSMutableArray new];
     
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
@@ -153,6 +152,7 @@
     {
         CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
         [self.cappuccinoProjectController addObject:cappuccinoProjectController];
+        [cappuccinoProjectController setOperationsTableView:self.operationsTableView];
     }
     
     [self.projectTableView reloadData];
@@ -265,6 +265,10 @@
     }
     
     self.currentCappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject];
+    
+    [self.operationsTableView setDataSource:self.currentCappuccinoProjectController];
+    [self.operationsTableView setDelegate:self.currentCappuccinoProjectController];
+    [self.operationsTableView reloadData];
     
     // This can't be bound because we can't save an indexSet in a plis
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];

@@ -12,6 +12,7 @@
 		6815BBE81AFBE6B00030D8BB /* CappuccinoProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBE71AFBE6B00030D8BB /* CappuccinoProjectController.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
 		681ADE8F1B0D032C00FC8E08 /* Path.m in Sources */ = {isa = PBXBuildFile; fileRef = 681ADE8E1B0D032C00FC8E08 /* Path.m */; };
+		6824CDDA1B0D5AA700F73447 /* OperationViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDD91B0D5AA700F73447 /* OperationViewCell.m */; };
 		6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2411AF98CE600CFE60E /* AppDelegate.m */; };
 		6841F2441AF98CE600CFE60E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2431AF98CE600CFE60E /* main.m */; };
 		6841F2461AF98CE600CFE60E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2451AF98CE600CFE60E /* Images.xcassets */; };
@@ -84,6 +85,8 @@
 		6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XcodeProjectCloser.m; sourceTree = "<group>"; };
 		681ADE8D1B0D032C00FC8E08 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Path.h; path = XcodeCapp/Path.h; sourceTree = "<group>"; };
 		681ADE8E1B0D032C00FC8E08 /* Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Path.m; path = XcodeCapp/Path.m; sourceTree = "<group>"; };
+		6824CDD81B0D5AA700F73447 /* OperationViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationViewCell.h; sourceTree = "<group>"; };
+		6824CDD91B0D5AA700F73447 /* OperationViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationViewCell.m; sourceTree = "<group>"; };
 		6841F23B1AF98CE600CFE60E /* XcodeCapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XcodeCapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6841F23F1AF98CE600CFE60E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6841F2401AF98CE600CFE60E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -160,6 +163,8 @@
 			children = (
 				680621171B015BF400CB24CD /* CappuccinoProjectViewCell.h */,
 				680621181B015BF400CB24CD /* CappuccinoProjectViewCell.m */,
+				6824CDD81B0D5AA700F73447 /* OperationViewCell.h */,
+				6824CDD91B0D5AA700F73447 /* OperationViewCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -448,6 +453,7 @@
 				680621191B015BF400CB24CD /* CappuccinoProjectViewCell.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,
 				6841F2441AF98CE600CFE60E /* main.m in Sources */,
+				6824CDDA1B0D5AA700F73447 /* OperationViewCell.m in Sources */,
 				6841F2CA1AFADEBC00CFE60E /* FindSourceFilesOperation.m in Sources */,
 				681ADE8F1B0D032C00FC8E08 /* Path.m in Sources */,
 				6841F2BC1AFA905100CFE60E /* Cappuccino.m in Sources */,

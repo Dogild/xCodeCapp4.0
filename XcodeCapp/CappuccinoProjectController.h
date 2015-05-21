@@ -11,7 +11,7 @@
 @class CappuccinoProject;
 @class TaskManager;
 
-@interface CappuccinoProjectController : NSObject
+@interface CappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate>
 
 @property CappuccinoProject *cappuccinoProject;
 
@@ -32,6 +32,8 @@
 
 // Task manager of the project
 @property TaskManager *taskManager;
+
+@property NSTableView *operationsTableView;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)loadProject;

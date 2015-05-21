@@ -35,6 +35,8 @@ enum {
 
 @interface ProcessSourceOperation : NSOperation
 
+@property NSTask *task;
+
 // sourcePath should be a path within the project (no resolved symlinks)
 - (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath;
 
