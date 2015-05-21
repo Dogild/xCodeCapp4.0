@@ -1198,8 +1198,20 @@
                                                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                                                 </textFieldCell>
                                                                                             </textField>
+                                                                                            <button verticalHuggingPriority="750" id="zYt-vg-7eJ">
+                                                                                                <rect key="frame" x="553" y="9" width="83" height="32"/>
+                                                                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                                                                                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U92-QG-dg2">
+                                                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                                                    <font key="font" metaFont="system"/>
+                                                                                                    <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                                                                                </buttonCell>
+                                                                                            </button>
                                                                                         </subviews>
                                                                                         <connections>
+                                                                                            <outlet property="cancelButton" destination="zYt-vg-7eJ" id="knm-n9-afp"/>
                                                                                             <outlet property="textField" destination="u9B-yS-Cs3" id="m0j-uV-07d"/>
                                                                                         </connections>
                                                                                     </tableCellView>
@@ -1226,6 +1238,9 @@
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
+                                                            <connections>
+                                                                <action selector="cancelAllOperations:" target="923-ke-ovW" id="BUC-pR-BtT"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                 </view>

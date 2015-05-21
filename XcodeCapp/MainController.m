@@ -14,17 +14,17 @@
 
 @implementation MainController
 
+- (CappuccinoProjectController*)currentCappuccinoProjectController
+{
+    return [self.cappuccinoProjectController objectAtIndex:[self.projectTableView selectedRow]];
+}
+
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
     for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
     {
         [controller stopListenProject];
     }
-}
-
-- (void)reloadOperationsTableView
-{
-    [self.operationTableView reloadData];
 }
 
 - (void)selectLastProjectSelected
@@ -100,6 +100,7 @@
         CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
         [cappuccinoProjectController setMainController:self];
         [self.cappuccinoProjectController addObject:cappuccinoProjectController];
+        [cappuccinoProjectController setOperationTableView:self.operationTableView];
     }
     
     [self.projectTableView reloadData];
@@ -215,8 +216,12 @@
 
 - (IBAction)saveSettings:(id)aSender
 {
-    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:[self.projectTableView selectedRow]];
-    [cappuccinoProjectController save:aSender];
+    [[self currentCappuccinoProjectController] save:aSender];
+}
+
+- (IBAction)cancelAllOperations:(id)aSender
+{
+    [[self currentCappuccinoProjectController] cancelAllOperations:aSender];
 }
 
 @end

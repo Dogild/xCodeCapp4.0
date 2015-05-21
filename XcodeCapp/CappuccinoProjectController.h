@@ -22,6 +22,8 @@
 // Task manager of the project
 @property MainController *mainController;
 
+@property (strong) NSTableView    *operationTableView;
+
 - (id)initWithPath:(NSString*)aPath;
 - (void)loadProject;
 
@@ -29,5 +31,6 @@
 - (void)startListenProject;
 
 - (IBAction)save:(id)sender;
+- (IBAction)cancelAllOperations:(id)aSender;
 
 @end

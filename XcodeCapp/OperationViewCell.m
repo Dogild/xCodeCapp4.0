@@ -22,4 +22,5 @@
         [self.textField unbind:@"stringValue"];
     }
 }
+
 @end

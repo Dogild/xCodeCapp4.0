@@ -12,6 +12,7 @@
 
 @interface OperationViewCell : NSTableCellView
 
+@property (nonatomic, retain) IBOutlet NSButton *cancelButton;
 @property (nonatomic, retain) ProcessSourceOperation *operation;
 
 @end

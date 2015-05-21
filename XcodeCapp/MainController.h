@@ -29,6 +29,4 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification;
 
-- (void)reloadOperationsTableView;
-
 @end
