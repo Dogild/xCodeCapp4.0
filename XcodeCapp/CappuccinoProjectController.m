@@ -903,6 +903,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [CappuccinoUtils removeSupportFilesForCappuccinoProject:self.cappuccinoProject];
     [CappuccinoUtils removeAllCibsAtPath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"]];
     
+    if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
+        [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
+    
     [self _init];
 }
 

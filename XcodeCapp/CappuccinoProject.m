@@ -158,9 +158,6 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     NSMutableArray *mutablePaths = [NSMutableArray array];
     NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
     
-    NSLog(@"coucou");
-    NSLog(@"%@", paths);
-    
     if (paths)
     {
         for (NSString *name in paths)
@@ -172,7 +169,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     }
     else
     {
-        mutablePaths = [XCCCappuccinoProjectBinPaths mutableCopy];
+        mutablePaths = [[[self class] defaultEnvironmentPaths] mutableCopy];
     }
     
     self.environementsPaths = mutablePaths;

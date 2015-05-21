@@ -242,4 +242,9 @@
     [[self currentCappuccinoProjectController] cancelAllOperations:aSender];
 }
 
+- (IBAction)synchronizeProject:(id)aSender
+{
+    [[self currentCappuccinoProjectController] synchronizeProject:aSender];
+}
+
 @end

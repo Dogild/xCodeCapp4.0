@@ -24,6 +24,7 @@
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
 - (IBAction)saveSettings:(id)aSender;
+- (IBAction)synchronizeProject:(id)aSender;
 
 - (void)addProjectPath:(NSString*)aProjectPath;
 - (void)pruneProjectHistory;

@@ -30,5 +30,6 @@
 
 - (IBAction)save:(id)sender;
 - (IBAction)cancelAllOperations:(id)aSender;
+- (IBAction)synchronizeProject:(id)aSender;
 
 @end
