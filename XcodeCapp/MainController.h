@@ -15,6 +15,8 @@
 @property (strong) IBOutlet NSSplitView    *splitView;
 @property (strong) IBOutlet NSTableView    *projectTableView;
 @property (strong) IBOutlet NSTableView    *operationTableView;
+@property (strong) IBOutlet NSTableView    *errorTableView;
+@property (strong) IBOutlet NSTableView    *warningTableView;
 
 @property (strong) NSMutableArray *cappuccinoProjectController;
 @property (strong) CappuccinoProject *currentCappuccinoProject;
@@ -23,6 +25,7 @@
 - (IBAction)removeProject:(id)aSender;
 - (IBAction)saveSettings:(id)aSender;
 
+- (void)addProjectPath:(NSString*)aProjectPath;
 - (void)pruneProjectHistory;
 - (void)fetchProjects;
 

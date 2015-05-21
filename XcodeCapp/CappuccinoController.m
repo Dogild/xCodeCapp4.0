@@ -7,6 +7,8 @@
 //
 
 #import "CappuccinoController.h"
+#import "CappuccinoUtils.h"
+#import "MainController.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
 
@@ -34,12 +36,14 @@
         ![self _installCappuccinoInFolder:temporaryFolder])
     {
         _isUpdating = NO;
+        [CappuccinoUtils notifyUserWithTitle:@"Cappuccino Updating" message:@"Something went wrong when downloading/installing Cappuccino"];
         DDLogVerbose(@"Cappuccino Updating : something went wrong when downloading Cappuccino");
         return;
     }
     
     _isUpdating = NO;
     DDLogVerbose(@"Cappuccino Updating : Cappuccino has been well updated");
+    [CappuccinoUtils notifyUserWithTitle:@"Cappuccino Updating" message:@"Cappuccino has been well updated"];
 }
 
 - (BOOL)_downloadCappuccinoInFolder:(NSString*)aFolder
@@ -47,7 +51,7 @@
     DDLogVerbose(@"Cappuccino Updating : downloading cappuccino");
     
     //Be sure to remove an old install
-    NSMutableArray *rmArguments = [NSMutableArray arrayWithObjects:@"-r", @"cappuccino", nil];
+    NSMutableArray *rmArguments = [NSMutableArray arrayWithObjects:@"-rf", @"cappuccino", nil];
     [_taskManager runTaskWithCommand:@"rm"
                    arguments:rmArguments
                   returnType:kTaskReturnTypeAny
@@ -157,13 +161,17 @@
         return;
     
     NSString *projectPath = [[savePanel.URL path] stringByStandardizingPath];
-    
+    [self performSelectorInBackground:@selector(createProjectAtPath:) withObject:projectPath];
+}
+
+- (void)createProjectAtPath:(NSString*)aPath
+{
     NSDictionary *taskResult;
-    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"gen", projectPath ,@"-t", @"NibApplication", nil];
+    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"gen", aPath ,@"-t", @"NibApplication", nil];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     // This is used when an user wants to replace an existing project
-    NSArray *argumentsRemove = [NSArray arrayWithObjects:@"-rf", projectPath, nil];
+    NSArray *argumentsRemove = [NSArray arrayWithObjects:@"-rf", aPath, nil];
     [_taskManager runTaskWithCommand:@"rm"
                            arguments:argumentsRemove
                           returnType:kTaskReturnTypeAny];
@@ -181,12 +189,12 @@
     if (!status)
     {
         DDLogVerbose(@"Created Xcode project: [%ld, %@]", status, status ? response : @"");
-        //[self notifyUserWithTitle:@"Project created" message:aPath.lastPathComponent];
+        [self.mainController performSelectorOnMainThread:@selector(addProjectPath:) withObject:aPath waitUntilDone:YES];
     }
     else
     {
         DDLogVerbose(@"Created Xcode project failed: [%ld, %@]", status, status ? response : @"");
-        NSDictionary *dictionary = [NSDictionary dictionaryWithObject:response forKey:@"message"];
+        [CappuccinoUtils notifyUserWithTitle:@"Create Cappucino Application failed" message:response];
     }
 }
 

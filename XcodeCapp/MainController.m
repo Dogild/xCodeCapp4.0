@@ -10,6 +10,7 @@
 #import "CappuccinoProject.h"
 #import "CappuccinoProjectController.h"
 #import "CappuccinoProjectViewCell.h"
+#import "CappuccinoUtils.h"
 #import "UserDefaults.h"
 
 @implementation MainController
@@ -211,13 +212,24 @@
         return;
     
     NSString *projectPath = [[openPanel.URLs[0] path] stringByStandardizingPath];
-    
-    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:projectPath];
+    [self addProjectPath:projectPath];
+}
+
+- (void)addProjectPath:(NSString*)aProjectPath
+{
+    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath];
     [self.cappuccinoProjectController addObject:cappuccinoProjectController];
     
+    NSInteger index = [self.cappuccinoProjectController indexOfObject:cappuccinoProjectController];
+
     [self.projectTableView reloadData];
-    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[self.cappuccinoProjectController indexOfObject:cappuccinoProjectController]] byExtendingSelection:NO];
+    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+    [self.projectTableView scrollRowToVisible:index];
     [self saveCurrentProjects];
+    
+    [CappuccinoUtils notifyUserWithTitle:@"Cappuccino project added" message:aProjectPath];
+    
+    [cappuccinoProjectController loadProject];
 }
 
 - (IBAction)saveSettings:(id)aSender

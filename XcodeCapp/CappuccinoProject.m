@@ -71,7 +71,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     if (self != [CappuccinoProject class])
         return;
     
-    XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:@"/usr/local/narwhal/bin", @"~/narwhal/bin", nil];
+    XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:[[Path alloc] initWithName:@"/usr/local/narwhal/bin"], [[Path alloc] initWithName:@"~/narwhal/bin"], nil];
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
     
@@ -80,7 +80,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
                                           XCCCappuccinoProcessObjj: @YES,
                                           XCCCappuccinoProcessNib2Cib: @YES,
                                           XCCCappuccinoProcessObjj2ObjcSkeleton: @YES,
-                                          XCCCappuccinoProjectBinPaths: XCCDefaultEnvironmentPaths,
+                                          XCCCappuccinoProjectBinPaths: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
                                           XCCCappuccinoObjjIncludePath: @""};
 }
 
@@ -145,14 +145,6 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     DDLogVerbose(@"Ignoring file paths: %@", self.ignoredPathPredicates);
 }
 
-- (void)initEnvironmentPaths
-{
-    NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
-    
-    if (![paths count])
-        [self setEnvironementsPaths:[CappuccinoProject defaultEnvironmentPaths]];
-}
-
 - (void)fetchProjectSettings
 {
     [self willChangeValueForKey:@"objjIncludePath"];
@@ -166,11 +158,21 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     NSMutableArray *mutablePaths = [NSMutableArray array];
     NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
     
-    for (NSString *name in paths)
+    NSLog(@"coucou");
+    NSLog(@"%@", paths);
+    
+    if (paths)
     {
-        Path *path = [Path new];
-        [path setName:name];
-        [mutablePaths addObject:path];
+        for (NSString *name in paths)
+        {
+            Path *path = [Path new];
+            [path setName:name];
+            [mutablePaths addObject:path];
+        }
+    }
+    else
+    {
+        mutablePaths = [XCCCappuccinoProjectBinPaths mutableCopy];
     }
     
     self.environementsPaths = mutablePaths;

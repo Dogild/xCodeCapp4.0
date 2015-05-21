@@ -82,7 +82,6 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)updateIgnoredPath;
-- (void)initEnvironmentPaths;
 - (void)_init;
 
 - (NSString *)projectName;

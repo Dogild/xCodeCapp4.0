@@ -157,7 +157,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     [self initObservers];
     [self prepareXcodeSupport];
-    [self.cappuccinoProject initEnvironmentPaths];
     
     self.taskManager = [self makeTaskManager];
     

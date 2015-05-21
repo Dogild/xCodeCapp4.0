@@ -15,12 +15,12 @@
 @interface CappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate>
 
 @property CappuccinoProject *cappuccinoProject;
+@property MainController *mainController;
 
 // Task manager of the project
 @property TaskManager *taskManager;
 
-// Task manager of the project
-@property MainController *mainController;
+
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)loadProject;

@@ -8,8 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Path : NSString
+@interface Path : NSObject
 
 @property NSString *name;
+
+- (instancetype)initWithName:(NSString*)aName;
 
 @end

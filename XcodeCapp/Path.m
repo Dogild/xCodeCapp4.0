@@ -22,5 +22,16 @@
     return self;
 }
 
+- (instancetype)initWithName:(NSString*)aName
+{
+    self = [super init];
+    
+    if (self)
+    {
+        self.name = aName;
+    }
+    
+    return self;
+}
 
 @end
