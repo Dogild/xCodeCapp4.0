@@ -26,9 +26,6 @@
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
     
     self.aboutWindow.backgroundColor = [NSColor whiteColor];
-    [self.mainController pruneProjectHistory];
-    [self.mainController fetchProjects];
-    [self.mainController selectLastProjectSelected];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {

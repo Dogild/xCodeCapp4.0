@@ -14,6 +14,13 @@
 
 @implementation MainController
 
+- (void)awakeFromNib
+{
+    [self pruneProjectHistory];
+    [self fetchProjects];
+    [self selectLastProjectSelected];
+}
+
 - (CappuccinoProjectController*)currentCappuccinoProjectController
 {
     return [self.cappuccinoProjectController objectAtIndex:[self.projectTableView selectedRow]];

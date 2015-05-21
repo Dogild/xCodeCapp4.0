@@ -25,7 +25,6 @@
 
 - (void)pruneProjectHistory;
 - (void)fetchProjects;
-- (void)selectLastProjectSelected;
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification;
 
