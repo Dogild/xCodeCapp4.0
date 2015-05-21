@@ -1,5 +1,5 @@
 //
-//  Cappuccino.h
+//  CappuccinoController.h
 //  XcodeCapp
 //
 //  Created by Alexandre Wilhelm on 5/6/15.
@@ -10,12 +10,13 @@
 
 @class TaskManager;
 
-@interface Cappuccino : NSObject
+@interface CappuccinoController : NSObject
 {
     BOOL            _isUpdating;
     TaskManager     *_taskManager;
 }
 
 - (IBAction)update:(id)aSender;
+- (IBAction)createProject:(id)aSender;
 
 @end

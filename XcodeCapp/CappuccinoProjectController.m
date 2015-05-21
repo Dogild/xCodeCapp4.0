@@ -339,7 +339,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), sourcePath);
     
     [self.currentOperations addObject:note.object];
-    [self.operationTableView reloadData];
+    [self.mainController.operationTableView reloadData];
     
     //[self pruneProcessingErrorsForProjectPath:sourcePath];
 }
@@ -358,7 +358,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     NSString *path = info[@"sourcePath"];
     
     [self.currentOperations removeObject:note.object];
-    [self.operationTableView reloadData];
+    [self.mainController.operationTableView reloadData];
     
     if ([CappuccinoUtils isObjjFile:path])
         [self.pbxOperations[@"add"] addObject:path];
@@ -959,7 +959,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)cancelOperation:(id)sender
 {
-    ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:[self.operationTableView rowForView:sender]];
+    ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:[self.mainController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 

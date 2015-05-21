@@ -100,7 +100,6 @@
         CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
         [cappuccinoProjectController setMainController:self];
         [self.cappuccinoProjectController addObject:cappuccinoProjectController];
-        [cappuccinoProjectController setOperationTableView:self.operationTableView];
     }
     
     [self.projectTableView reloadData];

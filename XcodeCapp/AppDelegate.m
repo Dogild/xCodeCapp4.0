@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "Cappuccino.h"
+#import "CappuccinoController.h"
 #import "MainController.h"
 #import "UserDefaults.h"
 

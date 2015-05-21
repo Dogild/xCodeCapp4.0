@@ -12,7 +12,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customObject id="Kof-Go-xQ9" customClass="Cappuccino"/>
+        <customObject id="Kof-Go-xQ9" customClass="CappuccinoController"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="aboutWindow" destination="EMp-Db-uhU" id="tnK-oP-g4I"/>
@@ -778,7 +778,7 @@
                                     <button verticalHuggingPriority="750" id="7QO-xa-9rT">
                                         <rect key="frame" x="1" y="-2" width="66" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ari-l9-Qyx">
+                                        <buttonCell key="cell" type="push" title="Link" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ari-l9-Qyx">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -786,10 +786,21 @@
                                             <action selector="addProject:" target="923-ke-ovW" id="WcS-qH-gsc"/>
                                         </connections>
                                     </button>
-                                    <button verticalHuggingPriority="750" id="5qE-h2-muz">
-                                        <rect key="frame" x="67" y="-2" width="91" height="32"/>
+                                    <button verticalHuggingPriority="750" id="q2p-dE-gsO">
+                                        <rect key="frame" x="67" y="-2" width="81" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="push" title="Remove" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wwg-4A-3Ad">
+                                        <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T8u-QW-yhT">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="createProject:" target="Kof-Go-xQ9" id="217-BN-O7c"/>
+                                        </connections>
+                                    </button>
+                                    <button verticalHuggingPriority="750" id="5qE-h2-muz">
+                                        <rect key="frame" x="154" y="-2" width="79" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="push" title="Unlink" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wwg-4A-3Ad">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>

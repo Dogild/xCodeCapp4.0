@@ -41,7 +41,7 @@
 		6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */ = {isa = PBXBuildFile; fileRef = 6841F28A1AF9932300CFE60E /* project.pbxproj */; };
 		6841F2B31AF9932300CFE60E /* XcodeCapp.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2991AF9932300CFE60E /* XcodeCapp.iconset */; };
 		6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2B61AFA83D500CFE60E /* UserDefaults.m */; };
-		6841F2BC1AFA905100CFE60E /* Cappuccino.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BB1AFA905100CFE60E /* Cappuccino.m */; };
+		6841F2BC1AFA905100CFE60E /* CappuccinoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BB1AFA905100CFE60E /* CappuccinoController.m */; };
 		6841F2BF1AFA965300CFE60E /* TaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BE1AFA965300CFE60E /* TaskManager.m */; };
 		6841F2C41AFABD7200CFE60E /* CappuccinoProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C31AFABD7200CFE60E /* CappuccinoProject.m */; };
 		6841F2CA1AFADEBC00CFE60E /* FindSourceFilesOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C71AFADEBC00CFE60E /* FindSourceFilesOperation.m */; };
@@ -129,8 +129,8 @@
 		6841F2991AF9932300CFE60E /* XcodeCapp.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = XcodeCapp.iconset; sourceTree = "<group>"; };
 		6841F2B61AFA83D500CFE60E /* UserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDefaults.m; sourceTree = "<group>"; };
 		6841F2B81AFA83E900CFE60E /* UserDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserDefaults.h; sourceTree = "<group>"; };
-		6841F2BA1AFA905100CFE60E /* Cappuccino.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cappuccino.h; sourceTree = "<group>"; };
-		6841F2BB1AFA905100CFE60E /* Cappuccino.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cappuccino.m; sourceTree = "<group>"; };
+		6841F2BA1AFA905100CFE60E /* CappuccinoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappuccinoController.h; sourceTree = "<group>"; };
+		6841F2BB1AFA905100CFE60E /* CappuccinoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappuccinoController.m; sourceTree = "<group>"; };
 		6841F2BD1AFA965300CFE60E /* TaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskManager.h; sourceTree = "<group>"; };
 		6841F2BE1AFA965300CFE60E /* TaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskManager.m; sourceTree = "<group>"; };
 		6841F2C21AFABD7200CFE60E /* CappuccinoProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CappuccinoProject.h; path = XcodeCapp/CappuccinoProject.h; sourceTree = "<group>"; };
@@ -177,6 +177,8 @@
 			children = (
 				6824CDDC1B0DA34500F73447 /* MainController.h */,
 				6824CDDD1B0DA34500F73447 /* MainController.m */,
+				6841F2BA1AFA905100CFE60E /* CappuccinoController.h */,
+				6841F2BB1AFA905100CFE60E /* CappuccinoController.m */,
 				6815BBE61AFBE6B00030D8BB /* CappuccinoProjectController.h */,
 				6815BBE71AFBE6B00030D8BB /* CappuccinoProjectController.m */,
 			);
@@ -209,8 +211,6 @@
 				6841F2471AF98CE600CFE60E /* MainMenu.xib */,
 				6841F2401AF98CE600CFE60E /* AppDelegate.h */,
 				6841F2411AF98CE600CFE60E /* AppDelegate.m */,
-				6841F2BA1AFA905100CFE60E /* Cappuccino.h */,
-				6841F2BB1AFA905100CFE60E /* Cappuccino.m */,
 				6824CDDB1B0D976400F73447 /* Controllers */,
 				68F3B95A1B0CFBCF00A7EF70 /* Models */,
 				680621161B015BDB00CB24CD /* Views */,
@@ -470,7 +470,7 @@
 				6824CDDA1B0D5AA700F73447 /* OperationViewCell.m in Sources */,
 				6841F2CA1AFADEBC00CFE60E /* FindSourceFilesOperation.m in Sources */,
 				681ADE8F1B0D032C00FC8E08 /* Path.m in Sources */,
-				6841F2BC1AFA905100CFE60E /* Cappuccino.m in Sources */,
+				6841F2BC1AFA905100CFE60E /* CappuccinoController.m in Sources */,
 				6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */,
 				6841F2651AF98DCB00CFE60E /* DDASLLogger.m in Sources */,
 				6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */,

@@ -6,11 +6,11 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "Cappuccino.h"
+#import "CappuccinoController.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
 
-@implementation Cappuccino
+@implementation CappuccinoController
 
 - (void)awakeFromNib
 {
@@ -145,6 +145,49 @@
     NSString *contentOfCappuccinoFolder = [[fileManger contentsOfDirectoryAtPath:[NSString stringWithFormat:@"%@cappuccino", aFolder] error:nil] firstObject];
     
     return [NSString stringWithFormat:@"%@cappuccino/%@", aFolder, contentOfCappuccinoFolder];
+}
+
+- (IBAction)createProject:(id)aSender
+{
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    savePanel.title = @"Create a new Cappuccino Project";
+    savePanel.canCreateDirectories = YES;
+    
+    if ([savePanel runModal] != NSFileHandlingPanelOKButton)
+        return;
+    
+    NSString *projectPath = [[savePanel.URL path] stringByStandardizingPath];
+    
+    NSDictionary *taskResult;
+    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"gen", projectPath ,@"-t", @"NibApplication", nil];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    // This is used when an user wants to replace an existing project
+    NSArray *argumentsRemove = [NSArray arrayWithObjects:@"-rf", projectPath, nil];
+    [_taskManager runTaskWithCommand:@"rm"
+                           arguments:argumentsRemove
+                          returnType:kTaskReturnTypeAny];
+    
+    if ([defaults boolForKey:kDefaultXCCUseSymlinkWhenCreatingProject])
+        [arguments addObject:@"-l"];
+    
+    taskResult = [_taskManager runTaskWithCommand:@"capp"
+                                        arguments:arguments
+                                       returnType:kTaskReturnTypeStdOut];
+    
+    NSInteger status = [taskResult[@"status"] intValue];
+    NSString *response = taskResult[@"response"];
+    
+    if (!status)
+    {
+        DDLogVerbose(@"Created Xcode project: [%ld, %@]", status, status ? response : @"");
+        //[self notifyUserWithTitle:@"Project created" message:aPath.lastPathComponent];
+    }
+    else
+    {
+        DDLogVerbose(@"Created Xcode project failed: [%ld, %@]", status, status ? response : @"");
+        NSDictionary *dictionary = [NSDictionary dictionaryWithObject:response forKey:@"message"];
+    }
 }
 
 @end
