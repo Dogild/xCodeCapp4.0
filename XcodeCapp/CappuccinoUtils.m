@@ -227,29 +227,6 @@ static NSImage *XCCIconWarning;
     }
 }
 
-+ (void)removeAllCibsAtPath:(NSString *)path
-{
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    NSArray *paths = [fm contentsOfDirectoryAtPath:path error:nil];
-    
-    for (NSString *filePath in paths)
-    {
-        if ([self isCibFile:filePath])
-            [fm removeItemAtPath:[path stringByAppendingPathComponent:filePath] error:nil];
-    }
-}
-
-+ (void)removeSupportFilesForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject
-{
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    [XcodeProjectCloser closeXcodeProjectForProject:aCappuccinoProject.projectPath];
-    
-    [fm removeItemAtPath:aCappuccinoProject.xcodeProjectPath error:nil];
-    [fm removeItemAtPath:aCappuccinoProject.supportPath error:nil];
-}
-
 + (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage
 {
     NSUserNotification *note = [NSUserNotification new];

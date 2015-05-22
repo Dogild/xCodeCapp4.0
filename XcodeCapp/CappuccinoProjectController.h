@@ -20,8 +20,6 @@
 // Task manager of the project
 @property TaskManager *taskManager;
 
-
-
 - (id)initWithPath:(NSString*)aPath;
 - (void)loadProject;
 
@@ -31,5 +29,7 @@
 - (IBAction)save:(id)sender;
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)synchronizeProject:(id)aSender;
+- (IBAction)removeErrors:(id)aSender;
+- (IBAction)removeWarnings:(id)aSender;
 
 @end

@@ -26,6 +26,7 @@ extern NSString * const XCCObjjDidGenerateErrorNotification;
 extern NSString * const XCCCappLintDidGenerateErrorNotification;
 extern NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification;
 extern NSString * const XCCNib2CibDidGenerateErrorNotification;
+extern NSString * const XCCConversionDidGenerateCancelNotification;
 
 // Status codes returned by support scripts run as tasks
 enum {

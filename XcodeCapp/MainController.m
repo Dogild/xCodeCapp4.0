@@ -9,7 +9,7 @@
 #import "MainController.h"
 #import "CappuccinoProject.h"
 #import "CappuccinoProjectController.h"
-#import "CappuccinoProjectViewCell.h"
+#import "CappuccinoProjectCellView.h"
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
 
@@ -137,7 +137,7 @@
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    CappuccinoProjectViewCell *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
+    CappuccinoProjectCellView *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
     
     CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectController objectAtIndex:row] cappuccinoProject];
     
@@ -167,6 +167,12 @@
     self.currentCappuccinoProject = [currentController cappuccinoProject];
     [self.operationTableView setDelegate:currentController];
     [self.operationTableView setDataSource:currentController];
+    
+    [self.errorTableView setDelegate:currentController];
+    [self.errorTableView setDataSource:currentController];
+    
+    [self.warningTableView setDelegate:currentController];
+    [self.warningTableView setDataSource:currentController];
     
     // This can't be bound because we can't save an indexSet in a plis
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
@@ -245,6 +251,16 @@
 - (IBAction)synchronizeProject:(id)aSender
 {
     [[self currentCappuccinoProjectController] synchronizeProject:aSender];
+}
+
+- (IBAction)removeErrors:(id)aSender
+{
+    [[self currentCappuccinoProjectController] removeErrors:aSender];
+}
+
+- (IBAction)removeWarnings:(id)aSender
+{
+    [[self currentCappuccinoProjectController] removeWarnings:aSender];
 }
 
 @end

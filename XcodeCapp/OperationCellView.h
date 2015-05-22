@@ -1,5 +1,5 @@
 //
-//  OperationViewCell.h
+//  OperationCellView.h
 //  XcodeCapp
 //
 //  Created by Alexandre Wilhelm on 5/20/15.
@@ -10,7 +10,7 @@
 
 @class ProcessSourceOperation;
 
-@interface OperationViewCell : NSTableCellView
+@interface OperationCellView : NSTableCellView
 
 @property (nonatomic, retain) IBOutlet NSButton *cancelButton;
 @property (nonatomic, retain) ProcessSourceOperation *operation;

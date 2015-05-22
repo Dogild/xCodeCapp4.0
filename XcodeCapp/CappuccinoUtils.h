@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class CappuccinoProject;
+@class CappuccinoError;
 
 @interface CappuccinoUtils : NSObject
 
@@ -27,9 +28,6 @@
 + (NSArray *)getPathsToWatchForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 
 + (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
-
-+ (void)removeAllCibsAtPath:(NSString *)path;
-+ (void)removeSupportFilesForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 
 + (NSImage *)iconActive;
 + (NSImage *)iconInactive;

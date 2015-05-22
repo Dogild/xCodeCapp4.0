@@ -14,6 +14,7 @@
 NSString * const XCCConversionDidEndNotification = @"XCCConversionDidStopNotification";
 NSString * const XCCConversionDidGenerateErrorNotification = @"XCCConversionDidGenerateErrorNotification";
 NSString * const XCCConversionDidStartNotification = @"XCCConversionDidStartNotification";
+NSString * const XCCConversionDidGenerateCancelNotification = @"XCCConversionDidGenerateCancelNotification";
 
 NSString * const XCCObjjDidStartNotification = @"XCCObjjDidStartNotification";
 NSString * const XCCObjjDidGenerateErrorNotification = @"XCCObjjDidGenerateErrorNotification";
@@ -76,7 +77,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         return;
     
     [self.task interrupt];
-    [self cancelWithUserInfo:[[self defaultUserInfo] mutableCopy] response:@"Operation canceled" notificationName:XCCConversionDidGenerateErrorNotification];
+    [self cancelWithUserInfo:[[self defaultUserInfo] mutableCopy] response:@"Operation canceled" notificationName:XCCConversionDidGenerateCancelNotification];
 }
 
 - (void)cancelWithUserInfo:(NSMutableDictionary*)userInfo response:(NSString*)aResponse notificationName:(NSString*)notificationName

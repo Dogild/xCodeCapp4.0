@@ -7,15 +7,20 @@
 //
 
 #import "CappuccinoProjectController.h"
+
 #import "CappuccinoProject.h"
 #import "CappuccinoUtils.h"
 #import "FindSourceFilesOperation.h"
 #import "LogUtils.h"
 #import "MainController.h"
-#import "OperationViewCell.h"
+#import "OperationCellView.h"
+#import "OperationError.h"
+#import "OperationErrorCellView.h"
+#import "OperationWarningCellView.h"
 #import "ProcessSourceOperation.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
+#import "XcodeProjectCloser.h"
 
 @interface CappuccinoProjectController ()
 
@@ -105,6 +110,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     self.pbxOperations[@"remove"] = [NSMutableArray array];
 }
 
+
+#pragma mark - Task manager methods
+
 - (TaskManager*)makeTaskManager
 {
     NSArray *environementPaths;
@@ -137,8 +145,22 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     return taskManager;
 }
 
+
 #pragma mark - Loading methods
 
+/*
+ Load the project :
+ 
+ - Init the controller
+ - Init the global observer
+ - Prepare the folder .XcodeSupport
+ - Create the task manager
+ - Find the source
+ - Populate the xcodeproj
+ 
+ If the project has been loaded, the method will only start to listen the project if needed
+ 
+ */
 - (void)loadProject
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
@@ -189,6 +211,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     return projectExists && supportExists;
 }
 
+/*
+ Check if the xCodeSupport is compatible with the current version of xCodeCapp
+ 
+ @return YES if compatible
+ */
 - (BOOL)xCodeSupportIsCompatible
 {
     double appCompatibilityVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey] doubleValue];
@@ -206,6 +233,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     return projectCompatibilityVersion.doubleValue >= appCompatibilityVersion;
 }
 
+/*
+ Create the xCode project (create a file .pbxproj)
+ */
 - (void)createXcodeProject
 {
     if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
@@ -224,7 +254,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogInfo(@"Xcode support project created at: %@", self.cappuccinoProject.xcodeProjectPath);
 }
 
-
+/*
+ Create the folder .XcodeSupport
+ */
 - (void)createXcodeSupportDirectory
 {
     if ([self.fm fileExistsAtPath:self.cappuccinoProject.supportPath])
@@ -262,6 +294,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.operationQueue addOperation:op];
 }
 
+/* 
+ Populate the array xCodeCappTargetedFiles based on the xcodecapp-ignore.
+ Array which can be used to check the entire project
+ */
 - (void)populatexCodeCappTargetedFiles
 {
     NSDirectoryEnumerator *filesOfProject = [self.fm enumeratorAtPath:self.cappuccinoProject.projectPath];
@@ -291,12 +327,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [center addObserver:self selector:@selector(sourceConversionDidStartHandler:) name:XCCConversionDidStartNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionDidEndHandler:) name:XCCConversionDidEndNotification object:nil];
     
-    
     [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCConversionDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
+    
+//    [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateWarningHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
+//    [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateWarningHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
 }
 
 - (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
@@ -337,8 +373,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), sourcePath);
     
-    [self.currentOperations addObject:note.object];
-    [self.mainController.operationTableView reloadData];
+    [self _addOperation:note.object];
     
     //[self pruneProcessingErrorsForProjectPath:sourcePath];
 }
@@ -356,9 +391,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     NSDictionary *info = note.userInfo;
     NSString *path = info[@"sourcePath"];
     
-    [self.currentOperations removeObject:note.object];
-    [self.mainController.operationTableView reloadData];
-    
+    [self _removeOperation:note.object];
+
     if ([CappuccinoUtils isObjjFile:path])
         [self.pbxOperations[@"add"] addObject:path];
     
@@ -370,18 +404,92 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:note waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError defaultOperationErrorFromDictionary:note.userInfo] waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
 }
 
-- (void)sourceConversionDidGenerateError:(NSNotification *)note
+- (void)sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:(NSNotification *)note
 {
-    NSMutableDictionary *info = [note.userInfo mutableCopy];
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
     
-    DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), info[@"sourcePath"]);
+    NSString *response = [note.userInfo objectForKey:@"errors"];
+    NSMutableArray *operationErrors = [NSMutableArray array];
     
-    //[self.errorListController addObject:info];
+    @try
+    {
+        NSArray *errors = [response propertyList];
+        
+        for (NSDictionary *error in errors)
+        {
+            [operationErrors addObject:[OperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
+        }
+    }
+    @catch (NSException *exception)
+    {
+        NSDictionary *error = @{@"line" : @"0",
+                                @"message" : response,
+                                @"path" : [note.userInfo objectForKey:@"sourcePath"]};
+        
+        [operationErrors addObject:[OperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
+    }
+    
+    for (OperationError *operationError in operationErrors)
+    {
+        [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:operationError waitUntilDone:NO];
+    }
+    
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
 }
 
+- (void)sourceConversionNib2CibDidGenerateErrorHandler:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo] waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+}
+
+- (void)sourceConversionDidGenerateWarning:(OperationError *)operationError
+{
+    DDLogVerbose(@"Cappuccino warning : %@", operationError.message);
+    
+    [self.cappuccinoProject willChangeValueForKey:@"warnings"];
+    [self.cappuccinoProject.warnings addObject:operationError];
+    [self.cappuccinoProject didChangeValueForKey:@"warnings"];
+    
+    [self.mainController.warningTableView reloadData];
+}
+
+- (void)sourceConversionDidGenerateError:(OperationError *)operationError
+{
+    DDLogVerbose(@"Cappuccino error : %@", operationError.message);
+    
+    [self.cappuccinoProject willChangeValueForKey:@"errors"];
+    [self.cappuccinoProject.errors addObject:operationError];
+    [self.cappuccinoProject didChangeValueForKey:@"errors"];
+    
+    [self.mainController.errorTableView reloadData];
+}
+
+/* 
+ Remove an operation and reload the tableView
+ */
+- (void)_removeOperation:(NSOperation*)anOperation
+{
+    [self.currentOperations removeObject:anOperation];
+    [self.mainController.operationTableView reloadData];
+}
+
+/*
+ Add an operation and reload the tableView
+ */
+- (void)_addOperation:(NSOperation*)anOperation
+{
+    [self.currentOperations addObject:anOperation];
+    [self.mainController.operationTableView reloadData];
+}
 
 #pragma mark - Events methods
 
@@ -819,45 +927,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"Updated Xcode project: [%ld, %@]", status, status ? response : @"");
 }
 
-#pragma mark - Action methods
-
-- (IBAction)openXcodeProject:(id)aSender
-{
-    BOOL isDirectory, opened = YES;
-    BOOL exists = [self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath isDirectory:&isDirectory];
-    
-    if (exists && isDirectory)
-    {
-        DDLogVerbose(@"Opening Xcode project at: %@", self.cappuccinoProject.xcodeProjectPath);
-        
-        opened = [[NSWorkspace sharedWorkspace] openFile:self.cappuccinoProject.xcodeProjectPath];
-    }
-    
-    if (!exists || !isDirectory || !opened)
-    {
-        NSString *text;
-        
-        if (!opened)
-            text = @"The project exists, but failed to open.";
-        else
-            text = [NSString stringWithFormat:@"%@ %@.", self.cappuccinoProject.xcodeProjectPath, !exists ? @"does not exist" : @"is not an Xcode project"];
-        
-        [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-        NSInteger response = NSRunAlertPanel(@"The project could not be opened.", @"%@\n\nWould you like to regenerate the project?", @"Yes", @"No", nil, text);
-        
-        if (response == NSAlertFirstButtonReturn)
-            [self synchronizeProject:self];
-    }
-}
-
-- (IBAction)synchronizeProject:(id)aSender
-{
-    [self resetProject];
-    [self loadProject];
-}
-
-#pragma mark - cleaning methods
-
 - (void)resetProjectForWatchedPath:(NSString *)path
 {
     // If a watched path changes we don't have much choice but to reset the project.
@@ -895,35 +964,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self synchronizeProject:self];
 }
 
-- (void)resetProject
-{
-    [self stopListenProject];
-    [self.operationQueue cancelAllOperations];
-    
-    [CappuccinoUtils removeSupportFilesForCappuccinoProject:self.cappuccinoProject];
-    [CappuccinoUtils removeAllCibsAtPath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"]];
-    
-    if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
-        [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
-    
-    [self _init];
-}
 
-- (IBAction)save:(id)sender
-{
-    DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
-    
-    [self.operationQueue cancelAllOperations];
-    [self saveSettings];
-    
-    if (self.cappuccinoProject.isProjectLoaded)
-    {
-        self.taskManager = [self makeTaskManager];
-        [self.cappuccinoProject updateIgnoredPath];
-    }
-    
-    DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
-}
+#pragma mark - Settings methods
 
 - (void)saveSettings
 {
@@ -941,33 +983,187 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         [self.fm removeItemAtPath:self.cappuccinoProject.xcodecappIgnorePath error:nil];
 }
 
+
+#pragma mark - Synchronize method
+
+/* Reset the project :
+    
+    - Stop to listen the project 
+    - Cancel all current operations
+    - Remove the support files
+    - Remove all cibs
+    - Initilize the controller
+ */
+- (void)resetProject
+{
+    [self stopListenProject];
+    [self.operationQueue cancelAllOperations];
+    
+    [self removeSupportFiles];
+    [self removeAllCibsAtPath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"]];
+    
+    if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
+        [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
+    
+    [self _init];
+}
+
+- (void)removeAllCibsAtPath:(NSString *)path
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    NSArray *paths = [fm contentsOfDirectoryAtPath:path error:nil];
+    
+    for (NSString *filePath in paths)
+    {
+        if ([CappuccinoUtils isCibFile:filePath])
+            [fm removeItemAtPath:[path stringByAppendingPathComponent:filePath] error:nil];
+    }
+}
+
+- (void)removeSupportFiles
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    [XcodeProjectCloser closeXcodeProjectForProject:self.cappuccinoProject.projectPath];
+    
+    [fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
+    [fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
+}
+
+
 #pragma mark - operation delegate and datasource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [self.currentOperations count];
+    NSString *tableViewIdentifier = [tableView identifier];
+    
+    if ([tableViewIdentifier isEqualToString:@"OperationsTableView"])
+        return [self.currentOperations count];
+    
+    if ([tableViewIdentifier isEqualToString:@"ErrorsTableView"])
+        return [self.cappuccinoProject.errors count];
+    
+    return [self.cappuccinoProject.warnings count];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    OperationViewCell *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-    [cellView setOperation:[self.currentOperations objectAtIndex:row]];
+    NSString *tableViewIdentifier = [tableView identifier];
     
-    [cellView.cancelButton setTarget:self];
-    [cellView.cancelButton setAction:@selector(cancelOperation:)];
+    if ([tableViewIdentifier isEqualToString:@"OperationsTableView"])
+    {
+        OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
+        [cellView setOperation:[self.currentOperations objectAtIndex:row]];
+        
+        [cellView.cancelButton setTarget:self];
+        [cellView.cancelButton setAction:@selector(cancelOperation:)];
+        
+        return cellView;
+    }
     
+    if ([tableViewIdentifier isEqualToString:@"ErrorsTableView"])
+    {
+        OperationErrorCellView *cellView = [tableView makeViewWithIdentifier:@"ErrorCell" owner:nil];
+        [cellView setOperationError:[self.cappuccinoProject.errors objectAtIndex:row]];
+        return cellView;
+    }
+    
+    OperationWarningCellView *cellView = [tableView makeViewWithIdentifier:@"WarningCell" owner:nil];
+    [cellView setOperationError:[self.cappuccinoProject.warnings objectAtIndex:row]];
+
     return cellView;
+
 }
 
-- (void)cancelOperation:(id)sender
+
+#pragma mark - IBActions methods
+
+// Cancel all current operations
+- (IBAction)cancelAllOperations:(id)aSender
+{
+    [self.currentOperations makeObjectsPerformSelector:@selector(cancel)];
+}
+
+// Cancel the operation linked to the sender
+- (IBAction)cancelOperation:(id)sender
 {
     ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:[self.mainController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 
-- (IBAction)cancelAllOperations:(id)aSender
+// Clean the errors tableView
+- (IBAction)removeErrors:(id)aSender
 {
-    [self.currentOperations makeObjectsPerformSelector:@selector(cancel)];
+    [self.cappuccinoProject willChangeValueForKey:@"errors"];
+    [self.cappuccinoProject.errors removeAllObjects];
+    [self.cappuccinoProject didChangeValueForKey:@"errors"];
+    
+    [self.mainController.errorTableView reloadData];
+}
+
+// Clean the warnings tableView
+- (IBAction)removeWarnings:(id)aSender
+{
+    [self.cappuccinoProject willChangeValueForKey:@"warnings"];
+    [self.cappuccinoProject.warnings removeAllObjects];
+    [self.cappuccinoProject willChangeValueForKey:@"warnings"];
+    
+    [self.mainController.warningTableView reloadData];
+}
+
+// Save the configuration of Cappuccino
+- (IBAction)save:(id)sender
+{
+    DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
+    
+    [self.operationQueue cancelAllOperations];
+    [self saveSettings];
+    
+    if (self.cappuccinoProject.isProjectLoaded)
+    {
+        self.taskManager = [self makeTaskManager];
+        [self.cappuccinoProject updateIgnoredPath];
+    }
+    
+    DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
+}
+
+// Synchronize the project again and load it again
+- (IBAction)synchronizeProject:(id)aSender
+{
+    [self resetProject];
+    [self loadProject];
+}
+
+// Open the project on xCode
+- (IBAction)openXcodeProject:(id)aSender
+{
+    BOOL isDirectory, opened = YES;
+    BOOL exists = [self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath isDirectory:&isDirectory];
+    
+    if (exists && isDirectory)
+    {
+        DDLogVerbose(@"Opening Xcode project at: %@", self.cappuccinoProject.xcodeProjectPath);
+        
+        opened = [[NSWorkspace sharedWorkspace] openFile:self.cappuccinoProject.xcodeProjectPath];
+    }
+    
+    if (!exists || !isDirectory || !opened)
+    {
+        NSString *text;
+        
+        if (!opened)
+            text = @"The project exists, but failed to open.";
+        else
+            text = [NSString stringWithFormat:@"%@ %@.", self.cappuccinoProject.xcodeProjectPath, !exists ? @"does not exist" : @"is not an Xcode project"];
+        
+        [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+        NSInteger response = NSRunAlertPanel(@"The project could not be opened.", @"%@\n\nWould you like to regenerate the project?", @"Yes", @"No", nil, text);
+        
+        if (response == NSAlertFirstButtonReturn)
+            [self synchronizeProject:self];
+    }
 }
 
 @end
