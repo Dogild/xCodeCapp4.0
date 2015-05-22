@@ -28,6 +28,7 @@
     operationError.fileName = [aDictionary objectForKey:@"sourcePath"];
     operationError.message = [aDictionary objectForKey:@"errors"];
     operationError.errorType = XCCNib2CibOperationErrorType;
+    operationError.command = @"nib2cib";
     
     return operationError;
 }
@@ -40,6 +41,7 @@
     operationError.message = [aDictionary objectForKey:@"message"];
     operationError.lineNumber = [aDictionary objectForKey:@"line"];
     operationError.errorType = XCCObjj2ObjcSkeletonOperationErrorType;
+    operationError.command = @"objj2objcskeleton";
     
     return operationError;
 }
@@ -52,6 +54,7 @@
     operationError.message = [aDictionary objectForKey:@"message"];
     operationError.lineNumber = [aDictionary objectForKey:@"line"];
     operationError.errorType = XCCObjjOperationErrorType;
+    operationError.command = @"objj";
     
     return operationError;
 }
@@ -64,6 +67,7 @@
     operationError.message = [aDictionary objectForKey:@"message"];
     operationError.lineNumber = [aDictionary objectForKey:@"line"];
     operationError.errorType = XCCCappLintOperationErrorType;
+    operationError.command = @"capp_lint";
     
     return operationError;
 }

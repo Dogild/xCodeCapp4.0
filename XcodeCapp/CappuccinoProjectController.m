@@ -10,6 +10,7 @@
 
 #import "CappuccinoProject.h"
 #import "CappuccinoUtils.h"
+#import "CappLintUtils.h"
 #import "FindSourceFilesOperation.h"
 #import "LogUtils.h"
 #import "MainController.h"
@@ -17,6 +18,7 @@
 #import "OperationError.h"
 #import "OperationErrorCellView.h"
 #import "OperationErrorHeaderCellView.h"
+#import "Objj2ObjcSkeletonUtils.h"
 #import "ProcessSourceOperation.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
@@ -332,12 +334,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidStart:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidStart:) name:XCCNib2CibDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionCappLintDidStart:) name:XCCCappLintDidStartNotification object:nil];
     
     [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
-    
+    [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
+
 //    [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateWarningHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
-//    [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateWarningHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
 }
 
 - (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
@@ -397,6 +400,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCNib2CibOperationErrorType];
 }
 
+- (void)sourceConversionCappLintDidStart:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCCappLintOperationErrorType];
+}
 
 - (void)sourceConversionDidEndHandler:(NSNotification *)note
 {
@@ -424,7 +434,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError defaultOperationErrorFromDictionary:note.userInfo] waitUntilDone:NO];
+    [self sourceConversionDidGenerateError:[OperationError defaultOperationErrorFromDictionary:note.userInfo]];
     [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
 }
 
@@ -432,33 +442,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-    
-    NSString *response = [note.userInfo objectForKey:@"errors"];
-    NSMutableArray *operationErrors = [NSMutableArray array];
-    
-    @try
-    {
-        NSArray *errors = [response propertyList];
         
-        for (NSDictionary *error in errors)
-        {
-            [operationErrors addObject:[OperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
-        }
-    }
-    @catch (NSException *exception)
-    {
-        NSDictionary *error = @{@"line" : @"0",
-                                @"message" : response,
-                                @"path" : [note.userInfo objectForKey:@"sourcePath"]};
-        
-        [operationErrors addObject:[OperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
-    }
-    
-    for (OperationError *operationError in operationErrors)
-    {
-        [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:operationError waitUntilDone:NO];
-    }
-    
+    [self sourceConversionDidGenerateErrors:[Objj2ObjcSkeletonUtils operationErrorsFromDictionary:note.userInfo]];
     [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
 }
 
@@ -467,8 +452,23 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo] waitUntilDone:NO];
+    [self sourceConversionDidGenerateError:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
     [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+}
+
+- (void)sourceConversionCappLintDidGenerateErrorHandler:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+        
+    [self sourceConversionDidGenerateErrors:[CappLintUtils operationErrorsFromDictionary:note.userInfo]];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+}
+
+- (void)sourceConversionDidGenerateErrors:(NSArray *)operationErrors
+{
+    for (OperationError *operationError in operationErrors)
+        [self sourceConversionDidGenerateError:operationError];
 }
 
 - (void)sourceConversionDidGenerateError:(OperationError *)operationError
@@ -482,7 +482,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [[self.cappuccinoProject.errors objectForKey:operationError.fileName] addObject:operationError];
     [self.cappuccinoProject didChangeValueForKey:@"errors"];
     
-    [self _reloadDataOutlineView];
+    [self performSelectorOnMainThread:@selector(_reloadDataOutlineView) withObject:nil waitUntilDone:NO];
 }
 
 - (void)pruneProcessingErrorsForSourcePath:(NSString*)sourcePath type:(int)errorType
