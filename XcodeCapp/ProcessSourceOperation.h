@@ -28,12 +28,6 @@ extern NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification;
 extern NSString * const XCCNib2CibDidGenerateErrorNotification;
 extern NSString * const XCCConversionDidGenerateCancelNotification;
 
-// Status codes returned by support scripts run as tasks
-enum {
-    XCCStatusCodeError = 1,
-    XCCStatusCodeWarning = 2
-};
-
 @interface ProcessSourceOperation : NSOperation
 
 @property NSTask *task;

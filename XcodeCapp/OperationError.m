@@ -16,6 +16,7 @@
     
     operationError.fileName = [aDictionary objectForKey:@"sourcePath"];
     operationError.message = [aDictionary objectForKey:@"errors"];
+    operationError.errorType = XCCDefaultOperationErrorType;
     
     return operationError;
 }
@@ -26,6 +27,7 @@
     
     operationError.fileName = [aDictionary objectForKey:@"sourcePath"];
     operationError.message = [aDictionary objectForKey:@"errors"];
+    operationError.errorType = XCCNib2CibOperationErrorType;
     
     return operationError;
 }
@@ -37,8 +39,38 @@
     operationError.fileName = [aDictionary objectForKey:@"path"];
     operationError.message = [aDictionary objectForKey:@"message"];
     operationError.lineNumber = [aDictionary objectForKey:@"line"];
+    operationError.errorType = XCCObjj2ObjcSkeletonOperationErrorType;
     
     return operationError;
+}
+
++ (instancetype)objjOperationErrorFromDictionary:(NSDictionary*)aDictionary
+{
+    OperationError *operationError = [[self alloc] init];
+    
+    operationError.fileName = [aDictionary objectForKey:@"path"];
+    operationError.message = [aDictionary objectForKey:@"message"];
+    operationError.lineNumber = [aDictionary objectForKey:@"line"];
+    operationError.errorType = XCCObjjOperationErrorType;
+    
+    return operationError;
+}
+
++ (instancetype)cappLintOperationErrorFromDictionary:(NSDictionary*)aDictionary
+{
+    OperationError *operationError = [[self alloc] init];
+    
+    operationError.fileName = [aDictionary objectForKey:@"path"];
+    operationError.message = [aDictionary objectForKey:@"message"];
+    operationError.lineNumber = [aDictionary objectForKey:@"line"];
+    operationError.errorType = XCCCappLintOperationErrorType;
+    
+    return operationError;
+}
+
+- (BOOL)isEqualTo:(OperationError*)object
+{
+    return object.errorType == self.errorType && [object.fileName isEqualToString:self.fileName];
 }
 
 @end

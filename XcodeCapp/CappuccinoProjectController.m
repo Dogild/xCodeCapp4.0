@@ -16,7 +16,7 @@
 #import "OperationCellView.h"
 #import "OperationError.h"
 #import "OperationErrorCellView.h"
-#import "OperationWarningCellView.h"
+#import "OperationErrorHeaderCellView.h"
 #import "ProcessSourceOperation.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
@@ -328,6 +328,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [center addObserver:self selector:@selector(sourceConversionDidEndHandler:) name:XCCConversionDidEndNotification object:nil];
     
     [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCConversionDidGenerateErrorNotification object:nil];
+    
+    
+    [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidStart:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionNib2CibDidStart:) name:XCCNib2CibDidStartNotification object:nil];
+    
     [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
     
@@ -362,7 +367,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-    
+        
     [self performSelectorOnMainThread:@selector(sourceConversionDidStart:) withObject:note waitUntilDone:NO];
 }
 
@@ -374,9 +379,24 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), sourcePath);
     
     [self _addOperation:note.object];
-    
-    //[self pruneProcessingErrorsForProjectPath:sourcePath];
 }
+
+- (void)sourceConversionObjj2ObjcSkeletonDidStart:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCObjj2ObjcSkeletonOperationErrorType];
+}
+
+- (void)sourceConversionNib2CibDidStart:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCNib2CibOperationErrorType];
+}
+
 
 - (void)sourceConversionDidEndHandler:(NSNotification *)note
 {
@@ -451,29 +471,50 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
 }
 
-- (void)sourceConversionDidGenerateWarning:(OperationError *)operationError
-{
-    DDLogVerbose(@"Cappuccino warning : %@", operationError.message);
-    
-    [self.cappuccinoProject willChangeValueForKey:@"warnings"];
-    [self.cappuccinoProject.warnings addObject:operationError];
-    [self.cappuccinoProject didChangeValueForKey:@"warnings"];
-    
-    [self.mainController.warningTableView reloadData];
-}
-
 - (void)sourceConversionDidGenerateError:(OperationError *)operationError
 {
     DDLogVerbose(@"Cappuccino error : %@", operationError.message);
     
+    if (![self.cappuccinoProject.errors objectForKey:operationError.fileName])
+        [self.cappuccinoProject.errors setValue:[NSMutableArray new] forKey:operationError.fileName];
+    
     [self.cappuccinoProject willChangeValueForKey:@"errors"];
-    [self.cappuccinoProject.errors addObject:operationError];
+    [[self.cappuccinoProject.errors objectForKey:operationError.fileName] addObject:operationError];
     [self.cappuccinoProject didChangeValueForKey:@"errors"];
     
-    [self.mainController.errorTableView reloadData];
+    [self _reloadDataOutlineView];
 }
 
-/* 
+- (void)pruneProcessingErrorsForSourcePath:(NSString*)sourcePath type:(int)errorType
+{
+    NSMutableArray *errorsToRemove = [NSMutableArray array];
+    
+    OperationError *defaultOperationError = [OperationError new];
+    defaultOperationError.fileName = sourcePath;
+    defaultOperationError.errorType = errorType;
+    
+    for (OperationError *operationError in [self.cappuccinoProject.errors objectForKey:sourcePath])
+    {
+        if ([operationError isEqualTo:defaultOperationError])
+            [errorsToRemove addObject:operationError];
+    }
+    
+    [self.cappuccinoProject willChangeValueForKey:@"errors"];
+    [[self.cappuccinoProject.errors objectForKey:sourcePath] removeObjectsInArray:errorsToRemove];
+    [self.cappuccinoProject didChangeValueForKey:@"errors"];
+    
+    if (![[self.cappuccinoProject.errors objectForKey:sourcePath] count])
+        [self.cappuccinoProject.errors removeObjectForKey:sourcePath];
+    
+    [self performSelectorOnMainThread:@selector(_reloadDataOutlineView) withObject:nil waitUntilDone:NO];
+}
+
+- (void)_reloadDataOutlineView
+{
+    [self.mainController.errorOutlineView reloadData];
+}
+
+/*
  Remove an operation and reload the tableView
  */
 - (void)_removeOperation:(NSOperation*)anOperation
@@ -1032,50 +1073,65 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 }
 
 
-#pragma mark - operation delegate and datasource
+#pragma mark - tableView delegate and datasource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    NSString *tableViewIdentifier = [tableView identifier];
-    
-    if ([tableViewIdentifier isEqualToString:@"OperationsTableView"])
-        return [self.currentOperations count];
-    
-    if ([tableViewIdentifier isEqualToString:@"ErrorsTableView"])
-        return [self.cappuccinoProject.errors count];
-    
-    return [self.cappuccinoProject.warnings count];
+    return [self.currentOperations count];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    NSString *tableViewIdentifier = [tableView identifier];
-    
-    if ([tableViewIdentifier isEqualToString:@"OperationsTableView"])
-    {
-        OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-        [cellView setOperation:[self.currentOperations objectAtIndex:row]];
+    OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
+    [cellView setOperation:[self.currentOperations objectAtIndex:row]];
         
-        [cellView.cancelButton setTarget:self];
-        [cellView.cancelButton setAction:@selector(cancelOperation:)];
+    [cellView.cancelButton setTarget:self];
+    [cellView.cancelButton setAction:@selector(cancelOperation:)];
         
-        return cellView;
-    }
-    
-    if ([tableViewIdentifier isEqualToString:@"ErrorsTableView"])
-    {
-        OperationErrorCellView *cellView = [tableView makeViewWithIdentifier:@"ErrorCell" owner:nil];
-        [cellView setOperationError:[self.cappuccinoProject.errors objectAtIndex:row]];
-        return cellView;
-    }
-    
-    OperationWarningCellView *cellView = [tableView makeViewWithIdentifier:@"WarningCell" owner:nil];
-    [cellView setOperationError:[self.cappuccinoProject.warnings objectAtIndex:row]];
-
     return cellView;
-
 }
 
+#pragma mark - outlineView data source and delegate
+
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
+{
+    if (!item)
+        return [[self.cappuccinoProject.errors allKeys] count];
+    
+    return [[self.cappuccinoProject.errors objectForKey:item] count];
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+{
+    return ![item isKindOfClass:[OperationError class]];
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
+{
+    if (!item)
+        return [[self.cappuccinoProject.errors allKeys] objectAtIndex:index];
+    
+    return [[self.cappuccinoProject.errors objectForKey:item] objectAtIndex:index];
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+{
+    return item;
+}
+
+- (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item
+{
+    if ([item isKindOfClass:[OperationError class]])
+    {
+        OperationErrorCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
+        [cellView setOperationError:item];
+        return cellView;
+    }
+    
+    OperationErrorHeaderCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
+    cellView.textField.stringValue = item;
+    return cellView;
+}
 
 #pragma mark - IBActions methods
 
@@ -1099,17 +1155,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.cappuccinoProject.errors removeAllObjects];
     [self.cappuccinoProject didChangeValueForKey:@"errors"];
     
-    [self.mainController.errorTableView reloadData];
-}
-
-// Clean the warnings tableView
-- (IBAction)removeWarnings:(id)aSender
-{
-    [self.cappuccinoProject willChangeValueForKey:@"warnings"];
-    [self.cappuccinoProject.warnings removeAllObjects];
-    [self.cappuccinoProject willChangeValueForKey:@"warnings"];
-    
-    [self.mainController.warningTableView reloadData];
+    [self _reloadDataOutlineView];
 }
 
 // Save the configuration of Cappuccino

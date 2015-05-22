@@ -15,7 +15,6 @@
 		6824CDDA1B0D5AA700F73447 /* OperationCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDD91B0D5AA700F73447 /* OperationCellView.m */; };
 		6824CDDE1B0DA34500F73447 /* MainController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDDD1B0DA34500F73447 /* MainController.m */; };
 		6824CDEA1B0E9CDB00F73447 /* OperationErrorCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDE91B0E9CDB00F73447 /* OperationErrorCellView.m */; };
-		6824CDED1B0E9EDB00F73447 /* OperationWarningCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDEC1B0E9EDB00F73447 /* OperationWarningCellView.m */; };
 		6824CDF01B0E9F1400F73447 /* OperationError.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDEF1B0E9F1400F73447 /* OperationError.m */; };
 		6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2411AF98CE600CFE60E /* AppDelegate.m */; };
 		6841F2441AF98CE600CFE60E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2431AF98CE600CFE60E /* main.m */; };
@@ -52,6 +51,7 @@
 		684228C71B016AFA00493AD3 /* mod_pbxproj.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6841F2691AF98DDD00CFE60E /* mod_pbxproj.py */; };
 		684228C81B016AFA00493AD3 /* pbxprojModifier.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6841F26B1AF98DDD00CFE60E /* pbxprojModifier.py */; };
 		6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6863FBA21AFD55A900040C8E /* LogUtils.m */; };
+		686C69711B0FAE620095BB3C /* OperationErrorHeaderCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69701B0FAE620095BB3C /* OperationErrorHeaderCellView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,8 +95,6 @@
 		6824CDDD1B0DA34500F73447 /* MainController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainController.m; sourceTree = "<group>"; };
 		6824CDE81B0E9CDB00F73447 /* OperationErrorCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationErrorCellView.h; sourceTree = "<group>"; };
 		6824CDE91B0E9CDB00F73447 /* OperationErrorCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationErrorCellView.m; sourceTree = "<group>"; };
-		6824CDEB1B0E9EDB00F73447 /* OperationWarningCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationWarningCellView.h; sourceTree = "<group>"; };
-		6824CDEC1B0E9EDB00F73447 /* OperationWarningCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationWarningCellView.m; sourceTree = "<group>"; };
 		6824CDEE1B0E9F1400F73447 /* OperationError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationError.h; path = XcodeCapp/OperationError.h; sourceTree = "<group>"; };
 		6824CDEF1B0E9F1400F73447 /* OperationError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OperationError.m; path = XcodeCapp/OperationError.m; sourceTree = "<group>"; };
 		6841F23B1AF98CE600CFE60E /* XcodeCapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XcodeCapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -150,6 +148,8 @@
 		6841F2C91AFADEBC00CFE60E /* ProcessSourceOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProcessSourceOperation.m; sourceTree = "<group>"; };
 		6863FBA11AFD55A900040C8E /* LogUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
 		6863FBA21AFD55A900040C8E /* LogUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogUtils.m; sourceTree = "<group>"; };
+		686C696F1B0FAE620095BB3C /* OperationErrorHeaderCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationErrorHeaderCellView.h; sourceTree = "<group>"; };
+		686C69701B0FAE620095BB3C /* OperationErrorHeaderCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationErrorHeaderCellView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,8 +179,8 @@
 				6824CDD91B0D5AA700F73447 /* OperationCellView.m */,
 				6824CDE81B0E9CDB00F73447 /* OperationErrorCellView.h */,
 				6824CDE91B0E9CDB00F73447 /* OperationErrorCellView.m */,
-				6824CDEB1B0E9EDB00F73447 /* OperationWarningCellView.h */,
-				6824CDEC1B0E9EDB00F73447 /* OperationWarningCellView.m */,
+				686C696F1B0FAE620095BB3C /* OperationErrorHeaderCellView.h */,
+				686C69701B0FAE620095BB3C /* OperationErrorHeaderCellView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -480,6 +480,7 @@
 				6824CDDE1B0DA34500F73447 /* MainController.m in Sources */,
 				6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */,
 				680621191B015BF400CB24CD /* CappuccinoProjectCellView.m in Sources */,
+				686C69711B0FAE620095BB3C /* OperationErrorHeaderCellView.m in Sources */,
 				6824CDF01B0E9F1400F73447 /* OperationError.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,
 				6841F2441AF98CE600CFE60E /* main.m in Sources */,
@@ -488,7 +489,6 @@
 				681ADE8F1B0D032C00FC8E08 /* Path.m in Sources */,
 				6841F2BC1AFA905100CFE60E /* CappuccinoController.m in Sources */,
 				6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */,
-				6824CDED1B0E9EDB00F73447 /* OperationWarningCellView.m in Sources */,
 				6841F2651AF98DCB00CFE60E /* DDASLLogger.m in Sources */,
 				6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */,
 				6824CDEA1B0E9CDB00F73447 /* OperationErrorCellView.m in Sources */,

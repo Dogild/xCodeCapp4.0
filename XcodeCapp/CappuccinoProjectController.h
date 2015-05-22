@@ -12,7 +12,7 @@
 @class TaskManager;
 @class MainController;
 
-@interface CappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate>
+@interface CappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
 
 @property CappuccinoProject *cappuccinoProject;
 @property MainController *mainController;
@@ -30,6 +30,5 @@
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)synchronizeProject:(id)aSender;
 - (IBAction)removeErrors:(id)aSender;
-- (IBAction)removeWarnings:(id)aSender;
 
 @end

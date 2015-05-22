@@ -121,8 +121,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (void)_init
 {
     self.projectPathsForSourcePaths = [NSMutableDictionary new];
-    self.errors = [NSMutableArray array];
-    self.warnings = [NSMutableArray array];
+    self.errors = [NSMutableDictionary new];
     
     self.isLoadingProject = NO;
     self.isListeningProject = NO;

@@ -64,10 +64,7 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 @property BOOL isProcessingProject;
 
 // A list of errors generated from the current batch of source processing
-@property NSMutableArray *errors;
-
-// A list of warning generated from the current batch of source processing
-@property NSMutableArray *warnings;
+@property NSMutableDictionary *errors;
 
 // Here we defined some accessors to bind them
 @property NSString *objjIncludePath;

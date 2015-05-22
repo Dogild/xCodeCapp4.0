@@ -52,8 +52,6 @@
             self.imageView.image = [CappuccinoUtils iconWorking];
         else if ([self.cappuccinoProject.errors count])
             self.imageView.image = [CappuccinoUtils iconError];
-        else if ([self.cappuccinoProject.warnings count])
-            self.imageView.image = [CappuccinoUtils iconWarning];
         else if (self.cappuccinoProject.isListeningProject)
             self.imageView.image = [CappuccinoUtils iconActive];
         else

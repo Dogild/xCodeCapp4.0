@@ -168,11 +168,8 @@
     [self.operationTableView setDelegate:currentController];
     [self.operationTableView setDataSource:currentController];
     
-    [self.errorTableView setDelegate:currentController];
-    [self.errorTableView setDataSource:currentController];
-    
-    [self.warningTableView setDelegate:currentController];
-    [self.warningTableView setDataSource:currentController];
+    [self.errorOutlineView setDelegate:currentController];
+    [self.errorOutlineView setDataSource:currentController];
     
     // This can't be bound because we can't save an indexSet in a plis
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
@@ -256,11 +253,6 @@
 - (IBAction)removeErrors:(id)aSender
 {
     [[self currentCappuccinoProjectController] removeErrors:aSender];
-}
-
-- (IBAction)removeWarnings:(id)aSender
-{
-    [[self currentCappuccinoProjectController] removeWarnings:aSender];
 }
 
 @end
