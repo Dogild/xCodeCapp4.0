@@ -1,5 +1,5 @@
 //
-//  Objj2ObjcSkeletonUtils.h
+//  ObjjUtils.h
 //  XcodeCapp
 //
 //  Created by Alexandre Wilhelm on 5/22/15.
@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OperationError.h"
 
-@interface Objj2ObjcSkeletonUtils : NSObject
+@interface ObjjUtils : NSObject
 
 + (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary;
++ (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary type:(XCCOperationErrorType)type;
 
 @end

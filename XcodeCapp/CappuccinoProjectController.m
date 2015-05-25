@@ -18,7 +18,7 @@
 #import "OperationError.h"
 #import "OperationErrorCellView.h"
 #import "OperationErrorHeaderCellView.h"
-#import "Objj2ObjcSkeletonUtils.h"
+#import "ObjjUtils.h"
 #import "ProcessSourceOperation.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
@@ -333,10 +333,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     
     [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidStart:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionObjjDidStart:) name:XCCObjjDidStartNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidStart:) name:XCCNib2CibDidStartNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionCappLintDidStart:) name:XCCCappLintDidStartNotification object:nil];
     
     [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateErrorHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
 
@@ -392,6 +394,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCObjj2ObjcSkeletonOperationErrorType];
 }
 
+- (void)sourceConversionObjjDidStart:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCObjjOperationErrorType];
+}
+
 - (void)sourceConversionNib2CibDidStart:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
@@ -443,7 +453,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
         
-    [self sourceConversionDidGenerateErrors:[Objj2ObjcSkeletonUtils operationErrorsFromDictionary:note.userInfo]];
+    [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType]];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+}
+
+- (void)sourceConversionObjjDidGenerateErrorHandler:(NSNotification *)note
+{
+    if (![self notificationBelongsToCurrentProject:note])
+        return;
+    
+    [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo]];
     [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
 }
 

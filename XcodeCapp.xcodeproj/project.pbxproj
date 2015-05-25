@@ -53,7 +53,7 @@
 		6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6863FBA21AFD55A900040C8E /* LogUtils.m */; };
 		686C69711B0FAE620095BB3C /* OperationErrorHeaderCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69701B0FAE620095BB3C /* OperationErrorHeaderCellView.m */; };
 		686C69741B0FC2EB0095BB3C /* CappLintUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69731B0FC2EB0095BB3C /* CappLintUtils.m */; };
-		686C697A1B0FC5930095BB3C /* Objj2ObjcSkeletonUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69791B0FC5930095BB3C /* Objj2ObjcSkeletonUtils.m */; };
+		686C697A1B0FC5930095BB3C /* ObjjUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69791B0FC5930095BB3C /* ObjjUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,8 +154,8 @@
 		686C69701B0FAE620095BB3C /* OperationErrorHeaderCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationErrorHeaderCellView.m; sourceTree = "<group>"; };
 		686C69721B0FC2EB0095BB3C /* CappLintUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappLintUtils.h; sourceTree = "<group>"; };
 		686C69731B0FC2EB0095BB3C /* CappLintUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappLintUtils.m; sourceTree = "<group>"; };
-		686C69781B0FC5930095BB3C /* Objj2ObjcSkeletonUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Objj2ObjcSkeletonUtils.h; sourceTree = "<group>"; };
-		686C69791B0FC5930095BB3C /* Objj2ObjcSkeletonUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Objj2ObjcSkeletonUtils.m; sourceTree = "<group>"; };
+		686C69781B0FC5930095BB3C /* ObjjUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjjUtils.h; sourceTree = "<group>"; };
+		686C69791B0FC5930095BB3C /* ObjjUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjjUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,8 +331,8 @@
 				6863FBA21AFD55A900040C8E /* LogUtils.m */,
 				686C69721B0FC2EB0095BB3C /* CappLintUtils.h */,
 				686C69731B0FC2EB0095BB3C /* CappLintUtils.m */,
-				686C69781B0FC5930095BB3C /* Objj2ObjcSkeletonUtils.h */,
-				686C69791B0FC5930095BB3C /* Objj2ObjcSkeletonUtils.m */,
+				686C69781B0FC5930095BB3C /* ObjjUtils.h */,
+				686C69791B0FC5930095BB3C /* ObjjUtils.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -496,7 +496,7 @@
 				686C69741B0FC2EB0095BB3C /* CappLintUtils.m in Sources */,
 				6841F2441AF98CE600CFE60E /* main.m in Sources */,
 				6824CDDA1B0D5AA700F73447 /* OperationCellView.m in Sources */,
-				686C697A1B0FC5930095BB3C /* Objj2ObjcSkeletonUtils.m in Sources */,
+				686C697A1B0FC5930095BB3C /* ObjjUtils.m in Sources */,
 				6841F2CA1AFADEBC00CFE60E /* FindSourceFilesOperation.m in Sources */,
 				681ADE8F1B0D032C00FC8E08 /* Path.m in Sources */,
 				6841F2BC1AFA905100CFE60E /* CappuccinoController.m in Sources */,

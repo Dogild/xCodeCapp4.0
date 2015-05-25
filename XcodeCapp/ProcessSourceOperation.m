@@ -215,6 +215,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSString *command = @"objj";
     NSArray *arguments = @[
+                           @"--xml-output-format",
                            @"-I",
                            [self.cappuccinoProject objjIncludePath],
                            self.sourcePath
