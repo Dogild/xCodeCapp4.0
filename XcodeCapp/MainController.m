@@ -17,22 +17,57 @@
 
 - (void)awakeFromNib
 {
+    [self initObservers];
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification*)aNotification
+{
     [self pruneProjectHistory];
     [self fetchProjects];
     [self selectLastProjectSelected];
+    [self loadLastProjectsLoaded];
+}
+
+- (void)initObservers
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(startListeningProjectHandler:) name:XCCStartListeningProjectNotification object:nil];
+    
+    [center addObserver:self selector:@selector(stopListeningProjectHandler:) name:XCCStopListeningProjectNotification object:nil];
+}
+
+- (void)startListeningProjectHandler:(NSNotification*)aNotification
+{
+    CappuccinoProject *cappuccinoProject = [aNotification object];
+    NSMutableArray *previousHistoryLoadedPaths = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
+    
+    if (!previousHistoryLoadedPaths)
+        previousHistoryLoadedPaths = [NSMutableArray array];
+    
+    if (![previousHistoryLoadedPaths containsObject:cappuccinoProject.projectPath])
+        [previousHistoryLoadedPaths addObject:cappuccinoProject.projectPath];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:previousHistoryLoadedPaths forKey:kDefaultXCCLastLoadedProjectPath];
+}
+
+- (void)stopListeningProjectHandler:(NSNotification*)aNotification
+{
+    CappuccinoProject *cappuccinoProject = [aNotification object];
+    NSMutableArray *previousHistoryLoadedPaths = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
+    
+    if (!previousHistoryLoadedPaths)
+        previousHistoryLoadedPaths = [NSMutableArray array];
+    
+    if ([previousHistoryLoadedPaths containsObject:cappuccinoProject.projectPath])
+        [previousHistoryLoadedPaths removeObject:cappuccinoProject.projectPath];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:previousHistoryLoadedPaths forKey:kDefaultXCCLastLoadedProjectPath];
 }
 
 - (CappuccinoProjectController*)currentCappuccinoProjectController
 {
     return [self.cappuccinoProjectController objectAtIndex:[self.projectTableView selectedRow]];
-}
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification
-{
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
-    {
-        [controller stopListenProject];
-    }
 }
 
 - (void)selectLastProjectSelected
@@ -57,7 +92,22 @@
     
     [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
     
-    DDLogVerbose(@"Start : selecting last selected project");
+    DDLogVerbose(@"Stop : selecting last selected project");
+}
+
+- (void)loadLastProjectsLoaded
+{
+    DDLogVerbose(@"Start : loading last loaded projects");
+    
+    NSArray *lastLoadedProjectPath = [[[NSUserDefaults standardUserDefaults] valueForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
+    
+    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
+    {
+        if ([lastLoadedProjectPath containsObject:controller.cappuccinoProject.projectPath])
+            [controller loadProject];
+    }
+    
+    DDLogVerbose(@"Stop : loading last selected project");
 }
 
 - (void)saveCurrentProjects
@@ -171,7 +221,7 @@
     [self.errorOutlineView setDelegate:currentController];
     [self.errorOutlineView setDataSource:currentController];
     
-    // This can't be bound because we can't save an indexSet in a plis
+    // This can't be bound because we can't save an indexSet in a plist
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
 }
 
@@ -187,8 +237,8 @@
         [cappuccinoProjectController startListenProject];
     else
         [cappuccinoProjectController loadProject];
-    
 }
+
 - (IBAction)removeProject:(id)aSender
 {
     NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];

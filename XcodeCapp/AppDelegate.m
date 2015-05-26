@@ -26,12 +26,12 @@
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
     
     self.aboutWindow.backgroundColor = [NSColor whiteColor];
+    
+    [self.mainController applicationDidFinishLaunching:aNotification];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
-    
-    [self.mainController applicationWillTerminate:aNotification];
     DDLogVerbose(@"\n******************************\n**    XcodeCapp stopped     **\n******************************\n");
 }
 

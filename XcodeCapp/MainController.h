@@ -30,6 +30,6 @@
 - (void)pruneProjectHistory;
 - (void)fetchProjects;
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification;
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 
 @end

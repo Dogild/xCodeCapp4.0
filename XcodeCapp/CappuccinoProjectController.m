@@ -24,6 +24,9 @@
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
 
+NSString * const XCCStartListeningProjectNotification = @"XCCStartListeningProject";
+NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject";
+
 @interface CappuccinoProjectController ()
 
 @property NSFileManager *fm;
@@ -341,8 +344,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateErrorHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
-
-//    [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateWarningHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
 }
 
 - (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
@@ -589,6 +590,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     FSEventStreamScheduleWithRunLoop(self.stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     [self startFSEventStream];
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCStartListeningProjectNotification object:self.cappuccinoProject];
     DDLogVerbose(@"FSEventStream started for paths: %@", pathsToWatch);
 }
 
@@ -620,6 +622,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         close(self.projectPathFileDescriptor);
         self.projectPathFileDescriptor = -1;
     }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:XCCStopListeningProjectNotification object:self.cappuccinoProject];
 }
 
 - (void)stopFSEventStream

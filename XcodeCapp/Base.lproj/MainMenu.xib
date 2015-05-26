@@ -1099,15 +1099,15 @@
                                                                 <action selector="removeErrors:" target="923-ke-ovW" id="vp3-Dm-2aW"/>
                                                             </connections>
                                                         </button>
-                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="WSF-CC-0kT">
+                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="56" horizontalPageScroll="10" verticalLineScroll="56" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="WSF-CC-0kT">
                                                             <rect key="frame" x="17" y="46" width="648" height="531"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <clipView key="contentView" id="yxZ-E6-Gsi">
                                                                 <rect key="frame" x="1" y="1" width="646" height="529"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="CvU-Li-tl5" id="VIQ-Ns-aOH">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="646" height="529"/>
+                                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="54" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="CvU-Li-tl5" id="VIQ-Ns-aOH">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="646" height="0.0"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
