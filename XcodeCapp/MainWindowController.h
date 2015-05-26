@@ -1,5 +1,5 @@
 //
-//  MainController.h
+//  MainWindowController.h
 //  XcodeCapp
 //
 //  Created by Alexandre Wilhelm on 5/20/15.
@@ -10,7 +10,7 @@
 
 @class CappuccinoProject;
 
-@interface MainController : NSObject <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
+@interface MainWindowController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
 @property (strong) IBOutlet NSSplitView    *splitView;
 @property (strong) IBOutlet NSTableView    *projectTableView;
@@ -29,7 +29,5 @@
 - (void)addProjectPath:(NSString*)aProjectPath;
 - (void)pruneProjectHistory;
 - (void)fetchProjects;
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 
 @end

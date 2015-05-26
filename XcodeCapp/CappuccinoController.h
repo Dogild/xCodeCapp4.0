@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class TaskManager;
-@class MainController;
+@class MainWindowController;
 
 @interface CappuccinoController : NSObject
 {
@@ -17,7 +17,7 @@
     TaskManager     *_taskManager;
 }
 
-@property IBOutlet MainController *mainController;
+@property IBOutlet MainWindowController *mainWindowController;
 
 - (IBAction)update:(id)aSender;
 - (IBAction)createProject:(id)aSender;

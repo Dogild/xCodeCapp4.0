@@ -13,7 +13,7 @@
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
 		681ADE8F1B0D032C00FC8E08 /* Path.m in Sources */ = {isa = PBXBuildFile; fileRef = 681ADE8E1B0D032C00FC8E08 /* Path.m */; };
 		6824CDDA1B0D5AA700F73447 /* OperationCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDD91B0D5AA700F73447 /* OperationCellView.m */; };
-		6824CDDE1B0DA34500F73447 /* MainController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDDD1B0DA34500F73447 /* MainController.m */; };
+		6824CDDE1B0DA34500F73447 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDDD1B0DA34500F73447 /* MainWindowController.m */; };
 		6824CDEA1B0E9CDB00F73447 /* OperationErrorCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDE91B0E9CDB00F73447 /* OperationErrorCellView.m */; };
 		6824CDF01B0E9F1400F73447 /* OperationError.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDEF1B0E9F1400F73447 /* OperationError.m */; };
 		6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2411AF98CE600CFE60E /* AppDelegate.m */; };
@@ -93,8 +93,8 @@
 		681ADE8E1B0D032C00FC8E08 /* Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Path.m; path = XcodeCapp/Path.m; sourceTree = "<group>"; };
 		6824CDD81B0D5AA700F73447 /* OperationCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationCellView.h; sourceTree = "<group>"; };
 		6824CDD91B0D5AA700F73447 /* OperationCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationCellView.m; sourceTree = "<group>"; };
-		6824CDDC1B0DA34500F73447 /* MainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainController.h; sourceTree = "<group>"; };
-		6824CDDD1B0DA34500F73447 /* MainController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainController.m; sourceTree = "<group>"; };
+		6824CDDC1B0DA34500F73447 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
+		6824CDDD1B0DA34500F73447 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		6824CDE81B0E9CDB00F73447 /* OperationErrorCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationErrorCellView.h; sourceTree = "<group>"; };
 		6824CDE91B0E9CDB00F73447 /* OperationErrorCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationErrorCellView.m; sourceTree = "<group>"; };
 		6824CDEE1B0E9F1400F73447 /* OperationError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationError.h; path = XcodeCapp/OperationError.h; sourceTree = "<group>"; };
@@ -194,8 +194,8 @@
 		6824CDDB1B0D976400F73447 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				6824CDDC1B0DA34500F73447 /* MainController.h */,
-				6824CDDD1B0DA34500F73447 /* MainController.m */,
+				6824CDDC1B0DA34500F73447 /* MainWindowController.h */,
+				6824CDDD1B0DA34500F73447 /* MainWindowController.m */,
 				6841F2BA1AFA905100CFE60E /* CappuccinoController.h */,
 				6841F2BB1AFA905100CFE60E /* CappuccinoController.m */,
 				6815BBE61AFBE6B00030D8BB /* CappuccinoProjectController.h */,
@@ -487,7 +487,7 @@
 				6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */,
 				6841F2CB1AFADEBC00CFE60E /* ProcessSourceOperation.m in Sources */,
 				6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */,
-				6824CDDE1B0DA34500F73447 /* MainController.m in Sources */,
+				6824CDDE1B0DA34500F73447 /* MainWindowController.m in Sources */,
 				6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */,
 				680621191B015BF400CB24CD /* CappuccinoProjectCellView.m in Sources */,
 				686C69711B0FAE620095BB3C /* OperationErrorHeaderCellView.m in Sources */,

@@ -13,7 +13,7 @@
 #import "CappLintUtils.h"
 #import "FindSourceFilesOperation.h"
 #import "LogUtils.h"
-#import "MainController.h"
+#import "MainWindowController.h"
 #import "OperationCellView.h"
 #import "OperationError.h"
 #import "OperationErrorCellView.h"
@@ -531,7 +531,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataOutlineView
 {
-    [self.mainController.errorOutlineView reloadData];
+    [self.mainWindowController.errorOutlineView reloadData];
 }
 
 /*
@@ -540,7 +540,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)_removeOperation:(NSOperation*)anOperation
 {
     [self.currentOperations removeObject:anOperation];
-    [self.mainController.operationTableView reloadData];
+    [self.mainWindowController.operationTableView reloadData];
 }
 
 /*
@@ -549,7 +549,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)_addOperation:(NSOperation*)anOperation
 {
     [self.currentOperations addObject:anOperation];
-    [self.mainController.operationTableView reloadData];
+    [self.mainWindowController.operationTableView reloadData];
 }
 
 #pragma mark - Events methods
@@ -1167,7 +1167,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 // Cancel the operation linked to the sender
 - (IBAction)cancelOperation:(id)sender
 {
-    ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:[self.mainController.operationTableView rowForView:sender]];
+    ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 

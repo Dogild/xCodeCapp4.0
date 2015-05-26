@@ -1,31 +1,41 @@
 //
-//  MainController.m
+//  MainWindowController.m
 //  XcodeCapp
 //
 //  Created by Alexandre Wilhelm on 5/20/15.
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "MainController.h"
+#import "MainWindowController.h"
 #import "CappuccinoProject.h"
 #import "CappuccinoProjectController.h"
 #import "CappuccinoProjectCellView.h"
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
 
-@implementation MainController
+@implementation MainWindowController
 
 - (void)awakeFromNib
 {
     [self initObservers];
-}
-
-- (void)applicationDidFinishLaunching:(NSNotification*)aNotification
-{
     [self pruneProjectHistory];
     [self fetchProjects];
+}
+
+- (void)windowDidLoad
+{
     [self selectLastProjectSelected];
     [self loadLastProjectsLoaded];
+}
+
+// Watch changes to the max recent projects preference
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kDefaultXCCMaxRecentProjects])
+    {
+        [self pruneProjectHistory];
+        [self fetchProjects];
+    }
 }
 
 - (void)initObservers
@@ -35,6 +45,11 @@
     [center addObserver:self selector:@selector(startListeningProjectHandler:) name:XCCStartListeningProjectNotification object:nil];
     
     [center addObserver:self selector:@selector(stopListeningProjectHandler:) name:XCCStopListeningProjectNotification object:nil];
+    
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:kDefaultXCCMaxRecentProjects
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
 }
 
 - (void)startListeningProjectHandler:(NSNotification*)aNotification
@@ -156,7 +171,7 @@
     for (NSString *path in projectHistory)
     {
         CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
-        [cappuccinoProjectController setMainController:self];
+        [cappuccinoProjectController setMainWindowController:self];
         [self.cappuccinoProjectController addObject:cappuccinoProjectController];
     }
     

@@ -9,8 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreServices/CoreServices.h>
 
-@class Cappuccino;
-@class MainController;
+@class CappuccinoController;
+@class MainWindowController;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 {
@@ -22,9 +22,8 @@
 @property (strong) IBOutlet NSPanel    *aboutWindow;
 @property (strong) IBOutlet NSWindow   *preferencesWindow;
 
-@property (strong) IBOutlet Cappuccino *cappuccino;
-
-@property (strong) IBOutlet MainController *mainController;
+@property (strong) IBOutlet CappuccinoController *cappuccinoController;
+@property (strong) IBOutlet MainWindowController *mainWindowController;
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;

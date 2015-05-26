@@ -10,7 +10,7 @@
 
 @class CappuccinoProject;
 @class TaskManager;
-@class MainController;
+@class MainWindowController;
 
 extern NSString * const XCCStartListeningProjectNotification;
 extern NSString * const XCCStopListeningProjectNotification;
@@ -18,7 +18,7 @@ extern NSString * const XCCStopListeningProjectNotification;
 @interface CappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
 
 @property CappuccinoProject *cappuccinoProject;
-@property MainController *mainController;
+@property MainWindowController *mainWindowController;
 
 // Task manager of the project
 @property TaskManager *taskManager;

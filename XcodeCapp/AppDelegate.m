@@ -8,13 +8,8 @@
 
 #import "AppDelegate.h"
 #import "CappuccinoController.h"
-#import "MainController.h"
+#import "MainWindowController.h"
 #import "UserDefaults.h"
-
-@interface AppDelegate ()
-
-@property (weak) IBOutlet NSWindow *window;
-@end
 
 @implementation AppDelegate
 
@@ -26,8 +21,7 @@
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
     
     self.aboutWindow.backgroundColor = [NSColor whiteColor];
-    
-    [self.mainController applicationDidFinishLaunching:aNotification];
+    [self.mainWindowController windowDidLoad];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
@@ -82,21 +76,6 @@
     
     [defaults registerDefaults:appDefaults];
     [defaults synchronize];
-    
-    [defaults addObserver:self
-               forKeyPath:kDefaultXCCMaxRecentProjects
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
-}
-
-// Watch changes to the max recent projects preference
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:kDefaultXCCMaxRecentProjects])
-    {
-        [self.mainController pruneProjectHistory];
-        [self.mainController fetchProjects];
-    }
 }
 
 #pragma mark - Logging methods

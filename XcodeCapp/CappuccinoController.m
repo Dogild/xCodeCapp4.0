@@ -8,7 +8,7 @@
 
 #import "CappuccinoController.h"
 #import "CappuccinoUtils.h"
-#import "MainController.h"
+#import "MainWindowController.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
 
@@ -189,7 +189,7 @@
     if (!status)
     {
         DDLogVerbose(@"Created Xcode project: [%ld, %@]", status, status ? response : @"");
-        [self.mainController performSelectorOnMainThread:@selector(addProjectPath:) withObject:aPath waitUntilDone:YES];
+        [self.mainWindowController performSelectorOnMainThread:@selector(addProjectPath:) withObject:aPath waitUntilDone:YES];
     }
     else
     {
