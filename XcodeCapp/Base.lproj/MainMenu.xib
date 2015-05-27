@@ -486,7 +486,12 @@
                                                                         <size key="minSize" width="238" height="138"/>
                                                                         <size key="maxSize" width="463" height="10000000"/>
                                                                         <connections>
-                                                                            <binding destination="923-ke-ovW" name="attributedString" keyPath="self.currentCappuccinoProject.ignoredPathsContent" id="y9f-WD-wK6"/>
+                                                                            <binding destination="923-ke-ovW" name="attributedString" keyPath="self.currentCappuccinoProject.ignoredPathsContent" id="6Ij-gC-crd">
+                                                                                <dictionary key="options">
+                                                                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                                                    <bool key="NSValidatesImmediately" value="YES"/>
+                                                                                </dictionary>
+                                                                            </binding>
                                                                         </connections>
                                                                     </textView>
                                                                 </subviews>
@@ -798,21 +803,21 @@ Original Cocoa version developed by:
         <window title="XcodeCapp Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="xcc-prefs" animationBehavior="default" id="ekp-cc-W2F">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
-            <rect key="contentRect" x="534" y="231" width="389" height="246"/>
+            <rect key="contentRect" x="534" y="231" width="389" height="266"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="79d-AB-fk4">
-                <rect key="frame" x="0.0" y="-5" width="389" height="246"/>
+                <rect key="frame" x="0.0" y="5" width="389" height="266"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box autoresizesSubviews="NO" title="Projects" borderType="line" id="9b3-Uc-gJL">
-                        <rect key="frame" x="17" y="83" width="355" height="148"/>
+                        <rect key="frame" x="17" y="74" width="355" height="177"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView">
-                            <rect key="frame" x="1" y="1" width="353" height="132"/>
+                            <rect key="frame" x="1" y="1" width="353" height="161"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <button id="csz-aF-YT7">
-                                    <rect key="frame" x="16" y="74" width="271" height="18"/>
+                                    <rect key="frame" x="16" y="103" width="271" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Load the most recent project on launch" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="Jgo-Nd-39U">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -828,7 +833,7 @@ Original Cocoa version developed by:
                                     </connections>
                                 </button>
                                 <button toolTip="If this is checked, when a Cappuccino project is opened, the project’s Xcode support project will be opened automatically" id="QGE-Iy-i46">
-                                    <rect key="frame" x="16" y="44" width="241" height="18"/>
+                                    <rect key="frame" x="16" y="73" width="241" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Automatically open Xcode projects" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="VNE-DB-5fX">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -844,7 +849,7 @@ Original Cocoa version developed by:
                                     </connections>
                                 </button>
                                 <button id="Czp-aZ-oHX">
-                                    <rect key="frame" x="16" y="102" width="298" height="18"/>
+                                    <rect key="frame" x="16" y="131" width="298" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Symlink frameworks when creating projects" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="7fQ-0l-5Zv">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -856,7 +861,7 @@ Original Cocoa version developed by:
                                     </connections>
                                 </button>
                                 <textField verticalHuggingPriority="750" id="geH-k1-u2T">
-                                    <rect key="frame" x="16" y="17" width="106" height="17"/>
+                                    <rect key="frame" x="16" y="46" width="106" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Recent projects:" id="C7d-ND-qh3">
                                         <font key="font" metaFont="system"/>
@@ -865,7 +870,7 @@ Original Cocoa version developed by:
                                     </textFieldCell>
                                 </textField>
                                 <popUpButton verticalHuggingPriority="750" id="Bcc-Sb-5oD">
-                                    <rect key="frame" x="125" y="11" width="56" height="26"/>
+                                    <rect key="frame" x="125" y="40" width="56" height="26"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <popUpButtonCell key="cell" type="push" title="30" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tkT-Hu-nS8" id="7dg-Ob-WKI">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -880,6 +885,40 @@ Original Cocoa version developed by:
                                     </popUpButtonCell>
                                     <connections>
                                         <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxRecentProjects" id="SOq-yu-ip6"/>
+                                    </connections>
+                                </popUpButton>
+                                <textField verticalHuggingPriority="750" id="Llm-fD-60A">
+                                    <rect key="frame" x="16" y="16" width="208" height="17"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Maximum number of operations :" id="feI-Ow-URM">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <popUpButton verticalHuggingPriority="750" id="9up-BP-tRE">
+                                    <rect key="frame" x="229" y="11" width="56" height="26"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="niA-cT-acm">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="menu"/>
+                                        <menu key="menu" title="OtherViews" id="lgh-Ml-epM">
+                                            <items>
+                                                <menuItem title="10" id="eqb-Oz-H0j"/>
+                                                <menuItem title="20" id="UjK-Ie-IaQ"/>
+                                                <menuItem title="30" id="8N1-pb-Qs1"/>
+                                                <menuItem title="40" id="jlf-ye-qWR"/>
+                                                <menuItem title="50" id="pRl-ub-xNC"/>
+                                                <menuItem title="100" id="QGm-lB-Ymx"/>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxNumberOfOperations" id="WkT-fq-usP">
+                                            <dictionary key="options">
+                                                <bool key="NSValidatesImmediately" value="YES"/>
+                                            </dictionary>
+                                        </binding>
                                     </connections>
                                 </popUpButton>
                             </subviews>
@@ -917,7 +956,7 @@ Original Cocoa version developed by:
                     </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-176.5" y="44"/>
+            <point key="canvasLocation" x="-218.5" y="-69"/>
         </window>
         <arrayController objectClassName="Path" automaticallyPreparesContent="YES" preservesSelection="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" automaticallyRearrangesObjects="YES" id="fad-TR-Rcn" userLabel="Configurations Array Controller">
             <declaredKeys>

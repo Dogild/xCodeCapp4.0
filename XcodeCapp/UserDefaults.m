@@ -21,4 +21,6 @@ NSString * const kDefaultXCCLastSelectedProjectPath = @"XCCLastSelectedProjectPa
 NSString * const kDefaultXCCLastOpenedProjectPath = @"XCCLastOpenedProjectPath";
 NSString * const kDefaultXCCLastLoadedProjectPath = @"XCCLastLoadedProjectPath";
 
+NSString * const kDefaultXCCMaxNumberOfOperations = @"XCCMaxNumberOfOperations";
+
 NSString * const kDefaultXCCLastEventId = @"XCCLastEventId";

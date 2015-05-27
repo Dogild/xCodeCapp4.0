@@ -99,15 +99,15 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 {
     if (self.isCancelled)
         return;
-
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        
     NSDictionary *info = [self defaultUserInfo];
     
     [center postNotificationName:XCCConversionDidStartNotification object:self userInfo:info];
 
     DDLogVerbose(@"Conversion started: %@", self.sourcePath);
-    
+
     BOOL isXibFile = [CappuccinoUtils isXibFile:self.sourcePath];
     BOOL isObjjFile = [CappuccinoUtils isObjjFile:self.sourcePath];
 
@@ -128,7 +128,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
             }
         }
     }
-
+    
     DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
 
     [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:info];
@@ -181,9 +181,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 {
     if (![self.cappuccinoProject shouldProcessWithNib2Cib] || self.isCancelled)
         return;
-    
+
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
-    
+
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidStartNotification object:self userInfo:info];
     
     NSString *command = @"nib2cib";
@@ -193,7 +193,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
                   ];
     
     NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
-    
+
     if ([result[@"status"] intValue] != 0)
     {
         NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
@@ -215,7 +215,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSString *command = @"objj";
     NSArray *arguments = @[
-                           @"--xml-output-format",
+                           @"--xml",
                            @"-I",
                            [self.cappuccinoProject objjIncludePath],
                            self.sourcePath

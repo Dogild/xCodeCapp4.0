@@ -44,9 +44,6 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 // so we can locate it if it moves.
 @property int projectPathFileDescriptor;
 
-// A list of files currently processing
-@property NSMutableArray *currentOperations;
-
 // Coalesces the modifications that have to be made to the Xcode project
 // after changes are made to source files. Keys are the actions "add" or "remove",
 // values are arrays of full paths to source files that need to be added or removed.
@@ -96,8 +93,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     self.taskManager = nil;
     
     self.operationQueue = [NSOperationQueue new];
-    
-    self.currentOperations = [NSMutableArray array];
+    [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
     
     [self _initPbxOperations];
     [self.cappuccinoProject _init];
@@ -153,6 +149,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 #pragma mark - Loading methods
 
+- (void)loadProject
+{
+    [self performSelectorInBackground:@selector(_loadProject) withObject:nil];
+}
+
 /*
  Load the project :
  
@@ -166,7 +167,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  If the project has been loaded, the method will only start to listen the project if needed
  
  */
-- (void)loadProject
+- (void)_loadProject
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
     
@@ -344,6 +345,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateErrorHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
+    
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:kDefaultXCCMaxNumberOfOperations
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+}
+
+// Watch changes to the max number of operations in the preference
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kDefaultXCCMaxNumberOfOperations])
+        [self.operationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
 }
 
 - (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
@@ -356,17 +369,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(addSourceToProjectPathMapping:) withObject:note waitUntilDone:NO];
-}
-
-- (void)addSourceToProjectPathMapping:(NSNotification *)note
-{
-    NSDictionary *info = note.userInfo;
-    NSString *sourcePath = info[@"sourcePath"];
-    
-    DDLogVerbose(@"Adding source to project mapping: %@ -> %@", sourcePath, info[@"projectPath"]);
-    
-    self.cappuccinoProject.projectPathsForSourcePaths[info[@"sourcePath"]] = info[@"projectPath"];
+    self.cappuccinoProject.projectPathsForSourcePaths[note.userInfo[@"sourcePath"]] = note.userInfo[@"projectPath"];
 }
 
 - (void)sourceConversionDidStartHandler:(NSNotification *)note
@@ -374,17 +377,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
         
-    [self performSelectorOnMainThread:@selector(sourceConversionDidStart:) withObject:note waitUntilDone:NO];
-}
-
-- (void)sourceConversionDidStart:(NSNotification *)note
-{
-    NSDictionary *info = note.userInfo;
-    NSString *sourcePath = info[@"sourcePath"];
-    
-    DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), sourcePath);
-    
-    [self _addOperation:note.object];
+    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionObjj2ObjcSkeletonDidStart:(NSNotification *)note
@@ -424,20 +417,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(sourceConversionDidEnd:) withObject:note waitUntilDone:NO];
-}
-
-- (void)sourceConversionDidEnd:(NSNotification *)note
-{
-    NSDictionary *info = note.userInfo;
-    NSString *path = info[@"sourcePath"];
+    NSString *path = note.userInfo[@"sourcePath"];
     
-    [self _removeOperation:note.object];
-
+    [self _reloadDataOperationsTableView];
+    
     if ([CappuccinoUtils isObjjFile:path])
         [self.pbxOperations[@"add"] addObject:path];
-    
-    DDLogVerbose(@"%@ %@", NSStringFromSelector(_cmd), path);
 }
 
 - (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
@@ -446,7 +431,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         return;
     
     [self sourceConversionDidGenerateError:[OperationError defaultOperationErrorFromDictionary:note.userInfo]];
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:(NSNotification *)note
@@ -455,7 +440,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         return;
         
     [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType]];
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionObjjDidGenerateErrorHandler:(NSNotification *)note
@@ -464,7 +449,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         return;
     
     [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo]];
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionNib2CibDidGenerateErrorHandler:(NSNotification *)note
@@ -473,7 +458,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         return;
     
     [self sourceConversionDidGenerateError:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionCappLintDidGenerateErrorHandler:(NSNotification *)note
@@ -482,7 +467,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         return;
         
     [self sourceConversionDidGenerateErrors:[CappLintUtils operationErrorsFromDictionary:note.userInfo]];
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.object waitUntilDone:NO];
+    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionDidGenerateErrors:(NSArray *)operationErrors
@@ -502,7 +487,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [[self.cappuccinoProject.errors objectForKey:operationError.fileName] addObject:operationError];
     [self.cappuccinoProject didChangeValueForKey:@"errors"];
     
-    [self performSelectorOnMainThread:@selector(_reloadDataOutlineView) withObject:nil waitUntilDone:NO];
+    [self _reloadDataOutlineView];
 }
 
 - (void)pruneProcessingErrorsForSourcePath:(NSString*)sourcePath type:(int)errorType
@@ -526,31 +511,22 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![[self.cappuccinoProject.errors objectForKey:sourcePath] count])
         [self.cappuccinoProject.errors removeObjectForKey:sourcePath];
     
-    [self performSelectorOnMainThread:@selector(_reloadDataOutlineView) withObject:nil waitUntilDone:NO];
+    [self _reloadDataOutlineView];
 }
 
 - (void)_reloadDataOutlineView
 {
-    [self.mainWindowController.errorOutlineView reloadData];
+    [self.mainWindowController.errorOutlineView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
 /*
  Remove an operation and reload the tableView
  */
-- (void)_removeOperation:(NSOperation*)anOperation
+- (void)_reloadDataOperationsTableView
 {
-    [self.currentOperations removeObject:anOperation];
-    [self.mainWindowController.operationTableView reloadData];
+    [self.mainWindowController.operationTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
-/*
- Add an operation and reload the tableView
- */
-- (void)_addOperation:(NSOperation*)anOperation
-{
-    [self.currentOperations addObject:anOperation];
-    [self.mainWindowController.operationTableView reloadData];
-}
 
 #pragma mark - Events methods
 
@@ -902,11 +878,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     self.cappuccinoProject.isProcessingProject = YES;
     
     // Poll every half second to see if the queue has finished
-    [NSTimer scheduledTimerWithTimeInterval:0.5
+    NSTimer * timer = [NSTimer scheduledTimerWithTimeInterval:0.5
                                      target:self
                                    selector:@selector(didQueueTimerFinish:)
                                    userInfo:NSStringFromSelector(selector)
                                     repeats:YES];
+    
+    [[NSRunLoop currentRunLoop] run];
+    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
 }
 
 - (void)didQueueTimerFinish:(NSTimer *)timer
@@ -920,7 +899,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         // Can't use plain performSelect: here because ARC doesn't know what the return value is
         // because the selector is determined at runtime. So we use performSelectorOnMainThread:
         // which has no return value.
-        [self performSelectorOnMainThread:selector withObject:nil waitUntilDone:NO];
+        
+        //[self performSelectorOnMainThread:selector withObject:nil waitUntilDone:NO];
+        [self performSelector:selector withObject:nil];
         
         self.cappuccinoProject.isProcessingProject = NO;
     }
@@ -958,6 +939,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 }
 
 - (void)updatePbxFile
+{
+    [self performSelectorInBackground:@selector(_updatePbxFile) withObject:nil];
+}
+
+- (void)_updatePbxFile
 {
     // See pbxprojModifier.py for info on the arguments
     NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
@@ -1042,9 +1028,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [data writeToFile:self.cappuccinoProject.infoPlistPath atomically:YES];
     
     if ([self.cappuccinoProject.ignoredPathsContent length])
-        [self.cappuccinoProject.ignoredPathsContent writeToFile:self.cappuccinoProject.xcodecappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    {
+        NSAttributedString *attributedString = (NSAttributedString*)self.cappuccinoProject.ignoredPathsContent;
+        [[attributedString string] writeToFile:self.cappuccinoProject.xcodecappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    }
     else if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodecappIgnorePath])
+    {
         [self.fm removeItemAtPath:self.cappuccinoProject.xcodecappIgnorePath error:nil];
+    }
 }
 
 
@@ -1100,13 +1091,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [self.currentOperations count];
+    return [self.operationQueue operationCount];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-    [cellView setOperation:[self.currentOperations objectAtIndex:row]];
+    [cellView setOperation:[self.operationQueue.operations objectAtIndex:row]];
         
     [cellView.cancelButton setTarget:self];
     [cellView.cancelButton setAction:@selector(cancelOperation:)];
@@ -1161,13 +1152,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 // Cancel all current operations
 - (IBAction)cancelAllOperations:(id)aSender
 {
-    [self.currentOperations makeObjectsPerformSelector:@selector(cancel)];
+    [self.operationQueue cancelAllOperations];
 }
 
 // Cancel the operation linked to the sender
 - (IBAction)cancelOperation:(id)sender
 {
-    ProcessSourceOperation *operation = [self.currentOperations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
+    ProcessSourceOperation *operation = [self.operationQueue.operations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 

@@ -26,4 +26,6 @@ extern NSString * const kDefaultXCCLastLoadedProjectPath;
 
 extern NSString * const kDefaultXCCLastEventId;
 
+extern NSString * const kDefaultXCCMaxNumberOfOperations;
+
 #endif

@@ -262,6 +262,7 @@
         return;
     
     [self.projectTableView deselectRow:selectedCappuccinoProject];
+    [[self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject] cancelAllOperations:aSender];
     [self.cappuccinoProjectController removeObjectAtIndex:selectedCappuccinoProject];
     [self.projectTableView reloadData];
     

@@ -164,6 +164,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
         return;
 
     ProcessSourceOperation *op = [[ProcessSourceOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager sourcePath:projectSourcePath];
+    
     [[NSOperationQueue currentQueue] addOperation:op];
 }
 

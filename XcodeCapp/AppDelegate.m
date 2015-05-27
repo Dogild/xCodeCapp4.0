@@ -69,7 +69,8 @@
                                 kDefaultXCCReopenLastProject: @YES,
                                 kDefaultXCCUpdateCappuccinoWithLastVersionOfMasterBranch: @NO,
                                 kDefaultXCCUseSymlinkWhenCreatingProject: @YES,
-                                kDefaultXCCLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN]
+                                kDefaultXCCLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN],
+                                kDefaultXCCMaxNumberOfOperations: @20
                                 };
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
