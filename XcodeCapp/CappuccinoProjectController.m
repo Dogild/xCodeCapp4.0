@@ -24,6 +24,14 @@
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
 
+enum XCCLineSpecifier {
+    kLineSpecifierNone,
+    kLineSpecifierColon,
+    kLineSpecifierMinusL,
+    kLineSpecifierPlus
+};
+typedef enum XCCLineSpecifier XCCLineSpecifier;
+
 NSString * const XCCStartListeningProjectNotification = @"XCCStartListeningProject";
 NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject";
 
@@ -48,6 +56,8 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 // after changes are made to source files. Keys are the actions "add" or "remove",
 // values are arrays of full paths to source files that need to be added or removed.
 @property NSMutableDictionary *pbxOperations;
+
+@property NSTimer *loadingTimer;
 
 - (void)handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds;
 
@@ -83,6 +93,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         self.cappuccinoProject = [[CappuccinoProject alloc] initWithPath:aPath];
                 
         [self _init];
+        
+        [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:kDefaultXCCMaxNumberOfOperations
+                                                   options:NSKeyValueObservingOptionNew
+                                                   context:NULL];
     }
     
     return self;
@@ -101,6 +116,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     self.lastEventId = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastEventId];
     
     self.projectPathFileDescriptor = -1;
+}
+
+// Watch changes to the max number of operations in the preference
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kDefaultXCCMaxNumberOfOperations])
+        [self.operationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
 }
 
 - (void)_initPbxOperations
@@ -326,6 +348,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)initObservers
 {
+    [self removeObservers];
+    
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
     [center addObserver:self selector:@selector(addSourceToProjectPathMappingHandler:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
@@ -345,18 +369,23 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateErrorHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
-    
-    [[NSUserDefaults standardUserDefaults] addObserver:self
-                                            forKeyPath:kDefaultXCCMaxNumberOfOperations
-                                               options:NSKeyValueObservingOptionNew
-                                               context:NULL];
 }
 
-// Watch changes to the max number of operations in the preference
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)removeObservers
 {
-    if ([keyPath isEqualToString:kDefaultXCCMaxNumberOfOperations])
-        [self.operationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
+    [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
+    [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
+    [center removeObserver:self name:XCCConversionDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
+    [center removeObserver:self name:XCCObjjDidStartNotification object:nil];
+    [center removeObserver:self name:XCCNib2CibDidStartNotification object:nil];
+    [center removeObserver:self name:XCCCappLintDidStartNotification object:nil];
+    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCObjjDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCNib2CibDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCCappLintDidGenerateErrorNotification object:nil];
 }
 
 - (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
@@ -538,6 +567,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
     
     [self stopListenProject];
+    [self initObservers];
     
     FSEventStreamCreateFlags flags = kFSEventStreamCreateFlagUseCFTypes |
                                      kFSEventStreamCreateFlagWatchRoot  |
@@ -581,6 +611,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)stopListenProject
 {
+    [self removeObservers];
+    [_loadingTimer invalidate];
+    [self.operationQueue cancelAllOperations];
+    
     if (self.stream)
     {
         DDLogInfo(@"Stop listen project: %@", self.cappuccinoProject.projectPath);
@@ -878,14 +912,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     self.cappuccinoProject.isProcessingProject = YES;
     
     // Poll every half second to see if the queue has finished
-    NSTimer * timer = [NSTimer scheduledTimerWithTimeInterval:0.5
+    _loadingTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
                                      target:self
                                    selector:@selector(didQueueTimerFinish:)
                                    userInfo:NSStringFromSelector(selector)
                                     repeats:YES];
     
     [[NSRunLoop currentRunLoop] run];
-    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+    [[NSRunLoop currentRunLoop] addTimer:_loadingTimer forMode:NSDefaultRunLoopMode];
 }
 
 - (void)didQueueTimerFinish:(NSTimer *)timer
@@ -1224,6 +1258,112 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         if (response == NSAlertFirstButtonReturn)
             [self synchronizeProject:self];
     }
+}
+
+- (void)openObjjFile:(id)sender
+{
+    id item = [sender itemAtRow:[sender selectedRow]];
+    
+    NSString *path = item;
+    NSInteger line = 1;
+    
+    if ([item isKindOfClass:[OperationError class]])
+    {
+        path = [(OperationError*)item fileName];
+        line = [[(OperationError*)item lineNumber] intValue];
+    }
+    
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    
+    NSString *app, *type;
+    BOOL success = [workspace getInfoForFile:path application:&app type:&type];
+    
+    if (!success)
+    {
+        NSBeep();
+        return;
+    }
+    
+    NSBundle *bundle = [NSBundle bundleWithPath:app];
+    NSString *identifier = bundle.bundleIdentifier;
+    NSString *executablePath = nil;
+    XCCLineSpecifier lineSpecifier = kLineSpecifierNone;
+    
+    if ([identifier hasPrefix:@"com.sublimetext."])
+    {
+        lineSpecifier = kLineSpecifierColon;
+        executablePath = [[bundle sharedSupportPath] stringByAppendingPathComponent:@"bin/subl"];
+    }
+    else if ([identifier isEqualToString:@"com.barebones.textwrangler"])
+    {
+        lineSpecifier = kLineSpecifierColon;
+        executablePath = [[bundle bundlePath] stringByAppendingPathComponent:@"Contents/Helpers/edit"];
+    }
+    else if ([identifier isEqualToString:@"com.barebones.bbedit"])
+    {
+        lineSpecifier = kLineSpecifierColon;
+        executablePath = [[bundle bundlePath] stringByAppendingPathComponent:@"Contents/Helpers/bbedit"];
+    }
+    else if ([identifier isEqualToString:@"com.macromates.textmate"])  // TextMate 1.x
+    {
+        lineSpecifier = kLineSpecifierMinusL;
+        executablePath = [[bundle sharedSupportPath] stringByAppendingPathComponent:@"Support/bin/mate"];
+    }
+    else if ([identifier hasPrefix:@"com.macromates.TextMate"])  // TextMate 2.x
+    {
+        lineSpecifier = kLineSpecifierMinusL;
+        executablePath = [bundle pathForResource:@"mate" ofType:@""];
+    }
+    else if ([identifier isEqualToString:@"com.chocolatapp.Chocolat"])
+    {
+        lineSpecifier = kLineSpecifierMinusL;
+        executablePath = [[bundle sharedSupportPath] stringByAppendingPathComponent:@"choc"];
+    }
+    else if ([identifier isEqualToString:@"org.vim.MacVim"])
+    {
+        lineSpecifier = kLineSpecifierPlus;
+        executablePath = @"/usr/local/bin/mvim";
+    }
+    else if ([identifier isEqualToString:@"org.gnu.Aquamacs"])
+    {
+        if ([self.fm isExecutableFileAtPath:@"/usr/bin/aquamacs"])
+            executablePath = @"/usr/bin/aquamacs";
+        else if ([self.fm isExecutableFileAtPath:@"/usr/local/bin/aquamacs"])
+            executablePath = @"/usr/local/bin/aquamacs";
+    }
+    else if ([identifier isEqualToString:@"com.apple.dt.Xcode"])
+    {
+        executablePath = [[bundle bundlePath] stringByAppendingPathComponent:@"Contents/Developer/usr/bin/xed"];
+    }
+    
+    if (!executablePath || ![self.fm isExecutableFileAtPath:executablePath])
+    {
+        [workspace openFile:path];
+        return;
+    }
+    
+    NSArray *args;
+    
+    switch (lineSpecifier)
+    {
+        case kLineSpecifierNone:
+            args = @[path];
+            break;
+            
+        case kLineSpecifierColon:
+            args = @[[NSString stringWithFormat:@"%1$@:%2$ld", path, line]];
+            break;
+            
+        case kLineSpecifierMinusL:
+            args = @[@"-l", [NSString stringWithFormat:@"%ld", line], path];
+            break;
+            
+        case kLineSpecifierPlus:
+            args = @[[NSString stringWithFormat:@"+%ld", line], path];
+            break;
+    }
+    
+    [self.taskManager runTaskWithCommand:executablePath arguments:args returnType:kTaskReturnTypeNone];
 }
 
 @end

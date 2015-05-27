@@ -135,10 +135,19 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     
     if ([self.fm fileExistsAtPath:self.xcodecappIgnorePath])
     {
-        self.ignoredPathsContent = [NSString stringWithContentsOfFile:self.xcodecappIgnorePath encoding:NSUTF8StringEncoding error:nil];
-        NSArray *ignoredPatterns = [self.ignoredPathsContent componentsSeparatedByString:@"\n"];
-        NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
-        [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
+        @try
+        {
+            self.ignoredPathsContent = [NSString stringWithContentsOfFile:self.xcodecappIgnorePath encoding:NSUTF8StringEncoding error:nil];
+            NSArray *ignoredPatterns = [self.ignoredPathsContent componentsSeparatedByString:@"\n"];
+            NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
+            [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
+        }
+        @catch(NSException *exception)
+        {
+            DDLogVerbose(@"Content of xcodecapp-ignorepath does not math the expected input");
+            self.ignoredPathPredicates = [NSMutableArray array];
+        }
+
     }
     
     DDLogVerbose(@"Ignoring file paths: %@", self.ignoredPathPredicates);

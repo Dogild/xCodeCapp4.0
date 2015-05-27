@@ -235,6 +235,8 @@
     
     [self.errorOutlineView setDelegate:currentController];
     [self.errorOutlineView setDataSource:currentController];
+    [self.errorOutlineView setDoubleAction:@selector(openObjjFile:)];
+    [self.errorOutlineView setTarget:currentController];
     
     // This can't be bound because we can't save an indexSet in a plist
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
@@ -262,7 +264,7 @@
         return;
     
     [self.projectTableView deselectRow:selectedCappuccinoProject];
-    [[self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject] cancelAllOperations:aSender];
+    [[self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject] stopListenProject];
     [self.cappuccinoProjectController removeObjectAtIndex:selectedCappuccinoProject];
     [self.projectTableView reloadData];
     
@@ -319,6 +321,11 @@
 - (IBAction)removeErrors:(id)aSender
 {
     [[self currentCappuccinoProjectController] removeErrors:aSender];
+}
+
+- (IBAction)openXcodeProject:(id)aSender
+{
+    [[self currentCappuccinoProjectController] openXcodeProject:aSender];
 }
 
 @end

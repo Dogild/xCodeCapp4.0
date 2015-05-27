@@ -507,7 +507,7 @@
                                                             </scroller>
                                                         </scrollView>
                                                         <button verticalHuggingPriority="750" id="lBM-rR-ONJ">
-                                                            <rect key="frame" x="508" y="10" width="162" height="32"/>
+                                                            <rect key="frame" x="519" y="10" width="162" height="32"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <buttonCell key="cell" type="push" title="Save configurations" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FQa-uk-OzR">
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -518,7 +518,7 @@
                                                             </connections>
                                                         </button>
                                                         <button verticalHuggingPriority="750" id="Ea0-Mt-Gqb">
-                                                            <rect key="frame" x="392" y="10" width="116" height="32"/>
+                                                            <rect key="frame" x="266" y="10" width="116" height="32"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <buttonCell key="cell" type="push" title="Synchronize" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rwM-Nk-Pgo">
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -526,6 +526,17 @@
                                                             </buttonCell>
                                                             <connections>
                                                                 <action selector="synchronizeProject:" target="923-ke-ovW" id="czE-u9-nnG"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button verticalHuggingPriority="750" id="AaA-r0-ROn">
+                                                            <rect key="frame" x="382" y="10" width="128" height="32"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="push" title="Open on xCode" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0Sq-MU-vxi">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="openXcodeProject:" target="923-ke-ovW" id="NKx-dy-Y98"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
