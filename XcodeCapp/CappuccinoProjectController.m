@@ -545,7 +545,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataOutlineView
 {
-    [self.mainWindowController.errorOutlineView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [self.mainWindowController.errorOutlineView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
 }
 
 /*
@@ -553,7 +553,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  */
 - (void)_reloadDataOperationsTableView
 {
-    [self.mainWindowController.operationTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [self.mainWindowController.operationTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
 }
 
 
@@ -935,7 +935,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         // which has no return value.
         
         //[self performSelectorOnMainThread:selector withObject:nil waitUntilDone:NO];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [self performSelector:selector withObject:nil];
+#pragma clang diagnostic pop
         
         self.cappuccinoProject.isProcessingProject = NO;
     }
@@ -965,8 +968,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)operationsDidFinish
 {
     [self updatePbxFile];
-    
-    // show errors
     
     // If the event stream was temporarily stopped, restart it
     [self startFSEventStream];
@@ -1019,9 +1020,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if ([path isEqualToString:self.cappuccinoProject.projectPath])
     {
         [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-        NSInteger response = NSRunAlertPanel(@"The project moved.", @"Your project directory has moved. Would you like to reload the project or quit XcodeCapp?", @"Reload", @"Quit", nil);
+        NSInteger response = NSRunAlertPanel(@"The project moved.", @"Your project directory has moved. Would you like to reload the project or unlink it from XcodeCapp?", @"Reload", @"Unlink", nil);
         
-        BOOL shouldQuit = YES;
+        BOOL shouldUnlink = YES;
         
         if (response == NSAlertDefaultReturn)
         {
@@ -1031,21 +1032,22 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
             
             if (result == 0)
             {
-                self.cappuccinoProject.projectPath = [NSString stringWithUTF8String:newPathBuf];
-                shouldQuit = NO;
+                self.cappuccinoProject = [[CappuccinoProject alloc] initWithPath:[NSString stringWithUTF8String:newPathBuf]];
+                shouldUnlink = NO;
             }
             else
                 NSRunAlertPanel(@"The project can’t be located.", @"I’m sorry Dave, but I don’t know where the project went. I’m afraid I have to quit now.", @"OK, HAL", nil, nil);
         }
         
-        if (shouldQuit)
+        if (shouldUnlink)
         {
-            [[NSApplication sharedApplication] terminate:self];
+            [self.mainWindowController unlinkProject:self];
             return;
         }
     }
     
     [self synchronizeProject:self];
+    [self.mainWindowController saveCurrentProjects];
 }
 
 

@@ -242,6 +242,12 @@
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
 }
 
+- (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem
+{
+    [self.errorOutlineView reloadData];
+    [self.operationTableView reloadData];
+}
+
 #pragma mark - button bar project tableView
 
 - (IBAction)loadProject:(id)aSender
@@ -262,9 +268,19 @@
     
     if (selectedCappuccinoProject == -1)
         return;
+
+    [self unlinkProject:[self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject]];
+}
+
+- (void)unlinkProject:(CappuccinoProjectController*)aController
+{
+    NSInteger selectedCappuccinoProject = [self.cappuccinoProjectController indexOfObject:aController];
+    
+    if (selectedCappuccinoProject == -1)
+        return;
     
     [self.projectTableView deselectRow:selectedCappuccinoProject];
-    [[self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject] stopListenProject];
+    [aController stopListenProject];
     [self.cappuccinoProjectController removeObjectAtIndex:selectedCappuccinoProject];
     [self.projectTableView reloadData];
     

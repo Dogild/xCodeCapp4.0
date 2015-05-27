@@ -35,4 +35,6 @@ extern NSString * const XCCStopListeningProjectNotification;
 - (IBAction)removeErrors:(id)aSender;
 - (IBAction)openXcodeProject:(id)sender;
 
+- (void)openObjjFile:(id)sender;
+
 @end

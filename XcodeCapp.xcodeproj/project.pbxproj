@@ -104,7 +104,6 @@
 		6841F2411AF98CE600CFE60E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6841F2431AF98CE600CFE60E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6841F2451AF98CE600CFE60E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		6841F2481AF98CE600CFE60E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		6841F24E1AF98CE600CFE60E /* XcodeCappTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XcodeCappTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6841F2531AF98CE600CFE60E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6841F2541AF98CE600CFE60E /* XcodeCappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XcodeCappTests.m; sourceTree = "<group>"; };
@@ -150,6 +149,7 @@
 		6863FBA11AFD55A900040C8E /* LogUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
 		6863FBA21AFD55A900040C8E /* LogUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogUtils.m; sourceTree = "<group>"; };
 		686ACD301B16397F0089EB03 /* CappuccinoProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappuccinoProjectController.m; sourceTree = "<group>"; };
+		686ACD331B1691AA0089EB03 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		686C696F1B0FAE620095BB3C /* OperationErrorHeaderCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationErrorHeaderCellView.h; sourceTree = "<group>"; };
 		686C69701B0FAE620095BB3C /* OperationErrorHeaderCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationErrorHeaderCellView.m; sourceTree = "<group>"; };
 		686C69721B0FC2EB0095BB3C /* CappLintUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappLintUtils.h; sourceTree = "<group>"; };
@@ -529,7 +529,7 @@
 		6841F2471AF98CE600CFE60E /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				6841F2481AF98CE600CFE60E /* Base */,
+				686ACD331B1691AA0089EB03 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";

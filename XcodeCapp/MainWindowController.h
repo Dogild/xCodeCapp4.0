@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class CappuccinoProject;
+@class CappuccinoProjectController;
 
 @interface MainWindowController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
@@ -29,5 +30,8 @@
 - (void)addProjectPath:(NSString*)aProjectPath;
 - (void)pruneProjectHistory;
 - (void)fetchProjects;
+- (void)saveCurrentProjects;
+
+- (void)unlinkProject:(CappuccinoProjectController*)aController;
 
 @end
