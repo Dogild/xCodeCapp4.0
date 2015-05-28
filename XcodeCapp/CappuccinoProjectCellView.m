@@ -60,20 +60,13 @@
         if (self.cappuccinoProject.isLoadingProject)
         {
             [self.loadButton setEnabled:NO];
-            self.loadButton.title = @"Loading";
         }
         else if (self.cappuccinoProject.isProjectLoaded)
         {
-            if (self.cappuccinoProject.isListeningProject)
-                self.loadButton.title = @"Stop listening";
-            else
-                self.loadButton.title = @"Start listening";
-                    
             [self.loadButton setEnabled:YES];
         }
         else
         {
-            self.loadButton.title = @"Load";
             [self.loadButton setEnabled:YES];
         }
         

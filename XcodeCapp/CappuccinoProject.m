@@ -71,7 +71,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     if (self != [CappuccinoProject class])
         return;
     
-    XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:[[Path alloc] initWithName:@"/usr/local/narwhal/bin"], [[Path alloc] initWithName:@"~/narwhal/bin"], nil];
+    XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:[[Path alloc] initWithName:@"/Users/Tonio/Documents/Alcatel/Applications/CNA-Dashboard/.cappenvs/environments/master/narwhal/bin"], nil];
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
     

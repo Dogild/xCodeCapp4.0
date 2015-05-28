@@ -152,13 +152,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
         
         NSRunAlertPanel(
-                        @"Executables are missing.",
+                        @"Some Executables are missing.",
                         @"Please make sure that each one of these executables:\n\n"
                         @"%@\n\n"
                         @"(or a symlink to it) is within one these directories:\n\n"
                         @"%@\n\n"
                         @"They do not all have to be in the same directory.",
-                        @"Quit",
+                        @"OK",
                         nil,
                         nil,
                         [taskManager.executables componentsJoinedByString:@"\n"],
@@ -209,6 +209,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self prepareXcodeSupport];
     
     self.taskManager = [self makeTaskManager];
+    
+    if (!self.taskManager.isValid)
+        return;
     
     [self populateXcodeProject];
     [self populatexCodeCappTargetedFiles];
@@ -975,7 +978,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)updatePbxFile
 {
-    [self performSelectorInBackground:@selector(_updatePbxFile) withObject:nil];
+    [self _updatePbxFile];
 }
 
 - (void)_updatePbxFile

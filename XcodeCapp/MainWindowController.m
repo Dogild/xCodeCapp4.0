@@ -18,12 +18,13 @@
 - (void)awakeFromNib
 {
     [self initObservers];
-    [self pruneProjectHistory];
-    [self fetchProjects];
 }
 
 - (void)windowDidLoad
 {
+    [self pruneProjectHistory];
+    [self fetchProjects];
+
     [self selectLastProjectSelected];
     [self loadLastProjectsLoaded];
 }
@@ -167,6 +168,7 @@
     self.cappuccinoProjectController = [NSMutableArray new];
     
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
+    NSLog(@"---------- %@", projectHistory);
     
     for (NSString *path in projectHistory)
     {
