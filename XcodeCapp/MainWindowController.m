@@ -168,7 +168,6 @@
     self.cappuccinoProjectController = [NSMutableArray new];
     
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
-    NSLog(@"---------- %@", projectHistory);
     
     for (NSString *path in projectHistory)
     {
@@ -283,6 +282,8 @@
     
     [self.projectTableView deselectRow:selectedCappuccinoProject];
     [aController stopListenProject];
+    [aController removeXcodeProject];
+    [aController removeXcodeSupportDirectory];
     [self.cappuccinoProjectController removeObjectAtIndex:selectedCappuccinoProject];
     [self.projectTableView reloadData];
     

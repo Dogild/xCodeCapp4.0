@@ -29,6 +29,9 @@ extern NSString * const XCCStopListeningProjectNotification;
 - (void)stopListenProject;
 - (void)startListenProject;
 
+- (void)removeXcodeProject;
+- (void)removeXcodeSupportDirectory;
+
 - (IBAction)save:(id)sender;
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)synchronizeProject:(id)aSender;

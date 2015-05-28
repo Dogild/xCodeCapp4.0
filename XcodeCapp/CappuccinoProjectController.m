@@ -269,8 +269,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  */
 - (void)createXcodeProject
 {
-    if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
-        [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
+    [self removeXcodeProject];
     
     [self.fm createDirectoryAtPath:self.cappuccinoProject.xcodeProjectPath withIntermediateDirectories:YES attributes:nil error:nil];
     
@@ -285,13 +284,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogInfo(@"Xcode support project created at: %@", self.cappuccinoProject.xcodeProjectPath);
 }
 
+- (void)removeXcodeProject
+{
+    if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
+        [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
+}
+
 /*
  Create the folder .XcodeSupport
  */
 - (void)createXcodeSupportDirectory
 {
-    if ([self.fm fileExistsAtPath:self.cappuccinoProject.supportPath])
-        [self.fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
+    [self removeXcodeSupportDirectory];
     
     [self.fm createDirectoryAtPath:self.cappuccinoProject.supportPath withIntermediateDirectories:YES attributes:nil error:nil];
     
@@ -302,6 +306,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [data writeToFile:self.cappuccinoProject.infoPlistPath atomically:YES];
     
     DDLogInfo(@".XcodeSupport directory created at: %@", self.cappuccinoProject.supportPath);
+}
+
+- (void)removeXcodeSupportDirectory
+{
+    if ([self.fm fileExistsAtPath:self.cappuccinoProject.supportPath])
+        [self.fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
 }
 
 - (void)populateXcodeProject
@@ -548,7 +558,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataOutlineView
 {
-    [self.mainWindowController.errorOutlineView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+    [self.mainWindowController.errorOutlineView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
 /*
@@ -556,7 +566,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  */
 - (void)_reloadDataOperationsTableView
 {
-    [self.mainWindowController.operationTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+    [self.mainWindowController.operationTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
 

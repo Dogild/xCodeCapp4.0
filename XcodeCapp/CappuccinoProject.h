@@ -30,6 +30,9 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // Project name
 @property NSString *projectName;
 
+// Project name
+@property NSString *projectSurname;
+
 // Full path to the <project>.xcodeproj
 @property NSString *xcodeProjectPath;
 

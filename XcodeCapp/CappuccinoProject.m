@@ -41,6 +41,9 @@ NSString * const XCCCappuccinoProjectBinPaths = @"XCCCappuccinoProjectBinPaths";
 // Path used by objj
 NSString *const XCCCappuccinoObjjIncludePath = @"XCCCappuccinoObjjIncludePath";
 
+// Bin paths used by this project
+NSString * const XCCCappuccinoProjectSurname = @"XCCCappuccinoProjectSurname";
+
 // Default environement paths
 static NSArray * XCCDefaultEnvironmentPaths;
 
@@ -81,7 +84,8 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
                                           XCCCappuccinoProcessNib2Cib: @YES,
                                           XCCCappuccinoProcessObjj2ObjcSkeleton: @YES,
                                           XCCCappuccinoProjectBinPaths: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
-                                          XCCCappuccinoObjjIncludePath: @""};
+                                          XCCCappuccinoObjjIncludePath: @"",
+                                          XCCCappuccinoProjectSurname: @""};
 }
 
 + (NSArray*)defaultEnvironmentPaths
@@ -182,6 +186,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     
     self.environementsPaths = mutablePaths;
     
+    
     [self didChangeValueForKey:@"objjIncludePath"];
     [self didChangeValueForKey:@"shouldProcessWithObjjWarnings"];
     [self didChangeValueForKey:@"shouldProcessWithCappLint"];
@@ -205,6 +210,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
     
     defaultSettings[XCCCappuccinoObjjIncludePath] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
+    defaultSettings[XCCCappuccinoProjectSurname] = [self.projectName copy];
     
     return defaultSettings;
 }
@@ -312,6 +318,18 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
     [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithNib2Cib] forKey:XCCCappuccinoProcessNib2Cib];
     [self didChangeValueForKey:@"shouldProcessWithNib2Cib"];
+}
+
+- (NSString*)projectSurname
+{
+    return [self settingValueForKey:XCCCappuccinoProjectSurname];
+}
+
+- (void)setProjectSurname:(NSString *)projectSurname
+{
+    [self willChangeValueForKey:@"projectSurname"];
+    [self.projectSettings setValue:projectSurname forKey:XCCCappuccinoProjectSurname];
+    [self didChangeValueForKey:@"projectSurname"];
 }
 
 @end
