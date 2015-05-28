@@ -243,12 +243,6 @@
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
 }
 
-- (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem
-{
-    [self.errorOutlineView reloadData];
-    [self.operationTableView reloadData];
-}
-
 #pragma mark - button bar project tableView
 
 - (IBAction)loadProject:(id)aSender

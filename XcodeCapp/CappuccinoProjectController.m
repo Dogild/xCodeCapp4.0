@@ -42,6 +42,9 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 // A queue for threaded operations to perform
 @property NSOperationQueue *operationQueue;
 
+// A queue for threaded operations to perform
+@property NSMutableArray *operations;
+
 @property FSEventStreamRef stream;
 
 // The last FSEvent id we received. This is stored in the user prefs
@@ -106,6 +109,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)_init
 {
     self.taskManager = nil;
+    
+    self.operations = [NSMutableArray new];
     
     self.operationQueue = [NSOperationQueue new];
     [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
@@ -418,7 +423,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-        
+    
+    [self.operations performSelectorOnMainThread:@selector(addObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
 
@@ -461,6 +467,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     NSString *path = note.userInfo[@"sourcePath"];
     
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
     
     if ([CappuccinoUtils isObjjFile:path])
@@ -472,6 +479,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError defaultOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
@@ -480,7 +488,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-        
+    
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
@@ -490,6 +499,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
@@ -499,6 +509,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
@@ -507,7 +518,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-        
+    
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[CappLintUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
@@ -1141,13 +1153,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [self.operationQueue operationCount];
+    return [self.operations count];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-    [cellView setOperation:[self.operationQueue.operations objectAtIndex:row]];
+    [cellView setOperation:[self.operations objectAtIndex:row]];
         
     [cellView.cancelButton setTarget:self];
     [cellView.cancelButton setAction:@selector(cancelOperation:)];
@@ -1203,6 +1215,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (IBAction)cancelAllOperations:(id)aSender
 {
     [self.operationQueue cancelAllOperations];
+    [self.operations removeAllObjects];
+    
+    [self _reloadDataOperationsTableView];
 }
 
 // Cancel the operation linked to the sender
