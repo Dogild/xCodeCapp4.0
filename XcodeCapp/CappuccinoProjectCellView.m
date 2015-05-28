@@ -20,6 +20,8 @@
     
     [self.textField setStringValue:[cappuccinoProject projectName]];
     [self.pathTextField setStringValue:[cappuccinoProject projectPath]];
+    
+    self.boxStatus.borderColor = [NSColor clearColor];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
@@ -46,32 +48,29 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == self.cappuccinoProject)
+    if (object != self.cappuccinoProject)
+        return;
+
+    if (self.cappuccinoProject.isLoadingProject || self.cappuccinoProject.isProcessingProject)
+        self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:107.0/255.0 green:148.0/255.0 blue:236.0/255.0 alpha:1.0];
+    else if ([self.cappuccinoProject.errors count])
+        self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:247.0/255.0 green:97.0/255.0 blue:89.0/255.0 alpha:1.0];
+    else if (self.cappuccinoProject.isListeningProject)
+        self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:179.0/255.0 green:214.0/255.0 blue:69.0/255.0 alpha:1.0];
+    else
+        self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
+    
+    if (self.cappuccinoProject.isLoadingProject || self.cappuccinoProject.isListeningProject)
     {
-        if (self.cappuccinoProject.isLoadingProject || self.cappuccinoProject.isProcessingProject)
-            self.imageView.image = [CappuccinoUtils iconWorking];
-        else if ([self.cappuccinoProject.errors count])
-            self.imageView.image = [CappuccinoUtils iconError];
-        else if (self.cappuccinoProject.isListeningProject)
-            self.imageView.image = [CappuccinoUtils iconActive];
-        else
-            self.imageView.image = [CappuccinoUtils iconInactive];
-        
-        if (self.cappuccinoProject.isLoadingProject)
-        {
-            [self.loadButton setEnabled:NO];
-        }
-        else if (self.cappuccinoProject.isProjectLoaded)
-        {
-            [self.loadButton setEnabled:YES];
-        }
-        else
-        {
-            [self.loadButton setEnabled:YES];
-        }
-        
-        [self.loadButton sizeToFit];
+        self.loadButton.image = [NSImage imageNamed:@"stop"];
+        self.loadButton.alternateImage = [NSImage imageNamed:@"stop-white"];
     }
+    else
+    {
+        self.loadButton.image = [NSImage imageNamed:@"run"];
+        self.loadButton.alternateImage = [NSImage imageNamed:@"run-white"];
+    }
+    
 }
 
 @end

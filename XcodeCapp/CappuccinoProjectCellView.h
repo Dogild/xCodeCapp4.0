@@ -14,6 +14,7 @@
 
 @property (nonatomic, retain) IBOutlet NSTextField *pathTextField;
 @property (nonatomic, retain) IBOutlet NSButton *loadButton;
+@property (nonatomic, retain) IBOutlet NSBox *boxStatus;
 @property (nonatomic, retain) CappuccinoProject *cappuccinoProject;
 
 @end
