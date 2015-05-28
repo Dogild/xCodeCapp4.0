@@ -42,6 +42,9 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 // A queue for threaded operations to perform
 @property NSOperationQueue *operationQueue;
 
+// A queue for threaded operations to perform
+@property NSMutableArray *operations;
+
 @property FSEventStreamRef stream;
 
 // The last FSEvent id we received. This is stored in the user prefs
@@ -106,6 +109,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)_init
 {
     self.taskManager = nil;
+    
+    self.operations = [NSMutableArray new];
     
     self.operationQueue = [NSOperationQueue new];
     [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
@@ -418,7 +423,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-        
+    
+    [self.operations performSelectorOnMainThread:@selector(addObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
 
@@ -427,7 +433,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCObjj2ObjcSkeletonOperationErrorType];
+    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjj2ObjcSkeletonOperationErrorType]} waitUntilDone:YES];
 }
 
 - (void)sourceConversionObjjDidStart:(NSNotification *)note
@@ -435,15 +441,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCObjjOperationErrorType];
+    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjjOperationErrorType]} waitUntilDone:YES];
 }
 
 - (void)sourceConversionNib2CibDidStart:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-    
-    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCNib2CibOperationErrorType];
+
+    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCNib2CibOperationErrorType]} waitUntilDone:YES];
 }
 
 - (void)sourceConversionCappLintDidStart:(NSNotification *)note
@@ -451,7 +457,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self pruneProcessingErrorsForSourcePath:[note.userInfo objectForKey:@"sourcePath"] type:XCCCappLintOperationErrorType];
+    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCCappLintOperationErrorType]} waitUntilDone:YES];
 }
 
 - (void)sourceConversionDidEndHandler:(NSNotification *)note
@@ -461,6 +467,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     NSString *path = note.userInfo[@"sourcePath"];
     
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
     
     if ([CappuccinoUtils isObjjFile:path])
@@ -472,7 +479,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self sourceConversionDidGenerateError:[OperationError defaultOperationErrorFromDictionary:note.userInfo]];
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError defaultOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
 
@@ -480,8 +488,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-        
-    [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType]];
+    
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
 
@@ -490,7 +499,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo]];
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
 
@@ -499,7 +509,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self sourceConversionDidGenerateError:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
 
@@ -507,15 +518,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-        
-    [self sourceConversionDidGenerateErrors:[CappLintUtils operationErrorsFromDictionary:note.userInfo]];
+    
+    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[CappLintUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
     [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionDidGenerateErrors:(NSArray *)operationErrors
 {
     for (OperationError *operationError in operationErrors)
-        [self sourceConversionDidGenerateError:operationError];
+        [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:operationError  waitUntilDone:YES];
 }
 
 - (void)sourceConversionDidGenerateError:(OperationError *)operationError
@@ -529,16 +541,17 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [[self.cappuccinoProject.errors objectForKey:operationError.fileName] addObject:operationError];
     [self.cappuccinoProject didChangeValueForKey:@"errors"];
     
-    [self _reloadDataOutlineView];
+    [self _reloadDataErrorsOutlineView];
 }
 
-- (void)pruneProcessingErrorsForSourcePath:(NSString*)sourcePath type:(int)errorType
+- (void)pruneProcessingErrorsForSourcePath:(NSDictionary*)info
 {
+    NSString *sourcePath = info[@"sourcePath"];
     NSMutableArray *errorsToRemove = [NSMutableArray array];
     
     OperationError *defaultOperationError = [OperationError new];
     defaultOperationError.fileName = sourcePath;
-    defaultOperationError.errorType = errorType;
+    defaultOperationError.errorType = [info[@"errorType"] intValue];
     
     for (OperationError *operationError in [self.cappuccinoProject.errors objectForKey:sourcePath])
     {
@@ -553,10 +566,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![[self.cappuccinoProject.errors objectForKey:sourcePath] count])
         [self.cappuccinoProject.errors removeObjectForKey:sourcePath];
     
-    [self _reloadDataOutlineView];
+    [self _reloadDataErrorsOutlineView];
 }
 
-- (void)_reloadDataOutlineView
+- (void)_reloadDataErrorsOutlineView
 {
     [self.mainWindowController.errorOutlineView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
@@ -1140,13 +1153,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [self.operationQueue operationCount];
+    return [self.operations count];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-    [cellView setOperation:[self.operationQueue.operations objectAtIndex:row]];
+    [cellView setOperation:[self.operations objectAtIndex:row]];
         
     [cellView.cancelButton setTarget:self];
     [cellView.cancelButton setAction:@selector(cancelOperation:)];
@@ -1202,6 +1215,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (IBAction)cancelAllOperations:(id)aSender
 {
     [self.operationQueue cancelAllOperations];
+    [self.operations removeAllObjects];
+    
+    [self _reloadDataOperationsTableView];
 }
 
 // Cancel the operation linked to the sender
@@ -1218,7 +1234,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.cappuccinoProject.errors removeAllObjects];
     [self.cappuccinoProject didChangeValueForKey:@"errors"];
     
-    [self _reloadDataOutlineView];
+    [self _reloadDataErrorsOutlineView];
 }
 
 // Save the configuration of Cappuccino
