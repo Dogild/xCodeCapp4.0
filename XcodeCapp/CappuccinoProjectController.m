@@ -579,7 +579,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  */
 - (void)_reloadDataOperationsTableView
 {
-    [self.mainWindowController performSelectorOnMainThread:@selector(reloadOperation) withObject:nil waitUntilDone:NO];
+    [self.mainWindowController performSelectorOnMainThread:@selector(reloadOperations) withObject:nil waitUntilDone:NO];
 }
 
 
