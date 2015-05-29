@@ -83,7 +83,7 @@
 
 - (CappuccinoProjectController*)currentCappuccinoProjectController
 {
-    return [self.cappuccinoProjectController objectAtIndex:[self.projectTableView selectedRow]];
+    return [self.cappuccinoProjectControllers objectAtIndex:[self.projectTableView selectedRow]];
 }
 
 - (void)selectLastProjectSelected
@@ -96,11 +96,11 @@
     
     if (lastSelectedProjectPath)
     {
-        for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
+        for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         {
             if ([controller.cappuccinoProject.projectPath isEqualToString:lastSelectedProjectPath])
             {
-                indexToSelect = [self.cappuccinoProjectController indexOfObject:controller];
+                indexToSelect = [self.cappuccinoProjectControllers indexOfObject:controller];
                 break;
             }
         }
@@ -117,7 +117,7 @@
     
     NSArray *lastLoadedProjectPath = [[[NSUserDefaults standardUserDefaults] valueForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
     
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
+    for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
     {
         if ([lastLoadedProjectPath containsObject:controller.cappuccinoProject.projectPath])
             [controller loadProject];
@@ -130,7 +130,7 @@
 {
     NSMutableArray *historyProjectPaths = [NSMutableArray array];
     
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectController)
+    for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
     
     [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCProjectHistory];
@@ -165,7 +165,7 @@
 - (void)fetchProjects
 {
     DDLogVerbose(@"Start : fetching historic projects");
-    self.cappuccinoProjectController = [NSMutableArray new];
+    self.cappuccinoProjectControllers = [NSMutableArray new];
     
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
     
@@ -173,7 +173,7 @@
     {
         CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
         [cappuccinoProjectController setMainWindowController:self];
-        [self.cappuccinoProjectController addObject:cappuccinoProjectController];
+        [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
     [self.projectTableView reloadData];
@@ -198,14 +198,14 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [self.cappuccinoProjectController count];
+    return [self.cappuccinoProjectControllers count];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     CappuccinoProjectCellView *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
     
-    CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectController objectAtIndex:row] cappuccinoProject];
+    CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectControllers objectAtIndex:row] cappuccinoProject];
     
     // No idea why I have to that here, does not work from the xib...
     [cellView.loadButton setAction:@selector(loadProject:)];
@@ -231,7 +231,7 @@
         return;
     }
     
-    CappuccinoProjectController *currentController = [self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject];
+    CappuccinoProjectController *currentController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
     
     self.currentCappuccinoProject = [currentController cappuccinoProject];
     [self.operationTableView setDelegate:currentController];
@@ -252,7 +252,7 @@
 
 - (IBAction)loadProject:(id)aSender
 {
-    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectController objectAtIndex:[self.projectTableView rowForView:aSender]];
+    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:[self.projectTableView rowForView:aSender]];
     
     if (cappuccinoProjectController.cappuccinoProject.isProjectLoaded && cappuccinoProjectController.cappuccinoProject.isListeningProject)
         [cappuccinoProjectController stopListenProject];
@@ -269,12 +269,12 @@
     if (selectedCappuccinoProject == -1)
         return;
 
-    [self unlinkProject:[self.cappuccinoProjectController objectAtIndex:selectedCappuccinoProject]];
+    [self unlinkProject:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
 }
 
 - (void)unlinkProject:(CappuccinoProjectController*)aController
 {
-    NSInteger selectedCappuccinoProject = [self.cappuccinoProjectController indexOfObject:aController];
+    NSInteger selectedCappuccinoProject = [self.cappuccinoProjectControllers indexOfObject:aController];
     
     if (selectedCappuccinoProject == -1)
         return;
@@ -283,7 +283,7 @@
     [aController stopListenProject];
     [aController removeXcodeProject];
     [aController removeXcodeSupportDirectory];
-    [self.cappuccinoProjectController removeObjectAtIndex:selectedCappuccinoProject];
+    [self.cappuccinoProjectControllers removeObjectAtIndex:selectedCappuccinoProject];
     [self.projectTableView reloadData];
     
     [self saveCurrentProjects];
@@ -307,9 +307,9 @@
 - (void)addProjectPath:(NSString*)aProjectPath
 {
     CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath];
-    [self.cappuccinoProjectController addObject:cappuccinoProjectController];
+    [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     
-    NSInteger index = [self.cappuccinoProjectController indexOfObject:cappuccinoProjectController];
+    NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];
 
     [self.projectTableView reloadData];
     [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
@@ -357,9 +357,9 @@
 
 - (IBAction)stopListeningAllProjects:(id)aSender
 {
-    for (int i; i < self.cappuccinoProjectController.count; i++)
+    for (int i; i < self.cappuccinoProjectControllers.count; i++)
     {
-        [[self.cappuccinoProjectController objectAtIndex:i] stopListenProject];
+        [[self.cappuccinoProjectControllers objectAtIndex:i] stopListenProject];
     }
     
 }

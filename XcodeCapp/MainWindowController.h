@@ -19,7 +19,7 @@
 @property (strong) IBOutlet NSTableView    *operationTableView;
 @property (strong) IBOutlet NSOutlineView  *errorOutlineView;
 
-@property (strong) NSMutableArray *cappuccinoProjectController;
+@property (strong) NSMutableArray *cappuccinoProjectControllers;
 @property (strong) CappuccinoProject *currentCappuccinoProject;
 
 - (IBAction)addProject:(id)aSender;
