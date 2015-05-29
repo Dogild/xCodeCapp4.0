@@ -57,9 +57,28 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     return self;
 }
 
-- (NSString*)description
+- (NSString*)operationName
 {
-    return [NSString stringWithFormat:@"%@ %@", self.task.launchPath.lastPathComponent, self.sourcePath];
+    if ([self.task.launchPath.lastPathComponent isEqualToString:@"objj2objcskeleton"])
+        return @"Creating Xcode mirror files";
+    
+    if ([self.task.launchPath.lastPathComponent isEqualToString:@"nib2cib"])
+        return @"Converting xib files";
+
+    if ([self.task.launchPath.lastPathComponent isEqualToString:@"objj"])
+        return @"Checking compilation errors";
+
+    if ([self.task.launchPath.lastPathComponent isEqualToString:@"capp_lint"])
+        return @"Checking style errors";
+    
+    return self.task.launchPath.lastPathComponent;
+}
+
+- (NSString*)operationDescription
+{
+    NSString *path = [NSString stringWithFormat:@"%@/", self.cappuccinoProject.projectPath];
+
+    return [self.sourcePath stringByReplacingOccurrencesOfString:path withString:@""];
 }
 
 - (NSMutableDictionary*)defaultUserInfo
@@ -151,9 +170,11 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 {
     DDLogVerbose(@"Running processing task: %@", aCommand);
     
-    [self willChangeValueForKey:@"description"];
+    [self willChangeValueForKey:@"operationDescription"];
+    [self willChangeValueForKey:@"operationName"];
     self.task = [self.taskManager taskWithCommand:aCommand arguments:arguments];
-    [self didChangeValueForKey:@"description"];
+    [self didChangeValueForKey:@"operationDescription"];
+    [self didChangeValueForKey:@"operationName"];
     
     NSDictionary *taskResult = [self.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
     

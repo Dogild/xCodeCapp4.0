@@ -15,11 +15,13 @@
 {
     if (newWindow)
     {
-        [self.textField bind:@"stringValue" toObject:self.operation withKeyPath:@"description" options:nil];
+        [self.textField bind:@"stringValue" toObject:self.operation withKeyPath:@"operationName" options:nil];
+        [self.fieldDescription bind:@"stringValue" toObject:self.operation withKeyPath:@"operationDescription" options:nil];
     }
     else
     {
         [self.textField unbind:@"stringValue"];
+        [self.fieldDescription unbind:@"stringValue"];
     }
 }
 

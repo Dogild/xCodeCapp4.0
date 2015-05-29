@@ -12,6 +12,8 @@
 
 @interface OperationCellView : NSTableCellView
 
+@property (nonatomic, retain) IBOutlet NSTextField *fieldDescription;
+
 @property (nonatomic, retain) IBOutlet NSButton *cancelButton;
 @property (nonatomic, retain) ProcessSourceOperation *operation;
 
