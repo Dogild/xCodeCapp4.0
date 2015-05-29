@@ -964,15 +964,15 @@
                                                     <rect key="frame" x="10" y="33" width="643" height="601"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="64" horizontalPageScroll="10" verticalLineScroll="64" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="wuN-gf-f2N">
-                                                            <rect key="frame" x="18" y="57" width="608" height="541"/>
+                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="wuN-gf-f2N">
+                                                            <rect key="frame" x="18" y="17" width="608" height="578"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <clipView key="contentView" id="qka-36-yyR">
-                                                                <rect key="frame" x="1" y="1" width="606" height="539"/>
+                                                                <rect key="frame" x="1" y="1" width="606" height="576"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <tableView identifier="OperationsTableView" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="62" rowSizeStyle="automatic" viewBased="YES" id="MpN-dD-QWe">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="539"/>
+                                                                    <tableView identifier="OperationsTableView" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="34" rowSizeStyle="automatic" viewBased="YES" id="MpN-dD-QWe">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="576"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -992,11 +992,11 @@
                                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                                                 <prototypeCellViews>
                                                                                     <tableCellView identifier="OperationCell" id="J40-QH-QKh" customClass="OperationCellView">
-                                                                                        <rect key="frame" x="1" y="1" width="603" height="62"/>
+                                                                                        <rect key="frame" x="1" y="1" width="603" height="34"/>
                                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="u9B-yS-Cs3">
-                                                                                                <rect key="frame" x="0.0" y="45" width="603" height="17"/>
+                                                                                                <rect key="frame" x="1" y="9" width="581" height="17"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="myx-l6-DiJ">
                                                                                                     <font key="font" metaFont="system"/>
@@ -1005,9 +1005,9 @@
                                                                                                 </textFieldCell>
                                                                                             </textField>
                                                                                             <button verticalHuggingPriority="750" id="zYt-vg-7eJ">
-                                                                                                <rect key="frame" x="513" y="9" width="83" height="32"/>
+                                                                                                <rect key="frame" x="582" y="8" width="18" height="18"/>
                                                                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
-                                                                                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U92-QG-dg2">
+                                                                                                <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="U92-QG-dg2">
                                                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                                                     <font key="font" metaFont="system"/>
                                                                                                     <string key="keyEquivalent" base64-UTF8="YES">
@@ -1037,17 +1037,6 @@ Gw
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                             </scroller>
                                                         </scrollView>
-                                                        <button verticalHuggingPriority="750" id="ZXn-8W-De2">
-                                                            <rect key="frame" x="499" y="10" width="173" height="32"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                            <buttonCell key="cell" type="push" title="Cancel all Operations" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gRV-1N-nKs">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="cancelAllOperations:" target="923-ke-ovW" id="BUC-pR-BtT"/>
-                                                            </connections>
-                                                        </button>
                                                     </subviews>
                                                 </view>
                                             </tabViewItem>
@@ -1309,6 +1298,7 @@ Original Cocoa version developed by:
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
+        <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
         <image name="icon-error" width="16" height="17"/>
         <image name="icon_128x128" width="128" height="128"/>
         <image name="openxcode" width="36" height="36"/>
