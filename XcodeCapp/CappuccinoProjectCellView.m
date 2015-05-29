@@ -22,6 +22,7 @@
     [self.pathTextField setStringValue:[cappuccinoProject projectPath]];
     
     self.boxStatus.borderColor = [NSColor clearColor];
+    self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
@@ -70,7 +71,13 @@
         self.loadButton.image = [NSImage imageNamed:@"run"];
         self.loadButton.alternateImage = [NSImage imageNamed:@"run-white"];
     }
-    
+}
+
+- (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle
+{
+    NSColor *textColor = (backgroundStyle == NSBackgroundStyleDark) ? [NSColor windowBackgroundColor] : [NSColor controlShadowColor];
+    self.pathTextField.textColor = textColor;
+    [super setBackgroundStyle:backgroundStyle];
 }
 
 @end
