@@ -1250,11 +1250,7 @@ Original Cocoa version developed by:
                                         </menu>
                                     </popUpButtonCell>
                                     <connections>
-                                        <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxNumberOfOperations" id="WkT-fq-usP">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
+                                        <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxNumberOfOperations" id="j7z-8T-ux4"/>
                                     </connections>
                                 </popUpButton>
                             </subviews>

@@ -11,8 +11,9 @@
 @class CappuccinoProject;
 @class CappuccinoError;
 
-@interface CappuccinoUtils : NSObject
 
+@interface CappuccinoUtils : NSObject
++ (NSArray *)defaultIgnoredPaths;
 + (BOOL)isObjjFile:(NSString *)path;
 + (BOOL)isXibFile:(NSString *)path;
 + (BOOL)isCibFile:(NSString *)path;
@@ -28,11 +29,4 @@
 + (NSArray *)getPathsToWatchForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 
 + (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
-
-+ (NSImage *)iconActive;
-+ (NSImage *)iconInactive;
-+ (NSImage *)iconWorking;
-+ (NSImage *)iconError;
-+ (NSImage *)iconWarning;
-
 @end

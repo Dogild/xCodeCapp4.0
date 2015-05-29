@@ -54,14 +54,7 @@ NSString * const XCCProjectDidFinishLoadingNotification = @"XCCProjectDidFinishL
 NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoadingNotification";
 
 @interface CappuccinoProject ()
-
 @property NSFileManager *fm;
-
-// A queue for threaded operations to perform
-@property NSOperationQueue *operationQueue;
-
-@property NSDictionary *projectSettings;
-
 @end
 
 
@@ -142,7 +135,15 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
         @try
         {
             self.ignoredPathsContent = [NSString stringWithContentsOfFile:self.xcodecappIgnorePath encoding:NSUTF8StringEncoding error:nil];
-            NSArray *ignoredPatterns = [self.ignoredPathsContent componentsSeparatedByString:@"\n"];
+            
+            NSMutableArray *ignoredPatterns = [NSMutableArray new];
+            
+            for (NSString *pattern in [CappuccinoUtils defaultIgnoredPaths])
+                [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
+            
+            for (NSString *pattern in [self.ignoredPathsContent componentsSeparatedByString:@"\n"])
+                [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
+            
             NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
             [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
         }

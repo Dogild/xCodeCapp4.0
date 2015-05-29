@@ -37,6 +37,9 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 
 @interface CappuccinoProjectController ()
 
+@property NSDate *lastReloadErrorsViewDate;
+@property NSDate *lastReloadOperationsViewDate;
+
 @property NSFileManager *fm;
 
 // A queue for threaded operations to perform
@@ -437,9 +440,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    NSString *path = note.userInfo[@"sourcePath"];
-    
     [self _removeOperation:note.userInfo[@"operation"]];
+    
+    NSString *path = note.userInfo[@"sourcePath"];
+    if ([CappuccinoUtils isObjjFile:path])
+        [self.pbxOperations[@"add"] addObject:path];
 }
 
 - (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
@@ -532,11 +537,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self _reloadDataErrorsOutlineView];
 }
 
-- (void)_reloadDataErrorsOutlineView
-{
-    [self.mainWindowController reloadErrors];
-}
-
 - (void)_addOperation:(NSOperation*)anOperation
 {
     [self.operations addObject:anOperation];
@@ -549,12 +549,24 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self _reloadDataOperationsTableView];
 }
 
-/*
- Remove an operation and reload the tableView
- */
+- (void)_reloadDataErrorsOutlineView
+{
+//    if (self.lastReloadErrorsViewDate && ABS([self.lastReloadErrorsViewDate timeIntervalSinceNow]) < 0.5)
+//        return;
+//    
+    [self.mainWindowController reloadErrors];
+    
+    self.lastReloadErrorsViewDate = [NSDate date];
+}
+
 - (void)_reloadDataOperationsTableView
 {
+//    if (self.lastReloadOperationsViewDate && ABS([self.lastReloadOperationsViewDate timeIntervalSinceNow]) < 0.5)
+//        return;
+    
     [self.mainWindowController reloadOperations];
+    
+    self.lastReloadOperationsViewDate = [NSDate date];
 }
 
 

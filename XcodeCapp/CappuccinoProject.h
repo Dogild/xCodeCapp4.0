@@ -66,6 +66,9 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 // Whether we are currently processing source files
 @property BOOL isProcessingProject;
 
+// The settings of the project
+@property NSDictionary *projectSettings;
+
 // A list of errors generated from the current batch of source processing
 @property NSMutableDictionary *errors;
 

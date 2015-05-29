@@ -17,13 +17,7 @@ static NSPredicate * XCCDirectoriesToIgnorePredicate = nil;
 static NSString * const XCCDirectoriesToIgnorePattern = @"^(?:Build|F(?:rameworks|oundation)|AppKit|Objective-J|(?:Browser|CommonJS)\\.environment|Resources|XcodeSupport|.+\\.xcodeproj)$";
 
 // An array of the default predicates used to ignore paths.
-static NSArray *XCCDefaultIgnoredPathPredicates = nil;
-
-static NSImage *XCCIconError;
-static NSImage *XCCIconActive;
-static NSImage *XCCIconWorking;
-static NSImage *XCCIconInactive;
-static NSImage *XCCIconWarning;
+static NSArray *XCCDefaultIgnoredPaths = nil;
 
 @implementation CappuccinoUtils
 
@@ -34,30 +28,23 @@ static NSImage *XCCIconWarning;
     
     XCCDirectoriesToIgnorePredicate = [NSPredicate predicateWithFormat:@"SELF matches %@", XCCDirectoriesToIgnorePattern];
     
-    NSArray *defaultIgnoredPaths = @[
-                                     @"*/Frameworks/",
-                                     @"!*/Frameworks/Debug/",
-                                     @"!*/Frameworks/Source/",
-                                     @"*/AppKit/",
-                                     @"*/Foundation/",
-                                     @"*/Objective-J/",
-                                     @"*/*.environment/",
-                                     @"*/Build/",
-                                     @"*/*.xcodeproj/",
-                                     @"*/.*/",
-                                     @"*/NS_*.j",
-                                     @"*/main.j",
-                                     @"*/.*",
-                                     @"!*/.xcodecapp-ignore"
-                                     ];
-    
-    XCCDefaultIgnoredPathPredicates = [self parseIgnorePaths:defaultIgnoredPaths];
-    
-    XCCIconError = [NSImage imageNamed:@"icon-error"];
-    XCCIconWarning = [NSImage imageNamed:@"icon-warning"];
-    XCCIconActive = [NSImage imageNamed:@"icon-active"];
-    XCCIconInactive = [NSImage imageNamed:@"icon-inactive"];
-    XCCIconWorking = [NSImage imageNamed:@"icon-working"];
+    XCCDefaultIgnoredPaths = @[
+                                 @"Frameworks/*",
+                                 @"AppKit/*",
+                                 @"Foundation/*",
+                                 @"Objective-J/*",
+                                 @"Build/*",
+                                 @"*.xcodeproj/*",
+                                 @".XcodeSupport/*"
+                                 @"NS_*.j",
+                                 @"main.j",
+                                 @".xcodecapp-ignore"
+                                 ];
+}
+
++ (NSArray *)defaultIgnoredPaths
+{
+    return XCCDefaultIgnoredPaths;
 }
 
 + (BOOL)isObjjFile:(NSString *)path
@@ -108,11 +95,8 @@ static NSImage *XCCIconWarning;
 + (BOOL)pathMatchesIgnoredPaths:(NSString*)aPath cappuccinoProjectIgnoredPathPredicates:(NSMutableArray*)cappuccinoProjectIgnoredPathPredicates
 {
     BOOL ignore = NO;
-    
-    NSMutableArray *ignoredPathPredicates = [XCCDefaultIgnoredPathPredicates mutableCopy];
-    [ignoredPathPredicates addObjectsFromArray:cappuccinoProjectIgnoredPathPredicates];
-    
-    for (NSDictionary *ignoreInfo in ignoredPathPredicates)
+        
+    for (NSDictionary *ignoreInfo in cappuccinoProjectIgnoredPathPredicates)
     {
         BOOL matches = [ignoreInfo[@"predicate"] evaluateWithObject:aPath];
         
@@ -235,33 +219,6 @@ static NSImage *XCCIconWarning;
     note.informativeText = aMessage;
     
     [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:note];
-}
-
-#pragma mark - Properties
-
-+ (NSImage *)iconActive
-{
-    return XCCIconActive;
-}
-
-+ (NSImage *)iconInactive
-{
-    return XCCIconInactive;
-}
-
-+ (NSImage *)iconWorking
-{
-    return XCCIconWorking;
-}
-
-+ (NSImage *)iconError
-{
-    return XCCIconError;
-}
-
-+ (NSImage *)iconWarning
-{
-    return XCCIconWarning;
 }
 
 @end
