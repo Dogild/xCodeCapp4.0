@@ -167,6 +167,9 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self willChangeValueForKey:@"environementsPaths"];
     self.projectSettings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
     
+    if (!self.projectSettings)
+        self.projectSettings = [self defaultSettings];
+    
     NSMutableArray *mutablePaths = [NSMutableArray array];
     NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
     
