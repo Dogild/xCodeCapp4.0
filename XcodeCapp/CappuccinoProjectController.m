@@ -420,8 +420,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self.operations performSelectorOnMainThread:@selector(addObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    [self _reloadDataOperationsTableView];
+    [self performSelectorOnMainThread:@selector(_addOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
 }
 
 - (void)sourceConversionObjj2ObjcSkeletonDidStart:(NSNotification *)note
@@ -463,13 +462,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     NSString *path = note.userInfo[@"sourcePath"];
     
-    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    [self _reloadDataOperationsTableView];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     
     if ([CappuccinoUtils isObjjFile:path])
-    {
         [self.pbxOperations[@"add"] addObject:path];
-    }
 }
 
 - (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
@@ -477,9 +473,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError defaultOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
-    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:(NSNotification *)note
@@ -487,9 +482,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType] waitUntilDone:YES];
-    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionObjjDidGenerateErrorHandler:(NSNotification *)note
@@ -497,19 +491,17 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
-    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionNib2CibDidGenerateErrorHandler:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
-    
-    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
-    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionCappLintDidGenerateErrorHandler:(NSNotification *)note
@@ -517,9 +509,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self.operations performSelectorOnMainThread:@selector(removeObject:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[CappLintUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
-    [self _reloadDataOperationsTableView];
 }
 
 - (void)sourceConversionDidGenerateErrors:(NSArray *)operationErrors
@@ -570,6 +561,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)_reloadDataErrorsOutlineView
 {
     [self.mainWindowController performSelectorOnMainThread:@selector(reloadErrors) withObject:nil waitUntilDone:YES];
+}
+
+- (void)_addOperation:(NSOperation*)anOperation
+{
+    [self.operations addObject:anOperation];
+    [self _reloadDataOperationsTableView];
+}
+
+- (void)_removeOperation:(NSOperation*)anOperation
+{
+    [self.operations removeObject:anOperation];
+    [self _reloadDataOperationsTableView];
 }
 
 /*
