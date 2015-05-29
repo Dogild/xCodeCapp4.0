@@ -76,7 +76,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     if (self.isCancelled)
         return;
     
-    [self.task interrupt];
+//    [self.task interrupt];
     [self cancelWithUserInfo:[[self defaultUserInfo] mutableCopy] response:@"Operation canceled" notificationName:XCCConversionDidGenerateCancelNotification];
 }
 
@@ -92,7 +92,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     userInfo[@"errors"] = aResponse;
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
+    });
 }
 
 - (void)main
@@ -101,37 +103,48 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         return;
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        
     NSDictionary *info = [self defaultUserInfo];
     
-    [center postNotificationName:XCCConversionDidStartNotification object:self userInfo:info];
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [center postNotificationName:XCCConversionDidStartNotification object:self userInfo:info];
+    });
     DDLogVerbose(@"Conversion started: %@", self.sourcePath);
-
-    BOOL isXibFile = [CappuccinoUtils isXibFile:self.sourcePath];
-    BOOL isObjjFile = [CappuccinoUtils isObjjFile:self.sourcePath];
-
-    if (isXibFile)
+    
+    @try
     {
-        [self launchNib2CibCommandForPath:self.sourcePath];
-    }
-    else if (isObjjFile)
-    {
-        [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
+        BOOL isXibFile = [CappuccinoUtils isXibFile:self.sourcePath];
+        BOOL isObjjFile = [CappuccinoUtils isObjjFile:self.sourcePath];
         
-        if (!self.cappuccinoProject.isLoadingProject)
+        if (isXibFile)
         {
-            if (!isXibFile)
+            [self launchNib2CibCommandForPath:self.sourcePath];
+        }
+        else if (isObjjFile)
+        {
+            [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
+            
+            if (!self.cappuccinoProject.isLoadingProject)
             {
-                [self launchObjjCommandForPath:self.sourcePath];
-                [self launchCappLintCommandForPath:self.sourcePath];
+                if (!isXibFile)
+                {
+                    [self launchObjjCommandForPath:self.sourcePath];
+                    [self launchCappLintCommandForPath:self.sourcePath];
+                }
             }
         }
+        
+        DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
     }
-    
-    DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
-
-    [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:info];
+    @catch (NSException *exception)
+    {
+        DDLogVerbose(@"Conversion failed: %@", exception);
+    }
+    @finally
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [center postNotificationName:XCCConversionDidEndNotification object:self userInfo:info];
+        });
+    }
 }
 
 - (NSDictionary*)launchTaskForCommand:(NSString*)aCommand arguments:(NSArray*)arguments
@@ -156,7 +169,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidStartNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidStartNotification object:self userInfo:info];
+    });
 
     NSString *command = @"objj2objcskeleton";
     NSArray *arguments = @[
@@ -173,7 +188,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCObjj2ObjcSkeletonDidGenerateErrorNotification];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidEndNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidEndNotification object:self userInfo:info];
+    });
 }
 
 
@@ -184,7 +201,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidStartNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidStartNotification object:self userInfo:info];
+    });
     
     NSString *command = @"nib2cib";
     NSArray *arguments = @[
@@ -201,7 +220,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCNib2CibDidGenerateErrorNotification];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidEndNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCNib2CibDidEndNotification object:self userInfo:info];
+    });
 }
 
 - (void)launchObjjCommandForPath:(NSString*)aPath
@@ -211,7 +232,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidStartNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidStartNotification object:self userInfo:info];
+    });
     
     NSString *command = @"objj";
     NSArray *arguments = @[
@@ -230,7 +253,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCObjjDidGenerateErrorNotification];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidEndNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjjDidEndNotification object:self userInfo:info];
+    });
 }
 
 - (void)launchCappLintCommandForPath:(NSString*)aPath
@@ -240,7 +265,9 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidStartNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidStartNotification object:self userInfo:info];
+    });
     
     NSString *command = @"capp_lint";
     NSString *baseDirectory = [NSString stringWithFormat:@"--basedir='%@'", self.cappuccinoProject.projectPath];
@@ -258,6 +285,8 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         [self cancelWithUserInfo:errorInfo response:result[@"response"] notificationName:XCCCappLintDidGenerateErrorNotification];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidEndNotification object:self userInfo:info];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:XCCCappLintDidEndNotification object:self userInfo:info];
+    });
 }
 @end

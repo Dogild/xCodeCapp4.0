@@ -824,7 +824,7 @@
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                                     <size key="minSize" width="580" height="58"/>
-                                                                                    <size key="maxSize" width="643" height="10000000"/>
+                                                                                    <size key="maxSize" width="661" height="10000000"/>
                                                                                     <attributedString key="textStorage">
                                                                                         <fragment>
                                                                                             <string key="content">*something*
@@ -843,7 +843,7 @@
                                                                                     </attributedString>
                                                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                                     <size key="minSize" width="580" height="58"/>
-                                                                                    <size key="maxSize" width="643" height="10000000"/>
+                                                                                    <size key="maxSize" width="661" height="10000000"/>
                                                                                     <connections>
                                                                                         <binding destination="923-ke-ovW" name="attributedString" keyPath="self.currentCappuccinoProject.ignoredPathsContent" id="6Ij-gC-crd">
                                                                                             <dictionary key="options">
@@ -966,14 +966,14 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <scrollView autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="wuN-gf-f2N">
-                                                            <rect key="frame" x="18" y="17" width="608" height="578"/>
+                                                            <rect key="frame" x="18" y="36" width="608" height="559"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <clipView key="contentView" id="qka-36-yyR">
-                                                                <rect key="frame" x="1" y="1" width="606" height="576"/>
+                                                                <rect key="frame" x="1" y="1" width="606" height="557"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <tableView identifier="OperationsTableView" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="34" rowSizeStyle="automatic" viewBased="YES" id="MpN-dD-QWe">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="0.0"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="557"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1038,6 +1038,17 @@ Gw
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                             </scroller>
                                                         </scrollView>
+                                                        <button verticalHuggingPriority="750" id="azQ-Vf-5fu">
+                                                            <rect key="frame" x="332" y="2" width="123" height="32"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="push" title="Stop that shit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kQd-2H-gYZ">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="cancelAllOperations:" target="923-ke-ovW" id="gI5-36-DpI"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                 </view>
                                             </tabViewItem>

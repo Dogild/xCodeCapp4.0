@@ -28,6 +28,7 @@
 - (IBAction)synchronizeProject:(id)aSender;
 - (IBAction)removeErrors:(id)aSender;
 - (IBAction)stopListeningAllProjects:(id)aSender;
+- (IBAction)listenSelectedCappuccinoProject:(id)aSender;
 
 - (void)addProjectPath:(NSString*)aProjectPath;
 - (void)pruneProjectHistory;

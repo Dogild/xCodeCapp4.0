@@ -207,14 +207,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     [self initObservers];
     [self prepareXcodeSupport];
-    
+
     self.taskManager = [self makeTaskManager];
-    
+
     if (!self.taskManager.isValid)
         return;
     
     [self populateXcodeProject];
-    [self populatexCodeCappTargetedFiles];
     [self waitForOperationQueueToFinishWithSelector:@selector(projectDidFinishLoading)];
 }
 
@@ -336,28 +335,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.operationQueue addOperation:op];
 }
 
-/* 
- Populate the array xCodeCappTargetedFiles based on the xcodecapp-ignore.
- Array which can be used to check the entire project
- */
-- (void)populatexCodeCappTargetedFiles
-{
-    NSDirectoryEnumerator *filesOfProject = [self.fm enumeratorAtPath:self.cappuccinoProject.projectPath];
-    NSString *filename;
-    
-    self.cappuccinoProject.xCodeCappTargetedFiles = [NSMutableArray array];
-    
-    while ((filename = [filesOfProject nextObject] )) {
-        
-        NSString *fullPath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:filename];
-        
-        if (![CappuccinoUtils isSourceFile:fullPath cappuccinoProject:self.cappuccinoProject])
-            continue;
-        
-        [self.cappuccinoProject.xCodeCappTargetedFiles addObject:fullPath];
-    }
-}
-
 #pragma mark - Observers methods
 
 - (void)initObservers
@@ -420,7 +397,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(_addOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
+    [self _addOperation:note.userInfo[@"operation"]];
 }
 
 - (void)sourceConversionObjj2ObjcSkeletonDidStart:(NSNotification *)note
@@ -428,7 +405,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjj2ObjcSkeletonOperationErrorType]} waitUntilDone:YES];
+    [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjj2ObjcSkeletonOperationErrorType]}];
 }
 
 - (void)sourceConversionObjjDidStart:(NSNotification *)note
@@ -436,7 +413,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjjOperationErrorType]} waitUntilDone:YES];
+    [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjjOperationErrorType]}];
 }
 
 - (void)sourceConversionNib2CibDidStart:(NSNotification *)note
@@ -444,7 +421,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
 
-    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCNib2CibOperationErrorType]} waitUntilDone:YES];
+    [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCNib2CibOperationErrorType]}];
 }
 
 - (void)sourceConversionCappLintDidStart:(NSNotification *)note
@@ -452,7 +429,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(pruneProcessingErrorsForSourcePath:) withObject:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCCappLintOperationErrorType]} waitUntilDone:YES];
+    [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCCappLintOperationErrorType]}];
 }
 
 - (void)sourceConversionDidEndHandler:(NSNotification *)note
@@ -462,10 +439,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     NSString *path = note.userInfo[@"sourcePath"];
     
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    
-    if ([CappuccinoUtils isObjjFile:path])
-        [self.pbxOperations[@"add"] addObject:path];
+    [self _removeOperation:note.userInfo[@"operation"]];
 }
 
 - (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
@@ -473,8 +447,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError defaultOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
+    [self _removeOperation:note.userInfo[@"operation"]];
+    [self sourceConversionDidGenerateError:[OperationError defaultOperationErrorFromDictionary:note.userInfo]];
 }
 
 - (void)sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:(NSNotification *)note
@@ -482,8 +456,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType] waitUntilDone:YES];
+    [self _removeOperation:note.userInfo[@"operation"]];
+    [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType]];
 }
 
 - (void)sourceConversionObjjDidGenerateErrorHandler:(NSNotification *)note
@@ -491,8 +465,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[ObjjUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
+    [self _removeOperation:note.userInfo[@"operation"]];
+    [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo]];
 }
 
 - (void)sourceConversionNib2CibDidGenerateErrorHandler:(NSNotification *)note
@@ -500,8 +474,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
 
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo] waitUntilDone:YES];
+    [self _removeOperation:note.userInfo[@"operation"]];
+    [self sourceConversionDidGenerateError:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
 }
 
 - (void)sourceConversionCappLintDidGenerateErrorHandler:(NSNotification *)note
@@ -509,14 +483,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     if (![self notificationBelongsToCurrentProject:note])
         return;
     
-    [self performSelectorOnMainThread:@selector(_removeOperation:) withObject:note.userInfo[@"operation"] waitUntilDone:YES];
-    [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateErrors:) withObject:[CappLintUtils operationErrorsFromDictionary:note.userInfo] waitUntilDone:YES];
+    [self _removeOperation:note.userInfo[@"operation"]];
+    [self sourceConversionDidGenerateErrors:[CappLintUtils operationErrorsFromDictionary:note.userInfo]];
 }
 
 - (void)sourceConversionDidGenerateErrors:(NSArray *)operationErrors
 {
     for (OperationError *operationError in operationErrors)
-        [self performSelectorOnMainThread:@selector(sourceConversionDidGenerateError:) withObject:operationError  waitUntilDone:YES];
+        [self sourceConversionDidGenerateError:operationError];
 }
 
 - (void)sourceConversionDidGenerateError:(OperationError *)operationError
@@ -560,7 +534,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataErrorsOutlineView
 {
-    [self.mainWindowController performSelectorOnMainThread:@selector(reloadErrors) withObject:nil waitUntilDone:YES];
+    [self.mainWindowController reloadErrors];
 }
 
 - (void)_addOperation:(NSOperation*)anOperation
@@ -580,7 +554,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  */
 - (void)_reloadDataOperationsTableView
 {
-    [self.mainWindowController performSelectorOnMainThread:@selector(reloadOperations) withObject:nil waitUntilDone:YES];
+    [self.mainWindowController reloadOperations];
 }
 
 
@@ -938,38 +912,41 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)waitForOperationQueueToFinishWithSelector:(SEL)selector
 {
     self.cappuccinoProject.isProcessingProject = YES;
-    
-    // Poll every half second to see if the queue has finished
-    _loadingTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
-                                     target:self
-                                   selector:@selector(didQueueTimerFinish:)
-                                   userInfo:NSStringFromSelector(selector)
-                                    repeats:YES];
-    
-//    [[NSRunLoop currentRunLoop] run];
-//    [[NSRunLoop currentRunLoop] addTimer:_loadingTimer forMode:NSDefaultRunLoopMode];
+    [self _scheduleLoadingTimerWithSelector:selector];
 }
 
-- (void)didQueueTimerFinish:(NSTimer *)timer
+- (void)_scheduleLoadingTimerWithSelector:(SEL)selector
 {
-    if (self.operationQueue.operationCount == 0)
+    _loadingTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                     target:self
+                                                   selector:@selector(_didLoadingTimerFinish:)
+                                                   userInfo:@{@"selector" : NSStringFromSelector(selector)}
+                                                    repeats:NO];
+  
+}
+
+- (void)_didLoadingTimerFinish:(NSTimer *)timer
+{
+    SEL selector = NSSelectorFromString(timer.userInfo[@"selector"]);
+    
+    if (self.operations.count > 0)
     {
-        SEL selector = NSSelectorFromString(timer.userInfo);
-        
-        [timer invalidate];
-        
-        // Can't use plain performSelect: here because ARC doesn't know what the return value is
-        // because the selector is determined at runtime. So we use performSelectorOnMainThread:
-        // which has no return value.
-        
-        //[self performSelectorOnMainThread:selector withObject:nil waitUntilDone:NO];
+        [self _scheduleLoadingTimerWithSelector:selector];
+        return;
+    }
+
+    
+    // Can't use plain performSelect: here because ARC doesn't know what the return value is
+    // because the selector is determined at runtime. So we use performSelectorOnMainThread:
+    // which has no return value.
+    
+    //[self performSelectorOnMainThread:selector withObject:nil waitUntilDone:NO];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [self performSelector:selector withObject:nil];
+    [self performSelector:selector withObject:nil];
 #pragma clang diagnostic pop
-        
-        self.cappuccinoProject.isProcessingProject = NO;
-    }
+    
+    self.cappuccinoProject.isProcessingProject = NO;
 }
 
 - (void)projectDidFinishLoading
@@ -1003,7 +980,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)updatePbxFile
 {
-    [self _updatePbxFile];
+//    [self _updatePbxFile];
 }
 
 - (void)_updatePbxFile

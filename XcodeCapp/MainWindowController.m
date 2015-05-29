@@ -208,7 +208,7 @@
     CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectControllers objectAtIndex:row] cappuccinoProject];
     
     // No idea why I have to that here, does not work from the xib...
-    [cellView.loadButton setAction:@selector(loadProject:)];
+    [cellView.loadButton setAction:@selector(listenSelectedCappuccinoProject:)];
     [cellView.loadButton setTarget:self];
     
     cellView.cappuccinoProject = cappuccinoProject;
@@ -250,7 +250,7 @@
 
 #pragma mark - button bar project tableView
 
-- (IBAction)loadProject:(id)aSender
+- (IBAction)listenSelectedCappuccinoProject:(id)aSender
 {
     CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:[self.projectTableView rowForView:aSender]];
     

@@ -41,7 +41,14 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 - (void)main
 {
-    [self findSourceFilesAtProjectPath:self.projectPathToSearch];
+    @try
+    {
+        [self findSourceFilesAtProjectPath:self.projectPathToSearch];
+    }
+    @catch (NSException *exception)
+    {
+        DDLogVerbose(@"Finding source files failed: %@", exception);
+    }
 }
 
 - (void)findSourceFilesAtProjectPath:(NSString *)aProjectPath
@@ -122,8 +129,10 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
                     if (self.isCancelled)
                         return;
-
-                    [center postNotificationName:XCCNeedSourceToProjectPathMappingNotification object:self userInfo:info];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [center postNotificationName:XCCNeedSourceToProjectPathMappingNotification object:self userInfo:info];
+                    });
                 }
                 else
                     DDLogVerbose(@"ignored symlinked directory: %@", projectRelativePath);
