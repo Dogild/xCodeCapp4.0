@@ -571,7 +571,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataErrorsOutlineView
 {
-    [self.mainWindowController.errorOutlineView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [self.mainWindowController performSelectorOnMainThread:@selector(reloadErrors) withObject:nil waitUntilDone:NO];
 }
 
 /*
@@ -579,7 +579,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  */
 - (void)_reloadDataOperationsTableView
 {
-    [self.mainWindowController.operationTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [self.mainWindowController performSelectorOnMainThread:@selector(reloadOperations) withObject:nil waitUntilDone:NO];
 }
 
 
@@ -1208,6 +1208,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     cellView.textField.stringValue = item;
     return cellView;
 }
+
+- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item
+{
+    if ([item isKindOfClass:[OperationError class]])
+        return 80.0;
+    else
+        return 20.0;
+}
+
 
 #pragma mark - IBActions methods
 

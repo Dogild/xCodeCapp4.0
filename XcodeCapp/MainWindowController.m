@@ -341,4 +341,15 @@
     [[self currentCappuccinoProjectController] openXcodeProject:aSender];
 }
 
+- (void)reloadErrors
+{
+    [self.errorOutlineView reloadData];
+    [self.errorOutlineView expandItem:nil expandChildren:YES];
+}
+
+- (void)reloadOperations
+{
+    [self.operationTableView reloadData];
+}
+
 @end

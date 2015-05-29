@@ -32,6 +32,9 @@
 - (void)fetchProjects;
 - (void)saveCurrentProjects;
 
+- (void)reloadErrors;
+- (void)reloadOperations;
+
 - (void)unlinkProject:(CappuccinoProjectController*)aController;
 
 @end

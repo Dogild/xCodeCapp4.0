@@ -8,6 +8,18 @@
 
 #import "OperationErrorHeaderCellView.h"
 
+
 @implementation OperationErrorHeaderCellView
 
+- (void)setObjectValue:(id)aPath
+{
+    AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
+    CappuccinoProject *currentProject = appDelegate.mainWindowController.currentCappuccinoProject;
+
+    NSString *path = [NSString stringWithFormat:@"%@/", currentProject.projectPath];
+    NSString *text = [aPath stringByReplacingOccurrencesOfString:path withString:@""];
+    
+    if (text)
+        self.textField.stringValue = text;
+}
 @end

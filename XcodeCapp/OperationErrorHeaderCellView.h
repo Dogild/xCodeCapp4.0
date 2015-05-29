@@ -7,6 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "AppDelegate.h"
+#import "MainWindowController.h"
+#import "CappuccinoProject.h"
 
 @interface OperationErrorHeaderCellView : NSTableCellView
 
