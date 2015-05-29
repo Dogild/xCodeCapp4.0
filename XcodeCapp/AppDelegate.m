@@ -25,6 +25,9 @@
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
+    
+    [self.mainWindowController stopListeningAllProjects:self];
+
     // Insert code here to tear down your application
     DDLogVerbose(@"\n******************************\n**    XcodeCapp stopped     **\n******************************\n");
 }

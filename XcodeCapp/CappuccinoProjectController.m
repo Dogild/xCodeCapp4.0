@@ -176,12 +176,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 #pragma mark - Loading methods
 
-- (void)loadProject
-{
-//    [self performSelectorInBackground:@selector(_loadProject) withObject:nil];
-    [self _loadProject];
-}
-
 /*
  Load the project :
  
@@ -195,7 +189,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  If the project has been loaded, the method will only start to listen the project if needed
  
  */
-- (void)_loadProject
+- (void)loadProject
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
     
@@ -474,7 +468,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     if ([CappuccinoUtils isObjjFile:path])
     {
-        NSLog(@"-----------------> %@", path);
         [self.pbxOperations[@"add"] addObject:path];
     }
 }

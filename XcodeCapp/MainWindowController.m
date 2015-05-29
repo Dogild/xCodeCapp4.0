@@ -355,4 +355,12 @@
     [self.operationTableView reloadData];
 }
 
+- (IBAction)stopListeningAllProjects:(id)aSender
+{
+    for (int i; i < self.cappuccinoProjectController.count; i++)
+    {
+        [[self.cappuccinoProjectController objectAtIndex:i] stopListenProject];
+    }
+    
+}
 @end
