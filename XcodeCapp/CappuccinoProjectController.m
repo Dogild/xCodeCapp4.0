@@ -178,7 +178,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)loadProject
 {
-    [self performSelectorInBackground:@selector(_loadProject) withObject:nil];
+//    [self performSelectorInBackground:@selector(_loadProject) withObject:nil];
+    [self _loadProject];
 }
 
 /*
@@ -309,6 +310,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
                                                     errorDescription:nil];
     
     [data writeToFile:self.cappuccinoProject.infoPlistPath atomically:YES];
+    [self.cappuccinoProject fetchProjectSettings];
     
     DDLogInfo(@".XcodeSupport directory created at: %@", self.cappuccinoProject.supportPath);
 }
@@ -471,7 +473,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self _reloadDataOperationsTableView];
     
     if ([CappuccinoUtils isObjjFile:path])
+    {
+        NSLog(@"-----------------> %@", path);
         [self.pbxOperations[@"add"] addObject:path];
+    }
 }
 
 - (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
@@ -640,6 +645,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self removeObservers];
     [_loadingTimer invalidate];
     [self.operationQueue cancelAllOperations];
+    [self removeErrors:self];
     
     if (self.stream)
     {
@@ -944,8 +950,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
                                    userInfo:NSStringFromSelector(selector)
                                     repeats:YES];
     
-    [[NSRunLoop currentRunLoop] run];
-    [[NSRunLoop currentRunLoop] addTimer:_loadingTimer forMode:NSDefaultRunLoopMode];
+//    [[NSRunLoop currentRunLoop] run];
+//    [[NSRunLoop currentRunLoop] addTimer:_loadingTimer forMode:NSDefaultRunLoopMode];
 }
 
 - (void)didQueueTimerFinish:(NSTimer *)timer

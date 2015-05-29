@@ -317,8 +317,6 @@
     [self saveCurrentProjects];
     
     [CappuccinoUtils notifyUserWithTitle:@"Cappuccino project added" message:aProjectPath];
-    
-    [cappuccinoProjectController loadProject];
 }
 
 - (IBAction)saveSettings:(id)aSender

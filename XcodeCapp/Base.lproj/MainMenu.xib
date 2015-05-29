@@ -371,7 +371,7 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="72" rowSizeStyle="automatic" viewBased="YES" id="Mss-Tu-7kR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="303" height="685"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="303" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
@@ -413,7 +413,7 @@
                                                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                         </box>
                                                                         <button verticalHuggingPriority="750" id="0Kk-a1-H2b">
-                                                                            <rect key="frame" x="56" y="3" width="43.5" height="28"/>
+                                                                            <rect key="frame" x="56" y="3" width="44" height="28"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <buttonCell key="cell" type="push" bezelStyle="rounded" image="openxcode" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21c-Zh-TSt">
                                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -436,7 +436,7 @@
                                                                             <font key="titleFont" metaFont="system"/>
                                                                         </box>
                                                                         <button verticalHuggingPriority="750" id="7pJ-O0-Sk5">
-                                                                            <rect key="frame" x="97" y="3" width="43.5" height="28"/>
+                                                                            <rect key="frame" x="97" y="3" width="44" height="28"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <buttonCell key="cell" type="push" bezelStyle="rounded" image="resync" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0lw-E5-col">
                                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -471,11 +471,11 @@
                                             </subviews>
                                             <nil key="backgroundColor"/>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="GIE-ju-XbD">
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="GIE-ju-XbD">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="NO" id="pb5-AF-zGg">
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="pb5-AF-zGg">
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
@@ -731,7 +731,7 @@
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                             <subviews>
                                                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" columnSelection="YES" autosaveColumns="NO" id="qor-9K-Jon">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="598" height="76"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="598" height="24"/>
                                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                                     <size key="intercellSpacing" width="11" height="7"/>
                                                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -886,7 +886,7 @@
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="50" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="CvU-Li-tl5" id="VIQ-Ns-aOH">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="576"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="0.0"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -973,7 +973,7 @@
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <tableView identifier="OperationsTableView" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="34" rowSizeStyle="automatic" viewBased="YES" id="MpN-dD-QWe">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="576"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="0.0"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
