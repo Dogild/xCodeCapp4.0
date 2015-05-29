@@ -13,6 +13,7 @@
 
 @interface MainWindowController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
+@property (strong) IBOutlet NSBox          *maskingView;
 @property (strong) IBOutlet NSSplitView    *splitView;
 @property (strong) IBOutlet NSTableView    *projectTableView;
 @property (strong) IBOutlet NSTableView    *operationTableView;

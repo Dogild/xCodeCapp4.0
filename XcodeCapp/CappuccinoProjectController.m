@@ -571,7 +571,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataErrorsOutlineView
 {
-    [self.mainWindowController performSelectorOnMainThread:@selector(reloadErrors) withObject:nil waitUntilDone:NO];
+    [self.mainWindowController performSelectorOnMainThread:@selector(reloadErrors) withObject:nil waitUntilDone:YES];
 }
 
 /*
@@ -579,7 +579,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
  */
 - (void)_reloadDataOperationsTableView
 {
-    [self.mainWindowController performSelectorOnMainThread:@selector(reloadOperations) withObject:nil waitUntilDone:NO];
+    [self.mainWindowController performSelectorOnMainThread:@selector(reloadOperations) withObject:nil waitUntilDone:YES];
 }
 
 

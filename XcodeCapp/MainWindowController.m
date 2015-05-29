@@ -225,6 +225,9 @@
         self.currentCappuccinoProject = nil;
         [self.operationTableView setDelegate:nil];
         [self.operationTableView setDataSource:nil];
+        
+        self.maskingView.frame = [[[self.splitView subviews] objectAtIndex:1] bounds];
+        [[[self.splitView subviews] objectAtIndex:1] addSubview:self.maskingView positioned:NSWindowAbove relativeTo:nil];
         return;
     }
     
@@ -233,6 +236,8 @@
     self.currentCappuccinoProject = [currentController cappuccinoProject];
     [self.operationTableView setDelegate:currentController];
     [self.operationTableView setDataSource:currentController];
+    
+    [self.maskingView removeFromSuperview];
     
     [self.errorOutlineView setDelegate:currentController];
     [self.errorOutlineView setDataSource:currentController];
