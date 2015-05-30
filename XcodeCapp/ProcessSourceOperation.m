@@ -270,7 +270,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];
     
-    if ([result[@"status"] intValue] != 0)
+    if ([result[@"response"] length] != 0)
     {
         NSMutableDictionary *errorInfo = [[self defaultUserInfo] mutableCopy];
         

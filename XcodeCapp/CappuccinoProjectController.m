@@ -551,8 +551,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataErrorsOutlineView
 {
-    if (self.lastReloadErrorsViewDate && ABS([self.lastReloadErrorsViewDate timeIntervalSinceNow]) < 0.5)
-        return;
+//    if (self.lastReloadErrorsViewDate && ABS([self.lastReloadErrorsViewDate timeIntervalSinceNow]) < 0.5)
+//        return;
     
     [self.mainWindowController reloadErrors];
 
@@ -561,8 +561,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataOperationsTableView
 {
-    if (self.lastReloadOperationsViewDate && ABS([self.lastReloadOperationsViewDate timeIntervalSinceNow]) < 0.5)
-        return;
+//    if (self.lastReloadOperationsViewDate && ABS([self.lastReloadOperationsViewDate timeIntervalSinceNow]) < 0.5)
+//        return;
     
     [self.mainWindowController reloadOperations];
     
@@ -1200,10 +1200,19 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     return cellView;
 }
 
-- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item
+- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(OperationError *)item
 {
     if ([item isKindOfClass:[OperationError class]])
-        return 41.0;
+    {
+//        CGFloat messageHeight = heightForStringDrawing(item.message, [NSFont fontWithName:@"Menlo" size:11.0]);
+        
+        CGRect frame = [item.message boundingRectWithSize:CGSizeMake([outlineView frame].size.width - 100, CGFLOAT_MAX)
+                                                  options:NSStringDrawingUsesLineFragmentOrigin
+                                               attributes:@{ NSFontAttributeName:[NSFont fontWithName:@"Menlo" size:12] }];
+
+        return frame.size.height + 50;
+    }
+    
     else
         return 20.0;
 }

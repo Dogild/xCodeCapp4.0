@@ -16,5 +16,6 @@
 
 @property (nonatomic, retain) IBOutlet NSTextField *fieldLineNumber;
 @property (nonatomic, retain) IBOutlet NSTextField *labelLineNumber;
+@property (nonatomic, retain) IBOutlet NSBox *boxErrorContent;
 
 @end

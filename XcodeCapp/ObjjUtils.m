@@ -21,7 +21,6 @@
     NSMutableArray *operationErrors = [NSMutableArray array];
     
     [message replaceOccurrencesOfString:@"[0m" withString:@"" options:0 range:NSMakeRange(0, [message length])];
-    NSLog(@"--------->\n%@\n----", message);
     
     @try
     {
@@ -38,7 +37,7 @@
     @catch (NSException *exception)
     {
         NSDictionary *error = @{@"line" : @"0",
-                                @"message" : exception,
+                                @"message" : message,
                                 @"path" : [dictionary objectForKey:@"sourcePath"]};
         
         if (type == XCCObjjOperationErrorType)

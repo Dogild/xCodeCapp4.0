@@ -19,10 +19,10 @@ typedef int XCCOperationErrorType;
 
 @interface OperationError : NSObject
 
-@property (strong) NSString *fileName;
-@property (strong) NSString *message;
-@property (strong) NSString *command;
-@property (strong) NSString *lineNumber;
+@property (nonatomic, retain) NSString *fileName;
+@property (nonatomic, retain) NSString *message;
+@property (nonatomic, retain) NSString *command;
+@property (nonatomic, retain) NSString *lineNumber;
 @property int errorType;
 
 + (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary;

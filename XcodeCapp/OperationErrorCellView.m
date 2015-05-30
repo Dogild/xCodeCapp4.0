@@ -17,12 +17,4 @@
     self.fieldLineNumber.stringValue = operationError.lineNumber;
 }
 
-- (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle
-{
-    NSColor *textColor = (backgroundStyle == NSBackgroundStyleDark) ? [NSColor windowBackgroundColor] : [NSColor controlShadowColor];
-    self.fieldLineNumber.textColor = textColor;
-    self.labelLineNumber.textColor = textColor;
-    [super setBackgroundStyle:backgroundStyle];
-}
-
 @end

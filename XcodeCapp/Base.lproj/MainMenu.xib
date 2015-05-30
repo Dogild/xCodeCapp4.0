@@ -878,14 +878,14 @@
                                                     <rect key="frame" x="10" y="33" width="643" height="601"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="43" horizontalPageScroll="10" verticalLineScroll="43" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="WSF-CC-0kT">
+                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="103" horizontalPageScroll="10" verticalLineScroll="103" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="WSF-CC-0kT">
                                                             <rect key="frame" x="18" y="17" width="608" height="578"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <clipView key="contentView" id="yxZ-E6-Gsi">
                                                                 <rect key="frame" x="1" y="1" width="606" height="576"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="41" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="CvU-Li-tl5" id="VIQ-Ns-aOH">
+                                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" multipleSelection="NO" autosaveColumns="NO" rowHeight="101" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="CvU-Li-tl5" id="VIQ-Ns-aOH">
                                                                         <rect key="frame" x="0.0" y="0.0" width="606" height="0.0"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
@@ -924,11 +924,32 @@
                                                                                         </connections>
                                                                                     </tableCellView>
                                                                                     <tableCellView identifier="OperationErrorCell" id="8eE-6W-Zcl" customClass="OperationErrorCellView">
-                                                                                        <rect key="frame" x="1" y="23" width="603" height="41"/>
+                                                                                        <rect key="frame" x="1" y="23" width="603" height="101"/>
                                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
+                                                                                            <box autoresizesSubviews="NO" cornerRadius="3" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="a5z-QV-U95">
+                                                                                                <rect key="frame" x="3" y="3" width="563" height="80"/>
+                                                                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                                                <view key="contentView">
+                                                                                                    <rect key="frame" x="1" y="1" width="561" height="78"/>
+                                                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                                                    <subviews>
+                                                                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" id="2HE-bm-GRF">
+                                                                                                            <rect key="frame" x="13" y="15" width="535" height="48"/>
+                                                                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                                                            <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Table View Cell" id="qfz-bd-FlK">
+                                                                                                                <font key="font" size="11" name="Menlo-Regular"/>
+                                                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                                                            </textFieldCell>
+                                                                                                        </textField>
+                                                                                                    </subviews>
+                                                                                                </view>
+                                                                                                <color key="borderColor" red="0.81568627449999997" green="0.81568627449999997" blue="0.81568627449999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                                                                <color key="fillColor" red="0.94901967050000002" green="0.94901967050000002" blue="0.94901967050000002" alpha="1" colorSpace="deviceRGB"/>
+                                                                                            </box>
                                                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="POv-oX-I2g">
-                                                                                                <rect key="frame" x="1" y="24" width="74" height="14"/>
+                                                                                                <rect key="frame" x="1" y="84" width="74" height="14"/>
                                                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                                                 <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Line number" id="hId-wz-ild">
                                                                                                     <font key="font" metaFont="smallSystemBold"/>
@@ -937,7 +958,7 @@
                                                                                                 </textFieldCell>
                                                                                             </textField>
                                                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="ixg-H6-umE">
-                                                                                                <rect key="frame" x="79" y="24" width="523" height="14"/>
+                                                                                                <rect key="frame" x="79" y="84" width="523" height="14"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                                                 <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="200" id="o6e-R1-fZg">
                                                                                                     <font key="font" metaFont="smallSystem"/>
@@ -945,17 +966,9 @@
                                                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                                                 </textFieldCell>
                                                                                             </textField>
-                                                                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" id="2HE-bm-GRF">
-                                                                                                <rect key="frame" x="1" y="3" width="601" height="20"/>
-                                                                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                                                <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Table View Cell" id="qfz-bd-FlK">
-                                                                                                    <font key="font" size="11" name="Menlo-Regular"/>
-                                                                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                                                </textFieldCell>
-                                                                                            </textField>
                                                                                         </subviews>
                                                                                         <connections>
+                                                                                            <outlet property="boxErrorContent" destination="a5z-QV-U95" id="oBx-Fq-qEj"/>
                                                                                             <outlet property="fieldLineNumber" destination="ixg-H6-umE" id="4AS-Uc-hRf"/>
                                                                                             <outlet property="labelLineNumber" destination="POv-oX-I2g" id="WIc-Qj-xzN"/>
                                                                                             <outlet property="textField" destination="2HE-bm-GRF" id="EWV-6I-gTj"/>

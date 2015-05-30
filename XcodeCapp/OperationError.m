@@ -10,6 +10,8 @@
 
 @implementation OperationError
 
+@synthesize message = _message;
+
 + (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
     OperationError *operationError = [[self alloc] init];
@@ -77,4 +79,15 @@
     return object.errorType == self.errorType && [object.fileName isEqualToString:self.fileName];
 }
 
+- (NSString *)message
+{
+    
+    NSInteger i = 0;
+    
+    while ((i < [_message length]) && [[NSCharacterSet newlineCharacterSet] characterIsMember:[_message characterAtIndex:i]]) {
+        i++;
+    }
+    
+    return [_message substringFromIndex:i];
+}
 @end
