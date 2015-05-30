@@ -357,10 +357,10 @@
 
 - (IBAction)stopListeningAllProjects:(id)aSender
 {
-    for (int i; i < self.cappuccinoProjectControllers.count; i++)
-    {
-        [[self.cappuccinoProjectControllers objectAtIndex:i] stopListenProject];
-    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:XCCStopListeningProjectNotification object:nil];
     
+    for (int i; i < self.cappuccinoProjectControllers.count; i++)
+        [[self.cappuccinoProjectControllers objectAtIndex:i] stopListenProject];
 }
+
 @end

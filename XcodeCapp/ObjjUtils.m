@@ -17,12 +17,15 @@
 
 + (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary type:(XCCOperationErrorType)type
 {
-    NSString *response = [dictionary objectForKey:@"errors"];
+    NSMutableString *message = [[dictionary objectForKey:@"errors"] mutableCopy];
     NSMutableArray *operationErrors = [NSMutableArray array];
+    
+    [message replaceOccurrencesOfString:@"[0m" withString:@"" options:0 range:NSMakeRange(0, [message length])];
+    NSLog(@"--------->\n%@\n----", message);
     
     @try
     {
-        NSArray *errors = [response propertyList];
+        NSArray *errors = [message propertyList];
         
         for (NSDictionary *error in errors)
         {
@@ -35,7 +38,7 @@
     @catch (NSException *exception)
     {
         NSDictionary *error = @{@"line" : @"0",
-                                @"message" : response,
+                                @"message" : exception,
                                 @"path" : [dictionary objectForKey:@"sourcePath"]};
         
         if (type == XCCObjjOperationErrorType)

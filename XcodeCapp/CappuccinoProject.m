@@ -14,7 +14,8 @@
 
 // We replace "/" in a path with this. It looks like "/",
 // but is actually an obscure Unicode character we hope no one uses in a filename.
-static NSString * const XCCSlashReplacement = @"∕";  // DIVISION SLASH, Unicode: U+2215
+//static NSString * const XCCSlashReplacement = @"∕";  // DIVISION SLASH, Unicode: U+2215
+static NSString * const XCCSlashReplacement = @"/";  // WTF was that? replaced by a normal / for now.
 
 // Where we put the generated Cocoa class files
 static NSString * const XCCSupportFolderName = @".XcodeSupport";

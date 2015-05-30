@@ -551,18 +551,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)_reloadDataErrorsOutlineView
 {
-//    if (self.lastReloadErrorsViewDate && ABS([self.lastReloadErrorsViewDate timeIntervalSinceNow]) < 0.5)
-//        return;
-//    
-    [self.mainWindowController reloadErrors];
+    if (self.lastReloadErrorsViewDate && ABS([self.lastReloadErrorsViewDate timeIntervalSinceNow]) < 0.5)
+        return;
     
+    [self.mainWindowController reloadErrors];
+
     self.lastReloadErrorsViewDate = [NSDate date];
 }
 
 - (void)_reloadDataOperationsTableView
 {
-//    if (self.lastReloadOperationsViewDate && ABS([self.lastReloadOperationsViewDate timeIntervalSinceNow]) < 0.5)
-//        return;
+    if (self.lastReloadOperationsViewDate && ABS([self.lastReloadOperationsViewDate timeIntervalSinceNow]) < 0.5)
+        return;
     
     [self.mainWindowController reloadOperations];
     
@@ -898,7 +898,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         [self.fm removeItemAtPath:shadowHeaderPath error:nil];
         [self.fm removeItemAtPath:shadowImplementationPath error:nil];
         
-        //[self pruneProcessingErrorsForProjectPath:sourcePath];
+        [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" :sourcePath, @"type" : [NSNumber numberWithInt:XCCDefaultOperationErrorType]}];
     }
     
     if (sourcePaths.count)
@@ -1203,7 +1203,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item
 {
     if ([item isKindOfClass:[OperationError class]])
-        return 80.0;
+        return 41.0;
     else
         return 20.0;
 }

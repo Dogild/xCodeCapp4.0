@@ -878,14 +878,14 @@
                                                     <rect key="frame" x="10" y="33" width="643" height="601"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="52" horizontalPageScroll="10" verticalLineScroll="52" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="WSF-CC-0kT">
+                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="43" horizontalPageScroll="10" verticalLineScroll="43" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="WSF-CC-0kT">
                                                             <rect key="frame" x="18" y="17" width="608" height="578"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <clipView key="contentView" id="yxZ-E6-Gsi">
                                                                 <rect key="frame" x="1" y="1" width="606" height="576"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="50" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="CvU-Li-tl5" id="VIQ-Ns-aOH">
+                                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="41" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="CvU-Li-tl5" id="VIQ-Ns-aOH">
                                                                         <rect key="frame" x="0.0" y="0.0" width="606" height="0.0"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
@@ -910,7 +910,7 @@
                                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="F9w-ex-an5">
-                                                                                                <rect key="frame" x="1" y="3" width="602" height="17"/>
+                                                                                                <rect key="frame" x="6" y="3" width="602" height="17"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                                                 <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="Table View Cell" id="O8l-Wx-2MF">
                                                                                                     <font key="font" size="12" name="Menlo-Regular"/>
@@ -924,20 +924,40 @@
                                                                                         </connections>
                                                                                     </tableCellView>
                                                                                     <tableCellView identifier="OperationErrorCell" id="8eE-6W-Zcl" customClass="OperationErrorCellView">
-                                                                                        <rect key="frame" x="1" y="23" width="603" height="50"/>
+                                                                                        <rect key="frame" x="1" y="23" width="603" height="41"/>
                                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
-                                                                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="2HE-bm-GRF">
-                                                                                                <rect key="frame" x="0.0" y="33" width="603" height="17"/>
+                                                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="POv-oX-I2g">
+                                                                                                <rect key="frame" x="1" y="24" width="74" height="14"/>
+                                                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                                                <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Line number" id="hId-wz-ild">
+                                                                                                    <font key="font" metaFont="smallSystemBold"/>
+                                                                                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                                                </textFieldCell>
+                                                                                            </textField>
+                                                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="ixg-H6-umE">
+                                                                                                <rect key="frame" x="79" y="24" width="523" height="14"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="qfz-bd-FlK">
-                                                                                                    <font key="font" metaFont="system"/>
+                                                                                                <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="200" id="o6e-R1-fZg">
+                                                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                                                </textFieldCell>
+                                                                                            </textField>
+                                                                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" id="2HE-bm-GRF">
+                                                                                                <rect key="frame" x="1" y="3" width="601" height="20"/>
+                                                                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                                                <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Table View Cell" id="qfz-bd-FlK">
+                                                                                                    <font key="font" size="11" name="Menlo-Regular"/>
                                                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                                                 </textFieldCell>
                                                                                             </textField>
                                                                                         </subviews>
                                                                                         <connections>
+                                                                                            <outlet property="fieldLineNumber" destination="ixg-H6-umE" id="4AS-Uc-hRf"/>
+                                                                                            <outlet property="labelLineNumber" destination="POv-oX-I2g" id="WIc-Qj-xzN"/>
                                                                                             <outlet property="textField" destination="2HE-bm-GRF" id="EWV-6I-gTj"/>
                                                                                         </connections>
                                                                                     </tableCellView>
@@ -965,15 +985,15 @@
                                                     <rect key="frame" x="10" y="33" width="643" height="601"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="52" horizontalPageScroll="10" verticalLineScroll="52" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="wuN-gf-f2N">
+                                                        <scrollView autohidesScrollers="YES" horizontalLineScroll="42" horizontalPageScroll="10" verticalLineScroll="42" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="wuN-gf-f2N">
                                                             <rect key="frame" x="18" y="36" width="608" height="559"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <clipView key="contentView" id="qka-36-yyR">
                                                                 <rect key="frame" x="1" y="1" width="606" height="557"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <tableView identifier="OperationsTableView" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="50" rowSizeStyle="automatic" viewBased="YES" id="MpN-dD-QWe">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="557"/>
+                                                                    <tableView identifier="OperationsTableView" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="40" rowSizeStyle="automatic" viewBased="YES" id="MpN-dD-QWe">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="606" height="0.0"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -993,11 +1013,11 @@
                                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                                                 <prototypeCellViews>
                                                                                     <tableCellView identifier="OperationCell" id="J40-QH-QKh" customClass="OperationCellView">
-                                                                                        <rect key="frame" x="1" y="1" width="603" height="50"/>
+                                                                                        <rect key="frame" x="1" y="1" width="603" height="40"/>
                                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="u9B-yS-Cs3">
-                                                                                                <rect key="frame" x="1" y="25" width="581" height="17"/>
+                                                                                                <rect key="frame" x="1" y="20" width="581" height="17"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="myx-l6-DiJ">
                                                                                                     <font key="font" metaFont="systemBold"/>
@@ -1006,7 +1026,7 @@
                                                                                                 </textFieldCell>
                                                                                             </textField>
                                                                                             <button verticalHuggingPriority="750" id="zYt-vg-7eJ">
-                                                                                                <rect key="frame" x="582" y="24" width="18" height="18"/>
+                                                                                                <rect key="frame" x="579" y="14" width="18" height="18"/>
                                                                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                                                                                                 <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="U92-QG-dg2">
                                                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1017,9 +1037,9 @@ Gw
                                                                                                 </buttonCell>
                                                                                             </button>
                                                                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="Uv9-Qd-wMM">
-                                                                                                <rect key="frame" x="1" y="8" width="581" height="17"/>
+                                                                                                <rect key="frame" x="1" y="3" width="581" height="17"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="0kE-nU-jc5">
+                                                                                                <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="0kE-nU-jc5">
                                                                                                     <font key="font" size="11" name="Menlo-Regular"/>
                                                                                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1028,7 +1048,7 @@ Gw
                                                                                         </subviews>
                                                                                         <connections>
                                                                                             <outlet property="cancelButton" destination="zYt-vg-7eJ" id="knm-n9-afp"/>
-                                                                                            <outlet property="fieldDescription" destination="Uv9-Qd-wMM" id="DC0-Lz-knT"/>
+                                                                                            <outlet property="fieldDescription" destination="Uv9-Qd-wMM" id="9OG-lP-btu"/>
                                                                                             <outlet property="textField" destination="u9B-yS-Cs3" id="m0j-uV-07d"/>
                                                                                         </connections>
                                                                                     </tableCellView>
