@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "XCCOperationError.h"
 
-@class TaskManager;
+@class XCCTaskLauncher;
 
 @interface XCCCappuccinoProject : NSObject
 

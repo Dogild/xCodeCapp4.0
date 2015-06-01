@@ -1,5 +1,5 @@
 //
-//  TaskManager.h
+//  TaskLauncher.h
 //  XcodeCapp
 //
 //  Created by Alexandre Wilhelm on 5/6/15.
@@ -18,7 +18,7 @@ enum XCCTaskReturnType {
 
 typedef enum XCCTaskReturnType XCCTaskReturnType;
 
-@interface TaskManager : NSObject
+@interface XCCTaskLauncher : NSObject
 {
     BOOL _isCappBuildDefined;
 }

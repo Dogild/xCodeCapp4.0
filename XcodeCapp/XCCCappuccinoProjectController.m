@@ -20,7 +20,7 @@
 #import "XCCOperationErrorHeaderDataView.h"
 #import "ObjjUtils.h"
 #import "XCCCSourceProcessingOperation.h"
-#import "TaskManager.h"
+#import "XCCTaskLauncher.h"
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
 
@@ -94,7 +94,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_init
 {
-    self.taskManager    = nil;
+    self.taskLauncher    = nil;
     self.operations     = [NSMutableArray new];
     self.operationQueue = [NSOperationQueue new];
     
@@ -125,7 +125,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 #pragma mark - Task manager methods
 
-- (TaskManager*)makeTaskManager
+- (XCCTaskLauncher*)makeTaskLauncher
 {
     NSArray *environementPaths;
     
@@ -134,9 +134,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     else
         environementPaths = [self.cappuccinoProject.environementsPaths valueForKeyPath:@"name"];
     
-    TaskManager *taskManager = [[TaskManager alloc] initWithEnvironementPaths:environementPaths];
+    XCCTaskLauncher *taskLauncher = [[XCCTaskLauncher alloc] initWithEnvironementPaths:environementPaths];
     
-    if (!taskManager.isValid)
+    if (!taskLauncher.isValid)
     {
         [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
         
@@ -150,11 +150,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                         @"OK",
                         nil,
                         nil,
-                        [taskManager.executables componentsJoinedByString:@"\n"],
-                        [taskManager.environmentPaths componentsJoinedByString:@"\n"]);
+                        [taskLauncher.executables componentsJoinedByString:@"\n"],
+                        [taskLauncher.environmentPaths componentsJoinedByString:@"\n"]);
     }
     
-    return taskManager;
+    return taskLauncher;
 }
 
 
@@ -177,9 +177,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _startListeningToNotifications];
     [self _prepareXcodeSupport];
 
-    self.taskManager = [self makeTaskManager];
+    self.taskLauncher = [self makeTaskLauncher];
 
-    if (!self.taskManager.isValid)
+    if (!self.taskLauncher.isValid)
         return;
     
     [self _populateXcodeSupportDirectory];
@@ -365,7 +365,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_populateXcodeSupportDirectoryWithProjectRelativePath:(NSString *)path
 {
-    XCCSourcesFinderOperation *op = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager path:path];
+    XCCSourcesFinderOperation *op = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self.taskLauncher sourcePath:path];
     [self.operationQueue addOperation:op];
 }
 
@@ -731,7 +731,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             continue;
         
         XCCCSourceProcessingOperation *op = [[XCCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
-                                                                                   taskManager:self.taskManager
+                                                                                   taskLauncher:self.taskLauncher
                                                                                     sourcePath:[self.cappuccinoProject projectPathForSourcePath:path]];
 
         [self.operationQueue addOperation:op];
@@ -923,7 +923,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     // This task takes less than a second to execute, no need to put it a separate thread
-    NSDictionary *taskResult = [self.taskManager runTaskWithCommand:@"python"
+    NSDictionary *taskResult = [self.taskLauncher runTaskWithCommand:@"python"
                                                  arguments:arguments
                                                 returnType:kTaskReturnTypeStdError];
     
@@ -1057,7 +1057,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     if (self.cappuccinoProject.isLoaded)
     {
-        self.taskManager = [self makeTaskManager];
+        self.taskLauncher = [self makeTaskLauncher];
         [self.cappuccinoProject updateIgnoredPath];
     }
     
@@ -1202,7 +1202,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             break;
     }
     
-    [self.taskManager runTaskWithCommand:executablePath arguments:args returnType:kTaskReturnTypeNone];
+    [self.taskLauncher runTaskWithCommand:executablePath arguments:args returnType:kTaskReturnTypeNone];
 }
 
 - (IBAction)switchProjectListeningStatus:(id)sender

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class XCCCappuccinoProject;
-@class TaskManager;
+@class XCCTaskLauncher;
 
 extern NSString * const XCCConversionDidStartNotification;
 extern NSString * const XCCConversionDidGenerateErrorNotification;
@@ -33,7 +33,7 @@ extern NSString * const XCCConversionDidGenerateCancelNotification;
 @property NSTask *task;
 
 // sourcePath should be a path within the project (no resolved symlinks)
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath;
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath;
 - (NSString *)operationName;
 - (NSString *)operationDescription;
 @end

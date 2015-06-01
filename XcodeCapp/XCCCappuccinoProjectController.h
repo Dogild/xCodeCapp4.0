@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class XCCCappuccinoProject;
-@class TaskManager;
+@class XCCTaskLauncher;
 @class XCCMainController;
 
 extern NSString * const XCCStartListeningProjectNotification;
@@ -21,7 +21,7 @@ extern NSString * const XCCStopListeningProjectNotification;
 @property XCCMainController *mainWindowController;
 
 // Task manager of the project
-@property TaskManager *taskManager;
+@property XCCTaskLauncher *taskLauncher;
 
 - (id)initWithPath:(NSString*)aPath controller:(id)aController;
 

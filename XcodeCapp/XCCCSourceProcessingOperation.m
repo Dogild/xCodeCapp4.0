@@ -9,7 +9,7 @@
 #import "XCCCSourceProcessingOperation.h"
 #import "XCCCappuccinoProject.h"
 #import "CappuccinoUtils.h"
-#import "TaskManager.h"
+#import "XCCTaskLauncher.h"
 
 NSString * const XCCConversionDidEndNotification = @"XCCConversionDidStopNotification";
 NSString * const XCCConversionDidGenerateErrorNotification = @"XCCConversionDidGenerateErrorNotification";
@@ -34,7 +34,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 @interface XCCCSourceProcessingOperation ()
 
-@property TaskManager *taskManager;
+@property XCCTaskLauncher *taskLauncher;
 @property XCCCappuccinoProject *cappuccinoProject;
 @property NSString *sourcePath;
 
@@ -43,13 +43,13 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 @implementation XCCCSourceProcessingOperation
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
 {
     self = [super init];
 
     if (self)
     {
-        self.taskManager = aTaskManager;
+        self.taskLauncher = aTaskLauncher;
         self.cappuccinoProject = aCappuccinoProject;
         self.sourcePath = sourcePath;
     }
@@ -172,11 +172,11 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     
     [self willChangeValueForKey:@"operationDescription"];
     [self willChangeValueForKey:@"operationName"];
-    self.task = [self.taskManager taskWithCommand:aCommand arguments:arguments];
+    self.task = [self.taskLauncher taskWithCommand:aCommand arguments:arguments];
     [self didChangeValueForKey:@"operationDescription"];
     [self didChangeValueForKey:@"operationName"];
     
-    NSDictionary *taskResult = [self.taskManager runTask:self.task returnType:kTaskReturnTypeAny];
+    NSDictionary *taskResult = [self.taskLauncher runTask:self.task returnType:kTaskReturnTypeAny];
     
     DDLogInfo(@"Processed %@:", self.sourcePath);
     

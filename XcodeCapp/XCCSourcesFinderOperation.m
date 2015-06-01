@@ -9,7 +9,7 @@
 #import "XCCSourcesFinderOperation.h"
 #import "XCCCSourceProcessingOperation.h"
 #import "XCCCappuccinoProject.h"
-#import "TaskManager.h"
+#import "XCCTaskLauncher.h"
 #import "CappuccinoUtils.h"
 
 NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSourceToProjectPathMappingNotification";
@@ -17,7 +17,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 @interface XCCSourcesFinderOperation ()
 
 @property XCCCappuccinoProject *cappuccinoProject;
-@property TaskManager *taskManager;
+@property XCCTaskLauncher *taskLauncher;
 @property NSString *projectPathToSearch;
 
 @end
@@ -25,15 +25,15 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 @implementation XCCSourcesFinderOperation
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager path:(NSString *)path
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
 {
     self = [super init];
     
     if (self)
     {
         self.cappuccinoProject = aCappuccinoProject;
-        self.taskManager = aTaskManager;
-        self.projectPathToSearch = path;
+        self.taskLauncher = aTaskLauncher;
+        self.projectPathToSearch = sourcePath;
     }
     
     return self;
@@ -172,7 +172,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     if (self.isCancelled)
         return;
 
-    XCCCSourceProcessingOperation *op = [[XCCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager sourcePath:projectSourcePath];
+    XCCCSourceProcessingOperation *op = [[XCCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self.taskLauncher sourcePath:projectSourcePath];
     
     [[NSOperationQueue currentQueue] addOperation:op];
 }

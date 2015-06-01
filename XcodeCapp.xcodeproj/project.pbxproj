@@ -47,7 +47,7 @@
 		6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */ = {isa = PBXBuildFile; fileRef = 6841F28A1AF9932300CFE60E /* project.pbxproj */; };
 		6841F2B31AF9932300CFE60E /* XcodeCapp.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2991AF9932300CFE60E /* XcodeCapp.iconset */; };
 		6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2B61AFA83D500CFE60E /* UserDefaults.m */; };
-		6841F2BF1AFA965300CFE60E /* TaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BE1AFA965300CFE60E /* TaskManager.m */; };
+		6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */; };
 		6841F2C41AFABD7200CFE60E /* XCCCappuccinoProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C31AFABD7200CFE60E /* XCCCappuccinoProject.m */; };
 		6841F2CA1AFADEBC00CFE60E /* XCCSourcesFinderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C71AFADEBC00CFE60E /* XCCSourcesFinderOperation.m */; };
 		6841F2CB1AFADEBC00CFE60E /* XCCCSourceProcessingOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C91AFADEBC00CFE60E /* XCCCSourceProcessingOperation.m */; };
@@ -145,8 +145,8 @@
 		6841F2991AF9932300CFE60E /* XcodeCapp.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = XcodeCapp.iconset; sourceTree = "<group>"; };
 		6841F2B61AFA83D500CFE60E /* UserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDefaults.m; sourceTree = "<group>"; };
 		6841F2B81AFA83E900CFE60E /* UserDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserDefaults.h; sourceTree = "<group>"; };
-		6841F2BD1AFA965300CFE60E /* TaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskManager.h; sourceTree = "<group>"; };
-		6841F2BE1AFA965300CFE60E /* TaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskManager.m; sourceTree = "<group>"; };
+		6841F2BD1AFA965300CFE60E /* XCCTaskLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCTaskLauncher.h; sourceTree = "<group>"; };
+		6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCTaskLauncher.m; sourceTree = "<group>"; };
 		6841F2C21AFABD7200CFE60E /* XCCCappuccinoProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XCCCappuccinoProject.h; path = XcodeCapp/XCCCappuccinoProject.h; sourceTree = "<group>"; };
 		6841F2C31AFABD7200CFE60E /* XCCCappuccinoProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XCCCappuccinoProject.m; path = XcodeCapp/XCCCappuccinoProject.m; sourceTree = "<group>"; };
 		6841F2C61AFADEBC00CFE60E /* XCCSourcesFinderOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCSourcesFinderOperation.h; sourceTree = "<group>"; };
@@ -329,8 +329,8 @@
 			children = (
 				6841F2B61AFA83D500CFE60E /* UserDefaults.m */,
 				6841F2B81AFA83E900CFE60E /* UserDefaults.h */,
-				6841F2BD1AFA965300CFE60E /* TaskManager.h */,
-				6841F2BE1AFA965300CFE60E /* TaskManager.m */,
+				6841F2BD1AFA965300CFE60E /* XCCTaskLauncher.h */,
+				6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */,
 				6841F2761AF98FA300CFE60E /* DDLogLevel.h */,
 				6841F2771AF98FA300CFE60E /* DDLogLevel.m */,
 				6815BBE31AFBE5A80030D8BB /* CappuccinoUtils.h */,
@@ -496,7 +496,7 @@
 			files = (
 				6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */,
 				6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */,
-				6841F2BF1AFA965300CFE60E /* TaskManager.m in Sources */,
+				6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */,
 				6841F2C41AFABD7200CFE60E /* XCCCappuccinoProject.m in Sources */,
 				6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */,
 				686ACD311B16397F0089EB03 /* XCCCappuccinoProjectController.m in Sources */,
