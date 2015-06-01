@@ -22,6 +22,8 @@
 
 - (void)windowDidLoad
 {
+    [self _showMaskingView:YES];
+    
     [self pruneProjectHistory];
     [self fetchProjects];
 
@@ -136,6 +138,30 @@
     [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCProjectHistory];
 }
 
+- (void)_showMaskingView:(BOOL)shouldShow
+{
+    if (shouldShow)
+    {
+        if (self.maskingView.superview)
+            return;
+        
+        [self.projectViewContainer setHidden:YES]; // try to remove and laught..
+        
+        self.maskingView.frame = [[[self.splitView subviews] objectAtIndex:1] bounds];
+        [[[self.splitView subviews] objectAtIndex:1] addSubview:self.maskingView positioned:NSWindowAbove relativeTo:nil];
+    }
+    else
+    {
+        if (!self.maskingView.superview)
+            return;
+        
+        [self.projectViewContainer setHidden:NO]; // try to remove and laught..
+        
+        [self.maskingView removeFromSuperview];
+    }
+    
+
+}
 #pragma mark - Projects history
 
 /*
@@ -226,8 +252,7 @@
         [self.operationTableView setDelegate:nil];
         [self.operationTableView setDataSource:nil];
         
-        self.maskingView.frame = [[[self.splitView subviews] objectAtIndex:1] bounds];
-        [[[self.splitView subviews] objectAtIndex:1] addSubview:self.maskingView positioned:NSWindowAbove relativeTo:nil];
+        [self _showMaskingView:YES];
         return;
     }
     
@@ -237,7 +262,7 @@
     [self.operationTableView setDelegate:currentController];
     [self.operationTableView setDataSource:currentController];
     
-    [self.maskingView removeFromSuperview];
+    [self _showMaskingView:NO];
     
     [self.errorOutlineView setDelegate:currentController];
     [self.errorOutlineView setDataSource:currentController];
@@ -307,6 +332,8 @@
 - (void)addProjectPath:(NSString*)aProjectPath
 {
     CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath];
+    cappuccinoProjectController.mainWindowController = self;
+
     [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     
     NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];

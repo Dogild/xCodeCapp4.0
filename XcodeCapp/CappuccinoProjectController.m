@@ -445,6 +445,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     NSString *path = note.userInfo[@"sourcePath"];
     if ([CappuccinoUtils isObjjFile:path])
         [self.pbxOperations[@"add"] addObject:path];
+    
+    [self _reloadDataErrorsOutlineView];
 }
 
 - (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
@@ -519,7 +521,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     OperationError *defaultOperationError = [OperationError new];
     defaultOperationError.fileName = sourcePath;
-    defaultOperationError.errorType = [info[@"errorType"] intValue];
+    defaultOperationError.errorType = [info[@"type"] intValue];
     
     for (OperationError *operationError in [self.cappuccinoProject.errors objectForKey:sourcePath])
     {
@@ -533,8 +535,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     if (![[self.cappuccinoProject.errors objectForKey:sourcePath] count])
         [self.cappuccinoProject.errors removeObjectForKey:sourcePath];
-    
-    [self _reloadDataErrorsOutlineView];
 }
 
 - (void)_addOperation:(NSOperation*)anOperation

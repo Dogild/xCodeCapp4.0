@@ -18,6 +18,7 @@
 @property (strong) IBOutlet NSTableView    *projectTableView;
 @property (strong) IBOutlet NSTableView    *operationTableView;
 @property (strong) IBOutlet NSOutlineView  *errorOutlineView;
+@property (strong) IBOutlet NSView         *projectViewContainer;
 
 @property (strong) NSMutableArray *cappuccinoProjectControllers;
 @property (strong) CappuccinoProject *currentCappuccinoProject;
