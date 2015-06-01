@@ -35,39 +35,25 @@ typedef enum XCCLineSpecifier XCCLineSpecifier;
 NSString * const XCCStartListeningProjectNotification = @"XCCStartListeningProject";
 NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject";
 
+
+
 @interface CappuccinoProjectController ()
 
 @property NSDate *lastReloadErrorsViewDate;
 @property NSDate *lastReloadOperationsViewDate;
-
 @property NSFileManager *fm;
-
-// A queue for threaded operations to perform
 @property NSOperationQueue *operationQueue;
-
-// A queue for threaded operations to perform
 @property NSMutableArray *operations;
-
 @property FSEventStreamRef stream;
-
-// The last FSEvent id we received. This is stored in the user prefs
-// so we can get all changes since the last time XcodeCapp was launched.
 @property NSNumber *lastEventId;
-
-// We keep a file descriptor open for the project directory
-// so we can locate it if it moves.
 @property int projectPathFileDescriptor;
-
-// Coalesces the modifications that have to be made to the Xcode project
-// after changes are made to source files. Keys are the actions "add" or "remove",
-// values are arrays of full paths to source files that need to be added or removed.
 @property NSMutableDictionary *pbxOperations;
-
 @property NSTimer *loadingTimer;
 
 - (void)handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds;
 
 @end
+
 
 
 void fsevents_callback(ConstFSEventStreamRef streamRef,
@@ -112,10 +98,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 - (void)_init
 {
     self.taskManager = nil;
-    
     self.operations = [NSMutableArray new];
-    
     self.operationQueue = [NSOperationQueue new];
+    
     [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
     
     [self _initPbxOperations];
@@ -179,36 +164,23 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 #pragma mark - Loading methods
 
-/*
- Load the project :
- 
- - Init the controller
- - Init the global observer
- - Prepare the folder .XcodeSupport
- - Create the task manager
- - Find the source
- - Populate the xcodeproj
- 
- If the project has been loaded, the method will only start to listen the project if needed
- 
- */
-- (void)loadProject
+- (void)_loadProject
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
     
-    if (self.cappuccinoProject.isProjectLoaded)
+    if (self.cappuccinoProject.isLoaded)
     {
-        [self startListenProject];
+        [self _startListeningToProject];
         return;
     }
     
     [self _init];
     
-    self.cappuccinoProject.isLoadingProject = YES;
+    self.cappuccinoProject.isLoading = YES;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidStartLoadingNotification object:self];
     
-    [self initObservers];
+    [self _startListeningToNotifications];
     [self prepareXcodeSupport];
 
     self.taskManager = [self makeTaskManager];
@@ -220,11 +192,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self waitForOperationQueueToFinishWithSelector:@selector(projectDidFinishLoading)];
 }
 
-/*!
- Create Xcode project and .XcodeSupport directory if necessary.
- 
- @return YES if both exist
- */
 - (BOOL)prepareXcodeSupport
 {
     // If either the project or the supmport directory are missing, recreate them both to ensure they are in sync
@@ -244,11 +211,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     return projectExists && supportExists;
 }
 
-/*
- Check if the xCodeSupport is compatible with the current version of xCodeCapp
- 
- @return YES if compatible
- */
 - (BOOL)xCodeSupportIsCompatible
 {
     double appCompatibilityVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey] doubleValue];
@@ -266,12 +228,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     return projectCompatibilityVersion.doubleValue >= appCompatibilityVersion;
 }
 
-/*
- Create the xCode project (create a file .pbxproj)
- */
 - (void)createXcodeProject
 {
-    [self removeXcodeProject];
+    [self _removeXcodeProject];
     
     [self.fm createDirectoryAtPath:self.cappuccinoProject.xcodeProjectPath withIntermediateDirectories:YES attributes:nil error:nil];
     
@@ -286,18 +245,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogInfo(@"Xcode support project created at: %@", self.cappuccinoProject.xcodeProjectPath);
 }
 
-- (void)removeXcodeProject
+- (void)_removeXcodeProject
 {
     if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
         [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
 }
 
-/*
- Create the folder .XcodeSupport
- */
 - (void)createXcodeSupportDirectory
 {
-    [self removeXcodeSupportDirectory];
+    [self _removeXcodeSupportDirectory];
     
     [self.fm createDirectoryAtPath:self.cappuccinoProject.supportPath withIntermediateDirectories:YES attributes:nil error:nil];
     
@@ -311,7 +267,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogInfo(@".XcodeSupport directory created at: %@", self.cappuccinoProject.supportPath);
 }
 
-- (void)removeXcodeSupportDirectory
+- (void)_removeXcodeSupportDirectory
 {
     if ([self.fm fileExistsAtPath:self.cappuccinoProject.supportPath])
         [self.fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
@@ -338,48 +294,45 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.operationQueue addOperation:op];
 }
 
-#pragma mark - Observers methods
 
-- (void)initObservers
+#pragma mark - Notifications Management
+
+- (void)_startListeningToNotifications
 {
-    [self removeObservers];
+    [self _stopListeningToNotifications];
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    [center addObserver:self selector:@selector(addSourceToProjectPathMappingHandler:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
-    
-    [center addObserver:self selector:@selector(sourceConversionDidStartHandler:) name:XCCConversionDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionDidEndHandler:) name:XCCConversionDidEndNotification object:nil];
-    
-    [center addObserver:self selector:@selector(sourceConversionDidGenerateErrorHandler:) name:XCCConversionDidGenerateErrorNotification object:nil];
-    
-    
-    [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidStart:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionObjjDidStart:) name:XCCObjjDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionNib2CibDidStart:) name:XCCNib2CibDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionCappLintDidStart:) name:XCCCappLintDidStartNotification object:nil];
-    
-    [center addObserver:self selector:@selector(sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionObjjDidGenerateErrorHandler:) name:XCCObjjDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionNib2CibDidGenerateErrorHandler:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(sourceConversionCappLintDidGenerateErrorHandler:) name:XCCCappLintDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveCappLintDidGenerateErrorNotification:) name:XCCCappLintDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveCappLintDidStartNotification:) name:XCCCappLintDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveConversionDidEndNotification:) name:XCCConversionDidEndNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveConversionDidGenerateErrorNotification:) name:XCCConversionDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveConversionDidStartNotification:) name:XCCConversionDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveNeedSourceToProjectPathMappingNotification:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveNib2CibDidGenerateErrorNotification:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveNib2CibDidStartNotifcation:) name:XCCNib2CibDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjj2ObjcSkeletonDidStartNotification:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjjDidGenerateErrorNotification:) name:XCCObjjDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjjDidStartNotification:) name:XCCObjjDidStartNotification object:nil];
 }
 
-- (void)removeObservers
+- (void)_stopListeningToNotifications
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
-    [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
+    
+    [center removeObserver:self name:XCCCappLintDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCCappLintDidStartNotification object:nil];
     [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
     [center removeObserver:self name:XCCConversionDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
-    [center removeObserver:self name:XCCObjjDidStartNotification object:nil];
-    [center removeObserver:self name:XCCNib2CibDidStartNotification object:nil];
-    [center removeObserver:self name:XCCCappLintDidStartNotification object:nil];
-    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCObjjDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
+    [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
     [center removeObserver:self name:XCCNib2CibDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCCappLintDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCNib2CibDidStartNotification object:nil];
+    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
+    [center removeObserver:self name:XCCObjjDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCObjjDidStartNotification object:nil];
 }
 
 - (BOOL)notificationBelongsToCurrentProject:(NSNotification *)note
@@ -387,7 +340,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     return note.userInfo[@"cappuccinoProject"] == self.cappuccinoProject;
 }
 
-- (void)addSourceToProjectPathMappingHandler:(NSNotification *)note
+- (void)_didReceiveNeedSourceToProjectPathMappingNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -395,7 +348,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     self.cappuccinoProject.projectPathsForSourcePaths[note.userInfo[@"sourcePath"]] = note.userInfo[@"projectPath"];
 }
 
-- (void)sourceConversionDidStartHandler:(NSNotification *)note
+- (void)_didReceiveConversionDidStartNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -403,7 +356,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self _addOperation:note.userInfo[@"operation"]];
 }
 
-- (void)sourceConversionObjj2ObjcSkeletonDidStart:(NSNotification *)note
+- (void)_didReceiveObjj2ObjcSkeletonDidStartNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -411,7 +364,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjj2ObjcSkeletonOperationErrorType]}];
 }
 
-- (void)sourceConversionObjjDidStart:(NSNotification *)note
+- (void)_didReceiveObjjDidStartNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -419,7 +372,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCObjjOperationErrorType]}];
 }
 
-- (void)sourceConversionNib2CibDidStart:(NSNotification *)note
+- (void)_didReceiveNib2CibDidStartNotifcation:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -427,7 +380,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCNib2CibOperationErrorType]}];
 }
 
-- (void)sourceConversionCappLintDidStart:(NSNotification *)note
+- (void)_didReceiveCappLintDidStartNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -435,7 +388,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self pruneProcessingErrorsForSourcePath:@{@"sourcePath" : note.userInfo[@"sourcePath"], @"type" : [NSNumber numberWithInt:XCCCappLintOperationErrorType]}];
 }
 
-- (void)sourceConversionDidEndHandler:(NSNotification *)note
+- (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -449,7 +402,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self _reloadDataErrorsOutlineView];
 }
 
-- (void)sourceConversionDidGenerateErrorHandler:(NSNotification *)note
+- (void)_didReceiveConversionDidGenerateErrorNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -458,7 +411,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self sourceConversionDidGenerateError:[OperationError defaultOperationErrorFromDictionary:note.userInfo]];
 }
 
-- (void)sourceConversionObjj2ObjcSkeletonDidGenerateErrorHandler:(NSNotification *)note
+- (void)_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -467,7 +420,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType]];
 }
 
-- (void)sourceConversionObjjDidGenerateErrorHandler:(NSNotification *)note
+- (void)_didReceiveObjjDidGenerateErrorNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -476,7 +429,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self sourceConversionDidGenerateErrors:[ObjjUtils operationErrorsFromDictionary:note.userInfo]];
 }
 
-- (void)sourceConversionNib2CibDidGenerateErrorHandler:(NSNotification *)note
+- (void)_didReceiveNib2CibDidGenerateErrorNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -485,7 +438,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self sourceConversionDidGenerateError:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
 }
 
-- (void)sourceConversionCappLintDidGenerateErrorHandler:(NSNotification *)note
+- (void)_didReceiveCappLintDidGenerateErrorNotification:(NSNotification *)note
 {
     if (![self notificationBelongsToCurrentProject:note])
         return;
@@ -502,39 +455,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)sourceConversionDidGenerateError:(OperationError *)operationError
 {
-    DDLogVerbose(@"Cappuccino error : %@", operationError.message);
-    
-    if (![self.cappuccinoProject.errors objectForKey:operationError.fileName])
-        [self.cappuccinoProject.errors setValue:[NSMutableArray new] forKey:operationError.fileName];
-    
-    [self.cappuccinoProject willChangeValueForKey:@"errors"];
-    [[self.cappuccinoProject.errors objectForKey:operationError.fileName] addObject:operationError];
-    [self.cappuccinoProject didChangeValueForKey:@"errors"];
-    
+    [self.cappuccinoProject addOperationError:operationError];
     [self _reloadDataErrorsOutlineView];
 }
 
 - (void)pruneProcessingErrorsForSourcePath:(NSDictionary*)info
 {
-    NSString *sourcePath = info[@"sourcePath"];
-    NSMutableArray *errorsToRemove = [NSMutableArray array];
-    
-    OperationError *defaultOperationError = [OperationError new];
-    defaultOperationError.fileName = sourcePath;
-    defaultOperationError.errorType = [info[@"type"] intValue];
-    
-    for (OperationError *operationError in [self.cappuccinoProject.errors objectForKey:sourcePath])
-    {
-        if ([operationError isEqualTo:defaultOperationError])
-            [errorsToRemove addObject:operationError];
-    }
-    
-    [self.cappuccinoProject willChangeValueForKey:@"errors"];
-    [[self.cappuccinoProject.errors objectForKey:sourcePath] removeObjectsInArray:errorsToRemove];
-    [self.cappuccinoProject didChangeValueForKey:@"errors"];
-    
-    if (![[self.cappuccinoProject.errors objectForKey:sourcePath] count])
-        [self.cappuccinoProject.errors removeObjectForKey:sourcePath];
+    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:info[@"sourcePath"] errorType:[info[@"type"] intValue]];
 }
 
 - (void)_addOperation:(NSOperation*)anOperation
@@ -554,7 +481,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 //    if (self.lastReloadErrorsViewDate && ABS([self.lastReloadErrorsViewDate timeIntervalSinceNow]) < 0.5)
 //        return;
     
-    [self.mainWindowController reloadErrors];
+    [self.mainWindowController reloadErrorsListForCurrentCappuccinoProject];
 
     self.lastReloadErrorsViewDate = [NSDate date];
 }
@@ -564,7 +491,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 //    if (self.lastReloadOperationsViewDate && ABS([self.lastReloadOperationsViewDate timeIntervalSinceNow]) < 0.5)
 //        return;
     
-    [self.mainWindowController reloadOperations];
+    [self.mainWindowController reloadOperationsListForCurrentCappuccinoProject];
     
     self.lastReloadOperationsViewDate = [NSDate date];
 }
@@ -572,15 +499,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 #pragma mark - Events methods
 
-- (void)startListenProject
+- (void)_startListeningToProject
 {
     if (self.stream)
         return;
     
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
     
-    [self stopListenProject];
-    [self initObservers];
+    [self _stopListeningToProject];
+    [self _startListeningToNotifications];
     
     FSEventStreamCreateFlags flags = kFSEventStreamCreateFlagUseCFTypes |
                                      kFSEventStreamCreateFlagWatchRoot  |
@@ -615,16 +542,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)startFSEventStream
 {
-    if (self.stream && !self.cappuccinoProject.isListeningProject)
+    if (self.stream && !self.cappuccinoProject.isListening)
     {
         FSEventStreamStart(self.stream);
-        self.cappuccinoProject.isListeningProject = YES;
+        self.cappuccinoProject.isListening = YES;
     }
 }
 
-- (void)stopListenProject
+- (void)_stopListeningToProject
 {
-    [self removeObservers];
+    [self _stopListeningToNotifications];
     [_loadingTimer invalidate];
     [self.operationQueue cancelAllOperations];
     [self removeErrors:self];
@@ -652,10 +579,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)stopFSEventStream
 {
-    if (self.stream && self.cappuccinoProject.isListeningProject)
+    if (self.stream && self.cappuccinoProject.isListening)
     {
         FSEventStreamStop(self.stream);
-        self.cappuccinoProject.isListeningProject = NO;
+        self.cappuccinoProject.isListening = NO;
     }
 }
 
@@ -790,7 +717,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         [self updateSupportFilesWithModifiedPaths:modifiedPaths];
 }
 
-
 - (void)updateSupportFilesWithModifiedPaths:(NSArray *)modifiedPaths
 {
     // Make sure we don't get any more events while handling these events
@@ -807,13 +733,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     }
 }
 
-/*!
- Handle a file modification. If it's a .j or xib/nib,
- perform the appropriate conversion. If it's .xcodecapp-ignore, it will
- update the list of ignored files.
- 
- @param path The full resolved path of the modified file
- */
 - (void)handleFileModificationAtPath:(NSString*)resolvedPath
 {
     if (![self.fm fileExistsAtPath:resolvedPath])
@@ -923,7 +842,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 - (void)waitForOperationQueueToFinishWithSelector:(SEL)selector
 {
-    self.cappuccinoProject.isProcessingProject = YES;
+    self.cappuccinoProject.isProcessing = YES;
     [self _scheduleLoadingTimerWithSelector:selector];
 }
 
@@ -958,7 +877,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self performSelector:selector withObject:nil];
 #pragma clang diagnostic pop
     
-    self.cappuccinoProject.isProcessingProject = NO;
+    self.cappuccinoProject.isProcessing = NO;
 }
 
 - (void)projectDidFinishLoading
@@ -966,8 +885,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self updatePbxFile];
     [self.cappuccinoProject fetchProjectSettings];
     
-    self.cappuccinoProject.isLoadingProject = NO;
-    self.cappuccinoProject.isProjectLoaded = YES;
+    self.cappuccinoProject.isLoading = NO;
+    self.cappuccinoProject.isLoaded = YES;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidFinishLoadingNotification object:self];
     [[NSUserDefaults standardUserDefaults] setObject:self.cappuccinoProject.projectPath forKey:kDefaultXCCLastOpenedProjectPath];
@@ -976,7 +895,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     
     DDLogVerbose(@"Project finished loading");
     
-    [self startListenProject];
+    [self _startListeningToProject];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:kDefaultXCCAutoOpenXcodeProject])
         [self openXcodeProject:self];
@@ -1058,13 +977,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
         
         if (shouldUnlink)
         {
-            [self.mainWindowController unlinkProject:self];
+            [self.mainWindowController removeCappuccinoProject:self];
             return;
         }
     }
     
     [self synchronizeProject:self];
-    [self.mainWindowController saveCurrentProjects];
+    [self.mainWindowController _saveManagedProjectsToUserDefaults];
 }
 
 
@@ -1094,17 +1013,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 
 #pragma mark - Synchronize method
 
-/* Reset the project :
-    
-    - Stop to listen the project 
-    - Cancel all current operations
-    - Remove the support files
-    - Remove all cibs
-    - Initilize the controller
- */
 - (void)resetProject
 {
-    [self stopListenProject];
+    [self _stopListeningToProject];
     [self.operationQueue cancelAllOperations];
     
     [self removeSupportFiles];
@@ -1140,87 +1051,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
 }
 
 
-#pragma mark - tableView delegate and datasource
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
-{
-    return [self.operations count];
-}
-
-- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
-{
-    OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-    [cellView setOperation:[self.operations objectAtIndex:row]];
-        
-    [cellView.cancelButton setTarget:self];
-    [cellView.cancelButton setAction:@selector(cancelOperation:)];
-        
-    return cellView;
-}
-
-#pragma mark - outlineView data source and delegate
-
-- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
-{
-    if (!item)
-        return [[self.cappuccinoProject.errors allKeys] count];
-    
-    return [[self.cappuccinoProject.errors objectForKey:item] count];
-}
-
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
-{
-    return ![item isKindOfClass:[OperationError class]];
-}
-
-- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
-{
-    if (!item)
-        return [[self.cappuccinoProject.errors allKeys] objectAtIndex:index];
-    
-    return [[self.cappuccinoProject.errors objectForKey:item] objectAtIndex:index];
-}
-
-- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
-{
-    return item;
-}
-
-- (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item
-{
-    if ([item isKindOfClass:[OperationError class]])
-    {
-        OperationErrorCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
-        [cellView setOperationError:item];
-        return cellView;
-    }
-    
-    OperationErrorHeaderCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
-    cellView.textField.stringValue = item;
-    return cellView;
-}
-
-- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(OperationError *)item
-{
-    if ([item isKindOfClass:[OperationError class]])
-    {
-//        CGFloat messageHeight = heightForStringDrawing(item.message, [NSFont fontWithName:@"Menlo" size:11.0]);
-        
-        CGRect frame = [item.message boundingRectWithSize:CGSizeMake([outlineView frame].size.width - 100, CGFLOAT_MAX)
-                                                  options:NSStringDrawingUsesLineFragmentOrigin
-                                               attributes:@{ NSFontAttributeName:[NSFont fontWithName:@"Menlo" size:12] }];
-
-        return frame.size.height + 50;
-    }
-    
-    else
-        return 20.0;
-}
 
 
-#pragma mark - IBActions methods
+#pragma mark - Actions
 
-// Cancel all current operations
 - (IBAction)cancelAllOperations:(id)aSender
 {
     [self.operationQueue cancelAllOperations];
@@ -1229,24 +1063,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self _reloadDataOperationsTableView];
 }
 
-// Cancel the operation linked to the sender
 - (IBAction)cancelOperation:(id)sender
 {
     ProcessSourceOperation *operation = [self.operationQueue.operations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 
-// Clean the errors tableView
 - (IBAction)removeErrors:(id)aSender
 {
-    [self.cappuccinoProject willChangeValueForKey:@"errors"];
-    [self.cappuccinoProject.errors removeAllObjects];
-    [self.cappuccinoProject didChangeValueForKey:@"errors"];
-    
+    [self.cappuccinoProject removeAllOperationErrors];
     [self _reloadDataErrorsOutlineView];
 }
 
-// Save the configuration of Cappuccino
 - (IBAction)save:(id)sender
 {
     DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
@@ -1254,7 +1082,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.operationQueue cancelAllOperations];
     [self saveSettings];
     
-    if (self.cappuccinoProject.isProjectLoaded)
+    if (self.cappuccinoProject.isLoaded)
     {
         self.taskManager = [self makeTaskManager];
         [self.cappuccinoProject updateIgnoredPath];
@@ -1263,14 +1091,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
 }
 
-// Synchronize the project again and load it again
 - (IBAction)synchronizeProject:(id)aSender
 {
     [self resetProject];
-    [self loadProject];
+    [self _loadProject];
 }
 
-// Open the project on xCode
 - (IBAction)openXcodeProject:(id)aSender
 {
     BOOL isDirectory, opened = YES;
@@ -1406,4 +1232,124 @@ void fsevents_callback(ConstFSEventStreamRef streamRef,
     [self.taskManager runTaskWithCommand:executablePath arguments:args returnType:kTaskReturnTypeNone];
 }
 
+
+#pragma mark - Actions
+
+- (void)applicationIsStarting
+{
+    NSArray *lastLoadedProjectPath = [[NSUserDefaults standardUserDefaults] valueForKey:kDefaultXCCLastLoadedProjectPath];
+    
+    if ([lastLoadedProjectPath containsObject:self.cappuccinoProject.projectPath])
+        [self _loadProject];
+}
+
+- (void)applicationIsClosing
+{
+    [self _stopListeningToProject];
+}
+
+- (void)cleanUpBeforeDeletion
+{
+    [self _stopListeningToProject];
+    [self _removeXcodeProject];
+    [self _removeXcodeSupportDirectory];
+}
+
+- (IBAction)updateProjectListeningState:(id)sender
+{
+    if (!self.cappuccinoProject.isLoaded)
+    {
+        [self _loadProject];
+    }
+    else if(!self.cappuccinoProject.isListening)
+    {
+        [self _startListeningToProject];
+    }
+    else
+    {
+        [self _stopListeningToProject];
+    }
+}
+
+
+#pragma mark - tableView delegate and datasource
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return [self.operations count];
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
+    [cellView setOperation:[self.operations objectAtIndex:row]];
+    
+    [cellView.cancelButton setTarget:self];
+    [cellView.cancelButton setAction:@selector(cancelOperation:)];
+    
+    return cellView;
+}
+
+
+#pragma mark - outlineView data source and delegate
+
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
+{
+    if (!item)
+        return [[self.cappuccinoProject.errors allKeys] count];
+    
+    return [[self.cappuccinoProject.errors objectForKey:item] count];
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+{
+    return ![item isKindOfClass:[OperationError class]];
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
+{
+    if (!item)
+        return [[self.cappuccinoProject.errors allKeys] objectAtIndex:index];
+    
+    return [[self.cappuccinoProject.errors objectForKey:item] objectAtIndex:index];
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+{
+    return item;
+}
+
+- (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item
+{
+    if ([item isKindOfClass:[OperationError class]])
+    {
+        OperationErrorCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
+        [cellView setOperationError:item];
+        return cellView;
+    }
+    
+    OperationErrorHeaderCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
+    cellView.textField.stringValue = item;
+    return cellView;
+}
+
+- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(OperationError *)item
+{
+    if ([item isKindOfClass:[OperationError class]])
+    {
+        //        CGFloat messageHeight = heightForStringDrawing(item.message, [NSFont fontWithName:@"Menlo" size:11.0]);
+        
+        CGRect frame = [item.message boundingRectWithSize:CGSizeMake([outlineView frame].size.width - 100, CGFLOAT_MAX)
+                                                  options:NSStringDrawingUsesLineFragmentOrigin
+                                               attributes:@{ NSFontAttributeName:[NSFont fontWithName:@"Menlo" size:12] }];
+        
+        return frame.size.height + 50;
+    }
+    
+    else
+        return 20.0;
+}
+
 @end
+
+

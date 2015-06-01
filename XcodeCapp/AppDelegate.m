@@ -27,7 +27,7 @@
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)app
 {
     DDLogVerbose(@"Stop listening to all projects");
-    [self.mainWindowController stopListeningAllProjects:self];
+    [self.mainWindowController applicationIsClosing];
     
     return NSTerminateNow;
 }

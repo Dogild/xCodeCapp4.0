@@ -161,10 +161,10 @@
         return;
     
     NSString *projectPath = [[savePanel.URL path] stringByStandardizingPath];
-    [self performSelectorInBackground:@selector(createProjectAtPath:) withObject:projectPath];
+    [self performSelectorInBackground:@selector(_createProjectAtPath:) withObject:projectPath];
 }
 
-- (void)createProjectAtPath:(NSString*)aPath
+- (void)_createProjectAtPath:(NSString*)aPath
 {
     NSDictionary *taskResult;
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"gen", aPath ,@"-t", @"NibApplication", nil];
@@ -189,7 +189,7 @@
     if (!status)
     {
         DDLogVerbose(@"Created Xcode project: [%ld, %@]", status, status ? response : @"");
-        [self.mainWindowController performSelectorOnMainThread:@selector(addProjectPath:) withObject:aPath waitUntilDone:YES];
+        [self.mainWindowController performSelectorOnMainThread:@selector(addCappuccinoProjectWithPath:) withObject:aPath waitUntilDone:YES];
     }
     else
     {

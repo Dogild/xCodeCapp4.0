@@ -24,13 +24,10 @@ extern NSString * const XCCStopListeningProjectNotification;
 @property TaskManager *taskManager;
 
 - (id)initWithPath:(NSString*)aPath;
-- (void)loadProject;
 
-- (void)stopListenProject;
-- (void)startListenProject;
-
-- (void)removeXcodeProject;
-- (void)removeXcodeSupportDirectory;
+- (void)applicationIsClosing;
+- (void)applicationIsStarting;
+- (void)cleanUpBeforeDeletion;
 
 - (IBAction)save:(id)sender;
 - (IBAction)cancelAllOperations:(id)aSender;
@@ -39,5 +36,7 @@ extern NSString * const XCCStopListeningProjectNotification;
 - (IBAction)openXcodeProject:(id)sender;
 
 - (void)openObjjFile:(id)sender;
+
+- (IBAction)updateProjectListeningState:(id)sender;
 
 @end

@@ -13,7 +13,7 @@
 
 extern NSString * const kDefaultXCCAutoOpenXcodeProject;
 extern NSString * const kDefaultXCCMaxRecentProjects;
-extern NSString * const kDefaultXCCProjectHistory;
+extern NSString * const kDefaultXCCCurrentManagedProjects;
 extern NSString * const kDefaultXCCReopenLastProject;
 extern NSString * const kDefaultXCCUpdateCappuccinoWithLastVersionOfMasterBranch;
 extern NSString * const kDefaultXCCUseSymlinkWhenCreatingProject;

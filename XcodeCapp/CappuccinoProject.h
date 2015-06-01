@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OperationError.h"
 
 @class TaskManager;
 
@@ -55,16 +56,16 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 @property NSMutableArray *ignoredPathPredicates;
 
 // Whether we are in the process of loading a project
-@property BOOL isLoadingProject;
+@property BOOL isLoading;
 
 // XcodeCapp is listening the event of this project
-@property BOOL isListeningProject;
+@property BOOL isListening;
 
 // Whether we have loaded the project
-@property BOOL isProjectLoaded;
+@property BOOL isLoaded;
 
 // Whether we are currently processing source files
-@property BOOL isProcessingProject;
+@property BOOL isProcessing;
 
 // The settings of the project
 @property NSDictionary *projectSettings;
@@ -87,6 +88,11 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (void)updateIgnoredPath;
 - (void)_init;
 
+- (void)addOperationError:(OperationError *)operationError;
+- (void)removeOperationError:(OperationError *)operationError;
+- (void)removeAllOperationErrors;
+- (void)removeOperationErrorsRelatedToSourcePath:(NSString *)aPath errorType:(int)anErrorType;
+
 - (NSString *)projectName;
 
 - (NSString *)projectRelativePathForPath:(NSString *)path;
@@ -98,6 +104,6 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (NSMutableDictionary*)defaultSettings;
 - (NSMutableDictionary*)currentSettings;
 - (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey;
-- (void)fetchProjectSettings;;
+- (void)fetchProjectSettings;
 
 @end

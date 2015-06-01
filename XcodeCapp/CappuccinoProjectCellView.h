@@ -7,8 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "CappuccinoProject.h"
 
-@class CappuccinoProject;
 
 @interface CappuccinoProjectCellView : NSTableCellView
 

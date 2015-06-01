@@ -142,7 +142,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         {
             [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
             
-            if (!self.cappuccinoProject.isLoadingProject)
+            if (!self.cappuccinoProject.isLoading)
             {
                 if (!isXibFile)
                 {

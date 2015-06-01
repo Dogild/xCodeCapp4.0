@@ -29,19 +29,19 @@
 {
     if (newWindow)
     {
-        [self.cappuccinoProject addObserver:self forKeyPath:@"isListeningProject" options:NSKeyValueObservingOptionNew context:nil];
-        [self.cappuccinoProject addObserver:self forKeyPath:@"isLoadingProject" options:NSKeyValueObservingOptionNew context:nil];
-        [self.cappuccinoProject addObserver:self forKeyPath:@"isProjectLoaded" options:NSKeyValueObservingOptionNew context:nil];
-        [self.cappuccinoProject addObserver:self forKeyPath:@"isProcessingProject" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isListening" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isLoading" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isLoaded" options:NSKeyValueObservingOptionNew context:nil];
+        [self.cappuccinoProject addObserver:self forKeyPath:@"isProcessing" options:NSKeyValueObservingOptionNew context:nil];
         [self.cappuccinoProject addObserver:self forKeyPath:@"warnings" options:NSKeyValueObservingOptionNew context:nil];
         [self.cappuccinoProject addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
     }
     else
     {
-        [self.cappuccinoProject removeObserver:self forKeyPath:@"isListeningProject"];
-        [self.cappuccinoProject removeObserver:self forKeyPath:@"isLoadingProject"];
-        [self.cappuccinoProject removeObserver:self forKeyPath:@"isProjectLoaded"];
-        [self.cappuccinoProject removeObserver:self forKeyPath:@"isProcessingProject"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isListening"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isLoading"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isLoaded"];
+        [self.cappuccinoProject removeObserver:self forKeyPath:@"isProcessing"];
         [self.cappuccinoProject removeObserver:self forKeyPath:@"warnings"];
         [self.cappuccinoProject removeObserver:self forKeyPath:@"errors"];
     }
@@ -52,25 +52,19 @@
     if (object != self.cappuccinoProject)
         return;
 
-    if (self.cappuccinoProject.isLoadingProject || self.cappuccinoProject.isProcessingProject)
+    if (self.cappuccinoProject.isLoading || self.cappuccinoProject.isProcessing)
         self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:107.0/255.0 green:148.0/255.0 blue:236.0/255.0 alpha:1.0];
     else if ([self.cappuccinoProject.errors count])
         self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:247.0/255.0 green:97.0/255.0 blue:89.0/255.0 alpha:1.0];
-    else if (self.cappuccinoProject.isListeningProject)
+    else if (self.cappuccinoProject.isListening)
         self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:179.0/255.0 green:214.0/255.0 blue:69.0/255.0 alpha:1.0];
     else
         self.boxStatus.fillColor = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
     
-    if (self.cappuccinoProject.isLoadingProject || self.cappuccinoProject.isListeningProject)
-    {
+    if (self.cappuccinoProject.isLoading || self.cappuccinoProject.isListening)
         self.loadButton.image = [NSImage imageNamed:@"stop"];
-        self.loadButton.alternateImage = [NSImage imageNamed:@"stop-white"];
-    }
     else
-    {
         self.loadButton.image = [NSImage imageNamed:@"run"];
-        self.loadButton.alternateImage = [NSImage imageNamed:@"run-white"];
-    }
 }
 
 - (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle

@@ -28,17 +28,15 @@
 - (IBAction)saveSettings:(id)aSender;
 - (IBAction)synchronizeProject:(id)aSender;
 - (IBAction)removeErrors:(id)aSender;
-- (IBAction)stopListeningAllProjects:(id)aSender;
-- (IBAction)listenSelectedCappuccinoProject:(id)aSender;
 
-- (void)addProjectPath:(NSString*)aProjectPath;
-- (void)pruneProjectHistory;
-- (void)fetchProjects;
-- (void)saveCurrentProjects;
+- (void)applicationIsClosing;
+- (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
+- (void)_restoreManagedProjectsFromUserDefaults;
+- (void)_saveManagedProjectsToUserDefaults;
 
-- (void)reloadErrors;
-- (void)reloadOperations;
+- (void)reloadErrorsListForCurrentCappuccinoProject;
+- (void)reloadOperationsListForCurrentCappuccinoProject;
 
-- (void)unlinkProject:(CappuccinoProjectController*)aController;
+- (void)removeCappuccinoProject:(CappuccinoProjectController*)aController;
 
 @end

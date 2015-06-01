@@ -15,47 +15,37 @@
 
 @implementation MainWindowController
 
+
+#pragma mark - Initialization
+
 - (void)awakeFromNib
 {
-    [self initObservers];
+    [self _startObservers];
+    [self _startListeningToNotifications];
 }
 
 - (void)windowDidLoad
 {
     [self _showMaskingView:YES];
     
-    [self pruneProjectHistory];
-    [self fetchProjects];
+    [self _restoreManagedProjectsFromUserDefaults];
 
-    [self selectLastProjectSelected];
-    [self loadLastProjectsLoaded];
+    [self _selectLastProjectSelected];
+    [self _loadLastProjectsLoaded];
 }
 
-// Watch changes to the max recent projects preference
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:kDefaultXCCMaxRecentProjects])
-    {
-        [self pruneProjectHistory];
-        [self fetchProjects];
-    }
-}
 
-- (void)initObservers
+#pragma mark - Notifications
+
+- (void)_startListeningToNotifications
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    [center addObserver:self selector:@selector(startListeningProjectHandler:) name:XCCStartListeningProjectNotification object:nil];
-    
-    [center addObserver:self selector:@selector(stopListeningProjectHandler:) name:XCCStopListeningProjectNotification object:nil];
-    
-    [[NSUserDefaults standardUserDefaults] addObserver:self
-                                            forKeyPath:kDefaultXCCMaxRecentProjects
-                                               options:NSKeyValueObservingOptionNew
-                                               context:NULL];
+    [center addObserver:self selector:@selector(_didReceiveStartListeningToProjectNotification:) name:XCCStartListeningProjectNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveStopListeningToProjectNotification:) name:XCCStopListeningProjectNotification object:nil];
 }
 
-- (void)startListeningProjectHandler:(NSNotification*)aNotification
+- (void)_didReceiveStartListeningToProjectNotification:(NSNotification*)aNotification
 {
     CappuccinoProject *cappuccinoProject = [aNotification object];
     NSMutableArray *previousHistoryLoadedPaths = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
@@ -69,7 +59,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:previousHistoryLoadedPaths forKey:kDefaultXCCLastLoadedProjectPath];
 }
 
-- (void)stopListeningProjectHandler:(NSNotification*)aNotification
+- (void)_didReceiveStopListeningToProjectNotification:(NSNotification*)aNotification
 {
     CappuccinoProject *cappuccinoProject = [aNotification object];
     NSMutableArray *previousHistoryLoadedPaths = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
@@ -83,12 +73,35 @@
     [[NSUserDefaults standardUserDefaults] setObject:previousHistoryLoadedPaths forKey:kDefaultXCCLastLoadedProjectPath];
 }
 
+
+#pragma mark - Observers
+
+- (void)_startObservers
+{
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:kDefaultXCCMaxRecentProjects
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kDefaultXCCMaxRecentProjects])
+        [self _restoreManagedProjectsFromUserDefaults];
+}
+
+
+#pragma mark - Custom Getters and Setters
+
 - (CappuccinoProjectController*)currentCappuccinoProjectController
 {
     return [self.cappuccinoProjectControllers objectAtIndex:[self.projectTableView selectedRow]];
 }
 
-- (void)selectLastProjectSelected
+
+#pragma mark - Utilities
+
+- (void)_selectLastProjectSelected
 {
     DDLogVerbose(@"Start : selecting last selected project");
     
@@ -113,29 +126,10 @@
     DDLogVerbose(@"Stop : selecting last selected project");
 }
 
-- (void)loadLastProjectsLoaded
+- (void)_loadLastProjectsLoaded
 {
-    DDLogVerbose(@"Start : loading last loaded projects");
-    
-    NSArray *lastLoadedProjectPath = [[[NSUserDefaults standardUserDefaults] valueForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
-    
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
-    {
-        if ([lastLoadedProjectPath containsObject:controller.cappuccinoProject.projectPath])
-            [controller loadProject];
-    }
-    
-    DDLogVerbose(@"Stop : loading last selected project");
-}
-
-- (void)saveCurrentProjects
-{
-    NSMutableArray *historyProjectPaths = [NSMutableArray array];
-    
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
-        [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCProjectHistory];
+    DDLogVerbose(@"Start : notifying all project controllers");
+    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(applicationIsStarting)];
 }
 
 - (void)_showMaskingView:(BOOL)shouldShow
@@ -162,38 +156,16 @@
     
 
 }
+
+
 #pragma mark - Projects history
 
-/*
- This method is used to remove project from the history if needed.
- It will be removed when having too many projects or when a project does not exist anymore
- */
-- (void)pruneProjectHistory
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSMutableArray *projectHistory = [[defaults arrayForKey:kDefaultXCCProjectHistory] mutableCopy];
-    NSFileManager *fm = [NSFileManager new];
-    
-    for (NSInteger i = projectHistory.count - 1; i >= 0; --i)
-    {
-        if (![fm fileExistsAtPath:projectHistory[i]])
-            [projectHistory removeObjectAtIndex:i];
-    }
-    
-    NSInteger maxProjects = [defaults integerForKey:kDefaultXCCMaxRecentProjects];
-    
-    if (projectHistory.count > maxProjects)
-        [projectHistory removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(maxProjects, projectHistory.count - maxProjects)]];
-    
-    [defaults setObject:projectHistory forKey:kDefaultXCCProjectHistory];
-}
-
-- (void)fetchProjects
+- (void)_restoreManagedProjectsFromUserDefaults
 {
     DDLogVerbose(@"Start : fetching historic projects");
     self.cappuccinoProjectControllers = [NSMutableArray new];
     
-    NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCProjectHistory];
+    NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCCurrentManagedProjects];
     
     for (NSString *path in projectHistory)
     {
@@ -205,6 +177,124 @@
     [self.projectTableView reloadData];
     
     DDLogVerbose(@"Stop : fetching historic projects");
+}
+
+- (void)_saveManagedProjectsToUserDefaults
+{
+    NSMutableArray *historyProjectPaths = [NSMutableArray array];
+    
+    for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
+        [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCCurrentManagedProjects];
+}
+
+
+#pragma mark - Public Utilities
+
+- (void)removeCappuccinoProject:(CappuccinoProjectController*)aController
+{
+    NSInteger selectedCappuccinoProject = [self.cappuccinoProjectControllers indexOfObject:aController];
+    
+    if (selectedCappuccinoProject == -1)
+        return;
+    
+    [self.projectTableView deselectRow:selectedCappuccinoProject];
+    [aController cleanUpBeforeDeletion];
+    [self.cappuccinoProjectControllers removeObjectAtIndex:selectedCappuccinoProject];
+    [self.projectTableView reloadData];
+    
+    [self _saveManagedProjectsToUserDefaults];
+}
+
+- (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath
+{
+    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath];
+    cappuccinoProjectController.mainWindowController = self;
+
+    [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
+    
+    NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];
+
+    [self.projectTableView reloadData];
+    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+    [self.projectTableView scrollRowToVisible:index];
+    [self _saveManagedProjectsToUserDefaults];
+    
+    [CappuccinoUtils notifyUserWithTitle:@"Cappuccino project added" message:aProjectPath];
+}
+
+- (void)reloadErrorsListForCurrentCappuccinoProject
+{
+    [self.errorOutlineView reloadData];
+    [self.errorOutlineView expandItem:nil expandChildren:YES];
+}
+
+- (void)reloadOperationsListForCurrentCappuccinoProject
+{
+    [self.operationTableView reloadData];
+}
+
+
+#pragma mark - Actions
+
+
+- (IBAction)addProject:(id)aSender
+{
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    openPanel.title = @"Add a new Cappuccino Project to XcodeCapp";
+    openPanel.canCreateDirectories = YES;
+    openPanel.canChooseDirectories = YES;
+    openPanel.canChooseFiles = NO;
+    
+    if ([openPanel runModal] != NSFileHandlingPanelOKButton)
+        return;
+    
+    NSString *projectPath = [[openPanel.URLs[0] path] stringByStandardizingPath];
+    [self addCappuccinoProjectWithPath:projectPath];
+}
+
+- (IBAction)removeProject:(id)aSender
+{
+    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
+    
+    if (selectedCappuccinoProject == -1)
+        return;
+    
+    [self removeCappuccinoProject:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
+}
+
+- (IBAction)saveSettings:(id)aSender
+{
+    [[self currentCappuccinoProjectController] save:aSender];
+}
+
+- (IBAction)cancelAllOperations:(id)aSender
+{
+    [[self currentCappuccinoProjectController] cancelAllOperations:aSender];
+}
+
+- (IBAction)synchronizeProject:(id)aSender
+{
+    [[self currentCappuccinoProjectController] synchronizeProject:aSender];
+}
+
+- (IBAction)removeErrors:(id)aSender
+{
+    [[self currentCappuccinoProjectController] removeErrors:aSender];
+}
+
+- (IBAction)openXcodeProject:(id)aSender
+{
+    [[self currentCappuccinoProjectController] openXcodeProject:aSender];
+}
+
+- (IBAction)applicationIsClosing:(id)aSender
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:XCCStopListeningProjectNotification object:nil];
+    
+    for (int i; i < self.cappuccinoProjectControllers.count; i++)
+        [[self.cappuccinoProjectControllers objectAtIndex:i] applicationIsClosing];
 }
 
 
@@ -220,6 +310,7 @@
     return 200;
 }
 
+
 #pragma mark - TableView delegate
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -229,15 +320,13 @@
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    CappuccinoProjectCellView *cellView = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
-    
-    CappuccinoProject *cappuccinoProject = [[self.cappuccinoProjectControllers objectAtIndex:row] cappuccinoProject];
-    
-    // No idea why I have to that here, does not work from the xib...
-    [cellView.loadButton setAction:@selector(listenSelectedCappuccinoProject:)];
-    [cellView.loadButton setTarget:self];
+    CappuccinoProjectCellView *cellView                      = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
+    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
+    CappuccinoProject *cappuccinoProject                     = [cappuccinoProjectController cappuccinoProject];
     
     cellView.cappuccinoProject = cappuccinoProject;
+    [cellView.loadButton setTarget:cappuccinoProjectController];
+    [cellView.loadButton setAction:@selector(updateProjectListeningState:)];
     
     return cellView;
 }
@@ -271,123 +360,6 @@
     
     // This can't be bound because we can't save an indexSet in a plist
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
-}
-
-#pragma mark - button bar project tableView
-
-- (IBAction)listenSelectedCappuccinoProject:(id)aSender
-{
-    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:[self.projectTableView rowForView:aSender]];
-    
-    if (cappuccinoProjectController.cappuccinoProject.isProjectLoaded && cappuccinoProjectController.cappuccinoProject.isListeningProject)
-        [cappuccinoProjectController stopListenProject];
-    else if (cappuccinoProjectController.cappuccinoProject.isProjectLoaded)
-        [cappuccinoProjectController startListenProject];
-    else
-        [cappuccinoProjectController loadProject];
-}
-
-- (IBAction)removeProject:(id)aSender
-{
-    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
-    
-    if (selectedCappuccinoProject == -1)
-        return;
-
-    [self unlinkProject:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
-}
-
-- (void)unlinkProject:(CappuccinoProjectController*)aController
-{
-    NSInteger selectedCappuccinoProject = [self.cappuccinoProjectControllers indexOfObject:aController];
-    
-    if (selectedCappuccinoProject == -1)
-        return;
-    
-    [self.projectTableView deselectRow:selectedCappuccinoProject];
-    [aController stopListenProject];
-    [aController removeXcodeProject];
-    [aController removeXcodeSupportDirectory];
-    [self.cappuccinoProjectControllers removeObjectAtIndex:selectedCappuccinoProject];
-    [self.projectTableView reloadData];
-    
-    [self saveCurrentProjects];
-}
-
-- (IBAction)addProject:(id)aSender
-{
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    openPanel.title = @"Add a new Cappuccino Project to XcodeCapp";
-    openPanel.canCreateDirectories = YES;
-    openPanel.canChooseDirectories = YES;
-    openPanel.canChooseFiles = NO;
-    
-    if ([openPanel runModal] != NSFileHandlingPanelOKButton)
-        return;
-    
-    NSString *projectPath = [[openPanel.URLs[0] path] stringByStandardizingPath];
-    [self addProjectPath:projectPath];
-}
-
-- (void)addProjectPath:(NSString*)aProjectPath
-{
-    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath];
-    cappuccinoProjectController.mainWindowController = self;
-
-    [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
-    
-    NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];
-
-    [self.projectTableView reloadData];
-    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    [self.projectTableView scrollRowToVisible:index];
-    [self saveCurrentProjects];
-    
-    [CappuccinoUtils notifyUserWithTitle:@"Cappuccino project added" message:aProjectPath];
-}
-
-- (IBAction)saveSettings:(id)aSender
-{
-    [[self currentCappuccinoProjectController] save:aSender];
-}
-
-- (IBAction)cancelAllOperations:(id)aSender
-{
-    [[self currentCappuccinoProjectController] cancelAllOperations:aSender];
-}
-
-- (IBAction)synchronizeProject:(id)aSender
-{
-    [[self currentCappuccinoProjectController] synchronizeProject:aSender];
-}
-
-- (IBAction)removeErrors:(id)aSender
-{
-    [[self currentCappuccinoProjectController] removeErrors:aSender];
-}
-
-- (IBAction)openXcodeProject:(id)aSender
-{
-    [[self currentCappuccinoProjectController] openXcodeProject:aSender];
-}
-
-- (void)reloadErrors
-{
-    [self.errorOutlineView reloadData];
-    [self.errorOutlineView expandItem:nil expandChildren:YES];
-}
-
-- (void)reloadOperations
-{
-    [self.operationTableView reloadData];
-}
-
-- (IBAction)stopListeningAllProjects:(id)aSender
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:XCCStopListeningProjectNotification object:nil];
-    
-    for (int i; i < self.cappuccinoProjectControllers.count; i++)
-        [[self.cappuccinoProjectControllers objectAtIndex:i] stopListenProject];
 }
 
 @end

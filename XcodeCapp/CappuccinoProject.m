@@ -121,10 +121,10 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     self.projectPathsForSourcePaths = [NSMutableDictionary new];
     self.errors = [NSMutableDictionary new];
     
-    self.isLoadingProject = NO;
-    self.isListeningProject = NO;
-    self.isProcessingProject = NO;
-    self.isProjectLoaded = NO;
+    self.isLoading = NO;
+    self.isListening = NO;
+    self.isProcessing = NO;
+    self.isLoaded = NO;
 }
 
 - (void)updateIgnoredPath
@@ -335,6 +335,46 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self willChangeValueForKey:@"projectSurname"];
     [self.projectSettings setValue:projectSurname forKey:XCCCappuccinoProjectSurname];
     [self didChangeValueForKey:@"projectSurname"];
+}
+
+- (void)addOperationError:(OperationError *)operationError
+{
+    if (![self.errors objectForKey:operationError.fileName])
+        [self.errors setValue:[NSMutableArray new] forKey:operationError.fileName];
+
+    [self willChangeValueForKey:@"errors"];
+    [[self.errors objectForKey:operationError.fileName] addObject:operationError];
+    [self didChangeValueForKey:@"errors"];
+
+}
+
+- (void)removeOperationError:(OperationError *)operationError
+{
+    [self willChangeValueForKey:@"errors"];
+    [[self.errors objectForKey:operationError.fileName] removeObject:operationError];
+    [self didChangeValueForKey:@"errors"];
+    
+    if (![[self.errors objectForKey:operationError.fileName] count])
+        [self.errors removeObjectForKey:operationError.fileName];
+}
+
+- (void)removeAllOperationErrors
+{
+    [self willChangeValueForKey:@"errors"];
+    [self.errors removeAllObjects];
+    [self didChangeValueForKey:@"errors"];
+}
+
+- (void)removeOperationErrorsRelatedToSourcePath:(NSString *)aPath errorType:(int)anErrorType
+{
+    NSMutableArray *errorsToRemove = [NSMutableArray array];
+    
+    for (OperationError *operationError in [self.errors objectForKey:aPath])
+        if ([operationError.fileName isEqualToString:aPath] && operationError.errorType == anErrorType)
+            [errorsToRemove addObject:operationError];
+    
+    for (OperationError *error in errorsToRemove)
+        [self removeOperationError:error];
 }
 
 @end
