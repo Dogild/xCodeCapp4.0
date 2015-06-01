@@ -7,7 +7,7 @@
 //
 
 #import "CappuccinoUtils.h"
-#import "CappuccinoProject.h"
+#import "XCCCappuccinoProject.h"
 #import "XcodeProjectCloser.h"
 
 // The regex above is used with this predicate for testing.
@@ -82,7 +82,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     return [path isEqualToString:xcodecappIgnorePath];
 }
 
-+ (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(CappuccinoProject*)aCappuccinoProject
++ (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
 {
     return ([self isXibFile:path] || [self isObjjFile:path] || [self isXCCIgnoreFile:path cappuccinoProjectXcodecappIgnorePath:aCappuccinoProject.xcodecappIgnorePath]) && ![self pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:aCappuccinoProject.ignoredPathPredicates];
 }
@@ -149,7 +149,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     return [NSString stringWithFormat:@"^%@$", regex];
 }
 
-+ (NSArray *)getPathsToWatchForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject
++ (NSArray *)getPathsToWatchForCappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
 {
     NSMutableArray *pathsToWatch = [NSMutableArray arrayWithObject:aCappuccinoProject.projectPath];
     NSArray *otherPathsToWatch = @[@"", @"Frameworks/Debug", @"Frameworks/Source"];
@@ -169,7 +169,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     return [pathsToWatch copy];
 }
 
-+ (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(CappuccinoProject*)aCappuccinoProject
++ (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
 {
     NSString *fullProjectPath = [aCappuccinoProject.projectPath stringByAppendingPathComponent:projectPath];
     NSError *error = NULL;

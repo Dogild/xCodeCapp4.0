@@ -8,11 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class OperationError;
+@class XCCOperationError;
 
-@interface OperationErrorCellView : NSTableCellView
+@interface XCCOperationErrorDataView : NSTableCellView
 
-@property (nonatomic, retain) OperationError *operationError;
+@property (nonatomic, retain) XCCOperationError *operationError;
 
 @property (nonatomic, retain) IBOutlet NSTextField *fieldLineNumber;
 @property (nonatomic, retain) IBOutlet NSTextField *labelLineNumber;

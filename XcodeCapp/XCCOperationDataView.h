@@ -8,13 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class ProcessSourceOperation;
+@class XCCCSourceProcessingOperation;
 
-@interface OperationCellView : NSTableCellView
+@interface XCCOperationDataView : NSTableCellView
 
 @property (nonatomic, retain) IBOutlet NSTextField *fieldDescription;
 
 @property (nonatomic, retain) IBOutlet NSButton *cancelButton;
-@property (nonatomic, retain) ProcessSourceOperation *operation;
+@property (nonatomic, retain) XCCCSourceProcessingOperation *operation;
 
 @end

@@ -8,9 +8,9 @@
 
 #include <fcntl.h>
 
-#import "CappuccinoProject.h"
+#import "XCCCappuccinoProject.h"
 #import "CappuccinoUtils.h"
-#import "Path.h"
+#import "XCCPath.h"
 
 // We replace "/" in a path with this. It looks like "/",
 // but is actually an obscure Unicode character we hope no one uses in a filename.
@@ -53,21 +53,21 @@ static NSDictionary* XCCDefaultInfoPlistConfigurations;
 NSString * const XCCProjectDidFinishLoadingNotification = @"XCCProjectDidFinishLoadingNotification";
 NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoadingNotification";
 
-@interface CappuccinoProject ()
+@interface XCCCappuccinoProject ()
 @property NSFileManager *fm;
 @end
 
 
-@implementation CappuccinoProject
+@implementation XCCCappuccinoProject
 
 #pragma mark - Class methods
 
 + (void)initialize
 {
-    if (self != [CappuccinoProject class])
+    if (self != [XCCCappuccinoProject class])
         return;
     
-    XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:[[Path alloc] initWithName:@"/Users/Tonio/Documents/Alcatel/Applications/CNA-Dashboard/.cappenvs/environments/master/narwhal/bin"], nil];
+    XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:[[XCCPath alloc] initWithName:@"/Users/Tonio/Documents/Alcatel/Applications/CNA-Dashboard/.cappenvs/environments/master/narwhal/bin"], nil];
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
     
@@ -178,7 +178,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     {
         for (NSString *name in paths)
         {
-            Path *path = [Path new];
+            XCCPath *path = [XCCPath new];
             [path setName:name];
             [mutablePaths addObject:path];
         }
@@ -336,7 +336,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self didChangeValueForKey:@"projectSurname"];
 }
 
-- (void)addOperationError:(OperationError *)operationError
+- (void)addOperationError:(XCCOperationError *)operationError
 {
     if (![self.errors objectForKey:operationError.fileName])
         [self.errors setValue:[NSMutableArray new] forKey:operationError.fileName];
@@ -347,7 +347,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 }
 
-- (void)removeOperationError:(OperationError *)operationError
+- (void)removeOperationError:(XCCOperationError *)operationError
 {
     [self willChangeValueForKey:@"errors"];
     [[self.errors objectForKey:operationError.fileName] removeObject:operationError];
@@ -368,11 +368,11 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 {
     NSMutableArray *errorsToRemove = [NSMutableArray array];
     
-    for (OperationError *operationError in [self.errors objectForKey:aPath])
+    for (XCCOperationError *operationError in [self.errors objectForKey:aPath])
         if ([operationError.fileName isEqualToString:aPath] && (operationError.errorType == anErrorType || anErrorType == XCCDefaultOperationErrorType))
             [errorsToRemove addObject:operationError];
     
-    for (OperationError *error in errorsToRemove)
+    for (XCCOperationError *error in errorsToRemove)
         [self removeOperationError:error];
 }
 

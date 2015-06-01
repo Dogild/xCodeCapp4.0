@@ -6,15 +6,15 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "OperationErrorHeaderCellView.h"
+#import "XCCOperationErrorHeaderDataView.h"
 
 
-@implementation OperationErrorHeaderCellView
+@implementation XCCOperationErrorHeaderDataView
 
 - (void)setObjectValue:(id)aPath
 {
     AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
-    CappuccinoProject *currentProject = appDelegate.mainWindowController.currentCappuccinoProject;
+    XCCCappuccinoProject *currentProject = appDelegate.mainWindowController.currentCappuccinoProject;
 
     NSString *path = [NSString stringWithFormat:@"%@/", currentProject.projectPath];
     NSString *text = [aPath stringByReplacingOccurrencesOfString:path withString:@""];

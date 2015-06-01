@@ -7,7 +7,7 @@
 //
 
 #import "CappLintUtils.h"
-#import "OperationError.h"
+#import "XCCOperationError.h"
 
 @implementation CappLintUtils
 
@@ -45,7 +45,7 @@
                                @"message": messageError,
                                @"path": sourcePath};
         
-        OperationError *operationError = [OperationError cappLintOperationErrorFromDictionary:dict];
+        XCCOperationError *operationError = [XCCOperationError cappLintOperationErrorFromDictionary:dict];
         
         [operationErrors addObject:operationError];
     }

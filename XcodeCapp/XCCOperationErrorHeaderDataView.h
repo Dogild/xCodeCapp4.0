@@ -8,9 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import "AppDelegate.h"
-#import "MainWindowController.h"
-#import "CappuccinoProject.h"
+#import "XCCMainController.h"
+#import "XCCCappuccinoProject.h"
 
-@interface OperationErrorHeaderCellView : NSTableCellView
+@interface XCCOperationErrorHeaderDataView : NSTableCellView
 
 @end

@@ -7,14 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "CappuccinoProject.h"
+#import "XCCCappuccinoProject.h"
 
 
-@interface CappuccinoProjectCellView : NSTableCellView
+@interface XCCCappuccinoProjectDataView : NSTableCellView
 
 @property (nonatomic, retain) IBOutlet NSTextField *pathTextField;
 @property (nonatomic, retain) IBOutlet NSButton *loadButton;
 @property (nonatomic, retain) IBOutlet NSBox *boxStatus;
-@property (nonatomic, retain) CappuccinoProject *cappuccinoProject;
+@property (nonatomic, retain) XCCCappuccinoProject *cappuccinoProject;
 
 @end

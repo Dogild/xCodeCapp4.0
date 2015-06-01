@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "MainWindowController.h"
+#import "XCCMainController.h"
 #import "UserDefaults.h"
 
 @implementation AppDelegate

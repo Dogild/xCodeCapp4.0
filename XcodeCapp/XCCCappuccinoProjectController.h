@@ -8,17 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-@class CappuccinoProject;
+@class XCCCappuccinoProject;
 @class TaskManager;
-@class MainWindowController;
+@class XCCMainController;
 
 extern NSString * const XCCStartListeningProjectNotification;
 extern NSString * const XCCStopListeningProjectNotification;
 
-@interface CappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
+@interface XCCCappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
 
-@property CappuccinoProject *cappuccinoProject;
-@property MainWindowController *mainWindowController;
+@property XCCCappuccinoProject *cappuccinoProject;
+@property XCCMainController *mainWindowController;
 
 // Task manager of the project
 @property TaskManager *taskManager;

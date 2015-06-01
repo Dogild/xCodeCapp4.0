@@ -6,15 +6,15 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "OperationError.h"
+#import "XCCOperationError.h"
 
-@implementation OperationError
+@implementation XCCOperationError
 
 @synthesize message = _message;
 
 + (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    OperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [[self alloc] init];
     
     operationError.fileName = [aDictionary objectForKey:@"sourcePath"];
     operationError.message = [aDictionary objectForKey:@"errors"];
@@ -25,7 +25,7 @@
 
 + (instancetype)nib2cibOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    OperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [[self alloc] init];
     
     operationError.fileName = [aDictionary objectForKey:@"sourcePath"];
     operationError.message = [aDictionary objectForKey:@"errors"];
@@ -37,7 +37,7 @@
 
 + (instancetype)objj2ObjcSkeletonOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    OperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [[self alloc] init];
     
     operationError.fileName = [aDictionary objectForKey:@"path"];
     operationError.message = [aDictionary objectForKey:@"message"];
@@ -50,7 +50,7 @@
 
 + (instancetype)objjOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    OperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [[self alloc] init];
     
     operationError.fileName = [aDictionary objectForKey:@"path"];
     operationError.message = [aDictionary objectForKey:@"message"];
@@ -63,7 +63,7 @@
 
 + (instancetype)cappLintOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    OperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [[self alloc] init];
     
     operationError.fileName = [aDictionary objectForKey:@"path"];
     operationError.message = [aDictionary objectForKey:@"message"];
@@ -74,7 +74,7 @@
     return operationError;
 }
 
-- (BOOL)isEqualTo:(OperationError*)object
+- (BOOL)isEqualTo:(XCCOperationError*)object
 {
     return object.errorType == self.errorType && [object.fileName isEqualToString:self.fileName];
 }

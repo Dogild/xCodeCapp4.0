@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E26a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
     </dependencies>
     <objects>
@@ -26,7 +25,7 @@
                 <outlet property="preferencesWindow" destination="ekp-cc-W2F" id="c14-w5-R7V"/>
             </connections>
         </customObject>
-        <customObject id="923-ke-ovW" customClass="MainWindowController">
+        <customObject id="923-ke-ovW" customClass="XCCMainController">
             <connections>
                 <outlet property="errorOutlineView" destination="VIQ-Ns-aOH" id="THg-Gv-vlh"/>
                 <outlet property="maskingView" destination="fYW-ua-i1m" id="3nU-gf-IXn"/>
@@ -378,7 +377,7 @@
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
-                                                                <tableCellView identifier="MainCell" id="QnM-Kd-OyB" customClass="CappuccinoProjectCellView">
+                                                                <tableCellView identifier="MainCell" id="QnM-Kd-OyB" customClass="XCCCappuccinoProjectDataView">
                                                                     <rect key="frame" x="0.0" y="0.0" width="303" height="72"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
@@ -898,7 +897,7 @@
                                                                                         </textFieldCell>
                                                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                                                         <prototypeCellViews>
-                                                                                            <tableCellView identifier="OperationErrorHeaderCell" id="lKb-b9-khu" customClass="OperationErrorHeaderCellView">
+                                                                                            <tableCellView identifier="OperationErrorHeaderCell" id="lKb-b9-khu" customClass="XCCOperationErrorHeaderDataView">
                                                                                                 <rect key="frame" x="1" y="1" width="603" height="20"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                                 <subviews>
@@ -916,7 +915,7 @@
                                                                                                     <outlet property="textField" destination="F9w-ex-an5" id="p2N-IL-yx3"/>
                                                                                                 </connections>
                                                                                             </tableCellView>
-                                                                                            <tableCellView identifier="OperationErrorCell" id="8eE-6W-Zcl" customClass="OperationErrorCellView">
+                                                                                            <tableCellView identifier="OperationErrorCell" id="8eE-6W-Zcl" customClass="XCCOperationErrorDataView">
                                                                                                 <rect key="frame" x="1" y="23" width="603" height="101"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                                 <subviews>
@@ -1018,7 +1017,7 @@
                                                                                         </textFieldCell>
                                                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                                                         <prototypeCellViews>
-                                                                                            <tableCellView identifier="OperationCell" id="J40-QH-QKh" customClass="OperationCellView">
+                                                                                            <tableCellView identifier="OperationCell" id="J40-QH-QKh" customClass="XCCOperationDataView">
                                                                                                 <rect key="frame" x="1" y="1" width="603" height="40"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                                 <subviews>

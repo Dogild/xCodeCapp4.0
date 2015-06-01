@@ -10,7 +10,7 @@
 #import <CoreServices/CoreServices.h>
 
 @class CappuccinoController;
-@class MainWindowController;
+@class XCCMainController;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 {
@@ -23,7 +23,7 @@
 @property (strong) IBOutlet NSWindow   *preferencesWindow;
 
 @property (strong) IBOutlet CappuccinoController *cappuccinoController;
-@property (strong) IBOutlet MainWindowController *mainWindowController;
+@property (strong) IBOutlet XCCMainController *mainWindowController;
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;

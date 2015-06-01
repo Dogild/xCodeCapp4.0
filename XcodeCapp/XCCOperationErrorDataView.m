@@ -6,12 +6,12 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "OperationErrorCellView.h"
-#import "OperationError.h"
+#import "XCCOperationErrorDataView.h"
+#import "XCCOperationError.h"
 
-@implementation OperationErrorCellView
+@implementation XCCOperationErrorDataView
 
-- (void)setOperationError:(OperationError *)operationError
+- (void)setOperationError:(XCCOperationError *)operationError
 {
     self.textField.stringValue = operationError.message;
     self.fieldLineNumber.stringValue = operationError.lineNumber;

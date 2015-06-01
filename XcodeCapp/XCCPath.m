@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "Path.h"
+#import "XCCPath.h"
 
-@implementation Path
+@implementation XCCPath
 
 - (instancetype)init
 {

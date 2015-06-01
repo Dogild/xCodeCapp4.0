@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "OperationError.h"
+#import "XCCOperationError.h"
 
 @interface ObjjUtils : NSObject
 

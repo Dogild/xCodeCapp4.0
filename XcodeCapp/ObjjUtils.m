@@ -29,9 +29,9 @@
         for (NSDictionary *error in errors)
         {
             if (type == XCCObjjOperationErrorType)
-                [operationErrors addObject:[OperationError objjOperationErrorFromDictionary:error]];
+                [operationErrors addObject:[XCCOperationError objjOperationErrorFromDictionary:error]];
             else
-                [operationErrors addObject:[OperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
+                [operationErrors addObject:[XCCOperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
         }
     }
     @catch (NSException *exception)
@@ -41,9 +41,9 @@
                                 @"path" : [dictionary objectForKey:@"sourcePath"]};
         
         if (type == XCCObjjOperationErrorType)
-            [operationErrors addObject:[OperationError objjOperationErrorFromDictionary:error]];
+            [operationErrors addObject:[XCCOperationError objjOperationErrorFromDictionary:error]];
         else
-            [operationErrors addObject:[OperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
+            [operationErrors addObject:[XCCOperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
     }
     
     return operationErrors;

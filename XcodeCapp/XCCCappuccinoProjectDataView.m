@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "CappuccinoProjectCellView.h"
-#import "CappuccinoProject.h"
+#import "XCCCappuccinoProjectDataView.h"
+#import "XCCCappuccinoProject.h"
 #import "CappuccinoUtils.h"
 
-@implementation CappuccinoProjectCellView
+@implementation XCCCappuccinoProjectDataView
 
-- (void)setCappuccinoProject:(CappuccinoProject *)cappuccinoProject
+- (void)setCappuccinoProject:(XCCCappuccinoProject *)cappuccinoProject
 {
     [self willChangeValueForKey:@"cappuccinoProject"];
     _cappuccinoProject = cappuccinoProject;

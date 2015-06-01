@@ -17,7 +17,7 @@ enum {
 };
 typedef int XCCOperationErrorType;
 
-@interface OperationError : NSObject
+@interface XCCOperationError : NSObject
 
 @property (nonatomic, retain) NSString *fileName;
 @property (nonatomic, retain) NSString *message;

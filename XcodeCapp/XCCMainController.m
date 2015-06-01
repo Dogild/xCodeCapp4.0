@@ -6,14 +6,14 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "MainWindowController.h"
-#import "CappuccinoProject.h"
-#import "CappuccinoProjectController.h"
-#import "CappuccinoProjectCellView.h"
+#import "XCCMainController.h"
+#import "XCCCappuccinoProject.h"
+#import "XCCCappuccinoProjectController.h"
+#import "XCCCappuccinoProjectDataView.h"
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
 
-@implementation MainWindowController
+@implementation XCCMainController
 
 
 #pragma mark - Initialization
@@ -28,7 +28,7 @@
 
 #pragma mark - Custom Getters and Setters
 
-- (CappuccinoProjectController*)currentCappuccinoProjectController
+- (XCCCappuccinoProjectController*)currentCappuccinoProjectController
 {
     return [self.cappuccinoProjectControllers objectAtIndex:[self.projectTableView selectedRow]];
 }
@@ -46,7 +46,7 @@
     
     if (lastSelectedProjectPath)
     {
-        for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
+        for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         {
             if ([controller.cappuccinoProject.projectPath isEqualToString:lastSelectedProjectPath])
             {
@@ -109,7 +109,7 @@
     
     for (NSString *path in projectHistory)
     {
-        CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path controller:self];
+        XCCCappuccinoProjectController *cappuccinoProjectController = [[XCCCappuccinoProjectController alloc] initWithPath:path controller:self];
         [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
@@ -122,7 +122,7 @@
 {
     NSMutableArray *historyProjectPaths = [NSMutableArray array];
     
-    for (CappuccinoProjectController *controller in self.cappuccinoProjectControllers)
+    for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
     
     [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCCurrentManagedProjects];
@@ -131,7 +131,7 @@
 
 #pragma mark - Public Utilities
 
-- (void)removeCappuccinoProject:(CappuccinoProjectController*)aController
+- (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController
 {
     NSInteger selectedCappuccinoProject = [self.cappuccinoProjectControllers indexOfObject:aController];
     
@@ -148,7 +148,7 @@
 
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath
 {
-    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath controller:self];
+    XCCCappuccinoProjectController *cappuccinoProjectController = [[XCCCappuccinoProjectController alloc] initWithPath:aProjectPath controller:self];
 
     [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     
@@ -249,9 +249,9 @@
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    CappuccinoProjectCellView   *cellView                    = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
-    CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
-    CappuccinoProject           *cappuccinoProject           =[cappuccinoProjectController cappuccinoProject];
+    XCCCappuccinoProjectDataView   *cellView                    = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
+    XCCCappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
+    XCCCappuccinoProject           *cappuccinoProject           =[cappuccinoProjectController cappuccinoProject];
     
     cellView.cappuccinoProject = cappuccinoProject;
     
@@ -275,7 +275,7 @@
         return;
     }
     
-    CappuccinoProjectController *currentController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
+    XCCCappuccinoProjectController *currentController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
     
     self.currentCappuccinoProject = [currentController cappuccinoProject];
     [self.operationTableView setDelegate:currentController];

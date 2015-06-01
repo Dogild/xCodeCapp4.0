@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cappuccino Project. All rights reserved.
 //
 
-#import "ProcessSourceOperation.h"
-#import "CappuccinoProject.h"
+#import "XCCCSourceProcessingOperation.h"
+#import "XCCCappuccinoProject.h"
 #import "CappuccinoUtils.h"
 #import "TaskManager.h"
 
@@ -32,18 +32,18 @@ NSString * const XCCNib2CibDidStartNotification = @"XCCNib2CibDidStartNotificati
 NSString * const XCCNib2CibDidGenerateErrorNotification = @"XCCNib2CibDidGenerateErrorNotification";
 NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
-@interface ProcessSourceOperation ()
+@interface XCCCSourceProcessingOperation ()
 
 @property TaskManager *taskManager;
-@property CappuccinoProject *cappuccinoProject;
+@property XCCCappuccinoProject *cappuccinoProject;
 @property NSString *sourcePath;
 
 @end
 
 
-@implementation ProcessSourceOperation
+@implementation XCCCSourceProcessingOperation
 
-- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath
 {
     self = [super init];
 

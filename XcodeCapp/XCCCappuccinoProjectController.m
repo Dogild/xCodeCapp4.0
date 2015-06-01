@@ -6,20 +6,20 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "CappuccinoProjectController.h"
+#import "XCCCappuccinoProjectController.h"
 
-#import "CappuccinoProject.h"
+#import "XCCCappuccinoProject.h"
 #import "CappuccinoUtils.h"
 #import "CappLintUtils.h"
-#import "FindSourceFilesOperation.h"
+#import "XCCSourcesFinderOperation.h"
 #import "LogUtils.h"
-#import "MainWindowController.h"
-#import "OperationCellView.h"
-#import "OperationError.h"
-#import "OperationErrorCellView.h"
-#import "OperationErrorHeaderCellView.h"
+#import "XCCMainController.h"
+#import "XCCOperationDataView.h"
+#import "XCCOperationError.h"
+#import "XCCOperationErrorDataView.h"
+#import "XCCOperationErrorHeaderDataView.h"
 #import "ObjjUtils.h"
-#import "ProcessSourceOperation.h"
+#import "XCCCSourceProcessingOperation.h"
 #import "TaskManager.h"
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
@@ -37,7 +37,7 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 
 
 
-@interface CappuccinoProjectController ()
+@interface XCCCappuccinoProjectController ()
 
 @property NSDate *lastReloadErrorsViewDate;
 @property NSDate *lastReloadOperationsViewDate;
@@ -58,7 +58,7 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 
 void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t numEvents, void *eventPaths, const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[])
 {
-    CappuccinoProjectController *controller = (__bridge  CappuccinoProjectController *)userData;
+    XCCCappuccinoProjectController *controller = (__bridge  XCCCappuccinoProjectController *)userData;
     NSArray *paths = (__bridge  NSArray *)eventPaths;
     
     [controller _handleFSEventsWithPaths:paths flags:eventFlags ids:eventIds];
@@ -66,7 +66,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 
 
-@implementation CappuccinoProjectController
+@implementation XCCCappuccinoProjectController
 
 #pragma mark - Init methods
 
@@ -77,7 +77,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (self)
     {
         self.fm = [NSFileManager defaultManager];
-        self.cappuccinoProject = [[CappuccinoProject alloc] initWithPath:aPath];
+        self.cappuccinoProject = [[XCCCappuccinoProject alloc] initWithPath:aPath];
         self.mainWindowController = aController;
         
         [self _init];
@@ -365,7 +365,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_populateXcodeSupportDirectoryWithProjectRelativePath:(NSString *)path
 {
-    FindSourceFilesOperation *op = [[FindSourceFilesOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager path:path];
+    XCCSourcesFinderOperation *op = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager path:path];
     [self.operationQueue addOperation:op];
 }
 
@@ -483,7 +483,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self _removeOperation:note.userInfo[@"operation"]];
-    [self.cappuccinoProject addOperationError:[OperationError defaultOperationErrorFromDictionary:note.userInfo]];
+    [self.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
     
     [self _reloadDataErrorsOutlineView];
 }
@@ -495,7 +495,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _removeOperation:note.userInfo[@"operation"]];
     
-    for (OperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
+    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
         [self.cappuccinoProject addOperationError:operationError];
 
     [self _reloadDataErrorsOutlineView];
@@ -508,7 +508,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _removeOperation:note.userInfo[@"operation"]];
 
-    for (OperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
+    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
     
     [self _reloadDataErrorsOutlineView];
@@ -522,7 +522,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     [self _removeOperation:note.userInfo[@"operation"]];
 
-    [self.cappuccinoProject addOperationError:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
+    [self.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
     
     [self _reloadDataErrorsOutlineView];
 }
@@ -534,7 +534,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _removeOperation:note.userInfo[@"operation"]];
 
-    for (OperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
+    for (XCCOperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
     
     [self _reloadDataErrorsOutlineView];
@@ -730,7 +730,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         if (![self.fm fileExistsAtPath:path])
             continue;
         
-        ProcessSourceOperation *op = [[ProcessSourceOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
+        XCCCSourceProcessingOperation *op = [[XCCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
                                                                                    taskManager:self.taskManager
                                                                                     sourcePath:[self.cappuccinoProject projectPathForSourcePath:path]];
 
@@ -953,7 +953,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             
             if (result == 0)
             {
-                self.cappuccinoProject = [[CappuccinoProject alloc] initWithPath:[NSString stringWithUTF8String:newPathBuf]];
+                self.cappuccinoProject = [[XCCCappuccinoProject alloc] initWithPath:[NSString stringWithUTF8String:newPathBuf]];
                 shouldUnlink = NO;
             }
             else
@@ -1038,7 +1038,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)cancelOperation:(id)sender
 {
-    ProcessSourceOperation *operation = [self.operationQueue.operations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
+    XCCCSourceProcessingOperation *operation = [self.operationQueue.operations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 
@@ -1106,10 +1106,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     NSString *path = item;
     NSInteger line = 1;
     
-    if ([item isKindOfClass:[OperationError class]])
+    if ([item isKindOfClass:[XCCOperationError class]])
     {
-        path = [(OperationError*)item fileName];
-        line = [[(OperationError*)item lineNumber] intValue];
+        path = [(XCCOperationError*)item fileName];
+        line = [[(XCCOperationError*)item lineNumber] intValue];
     }
     
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -1246,7 +1246,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    OperationCellView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
+    XCCOperationDataView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
     [cellView setOperation:[self.operations objectAtIndex:row]];
     
     [cellView.cancelButton setTarget:self];
@@ -1268,7 +1268,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
 {
-    return ![item isKindOfClass:[OperationError class]];
+    return ![item isKindOfClass:[XCCOperationError class]];
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
@@ -1286,21 +1286,21 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item
 {
-    if ([item isKindOfClass:[OperationError class]])
+    if ([item isKindOfClass:[XCCOperationError class]])
     {
-        OperationErrorCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
+        XCCOperationErrorDataView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
         [cellView setOperationError:item];
         return cellView;
     }
     
-    OperationErrorHeaderCellView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
+    XCCOperationErrorHeaderDataView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
     cellView.textField.stringValue = item;
     return cellView;
 }
 
-- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(OperationError *)item
+- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(XCCOperationError *)item
 {
-    if ([item isKindOfClass:[OperationError class]])
+    if ([item isKindOfClass:[XCCOperationError class]])
     {
         //        CGFloat messageHeight = heightForStringDrawing(item.message, [NSFont fontWithName:@"Menlo" size:11.0]);
         

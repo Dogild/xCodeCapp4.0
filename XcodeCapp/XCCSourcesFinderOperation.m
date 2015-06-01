@@ -6,26 +6,26 @@
 //  Copyright (c) 2013 Cappuccino Project. All rights reserved.
 //
 
-#import "FindSourceFilesOperation.h"
-#import "ProcessSourceOperation.h"
-#import "CappuccinoProject.h"
+#import "XCCSourcesFinderOperation.h"
+#import "XCCCSourceProcessingOperation.h"
+#import "XCCCappuccinoProject.h"
 #import "TaskManager.h"
 #import "CappuccinoUtils.h"
 
 NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSourceToProjectPathMappingNotification";
 
-@interface FindSourceFilesOperation ()
+@interface XCCSourcesFinderOperation ()
 
-@property CappuccinoProject *cappuccinoProject;
+@property XCCCappuccinoProject *cappuccinoProject;
 @property TaskManager *taskManager;
 @property NSString *projectPathToSearch;
 
 @end
 
 
-@implementation FindSourceFilesOperation
+@implementation XCCSourcesFinderOperation
 
-- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager path:(NSString *)path
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager path:(NSString *)path
 {
     self = [super init];
     
@@ -172,7 +172,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     if (self.isCancelled)
         return;
 
-    ProcessSourceOperation *op = [[ProcessSourceOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager sourcePath:projectSourcePath];
+    XCCCSourceProcessingOperation *op = [[XCCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskManager:self.taskManager sourcePath:projectSourcePath];
     
     [[NSOperationQueue currentQueue] addOperation:op];
 }

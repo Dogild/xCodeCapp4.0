@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class CappuccinoProject;
+@class XCCCappuccinoProject;
 @class TaskManager;
 
 extern NSString * const XCCConversionDidStartNotification;
@@ -28,12 +28,12 @@ extern NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification;
 extern NSString * const XCCNib2CibDidGenerateErrorNotification;
 extern NSString * const XCCConversionDidGenerateCancelNotification;
 
-@interface ProcessSourceOperation : NSOperation
+@interface XCCCSourceProcessingOperation : NSOperation
 
 @property NSTask *task;
 
 // sourcePath should be a path within the project (no resolved symlinks)
-- (id)initWithCappuccinoProject:(CappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath;
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskManager:(TaskManager*)aTaskManager sourcePath:(NSString *)sourcePath;
 - (NSString *)operationName;
 - (NSString *)operationDescription;
 @end

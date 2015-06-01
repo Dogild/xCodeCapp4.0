@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class CappuccinoProject;
-@class CappuccinoProjectController;
+@class XCCCappuccinoProject;
+@class XCCCappuccinoProjectController;
 
-@interface MainWindowController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
+@interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
 @property (strong) IBOutlet NSBox          *maskingView;
 @property (strong) IBOutlet NSSplitView    *splitView;
@@ -21,7 +21,7 @@
 @property (strong) IBOutlet NSView         *projectViewContainer;
 
 @property (strong) NSMutableArray *cappuccinoProjectControllers;
-@property (strong) CappuccinoProject *currentCappuccinoProject;
+@property (strong) XCCCappuccinoProject *currentCappuccinoProject;
 
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
@@ -37,6 +37,6 @@
 - (void)reloadErrorsListForCurrentCappuccinoProject;
 - (void)reloadOperationsListForCurrentCappuccinoProject;
 
-- (void)removeCappuccinoProject:(CappuccinoProjectController*)aController;
+- (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;
 
 @end

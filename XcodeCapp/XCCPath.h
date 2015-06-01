@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Path : NSObject
+@interface XCCPath : NSObject
 
 @property NSString *name;
 

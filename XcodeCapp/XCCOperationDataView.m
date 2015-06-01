@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "OperationCellView.h"
-#import "ProcessSourceOperation.h"
+#import "XCCOperationDataView.h"
+#import "XCCCSourceProcessingOperation.h"
 
-@implementation OperationCellView
+@implementation XCCOperationDataView
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
