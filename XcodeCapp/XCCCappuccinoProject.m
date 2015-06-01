@@ -97,7 +97,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
         self.fm = [NSFileManager defaultManager];
         self.projectPath = aPath;
         self.xcodecappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
-        self.projectName = [self.projectPath lastPathComponent];
+        self.name = [self.projectPath lastPathComponent];
         self.pbxModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
         
         NSString *projectName = [self.projectPath.lastPathComponent stringByAppendingString:@".xcodeproj"];
@@ -166,10 +166,10 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self willChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
     [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
     [self willChangeValueForKey:@"environementsPaths"];
-    self.projectSettings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
+    self.settings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
     
-    if (!self.projectSettings)
-        self.projectSettings = [self defaultSettings];
+    if (!self.settings)
+        self.settings = [self defaultSettings];
     
     NSMutableArray *mutablePaths = [NSMutableArray array];
     NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
@@ -201,12 +201,12 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 - (id)settingValueForKey:(NSString*)aKey
 {
-    return [self.projectSettings valueForKey:aKey];
+    return [self.settings valueForKey:aKey];
 }
 
 - (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey
 {
-    [self.projectSettings setValue:aValue forKey:aKey];
+    [self.settings setValue:aValue forKey:aKey];
 }
 
 - (id)defaultSettings
@@ -214,16 +214,16 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
     
     defaultSettings[XCCCappuccinoObjjIncludePath] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
-    defaultSettings[XCCCappuccinoProjectSurname] = [self.projectName copy];
+    defaultSettings[XCCCappuccinoProjectSurname] = [self.name copy];
     
     return defaultSettings;
 }
 
 - (NSMutableDictionary*)currentSettings
 {
-    [self.projectSettings setValue:[self.environementsPaths valueForKeyPath:@"name"] forKey:XCCCappuccinoProjectBinPaths];
+    [self.settings setValue:[self.environementsPaths valueForKeyPath:@"name"] forKey:XCCCappuccinoProjectBinPaths];
     
-    return [self.projectSettings mutableCopy];
+    return [self.settings mutableCopy];
 }
 
 #pragma mark path methods
@@ -272,7 +272,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (void)setObjjIncludePath:(NSString *)objjIncludePath
 {
     [self willChangeValueForKey:@"objjIncludePath"];
-    [self.projectSettings setValue:objjIncludePath forKey:XCCCappuccinoObjjIncludePath];
+    [self.settings setValue:objjIncludePath forKey:XCCCappuccinoObjjIncludePath];
     [self didChangeValueForKey:@"objjIncludePath"];
 }
 
@@ -284,7 +284,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (void)setShouldProcessWithObjjWarnings:(BOOL)shouldProcessWithObjjWarnings
 {
     [self willChangeValueForKey:@"shouldProcessWithObjjWarnings"];
-    [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithObjjWarnings] forKey:XCCCappuccinoProcessObjj];
+    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithObjjWarnings] forKey:XCCCappuccinoProcessObjj];
     [self didChangeValueForKey:@"shouldProcessWithObjjWarnings"];
 }
 
@@ -296,7 +296,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (void)setShouldProcessWithCappLint:(BOOL)shouldProcessWithCappLint
 {
     [self willChangeValueForKey:@"shouldProcessWithCappLint"];
-    [self.projectSettings setValue:[NSNumber numberWithInt:shouldProcessWithCappLint] forKey:XCCCappuccinoProcessCappLint];
+    [self.settings setValue:[NSNumber numberWithInt:shouldProcessWithCappLint] forKey:XCCCappuccinoProcessCappLint];
     [self didChangeValueForKey:@"shouldProcessWithCappLint"];
 }
 
@@ -308,7 +308,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (void)setShouldProcessWithObjj2ObjcSkeleton:(BOOL)shouldProcessWithObjj2ObjcSkeleton
 {
     [self willChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
-    [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithObjj2ObjcSkeleton] forKey:XCCCappuccinoProcessObjj2ObjcSkeleton];
+    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithObjj2ObjcSkeleton] forKey:XCCCappuccinoProcessObjj2ObjcSkeleton];
     [self didChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
 }
 
@@ -320,20 +320,20 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (void)setShouldProcessWithNib2Cib:(BOOL)shouldProcessWithNib2Cib
 {
     [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
-    [self.projectSettings setValue:[NSNumber numberWithBool:shouldProcessWithNib2Cib] forKey:XCCCappuccinoProcessNib2Cib];
+    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithNib2Cib] forKey:XCCCappuccinoProcessNib2Cib];
     [self didChangeValueForKey:@"shouldProcessWithNib2Cib"];
 }
 
-- (NSString*)projectSurname
+- (NSString*)nickname
 {
     return [self settingValueForKey:XCCCappuccinoProjectSurname];
 }
 
-- (void)setProjectSurname:(NSString *)projectSurname
+- (void)setNickname:(NSString *)projectSurname
 {
-    [self willChangeValueForKey:@"projectSurname"];
-    [self.projectSettings setValue:projectSurname forKey:XCCCappuccinoProjectSurname];
-    [self didChangeValueForKey:@"projectSurname"];
+    [self willChangeValueForKey:@"nickname"];
+    [self.settings setValue:projectSurname forKey:XCCCappuccinoProjectSurname];
+    [self didChangeValueForKey:@"nickname"];
 }
 
 - (void)addOperationError:(XCCOperationError *)operationError

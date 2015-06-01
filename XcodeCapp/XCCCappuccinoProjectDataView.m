@@ -18,7 +18,7 @@
     _cappuccinoProject = cappuccinoProject;
     [self didChangeValueForKey:@"cappuccinoProject"];
     
-    [self.textField setStringValue:[cappuccinoProject projectName]];
+    [self.textField setStringValue:[cappuccinoProject name]];
     [self.pathTextField setStringValue:[cappuccinoProject projectPath]];
     
     self.boxStatus.borderColor = [NSColor clearColor];
