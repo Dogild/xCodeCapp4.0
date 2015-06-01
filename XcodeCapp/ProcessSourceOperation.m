@@ -194,13 +194,14 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         [[NSNotificationCenter defaultCenter] postNotificationName:XCCObjj2ObjcSkeletonDidStartNotification object:self userInfo:info];
     });
 
-    NSString *relativePath = [aPath stringByReplacingOccurrencesOfString:self.cappuccinoProject.projectPath withString:@""];
-    NSString *destinationPath = [[self.cappuccinoProject.supportPath stringByAppendingString:relativePath] stringByDeletingLastPathComponent]; // yeay!
+    NSString *targetName = [self.cappuccinoProject flattenedXcodeSupportFileNameForPath:aPath];
     
     NSString *command = @"objj2objcskeleton";
     NSArray *arguments = @[
                   aPath,
-                  destinationPath
+                  self.cappuccinoProject.supportPath,
+                  @"-n",
+                  targetName
                   ];
     
     NSDictionary *result = [self launchTaskForCommand:command arguments:arguments];

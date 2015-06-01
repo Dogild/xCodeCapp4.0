@@ -14,8 +14,7 @@
 
 // We replace "/" in a path with this. It looks like "/",
 // but is actually an obscure Unicode character we hope no one uses in a filename.
-//static NSString * const XCCSlashReplacement = @"∕";  // DIVISION SLASH, Unicode: U+2215
-static NSString * const XCCSlashReplacement = @"/";  // WTF was that? replaced by a normal / for now.
+static NSString * const XCCSlashReplacement = @"∕";  // DIVISION SLASH, Unicode: U+2215
 
 // Where we put the generated Cocoa class files
 static NSString * const XCCSupportFolderName = @".XcodeSupport";
@@ -121,10 +120,10 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     self.projectPathsForSourcePaths = [NSMutableDictionary new];
     self.errors = [NSMutableDictionary new];
     
-    self.isLoading = NO;
-    self.isListening = NO;
-    self.isProcessing = NO;
-    self.isLoaded = NO;
+    self.isLoading      = NO;
+    self.isListening    = NO;
+    self.isProcessing   = NO;
+    self.isLoaded       = NO;
 }
 
 - (void)updateIgnoredPath
@@ -375,6 +374,13 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     
     for (OperationError *error in errorsToRemove)
         [self removeOperationError:error];
+}
+
+- (NSString *)flattenedXcodeSupportFileNameForPath:(NSString *)aPath
+{
+    NSString *relativePath = [[aPath stringByDeletingPathExtension] stringByReplacingOccurrencesOfString:[self.projectPath stringByAppendingString:@"/"] withString:@""];
+    
+    return [relativePath stringByReplacingOccurrencesOfString:@"/" withString:XCCSlashReplacement];
 }
 
 @end

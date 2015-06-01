@@ -29,4 +29,5 @@
 + (NSArray *)getPathsToWatchForCappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
 
 + (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(CappuccinoProject*)aCappuccinoProject;
+
 @end

@@ -23,10 +23,9 @@ extern NSString * const XCCStopListeningProjectNotification;
 // Task manager of the project
 @property TaskManager *taskManager;
 
-- (id)initWithPath:(NSString*)aPath;
+- (id)initWithPath:(NSString*)aPath controller:(id)aController;
 
 - (void)applicationIsClosing;
-- (void)applicationIsStarting;
 - (void)cleanUpBeforeDeletion;
 
 - (IBAction)save:(id)sender;

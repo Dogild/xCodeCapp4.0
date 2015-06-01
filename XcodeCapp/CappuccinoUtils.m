@@ -35,7 +35,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
                                  @"Objective-J/*",
                                  @"Build/*",
                                  @"*.xcodeproj/*",
-                                 @".XcodeSupport/*"
+                                 @".XcodeSupport/*",
                                  @"NS_*.j",
                                  @"main.j",
                                  @".xcodecapp-ignore"
@@ -220,5 +220,4 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     
     [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:note];
 }
-
 @end

@@ -371,7 +371,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="303" height="685"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="72" rowSizeStyle="automatic" viewBased="YES" id="Mss-Tu-7kR">
+                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="72" rowSizeStyle="automatic" viewBased="YES" id="Mss-Tu-7kR">
                                                     <rect key="frame" x="0.0" y="0.0" width="303" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1235,33 +1235,6 @@ Original Cocoa version developed by:
                                         <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCUseSymlinkWhenCreatingProject" id="Hch-bv-rjT"/>
                                     </connections>
                                 </button>
-                                <textField verticalHuggingPriority="750" id="geH-k1-u2T">
-                                    <rect key="frame" x="16" y="46" width="106" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Recent projects:" id="C7d-ND-qh3">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <popUpButton verticalHuggingPriority="750" id="Bcc-Sb-5oD">
-                                    <rect key="frame" x="125" y="40" width="56" height="26"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <popUpButtonCell key="cell" type="push" title="30" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tkT-Hu-nS8" id="7dg-Ob-WKI">
-                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="menu"/>
-                                        <menu key="menu" title="OtherViews" id="00P-eQ-b9h">
-                                            <items>
-                                                <menuItem title="10" id="QQl-Qa-y5y"/>
-                                                <menuItem title="20" id="MDL-Lu-rAH"/>
-                                                <menuItem title="30" state="on" id="tkT-Hu-nS8"/>
-                                            </items>
-                                        </menu>
-                                    </popUpButtonCell>
-                                    <connections>
-                                        <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxRecentProjects" id="SOq-yu-ip6"/>
-                                    </connections>
-                                </popUpButton>
                                 <textField verticalHuggingPriority="750" id="Llm-fD-60A">
                                     <rect key="frame" x="16" y="16" width="208" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>

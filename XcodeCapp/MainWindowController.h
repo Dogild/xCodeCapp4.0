@@ -29,7 +29,7 @@
 - (IBAction)synchronizeProject:(id)aSender;
 - (IBAction)removeErrors:(id)aSender;
 
-- (void)applicationIsClosing;
+- (void)notifyCappuccinoControllersApplicationIsClosing;
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
 - (void)_restoreManagedProjectsFromUserDefaults;
 - (void)_saveManagedProjectsToUserDefaults;

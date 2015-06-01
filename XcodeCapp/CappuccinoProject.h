@@ -99,6 +99,7 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path;
 - (NSString *)sourcePathForShadowPath:(NSString *)path;
 - (NSString *)projectPathForSourcePath:(NSString *)path;
+- (NSString *)flattenedXcodeSupportFileNameForPath:(NSString *)aPath;
 
 - (id)settingValueForKey:(NSString*)aKey;
 - (NSMutableDictionary*)defaultSettings;

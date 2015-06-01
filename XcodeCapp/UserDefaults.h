@@ -12,7 +12,6 @@
 #import <Foundation/NSString.h>
 
 extern NSString * const kDefaultXCCAutoOpenXcodeProject;
-extern NSString * const kDefaultXCCMaxRecentProjects;
 extern NSString * const kDefaultXCCCurrentManagedProjects;
 extern NSString * const kDefaultXCCReopenLastProject;
 extern NSString * const kDefaultXCCUpdateCappuccinoWithLastVersionOfMasterBranch;

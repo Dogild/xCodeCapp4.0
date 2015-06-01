@@ -18,20 +18,12 @@
 
 #pragma mark - Initialization
 
-- (void)awakeFromNib
-{
-    [self _startObservers];
-    [self _startListeningToNotifications];
-}
-
 - (void)windowDidLoad
 {
     [self _showMaskingView:YES];
-    
+    [self _startListeningToNotifications];
     [self _restoreManagedProjectsFromUserDefaults];
-
     [self _selectLastProjectSelected];
-    [self _loadLastProjectsLoaded];
 }
 
 
@@ -74,23 +66,6 @@
 }
 
 
-#pragma mark - Observers
-
-- (void)_startObservers
-{
-    [[NSUserDefaults standardUserDefaults] addObserver:self
-                                            forKeyPath:kDefaultXCCMaxRecentProjects
-                                               options:NSKeyValueObservingOptionNew
-                                               context:NULL];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:kDefaultXCCMaxRecentProjects])
-        [self _restoreManagedProjectsFromUserDefaults];
-}
-
-
 #pragma mark - Custom Getters and Setters
 
 - (CappuccinoProjectController*)currentCappuccinoProjectController
@@ -126,12 +101,6 @@
     DDLogVerbose(@"Stop : selecting last selected project");
 }
 
-- (void)_loadLastProjectsLoaded
-{
-    DDLogVerbose(@"Start : notifying all project controllers");
-    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(applicationIsStarting)];
-}
-
 - (void)_showMaskingView:(BOOL)shouldShow
 {
     if (shouldShow)
@@ -158,6 +127,17 @@
 }
 
 
+#pragma mark - Application Lifecycle
+
+- (void)notifyCappuccinoControllersApplicationIsClosing
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:XCCStopListeningProjectNotification object:nil];
+    
+    for (int i; i < self.cappuccinoProjectControllers.count; i++)
+        [[self.cappuccinoProjectControllers objectAtIndex:i] notifyCappuccinoControllersApplicationIsClosing];
+}
+
+
 #pragma mark - Projects history
 
 - (void)_restoreManagedProjectsFromUserDefaults
@@ -169,8 +149,7 @@
     
     for (NSString *path in projectHistory)
     {
-        CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path];
-        [cappuccinoProjectController setMainWindowController:self];
+        CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:path controller:self];
         [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
@@ -209,8 +188,7 @@
 
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath
 {
-    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath];
-    cappuccinoProjectController.mainWindowController = self;
+    CappuccinoProjectController *cappuccinoProjectController = [[CappuccinoProjectController alloc] initWithPath:aProjectPath controller:self];
 
     [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     
@@ -237,7 +215,6 @@
 
 
 #pragma mark - Actions
-
 
 - (IBAction)addProject:(id)aSender
 {
@@ -287,14 +264,6 @@
 - (IBAction)openXcodeProject:(id)aSender
 {
     [[self currentCappuccinoProjectController] openXcodeProject:aSender];
-}
-
-- (IBAction)applicationIsClosing:(id)aSender
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:XCCStopListeningProjectNotification object:nil];
-    
-    for (int i; i < self.cappuccinoProjectControllers.count; i++)
-        [[self.cappuccinoProjectControllers objectAtIndex:i] applicationIsClosing];
 }
 
 

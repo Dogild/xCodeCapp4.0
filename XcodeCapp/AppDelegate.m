@@ -27,7 +27,7 @@
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)app
 {
     DDLogVerbose(@"Stop listening to all projects");
-    [self.mainWindowController applicationIsClosing];
+    [self.mainWindowController notifyCappuccinoControllersApplicationIsClosing];
     
     return NSTerminateNow;
 }
@@ -74,7 +74,6 @@
 {
     NSDictionary *appDefaults = @{
                                 kDefaultXCCAutoOpenXcodeProject: @YES,
-                                kDefaultXCCMaxRecentProjects: @20,
                                 kDefaultXCCReopenLastProject: @YES,
                                 kDefaultXCCUpdateCappuccinoWithLastVersionOfMasterBranch: @NO,
                                 kDefaultXCCUseSymlinkWhenCreatingProject: @YES,
