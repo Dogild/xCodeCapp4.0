@@ -482,6 +482,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _removeOperation:note.userInfo[@"operation"]];
     [self.cappuccinoProject addOperationError:[OperationError defaultOperationErrorFromDictionary:note.userInfo]];
+    
     [self _reloadDataErrorsOutlineView];
 }
 
@@ -520,6 +521,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _removeOperation:note.userInfo[@"operation"]];
 
     [self.cappuccinoProject addOperationError:[OperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
+    
     [self _reloadDataErrorsOutlineView];
 }
 
@@ -535,6 +537,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _reloadDataErrorsOutlineView];
 }
+
 
 
 #pragma mark - Operation Management
@@ -793,9 +796,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     for (NSString *sourcePath in sourcePaths)
     {
-        NSString *shadowBasePath = [self.cappuccinoProject shadowBasePathForProjectSourcePath:sourcePath];
-        NSString *shadowHeaderPath = [shadowBasePath stringByAppendingPathExtension:@"h"];
-        NSString *shadowImplementationPath = [shadowBasePath stringByAppendingPathExtension:@"m"];
+        NSString *shadowBasePath            = [self.cappuccinoProject shadowBasePathForProjectSourcePath:sourcePath];
+        NSString *shadowHeaderPath          = [shadowBasePath stringByAppendingPathExtension:@"h"];
+        NSString *shadowImplementationPath  = [shadowBasePath stringByAppendingPathExtension:@"m"];
         
         [self.fm removeItemAtPath:shadowHeaderPath error:nil];
         [self.fm removeItemAtPath:shadowImplementationPath error:nil];
@@ -803,11 +806,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:sourcePath errorType:XCCDefaultOperationErrorType];
     }
     
+    [self _reloadDataErrorsOutlineView];
+    
     if (sourcePaths.count)
     {
         self.pbxOperations[@"remove"] = sourcePaths;
         DDLogVerbose(@"Removed shadow references to: %@", sourcePaths);
     }
+
 }
 
 - (void)_updateUserDefaultsWithLastFSEventID

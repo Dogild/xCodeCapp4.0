@@ -369,7 +369,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     NSMutableArray *errorsToRemove = [NSMutableArray array];
     
     for (OperationError *operationError in [self.errors objectForKey:aPath])
-        if ([operationError.fileName isEqualToString:aPath] && operationError.errorType == anErrorType)
+        if ([operationError.fileName isEqualToString:aPath] && (operationError.errorType == anErrorType || anErrorType == XCCDefaultOperationErrorType))
             [errorsToRemove addObject:operationError];
     
     for (OperationError *error in errorsToRemove)
