@@ -342,6 +342,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_removeXcodeSupportDirectory
 {
+    [XcodeProjectCloser closeXcodeProjectForProject:self.cappuccinoProject.projectPath];
+    
     if ([self.fm fileExistsAtPath:self.cappuccinoProject.supportPath])
         [self.fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
 }
@@ -997,12 +999,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 #pragma mark - Synchronize method
 
-- (void)resetProject
+- (void)_resetProject
 {
     [self _stopListeningToProject];
     [self.operationQueue cancelAllOperations];
     
-    [self removeSupportFiles];
+    [self _removeXcodeSupportDirectory];
     [self removeAllCibsAtPath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"]];
     
     if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
@@ -1023,18 +1025,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             [fm removeItemAtPath:[path stringByAppendingPathComponent:filePath] error:nil];
     }
 }
-
-- (void)removeSupportFiles
-{
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    [XcodeProjectCloser closeXcodeProjectForProject:self.cappuccinoProject.projectPath];
-    
-    [fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
-    [fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
-}
-
-
 
 
 #pragma mark - Actions
@@ -1077,7 +1067,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)synchronizeProject:(id)aSender
 {
-    [self resetProject];
+    [self _resetProject];
     [self _loadProject];
 }
 
@@ -1216,16 +1206,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.taskManager runTaskWithCommand:executablePath arguments:args returnType:kTaskReturnTypeNone];
 }
 
-- (IBAction)updateProjectListeningState:(id)sender
+- (IBAction)switchProjectListeningStatus:(id)sender
 {
     if(!self.cappuccinoProject.isListening)
-    {
         [self _startListeningToProject];
-    }
     else
-    {
         [self _stopListeningToProject];
-    }
 }
 
 

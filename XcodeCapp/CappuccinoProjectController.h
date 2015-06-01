@@ -36,6 +36,6 @@ extern NSString * const XCCStopListeningProjectNotification;
 
 - (void)openObjjFile:(id)sender;
 
-- (IBAction)updateProjectListeningState:(id)sender;
+- (IBAction)switchProjectListeningStatus:(id)sender;
 
 @end

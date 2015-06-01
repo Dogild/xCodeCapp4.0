@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "CappuccinoController.h"
 #import "MainWindowController.h"
 #import "UserDefaults.h"
 
@@ -74,9 +73,6 @@
 {
     NSDictionary *appDefaults = @{
                                 kDefaultXCCAutoOpenXcodeProject: @YES,
-                                kDefaultXCCReopenLastProject: @YES,
-                                kDefaultXCCUpdateCappuccinoWithLastVersionOfMasterBranch: @NO,
-                                kDefaultXCCUseSymlinkWhenCreatingProject: @YES,
                                 kDefaultXCCLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN],
                                 kDefaultXCCMaxNumberOfOperations: @20
                                 };

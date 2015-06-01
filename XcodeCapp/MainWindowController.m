@@ -289,13 +289,14 @@
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    CappuccinoProjectCellView *cellView                      = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
+    CappuccinoProjectCellView   *cellView                    = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
     CappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
-    CappuccinoProject *cappuccinoProject                     = [cappuccinoProjectController cappuccinoProject];
+    CappuccinoProject           *cappuccinoProject           =[cappuccinoProjectController cappuccinoProject];
     
     cellView.cappuccinoProject = cappuccinoProject;
+    
     [cellView.loadButton setTarget:cappuccinoProjectController];
-    [cellView.loadButton setAction:@selector(updateProjectListeningState:)];
+    [cellView.loadButton setAction:@selector(switchProjectListeningStatus:)];
     
     return cellView;
 }

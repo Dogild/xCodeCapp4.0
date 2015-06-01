@@ -56,13 +56,6 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
-                            <menuItem title="Update Cappuccino" id="Olw-nP-bQN">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="update:" target="Kof-Go-xQ9" id="AIP-pA-0lQ"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
                             <menuItem title="Quit XcodeCapp" keyEquivalent="q" id="4sb-4s-VLi">
                                 <connections>
                                     <action selector="terminate:" target="-1" id="Te7-pn-YzF"/>
@@ -75,11 +68,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="bib-Uj-vzu">
                         <items>
-                            <menuItem title="New" keyEquivalent="n" id="Was-JA-tGl">
-                                <connections>
-                                    <action selector="createProject:" target="Kof-Go-xQ9" id="5EC-Bc-oc5"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="IAo-SY-fd9">
                                 <connections>
                                     <action selector="addProject:" target="923-ke-ovW" id="Aon-wX-UNh"/>
@@ -1223,18 +1211,6 @@ Original Cocoa version developed by:
                                         </binding>
                                     </connections>
                                 </button>
-                                <button id="Czp-aZ-oHX">
-                                    <rect key="frame" x="16" y="131" width="298" height="18"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Symlink frameworks when creating projects" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="7fQ-0l-5Zv">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="save:" target="GHK-nR-IEq" id="pL4-sf-8qb"/>
-                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCUseSymlinkWhenCreatingProject" id="Hch-bv-rjT"/>
-                                    </connections>
-                                </button>
                                 <textField verticalHuggingPriority="750" id="Llm-fD-60A">
                                     <rect key="frame" x="16" y="16" width="208" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1265,34 +1241,6 @@ Original Cocoa version developed by:
                                         <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxNumberOfOperations" id="j7z-8T-ux4"/>
                                     </connections>
                                 </popUpButton>
-                            </subviews>
-                        </view>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </box>
-                    <box autoresizesSubviews="NO" title="Update" borderType="line" id="zOQ-ZA-LTE">
-                        <rect key="frame" x="17" y="16" width="355" height="54"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <view key="contentView">
-                            <rect key="frame" x="1" y="1" width="353" height="38"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <button toolTip="If this is checked, xCodeCapp will take the last version of Cappuccino on the master branch to install Cappuccino" id="MFY-d8-XH1">
-                                    <rect key="frame" x="16" y="12" width="226" height="18"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Use latest master branch version" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="92N-UF-g0r">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="save:" target="GHK-nR-IEq" id="9Fg-rU-KPQ"/>
-                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCUpdateCappuccinoWithLastVersionOfMasterBranch" id="idL-Er-JbB">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </button>
                             </subviews>
                         </view>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>

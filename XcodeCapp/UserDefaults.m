@@ -10,9 +10,6 @@
 
 NSString * const kDefaultXCCAutoOpenXcodeProject = @"XCCAutoOpenXcodeProject";
 NSString * const kDefaultXCCCurrentManagedProjects = @"XCCProjectHistory";
-NSString * const kDefaultXCCReopenLastProject = @"XCCReopenLastProject";
-NSString * const kDefaultXCCUpdateCappuccinoWithLastVersionOfMasterBranch = @"XCCUpdateCappuccinoWithLastVersionOfMasterBranch";
-NSString * const kDefaultXCCUseSymlinkWhenCreatingProject = @"XCCUseSymlinkWhenCreatingProject";
 
 NSString * const kDefaultXCCLogLevel = @"XCCLogLevel";
 
