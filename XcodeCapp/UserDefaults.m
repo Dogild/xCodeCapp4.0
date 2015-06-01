@@ -8,15 +8,9 @@
 
 #include "UserDefaults.h"
 
-NSString * const kDefaultXCCAutoOpenXcodeProject = @"XCCAutoOpenXcodeProject";
-NSString * const kDefaultXCCCurrentManagedProjects = @"XCCProjectHistory";
-
-NSString * const kDefaultXCCLogLevel = @"XCCLogLevel";
-
+NSString * const kDefaultXCCAutoOpenXcodeProject    = @"XCCAutoOpenXcodeProject";
+NSString * const kDefaultXCCCurrentManagedProjects  = @"XCCCurrentManagedProjects";
+NSString * const kDefaultXCCLogLevel                = @"XCCLogLevel";
 NSString * const kDefaultXCCLastSelectedProjectPath = @"XCCLastSelectedProjectPath";
-NSString * const kDefaultXCCLastOpenedProjectPath = @"XCCLastOpenedProjectPath";
-NSString * const kDefaultXCCLastLoadedProjectPath = @"XCCLastLoadedProjectPath";
-
-NSString * const kDefaultXCCMaxNumberOfOperations = @"XCCMaxNumberOfOperations";
-
-NSString * const kDefaultXCCLastEventId = @"XCCLastEventId";
+NSString * const kDefaultXCCMaxNumberOfOperations   = @"XCCMaxNumberOfOperations";
+NSString * const kDefaultXCCLastEventId             = @"XCCLastEventId";

@@ -893,7 +893,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.cappuccinoProject.isLoaded = YES;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidFinishLoadingNotification object:self];
-    [[NSUserDefaults standardUserDefaults] setObject:self.cappuccinoProject.projectPath forKey:kDefaultXCCLastOpenedProjectPath];
     
     [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
     

@@ -16,9 +16,7 @@ extern NSString * const kDefaultXCCCurrentManagedProjects;
 
 extern NSString * const kDefaultXCCLogLevel;
 
-extern NSString * const kDefaultXCCLastOpenedProjectPath;
 extern NSString * const kDefaultXCCLastSelectedProjectPath;
-extern NSString * const kDefaultXCCLastLoadedProjectPath;
 
 extern NSString * const kDefaultXCCLastEventId;
 

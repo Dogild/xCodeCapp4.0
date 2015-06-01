@@ -21,48 +21,8 @@
 - (void)windowDidLoad
 {
     [self _showMaskingView:YES];
-    [self _startListeningToNotifications];
     [self _restoreManagedProjectsFromUserDefaults];
     [self _selectLastProjectSelected];
-}
-
-
-#pragma mark - Notifications
-
-- (void)_startListeningToNotifications
-{
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    
-    [center addObserver:self selector:@selector(_didReceiveStartListeningToProjectNotification:) name:XCCStartListeningProjectNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveStopListeningToProjectNotification:) name:XCCStopListeningProjectNotification object:nil];
-}
-
-- (void)_didReceiveStartListeningToProjectNotification:(NSNotification*)aNotification
-{
-    CappuccinoProject *cappuccinoProject = [aNotification object];
-    NSMutableArray *previousHistoryLoadedPaths = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
-    
-    if (!previousHistoryLoadedPaths)
-        previousHistoryLoadedPaths = [NSMutableArray array];
-    
-    if (![previousHistoryLoadedPaths containsObject:cappuccinoProject.projectPath])
-        [previousHistoryLoadedPaths addObject:cappuccinoProject.projectPath];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:previousHistoryLoadedPaths forKey:kDefaultXCCLastLoadedProjectPath];
-}
-
-- (void)_didReceiveStopListeningToProjectNotification:(NSNotification*)aNotification
-{
-    CappuccinoProject *cappuccinoProject = [aNotification object];
-    NSMutableArray *previousHistoryLoadedPaths = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastLoadedProjectPath] mutableCopy];
-    
-    if (!previousHistoryLoadedPaths)
-        previousHistoryLoadedPaths = [NSMutableArray array];
-    
-    if ([previousHistoryLoadedPaths containsObject:cappuccinoProject.projectPath])
-        [previousHistoryLoadedPaths removeObject:cappuccinoProject.projectPath];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:previousHistoryLoadedPaths forKey:kDefaultXCCLastLoadedProjectPath];
 }
 
 
