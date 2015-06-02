@@ -36,6 +36,8 @@ extern NSString * const XCCStopListeningProjectNotification;
 - (IBAction)resetProject:(id)aSender;
 - (IBAction)removeErrors:(id)aSender;
 - (IBAction)openXcodeProject:(id)sender;
+- (IBAction)openProjectInFinder:(id)sender;
+- (IBAction)openProjectInEditor:(id)sender;
 
 - (void)openObjjFile:(id)sender;
 

@@ -1111,6 +1111,36 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
 }
 
+- (IBAction)openProjectInFinder:(id)sender
+{
+    [[NSWorkspace sharedWorkspace] openFile:self.cappuccinoProject.projectPath];
+}
+
+- (IBAction)openProjectInEditor:(id)sender
+{
+    NSArray     *contents = [self.fm contentsOfDirectoryAtPath:self.cappuccinoProject.projectPath error:nil];
+    NSString *  firstObjjFile;
+    
+    for (NSString *file in contents)
+    {
+        if ([[file pathExtension] isEqualToString:@"j"])
+        {
+            firstObjjFile = file;
+            break;
+        }
+    }
+    
+    if (!firstObjjFile)
+        return;
+    
+    NSString *applicationIdentifier = [self _managingApplicationIdenfierForFilePath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:firstObjjFile]];
+    
+    if (!applicationIdentifier)
+        return;
+    
+    [self _launchEditorForPath:self.cappuccinoProject.projectPath line:0 applicationIdentifier:applicationIdentifier];
+}
+
 - (void)openObjjFile:(id)sender
 {
     id item = [sender itemAtRow:[sender selectedRow]];
@@ -1123,22 +1153,30 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         path = [(XCCOperationError*)item fileName];
         line = [[(XCCOperationError*)item lineNumber] intValue];
     }
-    
+
+    [self _launchEditorForPath:path line:line applicationIdentifier:[self _managingApplicationIdenfierForFilePath:path]];
+}
+
+- (NSString *)_managingApplicationIdenfierForFilePath:(NSString *)filePath
+{
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    
     NSString *app, *type;
-    BOOL success = [workspace getInfoForFile:path application:&app type:&type];
     
-    if (!success)
-    {
-        NSBeep();
+    BOOL success = [workspace getInfoForFile:filePath application:&app type:&type];
+
+    return success ? app : nil;
+}
+
+- (void)_launchEditorForPath:(NSString*)path line:(NSInteger)line applicationIdentifier:(NSString *)applicationIdentifier
+{
+    if (!applicationIdentifier)
         return;
-    }
     
-    NSBundle *bundle = [NSBundle bundleWithPath:app];
-    NSString *identifier = bundle.bundleIdentifier;
-    NSString *executablePath = nil;
-    XCCLineSpecifier lineSpecifier = kLineSpecifierNone;
+    NSWorkspace         *workspace      = [NSWorkspace sharedWorkspace];
+    NSBundle            *bundle         = [NSBundle bundleWithPath:applicationIdentifier];
+    NSString            *identifier     = bundle.bundleIdentifier;
+    NSString            *executablePath = nil;
+    XCCLineSpecifier    lineSpecifier   = kLineSpecifierNone;
     
     if ([identifier hasPrefix:@"com.sublimetext."])
     {

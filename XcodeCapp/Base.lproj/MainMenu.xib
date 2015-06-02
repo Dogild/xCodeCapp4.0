@@ -404,15 +404,15 @@
                                                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                         </box>
-                                                                        <button verticalHuggingPriority="750" id="0Kk-a1-H2b">
-                                                                            <rect key="frame" x="56" y="3" width="44" height="28"/>
+                                                                        <button toolTip="Open In Xcode" verticalHuggingPriority="750" id="0Kk-a1-H2b">
+                                                                            <rect key="frame" x="140" y="3" width="44" height="28"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="openxcode" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21c-Zh-TSt">
+                                                                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="open-in-xcode" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21c-Zh-TSt">
                                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                                 <font key="font" metaFont="smallSystem"/>
                                                                             </buttonCell>
                                                                         </button>
-                                                                        <button verticalHuggingPriority="750" id="PoH-Du-Pas">
+                                                                        <button toolTip="Switch listening mode" verticalHuggingPriority="750" id="PoH-Du-Pas">
                                                                             <rect key="frame" x="14" y="3" width="44" height="28"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                             <buttonCell key="cell" type="push" bezelStyle="rounded" image="run" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WLR-K6-Jof">
@@ -427,14 +427,6 @@
                                                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                             <font key="titleFont" metaFont="system"/>
                                                                         </box>
-                                                                        <button verticalHuggingPriority="750" id="7pJ-O0-Sk5">
-                                                                            <rect key="frame" x="97" y="3" width="44" height="28"/>
-                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="resync" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0lw-E5-col">
-                                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                                <font key="font" metaFont="smallSystem"/>
-                                                                            </buttonCell>
-                                                                        </button>
                                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="PN4-Zx-XTz">
                                                                             <rect key="frame" x="17" y="36" width="203" height="11"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -448,9 +440,35 @@
                                                                             <rect key="frame" x="224" y="28" width="16" height="16"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                         </progressIndicator>
+                                                                        <button toolTip="Open in Finder" verticalHuggingPriority="750" id="vsI-jy-i4m">
+                                                                            <rect key="frame" x="56" y="3" width="44" height="28"/>
+                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="open-in-finder" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wlx-b2-lHy">
+                                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                                <font key="font" metaFont="smallSystem"/>
+                                                                            </buttonCell>
+                                                                        </button>
+                                                                        <button toolTip="Edit in Code Editor" verticalHuggingPriority="750" id="rTo-y9-fQU">
+                                                                            <rect key="frame" x="98" y="3" width="44" height="28"/>
+                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="open-in-editor" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VDo-2A-vaS">
+                                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                                <font key="font" metaFont="smallSystem"/>
+                                                                            </buttonCell>
+                                                                        </button>
+                                                                        <button toolTip="Reset the project" verticalHuggingPriority="750" id="7pJ-O0-Sk5">
+                                                                            <rect key="frame" x="182" y="3" width="44" height="28"/>
+                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="resync" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0lw-E5-col">
+                                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                                <font key="font" metaFont="smallSystem"/>
+                                                                            </buttonCell>
+                                                                        </button>
                                                                     </subviews>
                                                                     <connections>
                                                                         <outlet property="boxStatus" destination="kpw-qm-NQG" id="wgF-TG-b72"/>
+                                                                        <outlet property="buttonOpenInEditor" destination="rTo-y9-fQU" id="9Wd-NB-CiJ"/>
+                                                                        <outlet property="buttonOpenInFinder" destination="vsI-jy-i4m" id="r0G-Po-seO"/>
                                                                         <outlet property="buttonOpenXcodeProject" destination="0Kk-a1-H2b" id="rec-hN-qOy"/>
                                                                         <outlet property="buttonResetProject" destination="7pJ-O0-Sk5" id="mMq-CZ-FHb"/>
                                                                         <outlet property="buttonSwitchStatus" destination="PoH-Du-Pas" id="6Fa-UY-KXy"/>
@@ -650,7 +668,7 @@
                     </splitView>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="439" y="307"/>
+            <point key="canvasLocation" x="334" y="302"/>
         </window>
         <window title="About" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="EMp-Db-uhU" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
@@ -1518,8 +1536,10 @@ Gw
         <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
         <image name="cappuccino-icon" width="300" height="270"/>
         <image name="icon_128x128" width="128" height="128"/>
-        <image name="openxcode" width="36" height="36"/>
-        <image name="resync" width="36" height="36"/>
-        <image name="run" width="36" height="36"/>
+        <image name="open-in-editor" width="36" height="36"/>
+        <image name="open-in-finder" width="32" height="32"/>
+        <image name="open-in-xcode" width="32" height="32"/>
+        <image name="resync" width="32" height="32"/>
+        <image name="run" width="32" height="32"/>
     </resources>
 </document>
