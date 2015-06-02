@@ -203,6 +203,11 @@
 
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath
 {
+    if ([[self.cappuccinoProjectControllers filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cappuccinoProject.projectPath == %@", aProjectPath]] count])
+    {
+        NSRunAlertPanel(@"This project is already managed.", @"Please remove the other project or use the reset button.", @"OK", nil, nil, nil);
+        return;
+    }
     XCCCappuccinoProjectController *cappuccinoProjectController = [[XCCCappuccinoProjectController alloc] initWithPath:aProjectPath controller:self];
 
     [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];

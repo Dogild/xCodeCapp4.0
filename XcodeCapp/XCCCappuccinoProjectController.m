@@ -98,7 +98,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     self.taskLauncher       = nil;
     self.operations         = [NSMutableArray new];
-    self.operationQueue     = [NSOperationQueue new];
+    self.operationQueue     = [[NSApp delegate] mainOperationQueue];
     self.operationsTotal    = 0;
     self.operationsComplete = 0;
 
@@ -239,7 +239,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _stopListeningToNotifications];
     
     [_loadingTimer invalidate];
-    [self.operationQueue cancelAllOperations];
+    [self _cancelAllProjectRelatedOperations];
     [self removeErrors:self];
     
     if (self.stream)
@@ -486,10 +486,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
     
-    [self _removeOperation:note.userInfo[@"operation"]];
     [self.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
-    
-    [self _reloadDataErrorsOutlineView];
 }
 
 - (void)_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:(NSNotification *)note
@@ -497,26 +494,17 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
     
-    [self _removeOperation:note.userInfo[@"operation"]];
-    
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
         [self.cappuccinoProject addOperationError:operationError];
-
-    [self _reloadDataErrorsOutlineView];
 }
 
 - (void)_didReceiveObjjDidGenerateErrorNotification:(NSNotification *)note
 {
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
-    
-    [self _removeOperation:note.userInfo[@"operation"]];
 
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
-    
-    [self _reloadDataErrorsOutlineView];
-
 }
 
 - (void)_didReceiveNib2CibDidGenerateErrorNotification:(NSNotification *)note
@@ -524,24 +512,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self _removeOperation:note.userInfo[@"operation"]];
-
     [self.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
-    
-    [self _reloadDataErrorsOutlineView];
 }
 
 - (void)_didReceiveCappLintDidGenerateErrorNotification:(NSNotification *)note
 {
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
-    
-    [self _removeOperation:note.userInfo[@"operation"]];
 
     for (XCCOperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
-    
-    [self _reloadDataErrorsOutlineView];
 }
 
 - (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)aNotification
@@ -586,11 +566,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.operations addObject:anOperation];
     [self _reloadDataOperationsTableView];
     
-    if ([[anOperation className] isEqualToString:@"XCCSourceProcessingOperation"] || [[anOperation className] isEqualToString:@"XCCPbxCreationOperation"])
-    {
-        self.operationsTotal++;
-        [self _updateOperationsProgress];
-    };
+    self.operationsTotal++;
+    [self _updateOperationsProgress];
 }
 
 - (void)_removeOperation:(NSOperation*)anOperation
@@ -598,11 +575,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.operations removeObject:anOperation];
     [self _reloadDataOperationsTableView];
     
-    if ([[anOperation className] isEqualToString:@"XCCSourceProcessingOperation"] || [[anOperation className] isEqualToString:@"XCCPbxCreationOperation"])
-    {
-        self.operationsComplete++;
-        [self _updateOperationsProgress];
-    }
+    self.operationsComplete++;
+    [self _updateOperationsProgress];
 }
 
 - (void)_updateOperationsProgress
@@ -937,7 +911,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     SEL selector = NSSelectorFromString(timer.userInfo[@"selector"]);
     
-    if (self.operations.count > 0)
+    if ([[self _projectRelatedOperations] count] > 0)
     {
         [self _scheduleLoadingTimerWithSelector:selector];
         return;
@@ -1007,7 +981,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
     
-    [self.operationQueue cancelAllOperations];
+    [self _cancelAllProjectRelatedOperations];
     [self.cappuccinoProject saveSettings];
     
     [self _stopListeningToProject];
@@ -1020,7 +994,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_resetProject
 {
     [self _stopListeningToProject];
-    [self.operationQueue cancelAllOperations];
+    [self _cancelAllProjectRelatedOperations];
     
     [self _removeXcodeSupportDirectory];
     [self removeAllCibsAtPath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"]];
@@ -1044,12 +1018,22 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
 }
 
+- (void)_cancelAllProjectRelatedOperations
+{
+    [[self _projectRelatedOperations] makeObjectsPerformSelector:@selector(cancel)];
+}
+
+- (NSArray*)_projectRelatedOperations
+{
+    return [self.operationQueue.operations filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cappuccinoProject.projectPath == %@", self.cappuccinoProject.projectPath]];
+}
+
 
 #pragma mark - Actions
 
 - (IBAction)cancelAllOperations:(id)aSender
 {
-    [self.operationQueue cancelAllOperations];
+    [self _cancelAllProjectRelatedOperations];
     [self.operations removeAllObjects];
     
     [self _reloadDataOperationsTableView];
@@ -1057,7 +1041,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)cancelOperation:(id)sender
 {
-    XCCSourceProcessingOperation *operation = [self.operationQueue.operations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
+    XCCSourceProcessingOperation *operation = [[self _projectRelatedOperations] objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 

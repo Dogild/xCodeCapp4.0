@@ -19,6 +19,8 @@
     [self initLogging];
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
     
+    self.mainOperationQueue = [NSOperationQueue new];
+    
     self.aboutWindow.backgroundColor = [NSColor whiteColor];
     [self.mainWindowController windowDidLoad];
 }

@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XCCAbstractOperation.h"
 
 @class XCCCappuccinoProject;
 @class XCCTaskLauncher;
 
-@interface XCCPbxCreationOperation : NSOperation
+@interface XCCPbxCreationOperation : XCCAbstractOperation
 
 extern NSString * const XCCPbxCreationDidStartNotification;
 extern NSString * const XCCPbxCreationGenerateErrorNotification;

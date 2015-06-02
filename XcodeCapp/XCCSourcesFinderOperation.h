@@ -7,13 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XCCAbstractOperation.h"
 
 @class XCCCappuccinoProject;
 @class XCCTaskLauncher;
 
 extern NSString * const XCCNeedSourceToProjectPathMappingNotification;
 
-@interface XCCSourcesFinderOperation : NSOperation
+@interface XCCSourcesFinderOperation : XCCAbstractOperation
 
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)cappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath;
 

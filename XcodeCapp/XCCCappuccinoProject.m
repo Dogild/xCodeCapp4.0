@@ -37,7 +37,9 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
 
 @implementation XCCCappuccinoProject
 
-@synthesize XcodeCappIgnoreContent = _XcodeCappIgnoreContent;
+@synthesize XcodeCappIgnoreContent  = _XcodeCappIgnoreContent;
+@synthesize status                  = _status;
+
 
 #pragma mark - Class methods
 
@@ -309,6 +311,20 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
     }
 
     [self _writeXcodeCappIgnoreFile];
+}
+
+- (XCCCappuccinoProjectStatus)status
+{
+    return _status;
+}
+
+- (void)setStatus:(XCCCappuccinoProjectStatus)status
+{
+    [self willChangeValueForKey:@"status"];
+    _status = status;
+    [self didChangeValueForKey:@"status"];
+    
+    self.isBusy = (_status == XCCCappuccinoProjectStatusLoading || _status == XCCCappuccinoProjectStatusProcessing);
 }
 
 @end

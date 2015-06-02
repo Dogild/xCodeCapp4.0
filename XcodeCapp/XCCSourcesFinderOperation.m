@@ -8,18 +8,13 @@
 
 #import "XCCSourcesFinderOperation.h"
 #import "XCCSourceProcessingOperation.h"
-#import "XCCCappuccinoProject.h"
 #import "XCCTaskLauncher.h"
-#import "CappuccinoUtils.h"
 
 NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSourceToProjectPathMappingNotification";
 
 @interface XCCSourcesFinderOperation ()
-
-@property XCCCappuccinoProject *cappuccinoProject;
-@property XCCTaskLauncher *taskLauncher;
-@property NSString *projectPathToSearch;
-
+@property XCCTaskLauncher   *taskLauncher;
+@property NSString          *projectPathToSearch;
 @end
 
 

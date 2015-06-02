@@ -41,6 +41,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSMutableDictionary           *settings;
 @property NSMutableDictionary           *errors;
 @property NSString                      *version;
+@property BOOL                          isBusy;
 @property BOOL                          autoStartListening;
 @property NSString                      *objjIncludePath;
 @property BOOL                          shouldProcessWithObjjWarnings;
