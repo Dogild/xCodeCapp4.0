@@ -31,9 +31,9 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 @property NSString              *projectPath;
 @property NSString              *name;
 @property NSString              *nickname;
-@property NSString              *xcodeProjectPath;
+@property NSString              *XcodeProjectPath;
 @property NSString              *infoPlistPath;
-@property NSString              *xcodecappIgnorePath;
+@property NSString              *XcodeCappIgnorePath;
 @property NSString              *pbxModifierScriptPath;
 @property NSMutableDictionary   *projectPathsForSourcePaths;
 @property NSMutableArray        *ignoredPathPredicates;
@@ -62,8 +62,6 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (void)removeAllOperationErrors;
 - (void)removeOperationErrorsRelatedToSourcePath:(NSString *)aPath errorType:(int)anErrorType;
 
-- (NSString *)name;
-
 - (NSString *)projectRelativePathForPath:(NSString *)path;
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path;
 - (NSString *)sourcePathForShadowPath:(NSString *)path;
@@ -71,7 +69,6 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (NSString *)flattenedXcodeSupportFileNameForPath:(NSString *)aPath;
 
 - (id)settingValueForKey:(NSString*)aKey;
-- (NSMutableDictionary*)defaultSettings;
 - (NSMutableDictionary*)currentSettings;
 - (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey;
 - (void)fetchProjectSettings;

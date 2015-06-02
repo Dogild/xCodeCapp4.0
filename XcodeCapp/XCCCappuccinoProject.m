@@ -42,7 +42,7 @@ NSString * const XCCCappuccinoProjectBinPaths = @"XCCCappuccinoProjectBinPaths";
 NSString *const XCCCappuccinoObjjIncludePath = @"XCCCappuccinoObjjIncludePath";
 
 // Bin paths used by this project
-NSString * const XCCCappuccinoProjectSurname = @"XCCCappuccinoProjectSurname";
+NSString * const XCCCappuccinoProjectNickname = @"XCCCappuccinoProjectNickname";
 
 // Default environement paths
 static NSArray * XCCDefaultEnvironmentPaths;
@@ -78,7 +78,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
                                           XCCCappuccinoProcessObjj2ObjcSkeleton: @YES,
                                           XCCCappuccinoProjectBinPaths: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
                                           XCCCappuccinoObjjIncludePath: @"",
-                                          XCCCappuccinoProjectSurname: @""};
+                                          XCCCappuccinoProjectNickname: @""};
 }
 
 + (NSArray*)defaultEnvironmentPaths
@@ -96,13 +96,13 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     {
         self.fm = [NSFileManager defaultManager];
         self.projectPath = aPath;
-        self.xcodecappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
+        self.XcodeCappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
         self.name = [self.projectPath lastPathComponent];
         self.pbxModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
         
         NSString *projectName = [self.projectPath.lastPathComponent stringByAppendingString:@".xcodeproj"];
         
-        self.xcodeProjectPath = [self.projectPath stringByAppendingPathComponent:projectName];
+        self.XcodeProjectPath = [self.projectPath stringByAppendingPathComponent:projectName];
         self.supportPath = [self.projectPath stringByAppendingPathComponent:XCCSupportFolderName];
         self.infoPlistPath = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
         
@@ -130,11 +130,11 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 {
     self.ignoredPathPredicates = [NSMutableArray new];
     
-    if ([self.fm fileExistsAtPath:self.xcodecappIgnorePath])
+    if ([self.fm fileExistsAtPath:self.XcodeCappIgnorePath])
     {
         @try
         {
-            self.ignoredPathsContent = [NSString stringWithContentsOfFile:self.xcodecappIgnorePath encoding:NSUTF8StringEncoding error:nil];
+            self.ignoredPathsContent = [NSString stringWithContentsOfFile:self.XcodeCappIgnorePath encoding:NSUTF8StringEncoding error:nil];
             
             NSMutableArray *ignoredPatterns = [NSMutableArray new];
             
@@ -169,7 +169,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     self.settings = [NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath];
     
     if (!self.settings)
-        self.settings = [self defaultSettings];
+        self.settings = [self _defaultSettings];
     
     NSMutableArray *mutablePaths = [NSMutableArray array];
     NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
@@ -209,12 +209,12 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self.settings setValue:aValue forKey:aKey];
 }
 
-- (id)defaultSettings
+- (id)_defaultSettings
 {
     NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
     
     defaultSettings[XCCCappuccinoObjjIncludePath] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
-    defaultSettings[XCCCappuccinoProjectSurname] = [self.name copy];
+    defaultSettings[XCCCappuccinoProjectNickname] = [self.nickname copy];
     
     return defaultSettings;
 }
@@ -326,13 +326,13 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 - (NSString*)nickname
 {
-    return [self settingValueForKey:XCCCappuccinoProjectSurname];
+    return [self settingValueForKey:XCCCappuccinoProjectNickname];
 }
 
-- (void)setNickname:(NSString *)projectSurname
+- (void)setNickname:(NSString *)nickname
 {
     [self willChangeValueForKey:@"nickname"];
-    [self.settings setValue:projectSurname forKey:XCCCappuccinoProjectSurname];
+    [self.settings setValue:nickname forKey:XCCCappuccinoProjectNickname];
     [self didChangeValueForKey:@"nickname"];
 }
 

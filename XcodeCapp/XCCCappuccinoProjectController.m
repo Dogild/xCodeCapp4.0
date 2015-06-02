@@ -269,7 +269,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     // If either the project or the supmport directory are missing, recreate them both to ensure they are in sync
     BOOL projectExists, projectIsDirectory;
-    projectExists = [self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath isDirectory:&projectIsDirectory];
+    projectExists = [self.fm fileExistsAtPath:self.cappuccinoProject.XcodeProjectPath isDirectory:&projectIsDirectory];
     
     BOOL supportExists, supportIsDirectory;
     supportExists = [self.fm fileExistsAtPath:self.cappuccinoProject.supportPath isDirectory:&supportIsDirectory];
@@ -305,9 +305,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self _removeXcodeProject];
     
-    [self.fm createDirectoryAtPath:self.cappuccinoProject.xcodeProjectPath withIntermediateDirectories:YES attributes:nil error:nil];
+    [self.fm createDirectoryAtPath:self.cappuccinoProject.XcodeProjectPath withIntermediateDirectories:YES attributes:nil error:nil];
     
-    NSString *pbxPath = [self.cappuccinoProject.xcodeProjectPath stringByAppendingPathComponent:@"project.pbxproj"];
+    NSString *pbxPath = [self.cappuccinoProject.XcodeProjectPath stringByAppendingPathComponent:@"project.pbxproj"];
     
     [self.fm copyItemAtPath:[[NSBundle mainBundle] pathForResource:@"project" ofType:@"pbxproj"] toPath:pbxPath error:nil];
     
@@ -315,13 +315,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [content writeToFile:pbxPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     
-    DDLogInfo(@"Xcode support project created at: %@", self.cappuccinoProject.xcodeProjectPath);
+    DDLogInfo(@"Xcode support project created at: %@", self.cappuccinoProject.XcodeProjectPath);
 }
 
 - (void)_removeXcodeProject
 {
-    if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
-        [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
+    if ([self.fm fileExistsAtPath:self.cappuccinoProject.XcodeProjectPath])
+        [self.fm removeItemAtPath:self.cappuccinoProject.XcodeProjectPath error:nil];
 }
 
 - (void)_createXcodeSupportDirectory
@@ -330,7 +330,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self.fm createDirectoryAtPath:self.cappuccinoProject.supportPath withIntermediateDirectories:YES attributes:nil error:nil];
     
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:[self.cappuccinoProject defaultSettings]
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.cappuccinoProject.settings
                                                               format:NSPropertyListXMLFormat_v1_0
                                                     errorDescription:nil];
     
@@ -635,12 +635,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         }
 
         BOOL inodeMetaModified  = (flags & kFSEventStreamEventFlagItemInodeMetaMod) != 0;
-        BOOL isFile             = (flags & kFSEventStreamEventFlagItemIsFile) != 0;
-        BOOL isDir              = (flags & kFSEventStreamEventFlagItemIsDir) != 0;
-        BOOL renamed            = (flags & kFSEventStreamEventFlagItemRenamed) != 0;
-        BOOL modified           = (flags & kFSEventStreamEventFlagItemModified) != 0;
-        BOOL created            = (flags & kFSEventStreamEventFlagItemCreated) != 0;
-        BOOL removed            = (flags & kFSEventStreamEventFlagItemRemoved) != 0;
+        BOOL isFile             = (flags & kFSEventStreamEventFlagItemIsFile)       != 0;
+        BOOL isSymlink          = (flags & kFSEventStreamEventFlagItemIsSymlink)    != 0;
+        BOOL isDir              = (flags & kFSEventStreamEventFlagItemIsDir)        != 0;
+        BOOL renamed            = (flags & kFSEventStreamEventFlagItemRenamed)      != 0;
+        BOOL modified           = (flags & kFSEventStreamEventFlagItemModified)     != 0;
+        BOOL created            = (flags & kFSEventStreamEventFlagItemCreated)      != 0;
+        BOOL removed            = (flags & kFSEventStreamEventFlagItemRemoved)      != 0;
         
         DDLogVerbose(@"FSEvent: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
         
@@ -666,7 +667,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             
             continue;
         }
-        else if (isFile &&
+        else if ((isFile || isSymlink) &&
                  (created || modified || renamed || removed || inodeMetaModified) &&
                  [CappuccinoUtils isSourceFile:path cappuccinoProject:self.cappuccinoProject])
         {
@@ -694,7 +695,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             
             needUpdate = YES;
         }
-        else if (isFile && (renamed || removed) && !(modified || created) && [CappuccinoUtils isCibFile:path])
+        else if ((isFile || isSymlink) && (renamed || removed) && !(modified || created) && [CappuccinoUtils isCibFile:path])
         {
             // If a cib is deleted, mark its xib as needing update so the cib is regenerated
             NSString *xibPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"xib"];
@@ -987,11 +988,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if ([self.cappuccinoProject.ignoredPathsContent length])
     {
         NSAttributedString *attributedString = (NSAttributedString*)self.cappuccinoProject.ignoredPathsContent;
-        [[attributedString string] writeToFile:self.cappuccinoProject.xcodecappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [[attributedString string] writeToFile:self.cappuccinoProject.XcodeCappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
-    else if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodecappIgnorePath])
+    else if ([self.fm fileExistsAtPath:self.cappuccinoProject.XcodeCappIgnorePath])
     {
-        [self.fm removeItemAtPath:self.cappuccinoProject.xcodecappIgnorePath error:nil];
+        [self.fm removeItemAtPath:self.cappuccinoProject.XcodeCappIgnorePath error:nil];
     }
 }
 
@@ -1006,8 +1007,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _removeXcodeSupportDirectory];
     [self removeAllCibsAtPath:[self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"]];
     
-    if ([self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath])
-        [self.fm removeItemAtPath:self.cappuccinoProject.xcodeProjectPath error:nil];
+    if ([self.fm fileExistsAtPath:self.cappuccinoProject.XcodeProjectPath])
+        [self.fm removeItemAtPath:self.cappuccinoProject.XcodeProjectPath error:nil];
     
     [self _init];
 }
@@ -1073,13 +1074,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (IBAction)openXcodeProject:(id)aSender
 {
     BOOL isDirectory, opened = YES;
-    BOOL exists = [self.fm fileExistsAtPath:self.cappuccinoProject.xcodeProjectPath isDirectory:&isDirectory];
+    BOOL exists = [self.fm fileExistsAtPath:self.cappuccinoProject.XcodeProjectPath isDirectory:&isDirectory];
     
     if (exists && isDirectory)
     {
-        DDLogVerbose(@"Opening Xcode project at: %@", self.cappuccinoProject.xcodeProjectPath);
+        DDLogVerbose(@"Opening Xcode project at: %@", self.cappuccinoProject.XcodeProjectPath);
         
-        opened = [[NSWorkspace sharedWorkspace] openFile:self.cappuccinoProject.xcodeProjectPath];
+        opened = [[NSWorkspace sharedWorkspace] openFile:self.cappuccinoProject.XcodeProjectPath];
     }
     
     if (!exists || !isDirectory || !opened)
@@ -1089,7 +1090,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         if (!opened)
             text = @"The project exists, but failed to open.";
         else
-            text = [NSString stringWithFormat:@"%@ %@.", self.cappuccinoProject.xcodeProjectPath, !exists ? @"does not exist" : @"is not an Xcode project"];
+            text = [NSString stringWithFormat:@"%@ %@.", self.cappuccinoProject.XcodeProjectPath, !exists ? @"does not exist" : @"is not an Xcode project"];
         
         [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
         NSInteger response = NSRunAlertPanel(@"The project could not be opened.", @"%@\n\nWould you like to regenerate the project?", @"Yes", @"No", nil, text);
