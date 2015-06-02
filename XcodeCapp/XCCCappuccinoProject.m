@@ -294,7 +294,8 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
             [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
         
         for (NSString *pattern in [self.XcodeCappIgnoreContent componentsSeparatedByString:@"\n"])
-            [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
+            if ([pattern length])
+                [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
         
         NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
         [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
