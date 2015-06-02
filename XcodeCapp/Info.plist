@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIconFile</key>
-	<string>XcodeCapp.icns</string>
+	<string>Icon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.cappuccino.xcodecapp</string>
 	<key>CFBundleInfoDictionaryVersion</key>

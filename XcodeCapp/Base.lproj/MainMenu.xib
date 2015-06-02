@@ -686,143 +686,117 @@
         </window>
         <window title="About" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="EMp-Db-uhU" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-            <rect key="contentRect" x="196" y="240" width="402" height="247"/>
+            <rect key="contentRect" x="196" y="240" width="296" height="191"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="dj4-iP-S2b">
-                <rect key="frame" x="0.0" y="0.0" width="402" height="247"/>
+                <rect key="frame" x="0.0" y="0.0" width="296" height="191"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField verticalHuggingPriority="750" id="3my-QC-1SH">
-                        <rect key="frame" x="164" y="20" width="203" height="143"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" id="FmM-zG-cGH">
-                            <font key="font" metaFont="smallSystem"/>
-                            <string key="title">XcodeCapp 4 developed by:
-    Aparajita Fishman
-    aparajita@aparajita.com
-    
-    Alexandre Wilhelm
-    alexandre.wilhelmfr@gmail.com
-
-Original Cocoa version developed by:
-    Antoine Mercadal
-    antoine.mercadal@gmail.com</string>
-                            <color key="textColor" white="0.31343064259999998" alpha="1" colorSpace="calibratedWhite"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <textField verticalHuggingPriority="750" id="bZw-2n-hP1">
-                        <rect key="frame" x="164" y="171" width="221" height="74"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="XcodeCapp 4.0.0" id="lbJ-wf-cfH">
-                            <font key="font" size="18" name="Zapfino"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                        <connections>
-                            <binding destination="Voe-Tx-rLC" name="displayPatternValue1" keyPath="bundleVersion" id="sFq-0n-X0X">
-                                <dictionary key="options">
-                                    <string key="NSDisplayPattern">XcodeCapp %{value1}@</string>
-                                </dictionary>
-                            </binding>
-                        </connections>
-                    </textField>
                     <imageView id="Q2t-aL-TDg">
-                        <rect key="frame" x="17" y="108" width="128" height="128"/>
+                        <rect key="frame" x="107" y="89" width="82" height="82"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon_128x128" id="zF2-py-kAi"/>
                     </imageView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="3j4-r5-Ybe">
+                        <rect key="frame" x="74" y="64" width="149" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="XcodeCapp" id="qvL-bN-A9R">
+                            <font key="font" metaFont="systemBold" size="15"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="vIx-Hh-v8Z">
+                        <rect key="frame" x="117" y="42" width="63" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Version 4.0" id="WUW-Ut-m7V">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="IH1-cn-Xc9">
+                        <rect key="frame" x="18" y="20" width="260" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Copyright © 2012-2015 The Cappuccino Project" id="8lT-Ky-ecV">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="296" y="44.5"/>
+            <point key="canvasLocation" x="-218" y="94.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="GHK-nR-IEq" userLabel="User Defaults Controller"/>
         <window title="XcodeCapp Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="xcc-prefs" animationBehavior="default" id="ekp-cc-W2F">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
-            <rect key="contentRect" x="534" y="231" width="389" height="266"/>
+            <rect key="contentRect" x="534" y="231" width="357" height="132"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="79d-AB-fk4">
-                <rect key="frame" x="0.0" y="5" width="389" height="266"/>
+                <rect key="frame" x="0.0" y="5" width="357" height="132"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box autoresizesSubviews="NO" title="Projects" borderType="line" id="9b3-Uc-gJL">
-                        <rect key="frame" x="17" y="74" width="355" height="177"/>
+                    <button toolTip="If this is checked, when a Cappuccino project is opened, the project’s Xcode support project will be opened automatically" id="QGE-Iy-i46">
+                        <rect key="frame" x="18" y="96" width="321" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <view key="contentView">
-                            <rect key="frame" x="1" y="1" width="353" height="161"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <button id="csz-aF-YT7">
-                                    <rect key="frame" x="16" y="103" width="271" height="18"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Load the most recent project on launch" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="Jgo-Nd-39U">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="save:" target="GHK-nR-IEq" id="sPA-N0-TKd"/>
-                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCReopenLastProject" id="H31-KU-men">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </button>
-                                <button toolTip="If this is checked, when a Cappuccino project is opened, the project’s Xcode support project will be opened automatically" id="QGE-Iy-i46">
-                                    <rect key="frame" x="16" y="73" width="241" height="18"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Automatically open Xcode projects" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="VNE-DB-5fX">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="save:" target="GHK-nR-IEq" id="fuj-dR-oLv"/>
-                                        <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCAutoOpenXcodeProject" id="p9U-vM-aMX">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </button>
-                                <textField verticalHuggingPriority="750" id="Llm-fD-60A">
-                                    <rect key="frame" x="16" y="16" width="208" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Maximum number of operations :" id="feI-Ow-URM">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <popUpButton verticalHuggingPriority="750" id="9up-BP-tRE">
-                                    <rect key="frame" x="229" y="11" width="56" height="26"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="niA-cT-acm">
-                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="menu"/>
-                                        <menu key="menu" title="OtherViews" id="lgh-Ml-epM">
-                                            <items>
-                                                <menuItem title="10" id="eqb-Oz-H0j"/>
-                                                <menuItem title="20" id="UjK-Ie-IaQ"/>
-                                                <menuItem title="30" id="8N1-pb-Qs1"/>
-                                                <menuItem title="40" id="jlf-ye-qWR"/>
-                                                <menuItem title="50" id="pRl-ub-xNC"/>
-                                                <menuItem title="100" id="QGm-lB-Ymx"/>
-                                            </items>
-                                        </menu>
-                                    </popUpButtonCell>
-                                    <connections>
-                                        <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxNumberOfOperations" id="j7z-8T-ux4"/>
-                                    </connections>
-                                </popUpButton>
-                            </subviews>
-                        </view>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </box>
+                        <buttonCell key="cell" type="check" title="Automatically open Projects in Xcode" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="VNE-DB-5fX">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="save:" target="GHK-nR-IEq" id="fuj-dR-oLv"/>
+                            <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCAutoOpenXcodeProject" id="p9U-vM-aMX">
+                                <dictionary key="options">
+                                    <bool key="NSValidatesImmediately" value="YES"/>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" id="Llm-fD-60A">
+                        <rect key="frame" x="18" y="70" width="186" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Maximum parallel operations:" id="feI-Ow-URM">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" id="9up-BP-tRE">
+                        <rect key="frame" x="229" y="65" width="111" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="push" title="20" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="UjK-Ie-IaQ" id="niA-cT-acm">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" title="OtherViews" id="lgh-Ml-epM">
+                                <items>
+                                    <menuItem title="10" id="eqb-Oz-H0j"/>
+                                    <menuItem title="20" state="on" id="UjK-Ie-IaQ"/>
+                                    <menuItem title="30" id="8N1-pb-Qs1"/>
+                                    <menuItem title="40" id="jlf-ye-qWR"/>
+                                    <menuItem title="50" id="pRl-ub-xNC"/>
+                                    <menuItem title="100" id="QGm-lB-Ymx"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxNumberOfOperations" id="j7z-8T-ux4"/>
+                        </connections>
+                    </popUpButton>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" id="axH-wD-X4l">
+                        <rect key="frame" x="18" y="20" width="321" height="42"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="NZb-FO-ea5">
+                            <font key="font" metaFont="smallSystem"/>
+                            <string key="title">This represents the number of operations XcodeCapp can do in parallel. Decrease the this value if you encoounter slugginesh or over CPU usage.</string>
+                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-218.5" y="-69"/>
+            <point key="canvasLocation" x="-156.5" y="-126"/>
         </window>
         <arrayController objectClassName="XCCPath" automaticallyPreparesContent="YES" preservesSelection="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" automaticallyRearrangesObjects="YES" id="fad-TR-Rcn" userLabel="Configurations Array Controller">
             <declaredKeys>
@@ -837,18 +811,23 @@ Original Cocoa version developed by:
             </connections>
         </arrayController>
         <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="fYW-ua-i1m">
-            <rect key="frame" x="0.0" y="-1" width="337" height="277"/>
+            <rect key="frame" x="0.0" y="-1" width="456" height="365"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <view key="contentView">
-                <rect key="frame" x="1" y="1" width="335" height="275"/>
+                <rect key="frame" x="1" y="1" width="454" height="363"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <customView id="vKu-AP-6l9">
-                        <rect key="frame" x="15" y="15" width="305" height="240"/>
+                        <rect key="frame" x="15" y="15" width="424" height="333"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="9iO-X5-hpo">
+                                <rect key="frame" x="119" y="140" width="186" height="186"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon_512x512" id="1zG-V8-6bF"/>
+                            </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="lpR-ul-R4k">
-                                <rect key="frame" x="73" y="44" width="158" height="35"/>
+                                <rect key="frame" x="133" y="97" width="158" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="XcodeCapp" id="Oar-AW-2i5">
                                     <font key="font" metaFont="systemBold" size="23"/>
@@ -857,26 +836,21 @@ Original Cocoa version developed by:
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" id="fUL-eL-YkQ">
-                                <rect key="frame" x="51" y="27" width="203" height="14"/>
+                                <rect key="frame" x="111" y="85" width="203" height="14"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Select or Create a Project" id="unR-NY-aap">
+                                <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Version 4.0" id="unR-NY-aap">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" white="0.31343064259999998" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="9iO-X5-hpo">
-                                <rect key="frame" x="73" y="74" width="159" height="172"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="cappuccino-icon" id="1zG-V8-6bF"/>
-                            </imageView>
                         </subviews>
                     </customView>
                 </subviews>
             </view>
             <color key="borderColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-            <point key="canvasLocation" x="263.5" y="-210.5"/>
+            <point key="canvasLocation" x="150" y="-157.5"/>
         </box>
         <view id="GrY-4z-HDg">
             <rect key="frame" x="0.0" y="0.0" width="670" height="638"/>
@@ -1548,8 +1522,8 @@ Gw
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
-        <image name="cappuccino-icon" width="300" height="270"/>
         <image name="icon_128x128" width="128" height="128"/>
+        <image name="icon_512x512" width="512" height="512"/>
         <image name="open-in-editor" width="36" height="36"/>
         <image name="open-in-finder" width="32" height="32"/>
         <image name="open-in-terminal" width="32" height="32"/>
