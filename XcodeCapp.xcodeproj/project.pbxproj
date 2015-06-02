@@ -59,6 +59,7 @@
 		686C69711B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69701B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m */; };
 		686C69741B0FC2EB0095BB3C /* CappLintUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69731B0FC2EB0095BB3C /* CappLintUtils.m */; };
 		686C697A1B0FC5930095BB3C /* ObjjUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69791B0FC5930095BB3C /* ObjjUtils.m */; };
+		68B6BF321B1E2546003B265B /* XCCPbxCreationOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B6BF311B1E2546003B265B /* XCCPbxCreationOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +167,8 @@
 		686C69731B0FC2EB0095BB3C /* CappLintUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappLintUtils.m; sourceTree = "<group>"; };
 		686C69781B0FC5930095BB3C /* ObjjUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjjUtils.h; sourceTree = "<group>"; };
 		686C69791B0FC5930095BB3C /* ObjjUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjjUtils.m; sourceTree = "<group>"; };
+		68B6BF301B1E2546003B265B /* XCCPbxCreationOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCPbxCreationOperation.h; sourceTree = "<group>"; };
+		68B6BF311B1E2546003B265B /* XCCPbxCreationOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCPbxCreationOperation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -359,6 +362,8 @@
 				6841F2C71AFADEBC00CFE60E /* XCCSourcesFinderOperation.m */,
 				6841F2C81AFADEBC00CFE60E /* XCCCSourceProcessingOperation.h */,
 				6841F2C91AFADEBC00CFE60E /* XCCCSourceProcessingOperation.m */,
+				68B6BF301B1E2546003B265B /* XCCPbxCreationOperation.h */,
+				68B6BF311B1E2546003B265B /* XCCPbxCreationOperation.m */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -500,6 +505,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */,
+				68B6BF321B1E2546003B265B /* XCCPbxCreationOperation.m in Sources */,
 				6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */,
 				0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */,
 				6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */,

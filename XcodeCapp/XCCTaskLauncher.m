@@ -12,12 +12,7 @@
 
 - (id)init
 {
-    NSArray *environmentPaths = @[
-                                @"/usr/local/narwhal/bin",
-                                @"~/narwhal/bin",
-                                ];
-    
-    if (self = [self initWithEnvironementPaths:environmentPaths])
+    if (self = [self initWithEnvironementPaths:@[]])
     {
         
     }
@@ -33,9 +28,11 @@
         self.environment = [NSProcessInfo processInfo].environment.mutableCopy;
         self.environmentPaths = [environementPaths mutableCopy];
         
-        [self.environmentPaths insertObject:@"/usr/bin" atIndex:0];
-        [self.environmentPaths insertObject:@"/usr/local/bin" atIndex:0];
-        [self.environmentPaths insertObject:@"~/bin" atIndex:0];
+        [self.environmentPaths addObject:@"/usr/bin"];
+        [self.environmentPaths addObject:@"/usr/local/bin"];
+        [self.environmentPaths addObject:@"~/bin"];
+        [self.environmentPaths addObject:@"/usr/local/narwhal/bin"];
+        [self.environmentPaths addObject:@"~/narwhal/bin"];
         
         DDLogError(@"Init task manager with  environements %@", self.environmentPaths);
         

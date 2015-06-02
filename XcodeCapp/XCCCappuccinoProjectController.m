@@ -18,6 +18,7 @@
 #import "XCCOperationError.h"
 #import "XCCOperationErrorDataView.h"
 #import "XCCOperationErrorHeaderDataView.h"
+#import "XCCPbxCreationOperation.h"
 #import "ObjjUtils.h"
 #import "XCCCSourceProcessingOperation.h"
 #import "XCCTaskLauncher.h"
@@ -540,7 +541,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 }
 
 
-
 #pragma mark - Operation Management
 
 - (void)_addOperation:(NSOperation*)anOperation
@@ -939,36 +939,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updatePbxFile
 {
-    // See pbxprojModifier.py for info on the arguments
-    NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
+    XCCPbxCreationOperation *pbxOperation = [[XCCPbxCreationOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self.taskLauncher pbxOperations:self.pbxOperations];
     
-    BOOL shouldLaunchTask = NO;
-    
-    for (NSString *action in self.pbxOperations)
-    {
-        NSArray *paths = self.pbxOperations[action];
-        
-        if (paths.count)
-        {
-            [arguments addObject:action];
-            [arguments addObjectsFromArray:paths];
-            
-            shouldLaunchTask = YES;
-        }
-    }
-    
-    if (!shouldLaunchTask)
-        return;
-
-    // This task takes less than a second to execute, no need to put it a separate thread
-    NSDictionary *taskResult = [self.taskLauncher runTaskWithCommand:@"python"
-                                                 arguments:arguments
-                                                returnType:kTaskReturnTypeStdError];
-    
-    NSInteger status = [taskResult[@"status"] intValue];
-    NSString *response = taskResult[@"response"];
-    
-    DDLogVerbose(@"Updated Xcode project: [%ld, %@]", status, status ? response : @"");
+    [self.operationQueue addOperation:pbxOperation];
 }
 
 - (void)resetProjectForWatchedPath:(NSString *)path

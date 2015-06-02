@@ -149,7 +149,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
             continue;
 
         NSString *projectSourcePath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:projectRelativePath];
-
+        
         if ([CappuccinoUtils isObjjFile:filename] || [CappuccinoUtils isXibFile:filename])
         {
             NSString *processedPath;
