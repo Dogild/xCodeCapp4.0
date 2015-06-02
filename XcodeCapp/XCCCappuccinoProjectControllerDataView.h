@@ -16,6 +16,9 @@
 @property (nonatomic, retain) IBOutlet NSButton                     *buttonSwitchStatus;
 @property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenXcodeProject;
 @property (nonatomic, retain) IBOutlet NSButton                     *buttonResetProject;
+@property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenInFinder;
+@property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenInEditor;
+@property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenInTerminal;
 @property (nonatomic, retain) IBOutlet NSBox                        *boxStatus;
 @property (nonatomic, retain) IBOutlet NSProgressIndicator          *operationsProgressIndicator;
 

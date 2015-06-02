@@ -34,6 +34,25 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     _controller = controller;
     [self didChangeValueForKey:@"controller"];
     
+    [self.buttonSwitchStatus setTarget:controller];
+    [self.buttonSwitchStatus setAction:@selector(switchProjectListeningStatus:)];
+    
+    [self.buttonOpenXcodeProject setTarget:controller];
+    [self.buttonOpenXcodeProject setAction:@selector(openXcodeProject:)];
+    
+    [self.buttonResetProject setTarget:controller];
+    [self.buttonResetProject setAction:@selector(resetProject:)];
+    
+    [self.buttonOpenInEditor setTarget:controller];
+    [self.buttonOpenInEditor setAction:@selector(openProjectInEditor:)];
+    
+    [self.buttonOpenInFinder setTarget:controller];
+    [self.buttonOpenInFinder setAction:@selector(openProjectInFinder:)];
+    
+    [self.buttonOpenInTerminal setTarget:controller];
+    [self.buttonOpenInTerminal setAction:@selector(openProjectInTerminal:)];
+
+    
     self.boxStatus.borderColor  = [NSColor clearColor];
     self.boxStatus.fillColor    = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
 }
