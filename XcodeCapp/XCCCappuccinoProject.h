@@ -25,9 +25,7 @@ typedef int XCCCappuccinoProjectStatus;
 
 extern NSString * const XCCCompatibilityVersionKey;
 extern NSString * const XCCCappuccinoProjectBinPathsKey;
-extern NSString * const XCCProjectDidFinishLoadingNotification;
-extern NSString * const XCCProjectDidStartLoadingNotification;
-extern NSString * const XCCCappuccinoProjectWasListeningKey;
+extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 
 
 @property NSString                      *supportPath;
@@ -40,21 +38,22 @@ extern NSString * const XCCCappuccinoProjectWasListeningKey;
 @property NSString                      *pbxModifierScriptPath;
 @property NSMutableDictionary           *projectPathsForSourcePaths;
 @property NSMutableArray                *ignoredPathPredicates;
-@property NSDictionary                  *settings;
+@property NSMutableDictionary           *settings;
 @property NSMutableDictionary           *errors;
+@property NSString                      *version;
+@property BOOL                          autoStartListening;
 @property NSString                      *objjIncludePath;
 @property BOOL                          shouldProcessWithObjjWarnings;
 @property BOOL                          shouldProcessWithCappLint;
 @property BOOL                          shouldProcessWithObjj2ObjcSkeleton;
 @property BOOL                          shouldProcessWithNib2Cib;
-@property NSArray                       *environementsPaths;
-@property NSString                      *ignoredPathsContent;
+@property NSArray                       *environmentsPaths;
+@property NSString                      *XcodeCappIgnoreContent;
 @property XCCCappuccinoProjectStatus    status;
 
 + (NSArray*)defaultEnvironmentPaths;
 
 - (id)initWithPath:(NSString*)aPath;
-- (void)updateIgnoredPath;
 - (void)_init;
 
 - (void)addOperationError:(XCCOperationError *)operationError;
@@ -68,10 +67,10 @@ extern NSString * const XCCCappuccinoProjectWasListeningKey;
 - (NSString *)projectPathForSourcePath:(NSString *)path;
 - (NSString *)flattenedXcodeSupportFileNameForPath:(NSString *)aPath;
 
-- (id)valueForSetting:(NSString*)aKey;
-- (void)setValue:(id)aValue forSetting:(NSString*)aKey;
-- (void)fetchProjectSettings;
 - (void)saveSettings;
+
+- (void)reloadXcodeCappIgnoreFile;
+
 
 
 @end

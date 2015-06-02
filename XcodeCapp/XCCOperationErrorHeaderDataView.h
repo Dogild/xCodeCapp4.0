@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "AppDelegate.h"
 #import "XCCMainController.h"
+#import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProject.h"
 
 @interface XCCOperationErrorHeaderDataView : NSTableCellView

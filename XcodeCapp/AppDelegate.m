@@ -27,6 +27,7 @@
 {
     DDLogVerbose(@"Stop listening to all projects");
     [self.mainWindowController notifyCappuccinoControllersApplicationIsClosing];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
     return NSTerminateNow;
 }

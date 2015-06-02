@@ -14,7 +14,7 @@
 - (void)setObjectValue:(id)aPath
 {
     AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
-    XCCCappuccinoProject *currentProject = appDelegate.mainWindowController.currentCappuccinoProject;
+    XCCCappuccinoProject *currentProject = appDelegate.mainWindowController.currentCappuccinoProjectController.cappuccinoProject;
 
     NSString *path = [NSString stringWithFormat:@"%@/", currentProject.projectPath];
     NSString *text = [aPath stringByReplacingOccurrencesOfString:path withString:@""];

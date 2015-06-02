@@ -13,21 +13,29 @@
 
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
-@property (strong) IBOutlet NSBox          *maskingView;
-@property (strong) IBOutlet NSSplitView    *splitView;
-@property (strong) IBOutlet NSTableView    *projectTableView;
-@property (strong) IBOutlet NSTableView    *operationTableView;
-@property (strong) IBOutlet NSOutlineView  *errorOutlineView;
-@property (strong) IBOutlet NSView         *projectViewContainer;
+@property (strong) IBOutlet NSBox                   *maskingView;
+@property (strong) IBOutlet NSSplitView             *splitView;
+@property (strong) IBOutlet NSTableView             *projectTableView;
+@property (strong) IBOutlet NSTableView             *operationTableView;
+@property (strong) IBOutlet NSOutlineView           *errorOutlineView;
+@property (strong) IBOutlet NSView                  *projectViewContainer;
+@property (strong) IBOutlet NSArrayController       *includePathArrayController;
+@property (strong) IBOutlet NSTabView               *tabViewProject;
+@property (strong) IBOutlet NSButton                *buttonSelectConfigurationTab;
+@property (strong) IBOutlet NSButton                *buttonSelectErrorsTab;
+@property (strong) IBOutlet NSButton                *buttonSelectOperationsTab;
 
-@property (strong) NSMutableArray *cappuccinoProjectControllers;
-@property (strong) XCCCappuccinoProject *currentCappuccinoProject;
+@property (strong) IBOutlet NSView                  *viewTabConfiguration;
+@property (strong) IBOutlet NSView                  *viewTabErrors;
+@property (strong) IBOutlet NSView                  *viewTabOperations;
+
+@property (strong) NSMutableArray                   *cappuccinoProjectControllers;
+@property (strong) XCCCappuccinoProject             *currentCappuccinoProject;
+@property (strong) XCCCappuccinoProjectController   *currentCappuccinoProjectController;
 
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
-- (IBAction)saveSettings:(id)aSender;
-- (IBAction)synchronizeProject:(id)aSender;
-- (IBAction)removeErrors:(id)aSender;
+- (IBAction)updateSelectedTab:(id)aSender;
 
 - (void)notifyCappuccinoControllersApplicationIsClosing;
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;

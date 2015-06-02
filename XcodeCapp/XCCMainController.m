@@ -9,9 +9,13 @@
 #import "XCCMainController.h"
 #import "XCCCappuccinoProject.h"
 #import "XCCCappuccinoProjectController.h"
-#import "XCCCappuccinoProjectDataView.h"
+#import "XCCCappuccinoProjectControllerDataView.h"
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
+
+@interface XCCMainController()
+@property BOOL _isObserving;
+@end
 
 @implementation XCCMainController
 
@@ -23,43 +27,70 @@
     [self _showMaskingView:YES];
     [self _restoreManagedProjectsFromUserDefaults];
     [self _selectLastProjectSelected];
+    
+    NSTabViewItem *itemConfiguration = [[NSTabViewItem alloc] initWithIdentifier:@"configuration"];
+    [itemConfiguration setView:self.viewTabConfiguration];
+    [self.tabViewProject addTabViewItem:itemConfiguration];
+    
+    NSTabViewItem *itemErrors = [[NSTabViewItem alloc] initWithIdentifier:@"errors"];
+    [itemErrors setView:self.viewTabErrors];
+    [self.tabViewProject addTabViewItem:itemErrors];
+    
+    NSTabViewItem *itemOperations = [[NSTabViewItem alloc] initWithIdentifier:@"operations"];
+    [itemOperations setView:self.viewTabOperations];
+    [self.tabViewProject addTabViewItem:itemOperations];
+    
+    NSMutableParagraphStyle *paragraphStyle= [NSMutableParagraphStyle new];
+    [paragraphStyle setAlignment:NSCenterTextAlignment];
+    
+    NSDictionary *attrs = @{NSFontAttributeName: [NSFont systemFontOfSize:11],
+                            NSForegroundColorAttributeName: [NSColor whiteColor],
+                            NSParagraphStyleAttributeName: paragraphStyle};
+    
+    self.buttonSelectConfigurationTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self.buttonSelectConfigurationTab.title attributes:attrs];
+    self.buttonSelectErrorsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self.buttonSelectErrorsTab.title attributes:attrs];
+    self.buttonSelectOperationsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self.buttonSelectOperationsTab.title attributes:attrs];
+    
+    [self updateSelectedTab:self.buttonSelectConfigurationTab];
 }
 
 
-#pragma mark - Custom Getters and Setters
+#pragma mark - Array Controller Observers
 
-- (XCCCappuccinoProjectController*)currentCappuccinoProjectController
+- (void)_addArrayControllerObserver
 {
-    return [self.cappuccinoProjectControllers objectAtIndex:[self.projectTableView selectedRow]];
+    if (self._isObserving)
+        return;
+    
+    self._isObserving = YES;
+    
+    [self.includePathArrayController addObserver:self forKeyPath:@"arrangedObjects.name" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)_removeArrayControllerObserver
+{
+    if (!self._isObserving)
+        return;
+    
+    self._isObserving = NO;
+    
+    [self.includePathArrayController removeObserver:self forKeyPath:@"arrangedObjects.name"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (!self.currentCappuccinoProjectController)
+        return;
+    
+    if (self.currentCappuccinoProjectController.cappuccinoProject.status != XCCCappuccinoProjectStatusListening)
+        return;
+    
+    [self.currentCappuccinoProjectController reinitializeProjectFromSettings];
 }
 
 
 #pragma mark - Utilities
 
-- (void)_selectLastProjectSelected
-{
-    DDLogVerbose(@"Start : selecting last selected project");
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *lastSelectedProjectPath = [defaults valueForKey:kDefaultXCCLastSelectedProjectPath];
-    NSInteger indexToSelect = 0;
-    
-    if (lastSelectedProjectPath)
-    {
-        for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
-        {
-            if ([controller.cappuccinoProject.projectPath isEqualToString:lastSelectedProjectPath])
-            {
-                indexToSelect = [self.cappuccinoProjectControllers indexOfObject:controller];
-                break;
-            }
-        }
-    }
-    
-    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
-    
-    DDLogVerbose(@"Stop : selecting last selected project");
-}
 
 - (void)_showMaskingView:(BOOL)shouldShow
 {
@@ -91,14 +122,36 @@
 
 - (void)notifyCappuccinoControllersApplicationIsClosing
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:XCCStopListeningProjectNotification object:nil];
-    
-    for (int i; i < self.cappuccinoProjectControllers.count; i++)
-        [[self.cappuccinoProjectControllers objectAtIndex:i] applicationIsClosing];
+    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(applicationIsClosing)];
 }
 
 
 #pragma mark - Projects history
+
+- (void)_selectLastProjectSelected
+{
+    DDLogVerbose(@"Start : selecting last selected project");
+    
+    NSUserDefaults  *defaults                = [NSUserDefaults standardUserDefaults];
+    NSString        *lastSelectedProjectPath = [defaults valueForKey:kDefaultXCCLastSelectedProjectPath];
+    NSInteger       indexToSelect            = 0;
+    
+    if (lastSelectedProjectPath)
+    {
+        for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
+        {
+            if ([controller.cappuccinoProject.projectPath isEqualToString:lastSelectedProjectPath])
+            {
+                indexToSelect = [self.cappuccinoProjectControllers indexOfObject:controller];
+                break;
+            }
+        }
+    }
+    
+    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
+    
+    DDLogVerbose(@"Stop : selecting last selected project");
+}
 
 - (void)_restoreManagedProjectsFromUserDefaults
 {
@@ -201,29 +254,29 @@
     [self removeCappuccinoProject:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
 }
 
-- (IBAction)saveSettings:(id)aSender
+- (IBAction)updateSelectedTab:(id)aSender
 {
-    [[self currentCappuccinoProjectController] save:aSender];
-}
+    self.buttonSelectConfigurationTab.state = NSOffState;
+    self.buttonSelectErrorsTab.state = NSOffState;
+    self.buttonSelectOperationsTab.state = NSOffState;
+    
+    if (aSender == self.buttonSelectConfigurationTab)
+    {
+        self.buttonSelectConfigurationTab.state = NSOnState;
+        [self.tabViewProject selectTabViewItemAtIndex:0];
+    }
+    
+    if (aSender == self.buttonSelectErrorsTab)
+    {
+        self.buttonSelectErrorsTab.state = NSOnState;
+        [self.tabViewProject selectTabViewItemAtIndex:1];
+    }
 
-- (IBAction)cancelAllOperations:(id)aSender
-{
-    [[self currentCappuccinoProjectController] cancelAllOperations:aSender];
-}
-
-- (IBAction)synchronizeProject:(id)aSender
-{
-    [[self currentCappuccinoProjectController] synchronizeProject:aSender];
-}
-
-- (IBAction)removeErrors:(id)aSender
-{
-    [[self currentCappuccinoProjectController] removeErrors:aSender];
-}
-
-- (IBAction)openXcodeProject:(id)aSender
-{
-    [[self currentCappuccinoProjectController] openXcodeProject:aSender];
+    if (aSender == self.buttonSelectOperationsTab)
+    {
+        self.buttonSelectOperationsTab.state = NSOnState;
+        [self.tabViewProject selectTabViewItemAtIndex:2];
+    }
 }
 
 
@@ -249,25 +302,34 @@
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    XCCCappuccinoProjectDataView   *cellView                    = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
-    XCCCappuccinoProjectController *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
-    XCCCappuccinoProject           *cappuccinoProject           =[cappuccinoProjectController cappuccinoProject];
+    XCCCappuccinoProjectControllerDataView  *dataView                    = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
+    XCCCappuccinoProjectController          *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
     
-    cellView.cappuccinoProject = cappuccinoProject;
+    dataView.controller = cappuccinoProjectController;
     
-    [cellView.loadButton setTarget:cappuccinoProjectController];
-    [cellView.loadButton setAction:@selector(switchProjectListeningStatus:)];
-    
-    return cellView;
+    [dataView.buttonSwitchStatus setTarget:cappuccinoProjectController];
+    [dataView.buttonSwitchStatus setAction:@selector(switchProjectListeningStatus:)];
+
+    [dataView.buttonOpenXcodeProject setTarget:cappuccinoProjectController];
+    [dataView.buttonOpenXcodeProject setAction:@selector(openXcodeProject:)];
+
+    [dataView.buttonResetProject setTarget:cappuccinoProjectController];
+    [dataView.buttonResetProject setAction:@selector(resetProject:)];
+
+    return dataView;
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
     NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
     
+    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
+    
+    [self _removeArrayControllerObserver];
+    
     if (selectedCappuccinoProject == -1)
     {
-        self.currentCappuccinoProject = nil;
+        self.currentCappuccinoProjectController = nil;
         [self.operationTableView setDelegate:nil];
         [self.operationTableView setDataSource:nil];
         
@@ -275,21 +337,19 @@
         return;
     }
     
-    XCCCappuccinoProjectController *currentController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
+    self.currentCappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
     
-    self.currentCappuccinoProject = [currentController cappuccinoProject];
-    [self.operationTableView setDelegate:currentController];
-    [self.operationTableView setDataSource:currentController];
+    [self.operationTableView setDelegate:self.currentCappuccinoProjectController];
+    [self.operationTableView setDataSource:self.currentCappuccinoProjectController];
+    
+    [self.errorOutlineView setDelegate:self.currentCappuccinoProjectController];
+    [self.errorOutlineView setDataSource:self.currentCappuccinoProjectController];
+    [self.errorOutlineView setDoubleAction:@selector(openObjjFile:)];
+    [self.errorOutlineView setTarget:self.currentCappuccinoProjectController];
+    
+    [self _addArrayControllerObserver];
     
     [self _showMaskingView:NO];
-    
-    [self.errorOutlineView setDelegate:currentController];
-    [self.errorOutlineView setDataSource:currentController];
-    [self.errorOutlineView setDoubleAction:@selector(openObjjFile:)];
-    [self.errorOutlineView setTarget:currentController];
-    
-    // This can't be bound because we can't save an indexSet in a plist
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
 }
 
 @end

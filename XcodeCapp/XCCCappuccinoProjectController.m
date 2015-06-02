@@ -24,6 +24,8 @@
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
 
+@class XCCCSourceProcessingOperation;
+
 enum XCCLineSpecifier {
     kLineSpecifierNone,
     kLineSpecifierColon,
@@ -42,7 +44,6 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 @property NSDate *lastReloadErrorsViewDate;
 @property NSDate *lastReloadOperationsViewDate;
 @property NSFileManager *fm;
-@property NSOperationQueue *operationQueue;
 @property NSMutableArray *operations;
 @property FSEventStreamRef stream;
 @property NSNumber *lastEventId;
@@ -94,9 +95,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_init
 {
-    self.taskLauncher    = nil;
-    self.operations     = [NSMutableArray new];
-    self.operationQueue = [NSOperationQueue new];
+    self.taskLauncher       = nil;
+    self.operations         = [NSMutableArray new];
+    self.operationQueue     = [NSOperationQueue new];
+    self.operationsTotal    = 0;
+    self.operationsComplete = 0;
+
     
     [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
     
@@ -125,18 +129,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 #pragma mark - Task manager methods
 
-- (XCCTaskLauncher*)makeTaskLauncher
+- (void)initializeTaskLauncher
 {
-    NSArray *environementPaths;
+    NSArray *environmentPaths = [NSArray array];
     
-    if (![self.cappuccinoProject.environementsPaths count])
-        environementPaths = [NSArray array];
-    else
-        environementPaths = [self.cappuccinoProject.environementsPaths valueForKeyPath:@"name"];
+    if ([self.cappuccinoProject.environmentsPaths count])
+        environmentPaths = [self.cappuccinoProject.environmentsPaths valueForKeyPath:@"name"];
     
-    XCCTaskLauncher *taskLauncher = [[XCCTaskLauncher alloc] initWithEnvironementPaths:environementPaths];
+    self.taskLauncher = [[XCCTaskLauncher alloc] initWithEnvironementPaths:environmentPaths];
     
-    if (!taskLauncher.isValid)
+    if (!self.taskLauncher.isValid)
     {
         [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
         
@@ -146,15 +148,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                         @"%@\n\n"
                         @"(or a symlink to it) is within one these directories:\n\n"
                         @"%@\n\n"
-                        @"They do not all have to be in the same directory.",
+                        @"You may also add custom binary path to the project configuration.",
                         @"OK",
                         nil,
                         nil,
-                        [taskLauncher.executables componentsJoinedByString:@"\n"],
-                        [taskLauncher.environmentPaths componentsJoinedByString:@"\n"]);
+                        [self.taskLauncher.executables componentsJoinedByString:@", "],
+                        [self.taskLauncher.environmentPaths componentsJoinedByString:@"\n"]);
+        
+        self.cappuccinoProject.status = XCCCappuccinoProjectStatusInitialized;
     }
-    
-    return taskLauncher;
 }
 
 
@@ -172,12 +174,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusLoading;
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidStartLoadingNotification object:self];
-    
     [self _startListeningToNotifications];
     [self _prepareXcodeSupport];
 
-    self.taskLauncher = [self makeTaskLauncher];
+    [self initializeTaskLauncher];
 
     if (!self.taskLauncher.isValid)
         return;
@@ -288,7 +288,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     double appCompatibilityVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey] doubleValue];
     
-    NSNumber *projectCompatibilityVersion = [self.cappuccinoProject valueForSetting:XCCCompatibilityVersionKey];
+    NSNumber *projectCompatibilityVersion = [NSNumber numberWithInt:[self.cappuccinoProject.version intValue]];
     
     if (projectCompatibilityVersion == nil)
     {
@@ -335,7 +335,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                                     errorDescription:nil];
     
     [data writeToFile:self.cappuccinoProject.infoPlistPath atomically:YES];
-    [self.cappuccinoProject fetchProjectSettings];
     
     DDLogInfo(@".XcodeSupport directory created at: %@", self.cappuccinoProject.supportPath);
 }
@@ -548,12 +547,42 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self.operations addObject:anOperation];
     [self _reloadDataOperationsTableView];
+    
+    if ([[anOperation className] isEqualToString:@"XCCCSourceProcessingOperation"])
+    {
+        self.operationsTotal++;
+        [self _updateOperationsProgress];
+    };
 }
 
 - (void)_removeOperation:(NSOperation*)anOperation
 {
     [self.operations removeObject:anOperation];
     [self _reloadDataOperationsTableView];
+    
+    if ([[anOperation className] isEqualToString:@"XCCCSourceProcessingOperation"])
+    {
+        self.operationsComplete++;
+        [self _updateOperationsProgress];
+    }
+}
+
+- (void)_updateOperationsProgress
+{
+    if (self.operationsTotal == 0)
+        [self _resetOperationCounters];
+    
+    self.operationsProgress = (float)self.operationsComplete / (float)self.operationsTotal;
+    
+    if (self.operationsProgress == 1.0)
+        [self _resetOperationCounters];
+}
+
+- (void)_resetOperationCounters
+{
+    self.operationsProgress = 1.0;
+    self.operationsComplete = 0;
+    self.operationsTotal    = 0;
 }
 
 
@@ -562,6 +591,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)applicationIsClosing
 {
     [self _stopListeningToProject];
+    [self.cappuccinoProject saveSettings];
 }
 
 - (void)cleanUpBeforeDeletion
@@ -697,6 +727,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         }
         else if ((isFile || isSymlink) && (renamed || removed) && !(modified || created) && [CappuccinoUtils isCibFile:path])
         {
+            DDLogVerbose(@"FSEvent accepted");
+            
             // If a cib is deleted, mark its xib as needing update so the cib is regenerated
             NSString *xibPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"xib"];
             
@@ -705,6 +737,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                 [modifiedPaths addObject:xibPath];
                 needUpdate = YES;
             }
+        }
+        else if ((isFile || isSymlink) &&
+                 (created || modified || renamed || removed || inodeMetaModified) &&
+                 [CappuccinoUtils isXCCIgnoreFile:path cappuccinoProject:self.cappuccinoProject])
+        {
+            DDLogVerbose(@"FSEvent accepted");
+            
+            [self.cappuccinoProject reloadXcodeCappIgnoreFile];
         }
     }
     
@@ -886,17 +926,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_projectDidFinishLoading
 {
     [self _updatePbxFile];
-    [self.cappuccinoProject fetchProjectSettings];
     
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidFinishLoadingNotification object:self];
     
     [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
     
     DDLogVerbose(@"Project finished loading");
     
-    if ([[self.cappuccinoProject valueForSetting:XCCCappuccinoProjectWasListeningKey] boolValue])
+    if (self.cappuccinoProject.autoStartListening)
         [self _startListeningToProject];
 }
 
@@ -968,12 +1005,26 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         }
     }
     
-    [self synchronizeProject:self];
+    [self resetProject:self];
     [self.mainWindowController _saveManagedProjectsToUserDefaults];
 }
 
 
 #pragma mark - Synchronize method
+
+- (void)reinitializeProjectFromSettings
+{
+    DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
+    
+    [self.operationQueue cancelAllOperations];
+    [self.cappuccinoProject saveSettings];
+    
+    [self _stopListeningToProject];
+    [self initializeTaskLauncher];
+    [self _startListeningToProject];
+    
+    DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
+}
 
 - (void)_resetProject
 {
@@ -1025,20 +1076,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _reloadDataErrorsOutlineView];
 }
 
-- (IBAction)save:(id)sender
-{
-    DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
-    
-    [self.operationQueue cancelAllOperations];
-    [self.cappuccinoProject saveSettings];
-    
-    self.taskLauncher = [self makeTaskLauncher];
-    [self.cappuccinoProject updateIgnoredPath];
-    
-    DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
-}
-
-- (IBAction)synchronizeProject:(id)aSender
+- (IBAction)resetProject:(id)aSender
 {
     [self _resetProject];
     [self _loadProject];
@@ -1069,7 +1107,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         NSInteger response = NSRunAlertPanel(@"The project could not be opened.", @"%@\n\nWould you like to regenerate the project?", @"Yes", @"No", nil, text);
         
         if (response == NSAlertFirstButtonReturn)
-            [self synchronizeProject:self];
+            [self resetProject:self];
     }
 }
 
@@ -1181,18 +1219,21 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)switchProjectListeningStatus:(id)sender
 {
-    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusInitialized)
+    {
+        [self _loadProject];
+        self.cappuccinoProject.autoStartListening = YES;
+    }
+    else if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
     {
         [self _startListeningToProject];
-        [self.cappuccinoProject setValue:@YES forSetting:XCCCappuccinoProjectWasListeningKey];
+        self.cappuccinoProject.autoStartListening = YES;
     }
     else
     {
         [self _stopListeningToProject];
-        [self.cappuccinoProject setValue:@NO forSetting:XCCCappuccinoProjectWasListeningKey];
+        self.cappuccinoProject.autoStartListening = NO;
     }
-    
-    [self.cappuccinoProject saveSettings];
 }
 
 
@@ -1284,13 +1325,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     if ([item isKindOfClass:[XCCOperationError class]])
     {
-        //        CGFloat messageHeight = heightForStringDrawing(item.message, [NSFont fontWithName:@"Menlo" size:11.0]);
-        
-        CGRect frame = [item.message boundingRectWithSize:CGSizeMake([outlineView frame].size.width - 100, CGFLOAT_MAX)
+        CGRect frame = [item.message boundingRectWithSize:CGSizeMake([outlineView frame].size.width, CGFLOAT_MAX)
                                                   options:NSStringDrawingUsesLineFragmentOrigin
-                                               attributes:@{ NSFontAttributeName:[NSFont fontWithName:@"Menlo" size:12] }];
+                                               attributes:@{ NSFontAttributeName:[NSFont fontWithName:@"Menlo" size:11] }];
         
-        return frame.size.height + 50;
+        return frame.size.height + 38.0;
     }
     
     else

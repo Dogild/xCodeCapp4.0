@@ -18,7 +18,7 @@
 + (BOOL)isXibFile:(NSString *)path;
 + (BOOL)isCibFile:(NSString *)path;
 + (BOOL)isHeaderFile:(NSString *)path;
-+ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProjectXcodecappIgnorePath:(NSString*)xcodecappIgnorePath;
++ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
 + (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
 + (NSArray *)parseIgnorePaths:(NSArray *)paths;
 + (BOOL)pathMatchesIgnoredPaths:(NSString*)aPath cappuccinoProjectIgnoredPathPredicates:(NSMutableArray*)cappuccinoProjectIgnoredPathPredicates;

@@ -15,6 +15,17 @@
 {
     self.textField.stringValue = operationError.message;
     self.fieldLineNumber.stringValue = operationError.lineNumber;
+    
+    switch (operationError.errorType)
+    {
+        case XCCCappLintOperationErrorType:
+        case XCCNib2CibOperationErrorType:
+            [self.imageViewType setImage:[NSImage imageNamed:@"NSStatusPartiallyAvailable"]];
+            break;
+        
+        default:
+            [self.imageViewType setImage:[NSImage imageNamed:@"NSStatusUnavailable"]];
+    }
 }
 
 @end

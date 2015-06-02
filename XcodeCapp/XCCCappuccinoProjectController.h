@@ -15,22 +15,25 @@
 extern NSString * const XCCStartListeningProjectNotification;
 extern NSString * const XCCStopListeningProjectNotification;
 
+
 @interface XCCCappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
 
-@property XCCCappuccinoProject *cappuccinoProject;
-@property XCCMainController *mainWindowController;
+@property XCCCappuccinoProject  *cappuccinoProject;
+@property XCCMainController     *mainWindowController;
+@property XCCTaskLauncher       *taskLauncher;
+@property NSOperationQueue      *operationQueue;
+@property CGFloat               operationsProgress;
+@property NSInteger             operationsTotal;
+@property NSInteger             operationsComplete;
 
-// Task manager of the project
-@property XCCTaskLauncher *taskLauncher;
 
 - (id)initWithPath:(NSString*)aPath controller:(id)aController;
-
+- (void)reinitializeProjectFromSettings;
 - (void)applicationIsClosing;
 - (void)cleanUpBeforeDeletion;
 
-- (IBAction)save:(id)sender;
 - (IBAction)cancelAllOperations:(id)aSender;
-- (IBAction)synchronizeProject:(id)aSender;
+- (IBAction)resetProject:(id)aSender;
 - (IBAction)removeErrors:(id)aSender;
 - (IBAction)openXcodeProject:(id)sender;
 

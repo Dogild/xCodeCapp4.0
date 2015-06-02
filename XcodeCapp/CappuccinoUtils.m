@@ -77,14 +77,14 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     return NO;
 }
 
-+ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProjectXcodecappIgnorePath:(NSString*)xcodecappIgnorePath
++ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
 {
-    return [path isEqualToString:xcodecappIgnorePath];
+    return [path isEqualToString:aCappuccinoProject.XcodeCappIgnorePath];
 }
 
 + (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
 {
-    return ([self isXibFile:path] || [self isObjjFile:path] || [self isXCCIgnoreFile:path cappuccinoProjectXcodecappIgnorePath:aCappuccinoProject.XcodeCappIgnorePath]) && ![self pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:aCappuccinoProject.ignoredPathPredicates];
+    return ([self isXibFile:path] || [self isObjjFile:path]) && ![self pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:aCappuccinoProject.ignoredPathPredicates];
 }
 
 + (BOOL)shouldIgnoreDirectoryNamed:(NSString *)filename

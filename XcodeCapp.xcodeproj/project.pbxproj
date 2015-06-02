@@ -12,7 +12,7 @@
 		0247DCC51B17DDDD00192FEF /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC31B17DDDD00192FEF /* stop.png */; };
 		0247DCC71B17DF2400192FEF /* resync.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC61B17DF2400192FEF /* resync.png */; };
 		0247DCC91B1800DA00192FEF /* cappuccino-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC81B1800DA00192FEF /* cappuccino-icon.png */; };
-		680621191B015BF400CB24CD /* XCCCappuccinoProjectDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectDataView.m */; };
+		680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */; };
 		6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
 		681ADE8F1B0D032C00FC8E08 /* XCCPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 681ADE8E1B0D032C00FC8E08 /* XCCPath.m */; };
@@ -90,8 +90,8 @@
 		0247DCC31B17DDDD00192FEF /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 		0247DCC61B17DF2400192FEF /* resync.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = resync.png; sourceTree = "<group>"; };
 		0247DCC81B1800DA00192FEF /* cappuccino-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cappuccino-icon.png"; sourceTree = "<group>"; };
-		680621171B015BF400CB24CD /* XCCCappuccinoProjectDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectDataView.h; sourceTree = "<group>"; };
-		680621181B015BF400CB24CD /* XCCCappuccinoProjectDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCCappuccinoProjectDataView.m; sourceTree = "<group>"; };
+		680621171B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectControllerDataView.h; sourceTree = "<group>"; };
+		680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCCappuccinoProjectControllerDataView.m; sourceTree = "<group>"; };
 		6815BBE31AFBE5A80030D8BB /* CappuccinoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappuccinoUtils.h; sourceTree = "<group>"; };
 		6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappuccinoUtils.m; sourceTree = "<group>"; };
 		6815BBE61AFBE6B00030D8BB /* XCCCappuccinoProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectController.h; sourceTree = "<group>"; };
@@ -186,8 +186,8 @@
 		680621161B015BDB00CB24CD /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				680621171B015BF400CB24CD /* XCCCappuccinoProjectDataView.h */,
-				680621181B015BF400CB24CD /* XCCCappuccinoProjectDataView.m */,
+				680621171B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.h */,
+				680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */,
 				6824CDD81B0D5AA700F73447 /* XCCOperationDataView.h */,
 				6824CDD91B0D5AA700F73447 /* XCCOperationDataView.m */,
 				6824CDE81B0E9CDB00F73447 /* XCCOperationErrorDataView.h */,
@@ -504,7 +504,7 @@
 				6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */,
 				6824CDDE1B0DA34500F73447 /* XCCMainController.m in Sources */,
 				6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */,
-				680621191B015BF400CB24CD /* XCCCappuccinoProjectDataView.m in Sources */,
+				680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */,
 				686C69711B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m in Sources */,
 				6824CDF01B0E9F1400F73447 /* XCCOperationError.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,
