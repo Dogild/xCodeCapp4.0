@@ -1297,6 +1297,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.lastReloadOperationsViewDate = [NSDate date];
 }
 
+- (IBAction)openProjectInTerminal:(id)sender;
+{
+    NSString *s = [NSString stringWithFormat:@"tell application \"Terminal\"\n do script \"cd %@\" \n activate\n end tell", self.cappuccinoProject.projectPath];
+    NSAppleScript *script = [[NSAppleScript alloc] initWithSource:s];
+    [script executeAndReturnError:nil];
+}
 
 #pragma mark - tableView delegate and datasource
 

@@ -309,21 +309,6 @@
     
     dataView.controller = cappuccinoProjectController;
     
-    [dataView.buttonSwitchStatus setTarget:cappuccinoProjectController];
-    [dataView.buttonSwitchStatus setAction:@selector(switchProjectListeningStatus:)];
-
-    [dataView.buttonOpenXcodeProject setTarget:cappuccinoProjectController];
-    [dataView.buttonOpenXcodeProject setAction:@selector(openXcodeProject:)];
-
-    [dataView.buttonResetProject setTarget:cappuccinoProjectController];
-    [dataView.buttonResetProject setAction:@selector(resetProject:)];
-
-    [dataView.buttonOpenInEditor setTarget:cappuccinoProjectController];
-    [dataView.buttonOpenInEditor setAction:@selector(openProjectInEditor:)];
-
-    [dataView.buttonOpenInFinder setTarget:cappuccinoProjectController];
-    [dataView.buttonOpenInFinder setAction:@selector(openProjectInFinder:)];
-
     return dataView;
 }
 
