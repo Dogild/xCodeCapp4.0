@@ -76,24 +76,40 @@
 
 - (BOOL)executablesAreAccessible
 {
-    self.executablePaths = [NSMutableDictionary new];
+//    self.executablePaths = [NSMutableDictionary new];
+//    for (NSString *executable in self.executables)
+//    {
+//        NSDictionary *response = [self runTaskWithCommand:@"/usr/bin/which"
+//                                                   arguments:@[executable]
+//                                                  returnType:kTaskReturnTypeStdOut];
+//        
+//        NSString *path = [response[@"response"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+//        
+//        if (path.length)
+//            self.executablePaths[executable] = path;
+//        else
+//        {
+//            DDLogError(@"Could not find executable '%@' in PATH: %@", executable, self.environment[@"PATH"]);
+//            return NO;
+//        }
+//    }
     
-    for (NSString *executable in self.executables)
+    NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
+    NSMutableArray *arguments = [NSMutableArray array];
+    
+    [arguments addObject:[[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"supawhich"]];
+    [arguments addObjectsFromArray:self.executables];
+    NSDictionary *taskResult = [self runTaskWithCommand:[processEnvironment objectForKey:@"SHELL"]
+                                              arguments:arguments
+                                             returnType:kTaskReturnTypeStdOut];
+    
+    if (taskResult[@"status"] != 0)
     {
-        NSDictionary *response = [self runTaskWithCommand:@"/usr/bin/which"
-                                                   arguments:@[executable]
-                                                  returnType:kTaskReturnTypeStdOut];
-        
-        NSString *path = [response[@"response"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        
-        if (path.length)
-            self.executablePaths[executable] = path;
-        else
-        {
-            DDLogError(@"Could not find executable '%@' in PATH: %@", executable, self.environment[@"PATH"]);
-            return NO;
-        }
+        DDLogError(@"Could not find executable in PATH: %@", self.environment[@"PATH"]);
+        return NO;
     }
+    
+    self.executablePaths = (NSMutableDictionary*)[NSJSONSerialization JSONObjectWithData:[taskResult[@"response"] dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
     
     DDLogVerbose(@"Executable paths: %@", self.executablePaths);
     
