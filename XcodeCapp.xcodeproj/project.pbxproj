@@ -18,6 +18,8 @@
 		025800451B1E3F010000EB7D /* XCCAbstractOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 025800441B1E3F010000EB7D /* XCCAbstractOperation.m */; };
 		025800471B1E58A00000EB7D /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 025800461B1E58A00000EB7D /* Icon.icns */; };
 		025800491B1E58DF0000EB7D /* icon_512x512.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800481B1E58DF0000EB7D /* icon_512x512.png */; };
+		0258004B1B1E67090000EB7D /* supawhich in Resources */ = {isa = PBXBuildFile; fileRef = 0258004A1B1E67090000EB7D /* supawhich */; };
+		0258004C1B1E67770000EB7D /* supawhich in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0258004A1B1E67090000EB7D /* supawhich */; };
 		680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */; };
 		6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
@@ -85,6 +87,7 @@
 			files = (
 				684228C71B016AFA00493AD3 /* mod_pbxproj.py in CopyFiles */,
 				684228C81B016AFA00493AD3 /* pbxprojModifier.py in CopyFiles */,
+				0258004C1B1E67770000EB7D /* supawhich in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,6 +107,7 @@
 		025800441B1E3F010000EB7D /* XCCAbstractOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCAbstractOperation.m; sourceTree = "<group>"; };
 		025800461B1E58A00000EB7D /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		025800481B1E58DF0000EB7D /* icon_512x512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_512x512.png; sourceTree = "<group>"; };
+		0258004A1B1E67090000EB7D /* supawhich */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = supawhich; sourceTree = "<group>"; };
 		680621171B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectControllerDataView.h; sourceTree = "<group>"; };
 		680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCCappuccinoProjectControllerDataView.m; sourceTree = "<group>"; };
 		6815BBE31AFBE5A80030D8BB /* CappuccinoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappuccinoUtils.h; sourceTree = "<group>"; };
@@ -308,6 +312,7 @@
 		6841F2681AF98DDD00CFE60E /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
+				0258004A1B1E67090000EB7D /* supawhich */,
 				6841F2691AF98DDD00CFE60E /* mod_pbxproj.py */,
 				6841F26B1AF98DDD00CFE60E /* pbxprojModifier.py */,
 			);
@@ -489,6 +494,7 @@
 				6841F29C1AF9932300CFE60E /* icon-active@2x.png in Resources */,
 				025800421B1E30DD0000EB7D /* open-in-terminal.png in Resources */,
 				6841F2A21AF9932300CFE60E /* icon-working@2x.png in Resources */,
+				0258004B1B1E67090000EB7D /* supawhich in Resources */,
 				6841F27C1AF990C300CFE60E /* Debug.xcconfig in Resources */,
 				6841F26E1AF98DDD00CFE60E /* pbxprojModifier.py in Resources */,
 				6841F2A11AF9932300CFE60E /* icon-working.png in Resources */,

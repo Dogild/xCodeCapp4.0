@@ -75,25 +75,7 @@
 }
 
 - (BOOL)executablesAreAccessible
-{
-//    self.executablePaths = [NSMutableDictionary new];
-//    for (NSString *executable in self.executables)
-//    {
-//        NSDictionary *response = [self runTaskWithCommand:@"/usr/bin/which"
-//                                                   arguments:@[executable]
-//                                                  returnType:kTaskReturnTypeStdOut];
-//        
-//        NSString *path = [response[@"response"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-//        
-//        if (path.length)
-//            self.executablePaths[executable] = path;
-//        else
-//        {
-//            DDLogError(@"Could not find executable '%@' in PATH: %@", executable, self.environment[@"PATH"]);
-//            return NO;
-//        }
-//    }
-    
+{    
     NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
     NSMutableArray *arguments = [NSMutableArray array];
     
@@ -103,7 +85,7 @@
                                               arguments:arguments
                                              returnType:kTaskReturnTypeStdOut];
     
-    if (taskResult[@"status"] != 0)
+    if ([taskResult[@"status"] integerValue] != 0)
     {
         DDLogError(@"Could not find executable in PATH: %@", self.environment[@"PATH"]);
         return NO;
