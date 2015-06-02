@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NSMutableArray+moveIndexes.h"
 
 @class XCCCappuccinoProject;
 @class XCCCappuccinoProjectController;

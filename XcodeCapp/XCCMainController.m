@@ -52,6 +52,8 @@
     self.buttonSelectOperationsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self.buttonSelectOperationsTab.title attributes:attrs];
     
     [self updateSelectedTab:self.buttonSelectConfigurationTab];
+    
+    [self.projectTableView registerForDraggedTypes:[NSArray arrayWithObject:@"projects"]];
 }
 
 
@@ -352,4 +354,34 @@
     [self _showMaskingView:NO];
 }
 
+- (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)rowsIndexes toPasteboard:(NSPasteboard*)pasteboard
+{
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rowsIndexes];
+    [pasteboard declareTypes:[NSArray arrayWithObject:@"projects"] owner:self];
+    [pasteboard setData:data forType:@"projects"];
+    
+    return YES;
+}
+
+- (NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+    if (operation == NSTableViewDropOn)
+        return NSDragOperationNone;
+
+    return NSDragOperationMove;
+}
+
+- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id <NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)operation
+{
+    NSPasteboard        *pboard         = [info draggingPasteboard];
+    NSData              *rowData        = [pboard dataForType:@"projects"];
+    NSIndexSet          *rowIndexes     = [NSKeyedUnarchiver unarchiveObjectWithData:rowData];
+    
+    [self.cappuccinoProjectControllers moveIndexes:rowIndexes toIndex:row];
+    
+    [self.projectTableView reloadData];
+    [self _saveManagedProjectsToUserDefaults];
+    
+    return YES;
+}
 @end

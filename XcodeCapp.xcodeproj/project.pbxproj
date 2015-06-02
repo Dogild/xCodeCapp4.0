@@ -12,6 +12,7 @@
 		0247DCC51B17DDDD00192FEF /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC31B17DDDD00192FEF /* stop.png */; };
 		0247DCC71B17DF2400192FEF /* resync.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC61B17DF2400192FEF /* resync.png */; };
 		0247DCC91B1800DA00192FEF /* cappuccino-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC81B1800DA00192FEF /* cappuccino-icon.png */; };
+		0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */; };
 		680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */; };
 		6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
@@ -90,6 +91,8 @@
 		0247DCC31B17DDDD00192FEF /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 		0247DCC61B17DF2400192FEF /* resync.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = resync.png; sourceTree = "<group>"; };
 		0247DCC81B1800DA00192FEF /* cappuccino-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cappuccino-icon.png"; sourceTree = "<group>"; };
+		0258003A1B1E1C470000EB7D /* NSMutableArray+moveIndexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+moveIndexes.h"; sourceTree = "<group>"; };
+		0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+moveIndexes.m"; sourceTree = "<group>"; };
 		680621171B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectControllerDataView.h; sourceTree = "<group>"; };
 		680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCCappuccinoProjectControllerDataView.m; sourceTree = "<group>"; };
 		6815BBE31AFBE5A80030D8BB /* CappuccinoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappuccinoUtils.h; sourceTree = "<group>"; };
@@ -343,6 +346,8 @@
 				686C69731B0FC2EB0095BB3C /* CappLintUtils.m */,
 				686C69781B0FC5930095BB3C /* ObjjUtils.h */,
 				686C69791B0FC5930095BB3C /* ObjjUtils.m */,
+				0258003A1B1E1C470000EB7D /* NSMutableArray+moveIndexes.h */,
+				0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -496,6 +501,7 @@
 			files = (
 				6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */,
 				6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */,
+				0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */,
 				6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */,
 				6841F2C41AFABD7200CFE60E /* XCCCappuccinoProject.m in Sources */,
 				6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */,
