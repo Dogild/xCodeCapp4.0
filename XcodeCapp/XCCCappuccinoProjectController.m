@@ -165,12 +165,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
     
-    if (self.cappuccinoProject.isLoaded)
+    if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusInitialized)
         return;
     
     [self _init];
     
-    self.cappuccinoProject.isLoading = YES;
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusLoading;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidStartLoadingNotification object:self];
     
@@ -183,15 +183,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self _populateXcodeSupportDirectory];
-    [self waitForOperationQueueToFinishWithSelector:@selector(projectDidFinishLoading)];
+    [self waitForOperationQueueToFinishWithSelector:@selector(_projectDidFinishLoading)];
 }
 
 - (void)_startListeningToProject
 {
-    if (self.cappuccinoProject.isListening)
+    if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusStopped)
         return;
 
-    self.cappuccinoProject.isListening = YES;
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
     
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
     
@@ -230,10 +230,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_stopListeningToProject
 {
-    if (!self.cappuccinoProject.isListening)
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
         return;
     
-    self.cappuccinoProject.isListening = NO;
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
     
     [self _stopListeningToNotifications];
     
@@ -288,7 +288,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     double appCompatibilityVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey] doubleValue];
     
-    NSNumber *projectCompatibilityVersion = [self.cappuccinoProject settingValueForKey:XCCCompatibilityVersionKey];
+    NSNumber *projectCompatibilityVersion = [self.cappuccinoProject valueForSetting:XCCCompatibilityVersionKey];
     
     if (projectCompatibilityVersion == nil)
     {
@@ -720,7 +720,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     // Make sure we don't get any more events while handling these events
     [self _stopFSEventStream];
     
-    self.cappuccinoProject.isProcessing = YES;
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
     
     DDLogVerbose(@"Modified files: %@", modifiedPaths);
     
@@ -746,7 +746,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     // Make sure we don't get any more events while handling these events
     [self _stopFSEventStream];
     
-    self.cappuccinoProject.isProcessing = YES;
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
     
     DDLogVerbose(@"Renamed directories: %@", directories);
     
@@ -836,7 +836,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self _updatePbxFile];
     
-    self.cappuccinoProject.isProcessing = NO;
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
     
     // If the event stream was temporarily stopped, restart it
     [self _startFSEventStream];
@@ -881,23 +881,23 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     [self performSelector:selector withObject:nil];
 #pragma clang diagnostic pop
-    
-    self.cappuccinoProject.isProcessing = NO;
 }
 
-- (void)projectDidFinishLoading
+- (void)_projectDidFinishLoading
 {
     [self _updatePbxFile];
     [self.cappuccinoProject fetchProjectSettings];
     
-    self.cappuccinoProject.isLoading = NO;
-    self.cappuccinoProject.isLoaded = YES;
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XCCProjectDidFinishLoadingNotification object:self];
     
     [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
     
     DDLogVerbose(@"Project finished loading");
+    
+    if ([[self.cappuccinoProject valueForSetting:XCCCappuccinoProjectWasListeningKey] boolValue])
+        [self _startListeningToProject];
 }
 
 - (void)_updatePbxFile
@@ -973,30 +973,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 }
 
 
-#pragma mark - Settings methods
-
-- (void)saveSettings
-{
-    NSMutableDictionary *currentSettings = [self.cappuccinoProject currentSettings];
-    
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:currentSettings
-                                                              format:NSPropertyListXMLFormat_v1_0
-                                                    errorDescription:nil];
-    
-    [data writeToFile:self.cappuccinoProject.infoPlistPath atomically:YES];
-    
-    if ([self.cappuccinoProject.ignoredPathsContent length])
-    {
-        NSAttributedString *attributedString = (NSAttributedString*)self.cappuccinoProject.ignoredPathsContent;
-        [[attributedString string] writeToFile:self.cappuccinoProject.XcodeCappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    }
-    else if ([self.fm fileExistsAtPath:self.cappuccinoProject.XcodeCappIgnorePath])
-    {
-        [self.fm removeItemAtPath:self.cappuccinoProject.XcodeCappIgnorePath error:nil];
-    }
-}
-
-
 #pragma mark - Synchronize method
 
 - (void)_resetProject
@@ -1054,13 +1030,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     DDLogVerbose(@"Saving Cappuccino configuration project %@", self.cappuccinoProject.projectPath);
     
     [self.operationQueue cancelAllOperations];
-    [self saveSettings];
+    [self.cappuccinoProject saveSettings];
     
-    if (self.cappuccinoProject.isLoaded)
-    {
-        self.taskLauncher = [self makeTaskLauncher];
-        [self.cappuccinoProject updateIgnoredPath];
-    }
+    self.taskLauncher = [self makeTaskLauncher];
+    [self.cappuccinoProject updateIgnoredPath];
     
     DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
 }
@@ -1208,10 +1181,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)switchProjectListeningStatus:(id)sender
 {
-    if(!self.cappuccinoProject.isListening)
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
+    {
         [self _startListeningToProject];
+        [self.cappuccinoProject setValue:@YES forSetting:XCCCappuccinoProjectWasListeningKey];
+    }
     else
+    {
         [self _stopListeningToProject];
+        [self.cappuccinoProject setValue:@NO forSetting:XCCCappuccinoProjectWasListeningKey];
+    }
+    
+    [self.cappuccinoProject saveSettings];
 }
 
 

@@ -102,7 +102,7 @@
 
 - (void)_restoreManagedProjectsFromUserDefaults
 {
-    DDLogVerbose(@"Start : fetching historic projects");
+    DDLogVerbose(@"Start : restore managed projects");
     self.cappuccinoProjectControllers = [NSMutableArray new];
     
     NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCCurrentManagedProjects];
@@ -115,7 +115,7 @@
     
     [self.projectTableView reloadData];
     
-    DDLogVerbose(@"Stop : fetching historic projects");
+    DDLogVerbose(@"Stop : managed  projects restored");
 }
 
 - (void)_saveManagedProjectsToUserDefaults

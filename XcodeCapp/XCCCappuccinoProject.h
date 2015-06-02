@@ -10,10 +10,11 @@
 #import "XCCOperationError.h"
 
 enum {
-    XCCCappuccinoProjectStatusStopped       = 0,
-    XCCCappuccinoProjectStatusLoading       = 1,
-    XCCCappuccinoProjectStatusListening     = 2,
-    XCCCappuccinoProjectStatusProcessing    = 3
+    XCCCappuccinoProjectStatusInitialized   = 0,
+    XCCCappuccinoProjectStatusStopped       = 1,
+    XCCCappuccinoProjectStatusLoading       = 2,
+    XCCCappuccinoProjectStatusListening     = 3,
+    XCCCappuccinoProjectStatusProcessing    = 4
 };
 typedef int XCCCappuccinoProjectStatus;
 
@@ -23,33 +24,32 @@ typedef int XCCCappuccinoProjectStatus;
 @interface XCCCappuccinoProject : NSObject
 
 extern NSString * const XCCCompatibilityVersionKey;
-extern NSString * const XCCCappuccinoProjectBinPaths;
+extern NSString * const XCCCappuccinoProjectBinPathsKey;
 extern NSString * const XCCProjectDidFinishLoadingNotification;
 extern NSString * const XCCProjectDidStartLoadingNotification;
+extern NSString * const XCCCappuccinoProjectWasListeningKey;
 
-@property NSString              *supportPath;
-@property NSString              *projectPath;
-@property NSString              *name;
-@property NSString              *nickname;
-@property NSString              *XcodeProjectPath;
-@property NSString              *infoPlistPath;
-@property NSString              *XcodeCappIgnorePath;
-@property NSString              *pbxModifierScriptPath;
-@property NSMutableDictionary   *projectPathsForSourcePaths;
-@property NSMutableArray        *ignoredPathPredicates;
-@property BOOL                  isLoading;
-@property BOOL                  isListening;
-@property BOOL                  isLoaded;
-@property BOOL                  isProcessing;
-@property NSDictionary          *settings;
-@property NSMutableDictionary   *errors;
-@property NSString              *objjIncludePath;
-@property BOOL                  shouldProcessWithObjjWarnings;
-@property BOOL                  shouldProcessWithCappLint;
-@property BOOL                  shouldProcessWithObjj2ObjcSkeleton;
-@property BOOL                  shouldProcessWithNib2Cib;
-@property NSArray               *environementsPaths;
-@property NSString              *ignoredPathsContent;
+
+@property NSString                      *supportPath;
+@property NSString                      *projectPath;
+@property NSString                      *name;
+@property NSString                      *nickname;
+@property NSString                      *XcodeProjectPath;
+@property NSString                      *infoPlistPath;
+@property NSString                      *XcodeCappIgnorePath;
+@property NSString                      *pbxModifierScriptPath;
+@property NSMutableDictionary           *projectPathsForSourcePaths;
+@property NSMutableArray                *ignoredPathPredicates;
+@property NSDictionary                  *settings;
+@property NSMutableDictionary           *errors;
+@property NSString                      *objjIncludePath;
+@property BOOL                          shouldProcessWithObjjWarnings;
+@property BOOL                          shouldProcessWithCappLint;
+@property BOOL                          shouldProcessWithObjj2ObjcSkeleton;
+@property BOOL                          shouldProcessWithNib2Cib;
+@property NSArray                       *environementsPaths;
+@property NSString                      *ignoredPathsContent;
+@property XCCCappuccinoProjectStatus    status;
 
 + (NSArray*)defaultEnvironmentPaths;
 
@@ -68,9 +68,10 @@ extern NSString * const XCCProjectDidStartLoadingNotification;
 - (NSString *)projectPathForSourcePath:(NSString *)path;
 - (NSString *)flattenedXcodeSupportFileNameForPath:(NSString *)aPath;
 
-- (id)settingValueForKey:(NSString*)aKey;
-- (NSMutableDictionary*)currentSettings;
-- (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey;
+- (id)valueForSetting:(NSString*)aKey;
+- (void)setValue:(id)aValue forSetting:(NSString*)aKey;
 - (void)fetchProjectSettings;
+- (void)saveSettings;
+
 
 @end

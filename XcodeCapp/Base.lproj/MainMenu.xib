@@ -12,16 +12,10 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customObject id="Kof-Go-xQ9" customClass="CappuccinoController">
-            <connections>
-                <outlet property="mainWindowController" destination="923-ke-ovW" id="FZ1-aq-h7h"/>
-            </connections>
-        </customObject>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="aboutWindow" destination="EMp-Db-uhU" id="tnK-oP-g4I"/>
-                <outlet property="cappuccinoController" destination="Kof-Go-xQ9" id="BxL-fS-fl1"/>
-                <outlet property="mainWindowController" destination="923-ke-ovW" id="HXf-fO-hPK"/>
+                <outlet property="mainWindowController" destination="923-ke-ovW" id="5B3-2j-ERQ"/>
                 <outlet property="preferencesController" destination="GHK-nR-IEq" id="O3E-dL-6Fq"/>
                 <outlet property="preferencesWindow" destination="ekp-cc-W2F" id="c14-w5-R7V"/>
             </connections>

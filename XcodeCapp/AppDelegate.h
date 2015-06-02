@@ -18,12 +18,11 @@
 }
 
 @property (strong) IBOutlet NSUserDefaultsController    *preferencesController;
+@property (strong) IBOutlet NSPanel                     *aboutWindow;
+@property (strong) IBOutlet NSWindow                    *preferencesWindow;
+@property (strong) IBOutlet CappuccinoController        *cappuccinoController;
+@property (strong) IBOutlet XCCMainController           *mainWindowController;
 
-@property (strong) IBOutlet NSPanel    *aboutWindow;
-@property (strong) IBOutlet NSWindow   *preferencesWindow;
-
-@property (strong) IBOutlet CappuccinoController *cappuccinoController;
-@property (strong) IBOutlet XCCMainController *mainWindowController;
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;

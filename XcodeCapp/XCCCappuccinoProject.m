@@ -12,46 +12,26 @@
 #import "CappuccinoUtils.h"
 #import "XCCPath.h"
 
-// We replace "/" in a path with this. It looks like "/",
-// but is actually an obscure Unicode character we hope no one uses in a filename.
-static NSString * const XCCSlashReplacement = @"∕";  // DIVISION SLASH, Unicode: U+2215
-
-// Where we put the generated Cocoa class files
-static NSString * const XCCSupportFolderName = @".XcodeSupport";
-
-// Project should process capp lint or not
-static NSString * const XCCCappuccinoProcessCappLint = @"XCCCappuccinoProcessCappLint";
-
-// Project should process capp lint or not
-static NSString * const XCCCappuccinoProcessObjj = @"XCCCappuccinoProcessObjj";
-
-// Project should process nib2cib or not
-static NSString * const XCCCappuccinoProcessNib2Cib = @"XCCCappuccinoProcessNib2Cib";
-
-// Project should process objj2objcskeleton or not
-static NSString * const XCCCappuccinoProcessObjj2ObjcSkeleton = @"XCCCappuccinoProcessObjj2ObjcSkeleton";
-
-// We store a compatibility version in .XcodeSupport/Info.plist.
-// If the version is less than the version in XcodeCapp's Info.plist, we regenerate .XcodeSupport.
-NSString * const XCCCompatibilityVersionKey = @"XCCCompatibilityVersion";
-
-// Bin paths used by this project
-NSString * const XCCCappuccinoProjectBinPaths = @"XCCCappuccinoProjectBinPaths";
-
-// Path used by objj
-NSString *const XCCCappuccinoObjjIncludePath = @"XCCCappuccinoObjjIncludePath";
-
-// Bin paths used by this project
-NSString * const XCCCappuccinoProjectNickname = @"XCCCappuccinoProjectNickname";
-
-// Default environement paths
 static NSArray * XCCDefaultEnvironmentPaths;
-
-// Default info plist XCCDefaultInfoPlistConfigurations
 static NSDictionary* XCCDefaultInfoPlistConfigurations;
 
-NSString * const XCCProjectDidFinishLoadingNotification = @"XCCProjectDidFinishLoadingNotification";
-NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoadingNotification";
+// we replace the "/" by a weird unicode "/" in order to generate file names with "/" in .XcodeSupport. very clear huh?
+static NSString * const XCCSlashReplacement               = @"∕";  // DIVISION SLASH, Unicode: U+2215
+static NSString * const XCCSupportFolderName              = @".XcodeSupport";
+
+
+NSString * const XCCCappuccinoProcessCappLintKey          = @"XCCCappuccinoProcessCappLintKey";
+NSString * const XCCCappuccinoProcessObjjKey              = @"XCCCappuccinoProcessObjjKey";
+NSString * const XCCCappuccinoProcessNib2CibKey           = @"XCCCappuccinoProcessNib2CibKey";
+NSString * const XCCCappuccinoProcessObjj2ObjcSkeletonKey = @"XCCCappuccinoProcessObjj2ObjcSkeletonKey";
+NSString * const XCCCompatibilityVersionKey               = @"XCCCompatibilityVersion";
+NSString * const XCCCappuccinoProjectBinPathsKey          = @"XCCCappuccinoProjectBinPathsKey";
+NSString * const XCCCappuccinoObjjIncludePathKey          = @"XCCCappuccinoObjjIncludePathKey";
+NSString * const XCCCappuccinoProjectNicknameKey          = @"XCCCappuccinoProjectNicknameKey";
+NSString * const XCCCappuccinoProjectWasListeningKey      = @"XCCCappuccinoProjectWasListeningKey";
+
+NSString * const XCCProjectDidFinishLoadingNotification   = @"XCCProjectDidFinishLoadingNotification";
+NSString * const XCCProjectDidStartLoadingNotification    = @"XCCProjectDidStartLoadingNotification";
 
 @interface XCCCappuccinoProject ()
 @property NSFileManager *fm;
@@ -72,13 +52,14 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
     
     XCCDefaultInfoPlistConfigurations = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
-                                          XCCCappuccinoProcessCappLint: @YES,
-                                          XCCCappuccinoProcessObjj: @YES,
-                                          XCCCappuccinoProcessNib2Cib: @YES,
-                                          XCCCappuccinoProcessObjj2ObjcSkeleton: @YES,
-                                          XCCCappuccinoProjectBinPaths: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
-                                          XCCCappuccinoObjjIncludePath: @"",
-                                          XCCCappuccinoProjectNickname: @""};
+                                          XCCCappuccinoProcessCappLintKey: @YES,
+                                          XCCCappuccinoProcessObjjKey: @YES,
+                                          XCCCappuccinoProcessNib2CibKey: @YES,
+                                          XCCCappuccinoProcessObjj2ObjcSkeletonKey: @YES,
+                                          XCCCappuccinoProjectBinPathsKey: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
+                                          XCCCappuccinoObjjIncludePathKey: @"",
+                                          XCCCappuccinoProjectNicknameKey: @"",
+                                          XCCCappuccinoProjectWasListeningKey: @NO};
 }
 
 + (NSArray*)defaultEnvironmentPaths
@@ -118,12 +99,8 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 - (void)_init
 {
     self.projectPathsForSourcePaths = [NSMutableDictionary new];
-    self.errors = [NSMutableDictionary new];
-    
-    self.isLoading      = NO;
-    self.isListening    = NO;
-    self.isProcessing   = NO;
-    self.isLoaded       = NO;
+    self.errors                     = [NSMutableDictionary new];
+    self.status                     = XCCCappuccinoProjectStatusInitialized;
 }
 
 - (void)updateIgnoredPath
@@ -172,7 +149,7 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
         self.settings = [self _defaultSettings];
     
     NSMutableArray *mutablePaths = [NSMutableArray array];
-    NSArray *paths = [self settingValueForKey:XCCCappuccinoProjectBinPaths];
+    NSArray *paths = [self valueForSetting:XCCCappuccinoProjectBinPathsKey];
     
     if (paths)
     {
@@ -199,12 +176,12 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     [self didChangeValueForKey:@"environementsPaths"];
 }
 
-- (id)settingValueForKey:(NSString*)aKey
+- (id)valueForSetting:(NSString*)aKey
 {
     return [self.settings valueForKey:aKey];
 }
 
-- (void)updateSettingValue:(id)aValue forKey:(NSString*)aKey
+- (void)setValue:(id)aValue forSetting:(NSString*)aKey
 {
     [self.settings setValue:aValue forKey:aKey];
 }
@@ -213,17 +190,35 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 {
     NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
     
-    defaultSettings[XCCCappuccinoObjjIncludePath] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
-    defaultSettings[XCCCappuccinoProjectNickname] = [self.nickname copy];
+    defaultSettings[XCCCappuccinoObjjIncludePathKey] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
+    defaultSettings[XCCCappuccinoProjectNicknameKey] = [self.name copy];
     
     return defaultSettings;
 }
 
-- (NSMutableDictionary*)currentSettings
+- (void)saveSettings
 {
-    [self.settings setValue:[self.environementsPaths valueForKeyPath:@"name"] forKey:XCCCappuccinoProjectBinPaths];
+    NSMutableDictionary *currentSettings = [self.settings mutableCopy];
     
-    return [self.settings mutableCopy];
+    [currentSettings setValue:[self.environementsPaths valueForKeyPath:@"name"] forKey:XCCCappuccinoProjectBinPathsKey];
+    
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:currentSettings
+                                                              format:NSPropertyListXMLFormat_v1_0
+                                                    errorDescription:nil];
+    
+    [data writeToFile:self.infoPlistPath atomically:YES];
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if ([self.ignoredPathsContent length])
+    {
+        NSAttributedString *attributedString = (NSAttributedString*)self.ignoredPathsContent;
+        [[attributedString string] writeToFile:self.XcodeCappIgnorePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    }
+    else if ([fm fileExistsAtPath:self.XcodeCappIgnorePath])
+    {
+        [fm removeItemAtPath:self.XcodeCappIgnorePath error:nil];
+    }
 }
 
 #pragma mark path methods
@@ -266,73 +261,73 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
 
 - (NSString *)objjIncludePath
 {
-    return [self settingValueForKey:XCCCappuccinoObjjIncludePath];
+    return [self valueForSetting:XCCCappuccinoObjjIncludePathKey];
 }
 
 - (void)setObjjIncludePath:(NSString *)objjIncludePath
 {
     [self willChangeValueForKey:@"objjIncludePath"];
-    [self.settings setValue:objjIncludePath forKey:XCCCappuccinoObjjIncludePath];
+    [self.settings setValue:objjIncludePath forKey:XCCCappuccinoObjjIncludePathKey];
     [self didChangeValueForKey:@"objjIncludePath"];
 }
 
 - (BOOL)shouldProcessWithObjjWarnings
 {
-    return [[self settingValueForKey:XCCCappuccinoProcessObjj] boolValue];
+    return [[self valueForSetting:XCCCappuccinoProcessObjjKey] boolValue];
 }
 
 - (void)setShouldProcessWithObjjWarnings:(BOOL)shouldProcessWithObjjWarnings
 {
     [self willChangeValueForKey:@"shouldProcessWithObjjWarnings"];
-    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithObjjWarnings] forKey:XCCCappuccinoProcessObjj];
+    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithObjjWarnings] forKey:XCCCappuccinoProcessObjjKey];
     [self didChangeValueForKey:@"shouldProcessWithObjjWarnings"];
 }
 
 - (BOOL)shouldProcessWithCappLint
 {
-    return [[self settingValueForKey:XCCCappuccinoProcessCappLint] boolValue];
+    return [[self valueForSetting:XCCCappuccinoProcessCappLintKey] boolValue];
 }
 
 - (void)setShouldProcessWithCappLint:(BOOL)shouldProcessWithCappLint
 {
     [self willChangeValueForKey:@"shouldProcessWithCappLint"];
-    [self.settings setValue:[NSNumber numberWithInt:shouldProcessWithCappLint] forKey:XCCCappuccinoProcessCappLint];
+    [self.settings setValue:[NSNumber numberWithInt:shouldProcessWithCappLint] forKey:XCCCappuccinoProcessCappLintKey];
     [self didChangeValueForKey:@"shouldProcessWithCappLint"];
 }
 
 - (BOOL)shouldProcessWithObjj2ObjcSkeleton
 {
-    return [[self settingValueForKey:XCCCappuccinoProcessObjj2ObjcSkeleton] boolValue];
+    return [[self valueForSetting:XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
 }
 
 - (void)setShouldProcessWithObjj2ObjcSkeleton:(BOOL)shouldProcessWithObjj2ObjcSkeleton
 {
     [self willChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
-    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithObjj2ObjcSkeleton] forKey:XCCCappuccinoProcessObjj2ObjcSkeleton];
+    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithObjj2ObjcSkeleton] forKey:XCCCappuccinoProcessObjj2ObjcSkeletonKey];
     [self didChangeValueForKey:@"shouldProcessWithObjj2ObjcSkeleton"];
 }
 
 - (BOOL)shouldProcessWithNib2Cib
 {
-    return [[self settingValueForKey:XCCCappuccinoProcessNib2Cib] boolValue];
+    return [[self valueForSetting:XCCCappuccinoProcessNib2CibKey] boolValue];
 }
 
 - (void)setShouldProcessWithNib2Cib:(BOOL)shouldProcessWithNib2Cib
 {
     [self willChangeValueForKey:@"shouldProcessWithNib2Cib"];
-    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithNib2Cib] forKey:XCCCappuccinoProcessNib2Cib];
+    [self.settings setValue:[NSNumber numberWithBool:shouldProcessWithNib2Cib] forKey:XCCCappuccinoProcessNib2CibKey];
     [self didChangeValueForKey:@"shouldProcessWithNib2Cib"];
 }
 
 - (NSString*)nickname
 {
-    return [self settingValueForKey:XCCCappuccinoProjectNickname];
+    return [self valueForSetting:XCCCappuccinoProjectNicknameKey];
 }
 
 - (void)setNickname:(NSString *)nickname
 {
     [self willChangeValueForKey:@"nickname"];
-    [self.settings setValue:nickname forKey:XCCCappuccinoProjectNickname];
+    [self.settings setValue:nickname forKey:XCCCappuccinoProjectNicknameKey];
     [self didChangeValueForKey:@"nickname"];
 }
 
@@ -382,5 +377,4 @@ NSString * const XCCProjectDidStartLoadingNotification = @"XCCProjectDidStartLoa
     
     return [relativePath stringByReplacingOccurrencesOfString:@"/" withString:XCCSlashReplacement];
 }
-
 @end
