@@ -184,7 +184,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self _populateXcodeSupportDirectory];
-    [self waitForOperationQueueToFinishWithSelector:@selector(_projectDidFinishLoading)];
+    [self waitForOperationQueueToFinishWithSelector:@selector(_operationsDidFinish)];
 }
 
 - (void)_startListeningToProject
@@ -390,6 +390,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [center addObserver:self selector:@selector(_didReceiveObjj2ObjcSkeletonDidStartNotification:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveObjjDidGenerateErrorNotification:) name:XCCObjjDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveObjjDidStartNotification:) name:XCCObjjDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidStartNotification:) name:XCCPbxCreationDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidEndNotification:) name:XCCPbxCreationDidEndNotification object:nil];
 }
 
 - (void)_stopListeningToNotifications
@@ -408,6 +410,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [center removeObserver:self name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
     [center removeObserver:self name:XCCObjjDidGenerateErrorNotification object:nil];
     [center removeObserver:self name:XCCObjjDidStartNotification object:nil];
+    [center removeObserver:self name:XCCPbxCreationDidStartNotification object:nil];
+    [center removeObserver:self name:XCCPbxCreationDidEndNotification object:nil];
 }
 
 - (BOOL)_doesNotificationBelongToCurrentProject:(NSNotification *)note
@@ -540,6 +544,40 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _reloadDataErrorsOutlineView];
 }
 
+- (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)aNotification
+{
+    if (![self _doesNotificationBelongToCurrentProject:aNotification])
+        return;
+    
+    [self _addOperation:aNotification.userInfo[@"operation"]];
+}
+
+- (void)_didReceiveUpdatePbxFileDidEndNotification:(NSNotification*)aNotification
+{
+    if (![self _doesNotificationBelongToCurrentProject:aNotification])
+        return;
+    
+    [self _removeOperation:aNotification.userInfo[@"operation"]];
+    
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
+    {
+        self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
+        
+        [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
+        
+        DDLogVerbose(@"Project finished loading");
+        
+        if (self.cappuccinoProject.autoStartListening)
+            [self _startListeningToProject];
+    }
+    else
+    {
+        self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
+        
+        // If the event stream was temporarily stopped, restart it
+        [self _startFSEventStream];
+    }
+}
 
 #pragma mark - Operation Management
 
@@ -548,7 +586,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.operations addObject:anOperation];
     [self _reloadDataOperationsTableView];
     
-    if ([[anOperation className] isEqualToString:@"XCCCSourceProcessingOperation"])
+    if ([[anOperation className] isEqualToString:@"XCCSourceProcessingOperation"] || [[anOperation className] isEqualToString:@"XCCPbxCreationOperation"])
     {
         self.operationsTotal++;
         [self _updateOperationsProgress];
@@ -560,7 +598,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.operations removeObject:anOperation];
     [self _reloadDataOperationsTableView];
     
-    if ([[anOperation className] isEqualToString:@"XCCCSourceProcessingOperation"])
+    if ([[anOperation className] isEqualToString:@"XCCSourceProcessingOperation"] || [[anOperation className] isEqualToString:@"XCCPbxCreationOperation"])
     {
         self.operationsComplete++;
         [self _updateOperationsProgress];
@@ -876,14 +914,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_operationsDidFinish
 {
     [self _updatePbxFile];
-    
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
-    
-    // If the event stream was temporarily stopped, restart it
-    [self _startFSEventStream];
 }
-
-
 
 #pragma mark - Processing methods
 
@@ -922,20 +953,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     [self performSelector:selector withObject:nil];
 #pragma clang diagnostic pop
-}
-
-- (void)_projectDidFinishLoading
-{
-    [self _updatePbxFile];
-    
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
-    
-    [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
-    
-    DDLogVerbose(@"Project finished loading");
-    
-    if (self.cappuccinoProject.autoStartListening)
-        [self _startListeningToProject];
 }
 
 - (void)_updatePbxFile
