@@ -28,7 +28,7 @@ extern NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification;
 extern NSString * const XCCNib2CibDidGenerateErrorNotification;
 extern NSString * const XCCConversionDidGenerateCancelNotification;
 
-@interface XCCCSourceProcessingOperation : NSOperation
+@interface XCCSourceProcessingOperation : NSOperation
 
 @property NSTask *task;
 

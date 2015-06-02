@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Cappuccino Project. All rights reserved.
 //
 
-#import "XCCCSourceProcessingOperation.h"
+#import "XCCSourceProcessingOperation.h"
 #import "XCCCappuccinoProject.h"
 #import "CappuccinoUtils.h"
 #import "XCCTaskLauncher.h"
@@ -32,7 +32,7 @@ NSString * const XCCNib2CibDidStartNotification = @"XCCNib2CibDidStartNotificati
 NSString * const XCCNib2CibDidGenerateErrorNotification = @"XCCNib2CibDidGenerateErrorNotification";
 NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
-@interface XCCCSourceProcessingOperation ()
+@interface XCCSourceProcessingOperation ()
 
 @property XCCTaskLauncher *taskLauncher;
 @property XCCCappuccinoProject *cappuccinoProject;
@@ -41,7 +41,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 @end
 
 
-@implementation XCCCSourceProcessingOperation
+@implementation XCCSourceProcessingOperation
 
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
 {

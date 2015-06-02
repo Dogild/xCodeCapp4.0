@@ -7,7 +7,7 @@
 //
 
 #import "XCCOperationDataView.h"
-#import "XCCCSourceProcessingOperation.h"
+#import "XCCSourceProcessingOperation.h"
 
 @implementation XCCOperationDataView
 

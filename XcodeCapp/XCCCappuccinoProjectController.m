@@ -20,12 +20,12 @@
 #import "XCCOperationErrorHeaderDataView.h"
 #import "XCCPbxCreationOperation.h"
 #import "ObjjUtils.h"
-#import "XCCCSourceProcessingOperation.h"
+#import "XCCSourceProcessingOperation.h"
 #import "XCCTaskLauncher.h"
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
 
-@class XCCCSourceProcessingOperation;
+@class XCCSourceProcessingOperation;
 
 enum XCCLineSpecifier {
     kLineSpecifierNone,
@@ -771,7 +771,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         if (![self.fm fileExistsAtPath:path])
             continue;
         
-        XCCCSourceProcessingOperation *op = [[XCCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
+        XCCSourceProcessingOperation *op = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
                                                                                    taskLauncher:self.taskLauncher
                                                                                     sourcePath:[self.cappuccinoProject projectPathForSourcePath:path]];
 
@@ -1039,7 +1039,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)cancelOperation:(id)sender
 {
-    XCCCSourceProcessingOperation *operation = [self.operationQueue.operations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
+    XCCSourceProcessingOperation *operation = [self.operationQueue.operations objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
     [operation cancel];
 }
 
