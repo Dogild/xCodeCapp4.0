@@ -37,6 +37,16 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
     return self;
 }
 
+- (NSString*)operationName
+{
+    return @"Updating the pbx file of the project";
+}
+
+- (NSString*)operationDescription
+{
+    return self.cappuccinoProject.projectPath;
+}
+
 - (void)main
 {
     if (self.isCancelled)

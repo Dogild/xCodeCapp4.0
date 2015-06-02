@@ -19,5 +19,6 @@ extern NSString * const XCCPbxCreationGenerateErrorNotification;
 extern NSString * const XCCPbxCreationDidEndNotification;
 
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher pbxOperations:(NSMutableDictionary *)pbxOperations;
-
+- (NSString*)operationDescription;
+- (NSString*)operationName;
 @end
