@@ -115,8 +115,6 @@
         
         [self.maskingView removeFromSuperview];
     }
-    
-
 }
 
 

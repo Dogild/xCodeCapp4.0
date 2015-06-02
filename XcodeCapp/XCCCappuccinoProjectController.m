@@ -88,6 +88,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                                 forKeyPath:kDefaultXCCMaxNumberOfOperations
                                                    options:NSKeyValueObservingOptionNew
                                                    context:NULL];
+        
         [self _loadProject];
     }
     
@@ -99,9 +100,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.taskLauncher       = nil;
     self.operations         = [NSMutableArray new];
     self.operationQueue     = [[NSApp delegate] mainOperationQueue];
-    self.operationsTotal    = 0;
-    self.operationsComplete = 0;
 
+    [self _resetOperationCounters];
     
     [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
     
@@ -537,6 +537,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:aNotification])
         return;
     
+    self.operationsComplete++;
+    
     [self _removeOperation:aNotification.userInfo[@"operation"]];
     
     if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
@@ -566,6 +568,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.operations addObject:anOperation];
     [self _reloadDataOperationsTableView];
     
+    if (self.operationsTotal == 0)
+        self.operationsTotal++;
+    
     self.operationsTotal++;
     [self _updateOperationsProgress];
 }
@@ -574,6 +579,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self.operations removeObject:anOperation];
     [self _reloadDataOperationsTableView];
+    
     
     self.operationsComplete++;
     [self _updateOperationsProgress];
@@ -904,7 +910,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                                    selector:@selector(_didLoadingTimerFinish:)
                                                    userInfo:@{@"selector" : NSStringFromSelector(selector)}
                                                     repeats:NO];
-  
 }
 
 - (void)_didLoadingTimerFinish:(NSTimer *)timer
@@ -916,7 +921,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self _scheduleLoadingTimerWithSelector:selector];
         return;
     }
-
     
     // Can't use plain performSelect: here because ARC doesn't know what the return value is
     // because the selector is determined at runtime. So we use performSelectorOnMainThread:
