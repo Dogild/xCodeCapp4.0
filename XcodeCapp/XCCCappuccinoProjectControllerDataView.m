@@ -55,22 +55,23 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     
     self.boxStatus.borderColor  = [NSColor clearColor];
     self.boxStatus.fillColor    = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
+    [self.waitingProgressIndicator startAnimation:self];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
     if (newWindow)
     {
-
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
         
         NSDictionary *options = @{NSValueTransformerNameBindingOption: NSNegateBooleanTransformerName};
         [self.operationsProgressIndicator bind:NSValueBinding toObject:self.controller withKeyPath:@"operationsProgress" options:nil];
-        [self.operationsProgressIndicator bind:NSHiddenBinding toObject:self.controller withKeyPath:@"operationQueue.operationCount" options:options];
+        [self.operationsProgressIndicator bind:NSHiddenBinding toObject:self.controller withKeyPath:@"operationsTotal" options:options];
+        [self.waitingProgressIndicator bind:NSHiddenBinding toObject:self.controller.cappuccinoProject withKeyPath:@"isBusy" options:options];
+        [self.waitingProgressIndicator bind:@"hidden2" toObject:self.controller withKeyPath:@"operationsTotal" options:nil];
         [self.textField bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"nickname" options:nil];
         [self.pathTextField bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"projectPath" options:nil];
-
     }
     else
     {
@@ -78,6 +79,8 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"errors"];
         [self.operationsProgressIndicator unbind:NSValueBinding];
         [self.operationsProgressIndicator unbind:NSHiddenBinding];
+        [self.waitingProgressIndicator unbind:NSHiddenBinding];
+        [self.waitingProgressIndicator unbind:@"hidden2"];
         [self.textField unbind:NSValueBinding];
         [self.pathTextField unbind:NSValueBinding];
     }

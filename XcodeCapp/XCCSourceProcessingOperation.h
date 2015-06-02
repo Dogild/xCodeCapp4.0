@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XCCAbstractOperation.h"
 
 @class XCCCappuccinoProject;
 @class XCCTaskLauncher;
@@ -28,9 +29,10 @@ extern NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification;
 extern NSString * const XCCNib2CibDidGenerateErrorNotification;
 extern NSString * const XCCConversionDidGenerateCancelNotification;
 
-@interface XCCSourceProcessingOperation : NSOperation
 
-@property NSTask *task;
+@interface XCCSourceProcessingOperation : XCCAbstractOperation
+
+@property NSTask                *task;
 
 // sourcePath should be a path within the project (no resolved symlinks)
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath;

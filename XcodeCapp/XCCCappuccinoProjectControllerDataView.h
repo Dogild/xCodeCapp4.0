@@ -21,6 +21,7 @@
 @property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenInTerminal;
 @property (nonatomic, retain) IBOutlet NSBox                        *boxStatus;
 @property (nonatomic, retain) IBOutlet NSProgressIndicator          *operationsProgressIndicator;
+@property (nonatomic, retain) IBOutlet NSProgressIndicator          *waitingProgressIndicator;
 
 @property (nonatomic, retain) XCCCappuccinoProjectController        *controller;
 

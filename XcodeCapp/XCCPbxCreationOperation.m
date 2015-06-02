@@ -17,9 +17,7 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
 @interface XCCPbxCreationOperation ()
 
 @property XCCTaskLauncher *taskLauncher;
-@property XCCCappuccinoProject *cappuccinoProject;
 @property NSMutableDictionary *pbxOperations;
-
 @end
 
 @implementation XCCPbxCreationOperation

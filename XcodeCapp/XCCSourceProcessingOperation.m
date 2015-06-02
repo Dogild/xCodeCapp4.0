@@ -7,8 +7,6 @@
 //
 
 #import "XCCSourceProcessingOperation.h"
-#import "XCCCappuccinoProject.h"
-#import "CappuccinoUtils.h"
 #import "XCCTaskLauncher.h"
 
 NSString * const XCCConversionDidEndNotification = @"XCCConversionDidStopNotification";
@@ -35,7 +33,6 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 @interface XCCSourceProcessingOperation ()
 
 @property XCCTaskLauncher *taskLauncher;
-@property XCCCappuccinoProject *cappuccinoProject;
 @property NSString *sourcePath;
 
 @end

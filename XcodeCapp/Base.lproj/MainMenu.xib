@@ -440,6 +440,10 @@
                                                                             <rect key="frame" x="268" y="28" width="16" height="16"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                         </progressIndicator>
+                                                                        <progressIndicator toolTip="Waiting for operation queue availability" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="1" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" id="p3u-tG-2hS">
+                                                                            <rect key="frame" x="268" y="28" width="16" height="16"/>
+                                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                                        </progressIndicator>
                                                                         <button toolTip="Open in Finder" verticalHuggingPriority="750" id="vsI-jy-i4m">
                                                                             <rect key="frame" x="56" y="3" width="44" height="28"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -484,6 +488,7 @@
                                                                         <outlet property="operationsProgressIndicator" destination="dZP-lW-STI" id="nyZ-nv-RH6"/>
                                                                         <outlet property="pathTextField" destination="PN4-Zx-XTz" id="VU9-Yo-I8W"/>
                                                                         <outlet property="textField" destination="nss-wl-6TY" id="V1m-Vi-Y2z"/>
+                                                                        <outlet property="waitingProgressIndicator" destination="p3u-tG-2hS" id="RH1-PG-ELB"/>
                                                                     </connections>
                                                                 </tableCellView>
                                                             </prototypeCellViews>

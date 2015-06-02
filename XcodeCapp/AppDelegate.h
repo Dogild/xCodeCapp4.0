@@ -23,6 +23,8 @@
 @property (strong) IBOutlet CappuccinoController        *cappuccinoController;
 @property (strong) IBOutlet XCCMainController           *mainWindowController;
 
+@property (strong) NSOperationQueue                     *mainOperationQueue;
+
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;
