@@ -596,6 +596,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)cleanUpBeforeDeletion
 {
+    [self _stopListeningToNotifications];
     [self _stopListeningToProject];
     [self _removeXcodeProject];
     [self _removeXcodeSupportDirectory];
