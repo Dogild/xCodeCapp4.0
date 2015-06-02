@@ -94,7 +94,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:XCCStopListeningProjectNotification object:nil];
     
     for (int i; i < self.cappuccinoProjectControllers.count; i++)
-        [[self.cappuccinoProjectControllers objectAtIndex:i] notifyCappuccinoControllersApplicationIsClosing];
+        [[self.cappuccinoProjectControllers objectAtIndex:i] applicationIsClosing];
 }
 
 

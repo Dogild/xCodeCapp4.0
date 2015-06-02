@@ -37,6 +37,12 @@
     DDLogVerbose(@"\n******************************\n**    XcodeCapp stopped     **\n******************************\n");
 }
 
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
+{
+    [self.mainWindowController showWindow:self];
+    return YES;
+}
+
 #pragma mark - Window managements
 
 - (void)openWindow:(NSWindow *)aWindow
