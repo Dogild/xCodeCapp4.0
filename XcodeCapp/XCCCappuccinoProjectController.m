@@ -42,15 +42,15 @@ NSString * const XCCStopListeningProjectNotification = @"XCCStopListeningProject
 
 @interface XCCCappuccinoProjectController ()
 
-@property NSDate *lastReloadErrorsViewDate;
-@property NSDate *lastReloadOperationsViewDate;
-@property NSFileManager *fm;
-@property NSMutableArray *operations;
-@property FSEventStreamRef stream;
-@property NSNumber *lastEventId;
-@property int projectPathFileDescriptor;
-@property NSMutableDictionary *pbxOperations;
-@property NSTimer *loadingTimer;
+@property NSDate                *lastReloadErrorsViewDate;
+@property NSDate                *lastReloadOperationsViewDate;
+@property NSFileManager         *fm;
+@property NSOperationQueue      *operationQueue;
+@property FSEventStreamRef      stream;
+@property NSNumber              *lastEventId;
+@property int                   projectPathFileDescriptor;
+@property NSMutableDictionary   *pbxOperations;
+@property NSTimer               *loadingTimer;
 
 - (void)_handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds;
 

@@ -21,10 +21,10 @@ extern NSString * const XCCStopListeningProjectNotification;
 @property XCCCappuccinoProject  *cappuccinoProject;
 @property XCCMainController     *mainWindowController;
 @property XCCTaskLauncher       *taskLauncher;
-@property NSOperationQueue      *operationQueue;
 @property CGFloat               operationsProgress;
 @property NSInteger             operationsTotal;
 @property NSInteger             operationsComplete;
+@property NSMutableArray        *operations;
 
 
 - (id)initWithPath:(NSString*)aPath controller:(id)aController;

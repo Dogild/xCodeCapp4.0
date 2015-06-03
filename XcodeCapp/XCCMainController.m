@@ -25,6 +25,10 @@
 - (void)windowDidLoad
 {
     [self _showMaskingView:YES];
+    [self _showProjectsTableMaskingView:YES];
+    [self _showErrorsTableMaskingView:YES];
+    [self _showOperationsTableMaskingView:YES];
+    
     [self _restoreManagedProjectsFromUserDefaults];
     [self _selectLastProjectSelected];
     
@@ -53,7 +57,7 @@
     
     [self updateSelectedTab:self.buttonSelectConfigurationTab];
     
-    [self.projectTableView registerForDraggedTypes:[NSArray arrayWithObject:@"projects"]];
+    [self.projectTableView registerForDraggedTypes:[NSArray arrayWithObjects:@"projects", NSFilenamesPboardType, nil]];
 }
 
 
@@ -295,7 +299,7 @@
     [self.errorOutlineView reloadData];
     [self.errorOutlineView expandItem:nil expandChildren:YES];
     
-    if (![self.currentCappuccinoProjectController.cappuccinoProject.errors count])
+    if (!self.currentCappuccinoProjectController.cappuccinoProject.errors.count)
         [self _showErrorsTableMaskingView:YES];
     else
         [self _showErrorsTableMaskingView:NO];
@@ -305,7 +309,7 @@
 {
     [self.operationTableView reloadData];
     
-    if (![self.currentCappuccinoProjectController.cappuccinoProject.errors count])
+    if (!self.currentCappuccinoProjectController.operations.count)
         [self _showOperationsTableMaskingView:YES];
     else
         [self _showOperationsTableMaskingView:NO];
@@ -315,7 +319,7 @@
 {
     [self.projectTableView reloadData];
     
-    if ([self.cappuccinoProjectControllers count] == 0)
+    if (self.cappuccinoProjectControllers.count == 0)
         [self _showProjectsTableMaskingView:YES];
     else
         [self _showProjectsTableMaskingView:NO];
@@ -453,24 +457,64 @@
 
 - (NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
 {
-    if (operation == NSTableViewDropOn)
-        return NSDragOperationNone;
+    NSPasteboard *pboard = [info draggingPasteboard];
+    
+    if ([pboard.types containsObject:(NSString *)NSFilenamesPboardType])
+    {
+        NSArray *draggedFiles = [pboard propertyListForType:(NSString *)NSFilenamesPboardType];
+        
+        for (NSString *file in draggedFiles)
+        {
+            BOOL isDir;
+            [[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDir];
 
-    return NSDragOperationMove;
+            if (!isDir)
+                return NSDragOperationNone;
+        }
+        
+        return NSDragOperationCopy;
+    }
+    else if ([pboard.types containsObject:@"projects"])
+    {
+        if (operation == NSTableViewDropOn)
+            return NSDragOperationNone;
+        
+        return NSDragOperationMove;
+    }
+    else
+    {
+        return NSDragOperationNone;
+    }
 }
 
 - (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id <NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)operation
 {
-    NSPasteboard        *pboard         = [info draggingPasteboard];
-    NSData              *rowData        = [pboard dataForType:@"projects"];
-    NSIndexSet          *rowIndexes     = [NSKeyedUnarchiver unarchiveObjectWithData:rowData];
+    NSPasteboard *pboard = [info draggingPasteboard];
     
-    [self.cappuccinoProjectControllers moveIndexes:rowIndexes toIndex:row];
-    
-    [self reloadProjectsList];
-    
-    [self _saveManagedProjectsToUserDefaults];
-    
-    return YES;
+    if ([pboard.types containsObject:(NSString *)NSFilenamesPboardType])
+    {
+        NSArray *draggedFolders = [pboard propertyListForType:(NSString *)NSFilenamesPboardType];
+        
+        for (NSString *folders in draggedFolders)
+            [self addCappuccinoProjectWithPath:folders];
+
+        return YES;
+    }
+    else if ([pboard.types containsObject:@"projects"])
+    {
+        NSData      *rowData    = [pboard dataForType:@"projects"];
+        NSIndexSet  *rowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData:rowData];
+
+        [self.cappuccinoProjectControllers moveIndexes:rowIndexes toIndex:row];
+        [self reloadProjectsList];
+        [self _saveManagedProjectsToUserDefaults];
+        
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
 }
+
 @end
