@@ -18,6 +18,7 @@
                 <outlet property="mainWindowController" destination="923-ke-ovW" id="5B3-2j-ERQ"/>
                 <outlet property="preferencesController" destination="GHK-nR-IEq" id="O3E-dL-6Fq"/>
                 <outlet property="preferencesWindow" destination="ekp-cc-W2F" id="c14-w5-R7V"/>
+                <outlet property="statusMenu" destination="caT-Aq-Atw" id="GMY-qt-ISN"/>
             </connections>
         </customObject>
         <customObject id="923-ke-ovW" customClass="XCCMainController">
@@ -1669,6 +1670,17 @@ Gw
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <point key="canvasLocation" x="284" y="-269.5"/>
         </box>
+        <menu id="caT-Aq-Atw">
+            <items>
+                <menuItem title="Hello" id="Hma-JF-E3r">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="World" id="che-rf-vOB">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="744" y="-222.5"/>
+        </menu>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>

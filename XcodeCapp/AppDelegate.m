@@ -12,16 +12,16 @@
 
 @implementation AppDelegate
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
-    
-    [self registerDefaultPreferences];
-    [self initLogging];
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
     
     self.mainOperationQueue = [NSOperationQueue new];
     
-    self.aboutWindow.backgroundColor = [NSColor whiteColor];
+    [self registerDefaultPreferences];
+    [self initLogging];
+    [self _initStatusItem];
+    
     [self.mainWindowController windowDidLoad];
 }
 
@@ -61,6 +61,29 @@
     {
         return NO;
     }
+}
+
+- (void)_initStatusItem
+{
+    self.iconWorking = [NSImage imageNamed:@"icon-working"];
+    self.iconInactive = [NSImage imageNamed:@"icon-inactive"];
+    self.iconError = [NSImage imageNamed:@"icon-error"];
+    
+    self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+    self.statusItem.menu = self.statusMenu;
+    self.statusItem.image = self.iconInactive;
+    self.statusItem.highlightMode = YES;
+    self.statusItem.length = self.iconInactive.size.width + 12;
+    
+    [self.mainOperationQueue addObserver:self forKeyPath:@"operationCount" options:0 context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (self.mainOperationQueue.operationCount)
+        self.statusItem.image = self.iconWorking;
+    else
+        self.statusItem.image = self.iconInactive;
 }
 
 #pragma mark - Window managements

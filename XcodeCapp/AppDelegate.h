@@ -13,10 +13,13 @@
 @class XCCMainController;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
-{
-    
-}
 
+@property (nonatomic) NSImage *iconInactive;
+@property (nonatomic) NSImage *iconWorking;
+@property (nonatomic) NSImage *iconError;
+@property NSStatusItem        *statusItem;
+
+@property (strong) IBOutlet NSMenu                      *statusMenu;
 @property (strong) IBOutlet NSUserDefaultsController    *preferencesController;
 @property (strong) IBOutlet NSPanel                     *aboutWindow;
 @property (strong) IBOutlet NSWindow                    *preferencesWindow;
