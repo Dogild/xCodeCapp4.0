@@ -13,8 +13,15 @@
 
 - (void)setOperationError:(XCCOperationError *)operationError
 {
-    self.textField.stringValue = operationError.message;
-    self.fieldLineNumber.stringValue = operationError.lineNumber;
+    if (operationError.message)
+        self.textField.stringValue = operationError.message;
+    else
+        self.textField.stringValue = @"No message";
+    
+    if (operationError.lineNumber)
+        self.fieldLineNumber.stringValue = operationError.lineNumber;
+    else
+        self.fieldLineNumber.stringValue = @"0";
     
     switch (operationError.errorType)
     {

@@ -216,8 +216,6 @@
     [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     [self.projectTableView scrollRowToVisible:index];
     [self _saveManagedProjectsToUserDefaults];
-    
-    [CappuccinoUtils notifyUserWithTitle:@"Cappuccino project added" message:aProjectPath];
 }
 
 - (void)reloadErrorsListForCurrentCappuccinoProject
@@ -284,6 +282,10 @@
     }
 }
 
+- (IBAction)cleanAllErrors:(id)aSender
+{
+    [self.currentCappuccinoProjectController removeErrors:aSender];
+}
 
 #pragma mark - SplitView delegate
 
@@ -294,7 +296,7 @@
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    return 200;
+    return 300;
 }
 
 
@@ -319,7 +321,7 @@
 {
     NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
     
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
+    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
     
     [self _removeArrayControllerObserver];
     

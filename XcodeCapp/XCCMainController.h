@@ -31,12 +31,12 @@
 @property (strong) IBOutlet NSView                  *viewTabOperations;
 
 @property (strong) NSMutableArray                   *cappuccinoProjectControllers;
-@property (strong) XCCCappuccinoProject             *currentCappuccinoProject;
 @property (strong) XCCCappuccinoProjectController   *currentCappuccinoProjectController;
 
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
 - (IBAction)updateSelectedTab:(id)aSender;
+- (IBAction)cleanAllErrors:(id)aSender;
 
 - (void)notifyCappuccinoControllersApplicationIsClosing;
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
@@ -45,6 +45,7 @@
 
 - (void)reloadErrorsListForCurrentCappuccinoProject;
 - (void)reloadOperationsListForCurrentCappuccinoProject;
+
 
 - (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;
 

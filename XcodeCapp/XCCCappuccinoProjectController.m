@@ -89,7 +89,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                                    options:NSKeyValueObservingOptionNew
                                                    context:NULL];
         
-        [self _loadProject];
+        if (self.cappuccinoProject.autoStartListening)
+            [self _loadProject];
     }
     
     return self;
@@ -144,17 +145,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
         
         NSRunAlertPanel(
-                        @"Some Executables are missing.",
-                        @"Please make sure that each one of these executables:\n\n"
+                        self.cappuccinoProject.nickname,
+                        @"XcodeCapp was unable to find all necessary executables in your environment:\n\n"
                         @"%@\n\n"
-                        @"(or a symlink to it) is within one these directories:\n\n"
-                        @"%@\n\n"
-                        @"You may also add custom binary path to the project configuration.",
+                        @"You certainly need to change the binary paths in the project settings.",
                         @"OK",
                         nil,
                         nil,
-                        [self.taskLauncher.executables componentsJoinedByString:@", "],
-                        [self.taskLauncher.environmentPaths componentsJoinedByString:@"\n"]);
+                        [self.taskLauncher.executables componentsJoinedByString:@", "]);
         
         self.cappuccinoProject.status = XCCCappuccinoProjectStatusInitialized;
     }
@@ -487,6 +485,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Unknown Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
 }
 
 - (void)_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:(NSNotification *)note
@@ -495,7 +496,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
+    {
         [self.cappuccinoProject addOperationError:operationError];
+        
+    }
+
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
 }
 
 - (void)_didReceiveObjjDidGenerateErrorNotification:(NSNotification *)note
@@ -505,6 +512,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
+
 }
 
 - (void)_didReceiveNib2CibDidGenerateErrorNotification:(NSNotification *)note
@@ -513,6 +524,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"nib2cib Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
+
 }
 
 - (void)_didReceiveCappLintDidGenerateErrorNotification:(NSNotification *)note
@@ -522,6 +537,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     for (XCCOperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
+        
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
 }
 
 - (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)aNotification
@@ -614,6 +632,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)cleanUpBeforeDeletion
 {
+    [self cancelAllOperations:self];
     [self _stopListeningToNotifications];
     [self _stopListeningToProject];
     [self _removeXcodeProject];

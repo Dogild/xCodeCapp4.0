@@ -49,7 +49,7 @@
         // Make sure to not do something in sudo
         self.environment[@"CAPP_NOSUDO"] = @"1";
         
-        self.executables = @[@"python", @"narwhal-jsc", @"objj", @"nib2cib", @"capp", @"capp_lint", @"jake", @"curl", @"unzip", @"rm", @"objj2objcskeleton"];
+        self.executables = @[@"python", @"objj", @"nib2cib",@"objj2objcskeleton", @"capp_lint", @"cat"]; // do not remove cat, or try to debug what going on...
         
         // This is used to get the env var of $CAPP_BUILD
         NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
@@ -75,7 +75,7 @@
 }
 
 - (BOOL)executablesAreAccessible
-{    
+{
     NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
     NSMutableArray *arguments = [NSMutableArray array];
     
