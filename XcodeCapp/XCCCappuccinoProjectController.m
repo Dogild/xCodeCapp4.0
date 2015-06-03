@@ -89,6 +89,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                                    options:NSKeyValueObservingOptionNew
                                                    context:NULL];
         
+        [self _prepareXcodeSupport];
+        
         if (self.cappuccinoProject.autoStartListening)
             [self _loadProject];
     }
@@ -174,7 +176,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusLoading;
     
     [self _startListeningToNotifications];
-    [self _prepareXcodeSupport];
 
     [self initializeTaskLauncher];
 
