@@ -81,13 +81,19 @@
 
 - (NSString *)message
 {
-    
     NSInteger i = 0;
     
-    while ((i < [_message length]) && [[NSCharacterSet newlineCharacterSet] characterIsMember:[_message characterAtIndex:i]]) {
+    while ((i < [_message length]) && [[NSCharacterSet newlineCharacterSet] characterIsMember:[_message characterAtIndex:i]])
         i++;
-    }
     
     return [_message substringFromIndex:i];
 }
+
+- (void)setMessage:(NSString *)message
+{
+    [self willChangeValueForKey:@"message"];
+    _message = message;
+    [self didChangeValueForKey:@"message"];
+}
+
 @end
