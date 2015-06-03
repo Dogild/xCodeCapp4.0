@@ -80,7 +80,7 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
         self.projectPath = aPath;
         self.XcodeCappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
         self.name = [self.projectPath lastPathComponent];
-        self.pbxModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
+        self.PBXModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
         
         NSString *projectName = [self.projectPath.lastPathComponent stringByAppendingString:@".xcodeproj"];
         
@@ -127,13 +127,13 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
 
 - (void)_loadSettings
 {
-    self.settings = [[NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath] mutableCopy];
+    self->settings = [[NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath] mutableCopy];
     
-    if (!self.settings)
-        self.settings = [[self _defaultSettings] mutableCopy];
+    if (!self->settings)
+        self->settings = [[self _defaultSettings] mutableCopy];
     
     NSMutableArray *mutablePaths = [NSMutableArray array];
-    NSArray        *paths        = self.settings[XCCCappuccinoProjectBinPathsKey];
+    NSArray        *paths        = self->settings[XCCCappuccinoProjectBinPathsKey];
     
     if (paths)
     {
@@ -149,36 +149,37 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
         mutablePaths = [[[self class] defaultEnvironmentPaths] mutableCopy];
     }
     
-    self.environmentsPaths                 = mutablePaths;
-    self.nickname                           = self.settings[XCCCappuccinoProjectNicknameKey];
-    self.objjIncludePath                    = self.settings[XCCCappuccinoObjjIncludePathKey];
-    self.version                            = self.settings[XCCCompatibilityVersionKey];
-    self.shouldProcessWithObjjWarnings      = [self.settings[XCCCappuccinoProcessObjjKey] boolValue];
-    self.shouldProcessWithCappLint          = [self.settings[XCCCappuccinoProcessCappLintKey] boolValue];
-    self.shouldProcessWithObjj2ObjcSkeleton = [self.settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
-    self.shouldProcessWithNib2Cib           = [self.settings[XCCCappuccinoProcessNib2CibKey] boolValue];
-    self.autoStartListening                 = [self.settings[XCCCappuccinoProjectAutoStartListeningKey] boolValue];
+    self.environmentsPaths        = mutablePaths;
+    self.nickname                 = self->settings[XCCCappuccinoProjectNicknameKey];
+    self.objjIncludePath          = self->settings[XCCCappuccinoObjjIncludePathKey];
+    self.version                  = self->settings[XCCCompatibilityVersionKey];
+    self.processObjjWarnings      = [self->settings[XCCCappuccinoProcessObjjKey] boolValue];
+    self.processCappLint          = [self->settings[XCCCappuccinoProcessCappLintKey] boolValue];
+    self.processObjj2ObjcSkeleton = [self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
+    self.processNib2Cib           = [self->settings[XCCCappuccinoProcessNib2CibKey] boolValue];
+    self.autoStartListening       = [self->settings[XCCCappuccinoProjectAutoStartListeningKey] boolValue];
 }
 
 - (void)saveSettings
 {
-    self.settings[XCCCappuccinoProjectBinPathsKey]              = [self.environmentsPaths valueForKeyPath:@"name"];
-    self.settings[XCCCappuccinoObjjIncludePathKey]              = self.objjIncludePath;
-    self.settings[XCCCappuccinoProjectNicknameKey]              = self.nickname;
-    self.settings[XCCCompatibilityVersionKey]                   = self.version;
-    self.settings[XCCCappuccinoProcessObjjKey]                  = [NSNumber numberWithBool:self.shouldProcessWithObjjWarnings];
-    self.settings[XCCCappuccinoProcessCappLintKey]              = [NSNumber numberWithBool:self.shouldProcessWithCappLint];
-    self.settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.shouldProcessWithObjj2ObjcSkeleton];
-    self.settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.shouldProcessWithNib2Cib];
-    self.settings[XCCCappuccinoProjectAutoStartListeningKey]    = [NSNumber numberWithBool:self.autoStartListening];
+    self->settings[XCCCappuccinoProjectBinPathsKey]              = [self.environmentsPaths valueForKeyPath:@"name"];
+    self->settings[XCCCappuccinoObjjIncludePathKey]              = self.objjIncludePath;
+    self->settings[XCCCappuccinoProjectNicknameKey]              = self.nickname;
+    self->settings[XCCCompatibilityVersionKey]                   = self.version;
+    self->settings[XCCCappuccinoProcessObjjKey]                  = [NSNumber numberWithBool:self.processObjjWarnings];
+    self->settings[XCCCappuccinoProcessCappLintKey]              = [NSNumber numberWithBool:self.processCappLint];
+    self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.processObjj2ObjcSkeleton];
+    self->settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.processNib2Cib];
+    self->settings[XCCCappuccinoProjectAutoStartListeningKey]    = [NSNumber numberWithBool:self.autoStartListening];
 
     [self _writeXcodeCappIgnoreFile];
+    [self _writeSettings];
 }
 
 
 - (void)_writeXcodeCappIgnoreFile
 {
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self->settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
     
     [data writeToFile:self.infoPlistPath atomically:YES];
     
@@ -188,6 +189,13 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
         [self.XcodeCappIgnoreContent writeToFile:self.XcodeCappIgnorePath atomically:YES encoding:NSASCIIStringEncoding error:nil];
     else if ([fm fileExistsAtPath:self.XcodeCappIgnorePath])
         [fm removeItemAtPath:self.XcodeCappIgnorePath error:nil];
+}
+
+- (void)_writeSettings
+{
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self->settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
+    
+    [data writeToFile:self.infoPlistPath atomically:YES];
 }
 
 #pragma mark path methods

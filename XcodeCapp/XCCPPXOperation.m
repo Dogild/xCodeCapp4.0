@@ -63,7 +63,7 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
     
     @try
     {
-        NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
+        NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.PBXModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
         
         BOOL shouldLaunchTask = NO;
     

@@ -312,11 +312,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [[NSFileManager defaultManager] createDirectoryAtPath:self.cappuccinoProject.supportPath withIntermediateDirectories:YES attributes:nil error:nil];
     
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.cappuccinoProject.settings
-                                                              format:NSPropertyListXMLFormat_v1_0
-                                                    errorDescription:nil];
-    
-    [data writeToFile:self.cappuccinoProject.infoPlistPath atomically:YES];
+    [self.cappuccinoProject saveSettings];
     
     DDLogInfo(@".XcodeSupport directory created at: %@", self.cappuccinoProject.supportPath);
 }
