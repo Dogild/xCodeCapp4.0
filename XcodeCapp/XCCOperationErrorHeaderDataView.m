@@ -11,15 +11,14 @@
 
 @implementation XCCOperationErrorHeaderDataView
 
-- (void)setObjectValue:(id)aPath
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
-    AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
-    XCCCappuccinoProject *currentProject = appDelegate.mainWindowController.currentCappuccinoProjectController.cappuccinoProject;
-
-    NSString *path = [NSString stringWithFormat:@"%@/", currentProject.projectPath];
-    NSString *text = [aPath stringByReplacingOccurrencesOfString:path withString:@""];
+    if (!newWindow)
+        return;
     
-    if (text)
-        self.textField.stringValue = text;
+    if (self.fileName)
+        self->fieldName.stringValue = self.fileName;
+    else
+        self->fieldName.stringValue = @"No name";
 }
 @end

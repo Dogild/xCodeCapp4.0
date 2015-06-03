@@ -7,11 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "AppDelegate.h"
-#import "XCCMainController.h"
-#import "XCCCappuccinoProjectController.h"
-#import "XCCCappuccinoProject.h"
+#import "XCCOperationError.h"
+
 
 @interface XCCOperationErrorHeaderDataView : NSTableCellView
+{
+    IBOutlet NSTextField *fieldName;
+}
+
+@property NSString *fileName;
 
 @end

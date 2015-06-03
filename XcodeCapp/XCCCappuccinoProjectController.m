@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
+#import "AppDelegate.h"
 #import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProject.h"
 #import "CappuccinoUtils.h"
@@ -1281,8 +1282,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     XCCOperationDataView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
     [cellView setOperation:[self.operations objectAtIndex:row]];
     
-    [cellView.cancelButton setTarget:self];
-    [cellView.cancelButton setAction:@selector(cancelOperation:)];
+//    [cellView.cancelButton setTarget:self];
+//    [cellView.cancelButton setAction:@selector(cancelOperation:)];
     
     return cellView;
 }
@@ -1320,14 +1321,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     if ([item isKindOfClass:[XCCOperationError class]])
     {
-        XCCOperationErrorDataView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
-        [cellView setOperationError:item];
-        return cellView;
+        XCCOperationErrorDataView *dataView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
+        dataView.errorOperation = item;
+        return dataView;
     }
     
-    XCCOperationErrorHeaderDataView *cellView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
-    cellView.textField.stringValue = item;
-    return cellView;
+    XCCOperationErrorHeaderDataView *dataView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
+    
+    dataView.fileName = [[item stringByReplacingOccurrencesOfString:self.cappuccinoProject.projectPath withString:@""] substringFromIndex:1];
+    return dataView;
 }
 
 - (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(XCCOperationError *)item

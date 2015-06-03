@@ -16,8 +16,8 @@
 {
     XCCOperationError *operationError = [[self alloc] init];
     
-    operationError.fileName = [aDictionary objectForKey:@"sourcePath"];
-    operationError.message = [aDictionary objectForKey:@"errors"];
+    operationError.fileName = aDictionary[@"sourcePath"];
+    operationError.message = aDictionary[@"errors"];
     operationError.errorType = XCCDefaultOperationErrorType;
     
     return operationError;
@@ -27,8 +27,8 @@
 {
     XCCOperationError *operationError = [[self alloc] init];
     
-    operationError.fileName = [aDictionary objectForKey:@"sourcePath"];
-    operationError.message = [aDictionary objectForKey:@"errors"];
+    operationError.fileName = aDictionary[@"sourcePath"];
+    operationError.message = aDictionary[@"errors"];
     operationError.errorType = XCCNib2CibOperationErrorType;
     operationError.command = @"nib2cib";
     
@@ -39,9 +39,9 @@
 {
     XCCOperationError *operationError = [[self alloc] init];
     
-    operationError.fileName = [aDictionary objectForKey:@"path"];
-    operationError.message = [aDictionary objectForKey:@"message"];
-    operationError.lineNumber = [aDictionary objectForKey:@"line"];
+    operationError.fileName = aDictionary[@"path"];
+    operationError.message = aDictionary[@"message"];
+    operationError.lineNumber = aDictionary[@"line"];
     operationError.errorType = XCCObjj2ObjcSkeletonOperationErrorType;
     operationError.command = @"objj2objcskeleton";
     
@@ -52,9 +52,9 @@
 {
     XCCOperationError *operationError = [[self alloc] init];
     
-    operationError.fileName = [aDictionary objectForKey:@"path"];
-    operationError.message = [aDictionary objectForKey:@"message"];
-    operationError.lineNumber = [aDictionary objectForKey:@"line"];
+    operationError.fileName = aDictionary[@"path"];
+    operationError.message = aDictionary[@"message"];
+    operationError.lineNumber = aDictionary[@"line"];
     operationError.errorType = XCCObjjOperationErrorType;
     operationError.command = @"objj";
     
@@ -65,9 +65,9 @@
 {
     XCCOperationError *operationError = [[self alloc] init];
     
-    operationError.fileName = [aDictionary objectForKey:@"path"];
-    operationError.message = [aDictionary objectForKey:@"message"];
-    operationError.lineNumber = [aDictionary objectForKey:@"line"];
+    operationError.fileName = aDictionary[@"path"];
+    operationError.message = aDictionary[@"message"];
+    operationError.lineNumber = aDictionary[@"line"];
     operationError.errorType = XCCCappLintOperationErrorType;
     operationError.command = @"capp_lint";
     

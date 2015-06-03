@@ -11,11 +11,13 @@
 @class XCCOperationError;
 
 @interface XCCOperationErrorDataView : NSTableCellView
+{
+    IBOutlet NSTextField    *fieldMessage;
+    IBOutlet NSTextField    *fieldLineNumber;
+    IBOutlet NSTextField    *labelLineNumber;
+    IBOutlet NSImageView    *imageViewType;
+}
 
-@property (nonatomic, retain) XCCOperationError *operationError;
-
-@property (nonatomic, retain) IBOutlet NSTextField *fieldLineNumber;
-@property (nonatomic, retain) IBOutlet NSTextField *labelLineNumber;
-@property (nonatomic, retain) IBOutlet NSImageView *imageViewType;
+@property XCCOperationError *errorOperation;
 
 @end

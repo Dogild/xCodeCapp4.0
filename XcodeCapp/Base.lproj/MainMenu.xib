@@ -488,9 +488,9 @@
                                                                         <outlet property="buttonOpenXcodeProject" destination="0Kk-a1-H2b" id="rec-hN-qOy"/>
                                                                         <outlet property="buttonResetProject" destination="7pJ-O0-Sk5" id="mMq-CZ-FHb"/>
                                                                         <outlet property="buttonSwitchStatus" destination="PoH-Du-Pas" id="6Fa-UY-KXy"/>
+                                                                        <outlet property="fieldNickname" destination="nss-wl-6TY" id="zri-Wn-gKS"/>
+                                                                        <outlet property="fieldPath" destination="PN4-Zx-XTz" id="jWb-sW-lU4"/>
                                                                         <outlet property="operationsProgressIndicator" destination="dZP-lW-STI" id="nyZ-nv-RH6"/>
-                                                                        <outlet property="pathTextField" destination="PN4-Zx-XTz" id="VU9-Yo-I8W"/>
-                                                                        <outlet property="textField" destination="nss-wl-6TY" id="V1m-Vi-Y2z"/>
                                                                         <outlet property="waitingProgressIndicator" destination="p3u-tG-2hS" id="RH1-PG-ELB"/>
                                                                     </connections>
                                                                 </tableCellView>
@@ -1352,7 +1352,7 @@
                                                     </textField>
                                                 </subviews>
                                                 <connections>
-                                                    <outlet property="textField" destination="F9w-ex-an5" id="p2N-IL-yx3"/>
+                                                    <outlet property="fieldName" destination="F9w-ex-an5" id="46U-rF-u1E"/>
                                                 </connections>
                                             </tableCellView>
                                             <tableCellView identifier="OperationErrorCell" id="8eE-6W-Zcl" customClass="XCCOperationErrorDataView">
@@ -1406,9 +1406,9 @@
                                                 </subviews>
                                                 <connections>
                                                     <outlet property="fieldLineNumber" destination="ixg-H6-umE" id="4AS-Uc-hRf"/>
+                                                    <outlet property="fieldMessage" destination="2HE-bm-GRF" id="UhX-7O-2eB"/>
                                                     <outlet property="imageViewType" destination="D3M-Ik-IZJ" id="fkd-Cg-IhL"/>
                                                     <outlet property="labelLineNumber" destination="POv-oX-I2g" id="WIc-Qj-xzN"/>
-                                                    <outlet property="textField" destination="2HE-bm-GRF" id="EWV-6I-gTj"/>
                                                 </connections>
                                             </tableCellView>
                                         </prototypeCellViews>
@@ -1519,9 +1519,9 @@ Gw
                                                     </textField>
                                                 </subviews>
                                                 <connections>
-                                                    <outlet property="cancelButton" destination="zYt-vg-7eJ" id="knm-n9-afp"/>
+                                                    <outlet property="buttonCancel" destination="zYt-vg-7eJ" id="wm2-jr-eVS"/>
                                                     <outlet property="fieldDescription" destination="Uv9-Qd-wMM" id="9OG-lP-btu"/>
-                                                    <outlet property="textField" destination="u9B-yS-Cs3" id="m0j-uV-07d"/>
+                                                    <outlet property="fieldName" destination="u9B-yS-Cs3" id="SLw-ux-Vls"/>
                                                 </connections>
                                             </tableCellView>
                                         </prototypeCellViews>
