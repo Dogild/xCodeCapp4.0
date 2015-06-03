@@ -216,15 +216,36 @@
     DDLogVerbose(@"Start : restore managed projects");
     self.cappuccinoProjectControllers = [NSMutableArray new];
     
-    NSArray *projectHistory = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCCurrentManagedProjects];
+    NSArray         *projectHistory  = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCCurrentManagedProjects];
+    NSFileManager   *fm              = [NSFileManager defaultManager];
+    NSMutableArray  *missingProjects = [NSMutableArray new];
     
     for (NSString *path in projectHistory)
     {
+        if (![fm fileExistsAtPath:path isDirectory:nil])
+        {
+            [missingProjects addObject:path];
+            continue;
+        }
+        
         XCCCappuccinoProjectController *cappuccinoProjectController = [[XCCCappuccinoProjectController alloc] initWithPath:path controller:self];
         [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
     [self _reloadProjectsList];
+    
+    if (missingProjects.count)
+    {
+        NSRunAlertPanel(@"Missing Projects",
+                        @"Some managed project could not be found and have been removed:\n\n"
+                        @"%@\n\n",
+                        @"OK",
+                        nil,
+                        nil,
+                        [missingProjects componentsJoinedByString:@", "]);
+
+        [self saveManagedProjectsToUserDefaults];
+    }
     
     DDLogVerbose(@"Stop : managed  projects restored");
 }

@@ -26,9 +26,9 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     
     if (self)
     {
-        self.cappuccinoProject = aCappuccinoProject;
-        self.taskLauncher = aTaskLauncher;
-        self.projectPathToSearch = sourcePath;
+        self.cappuccinoProject      = aCappuccinoProject;
+        self.taskLauncher           = aTaskLauncher;
+        self.projectPathToSearch    = sourcePath;
     }
     
     return self;
