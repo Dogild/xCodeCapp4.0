@@ -38,7 +38,7 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     [self.buttonSwitchStatus setAction:@selector(switchProjectListeningStatus:)];
     
     [self.buttonOpenXcodeProject setTarget:controller];
-    [self.buttonOpenXcodeProject setAction:@selector(openXcodeProject:)];
+    [self.buttonOpenXcodeProject setAction:@selector(openProjectInXcode:)];
     
     [self.buttonResetProject setTarget:controller];
     [self.buttonResetProject setAction:@selector(resetProject:)];

@@ -12,19 +12,24 @@
 @class XCCTaskLauncher;
 @class XCCMainController;
 
-extern NSString * const XCCStartListeningProjectNotification;
-extern NSString * const XCCStopListeningProjectNotification;
-
 
 @interface XCCCappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
+{
+    XCCTaskLauncher             *taskLauncher;
+    NSOperationQueue            *operationQueue;
+    FSEventStreamRef            stream;
+    NSNumber                    *lastEventId;
+    int                         projectPathFileDescriptor;
+    NSMutableDictionary         *pendingPBXOperations;
+    NSTimer                     *timerOperationQueueCompletionMonitor;
+}
 
-@property XCCCappuccinoProject  *cappuccinoProject;
-@property XCCMainController     *mainWindowController;
-@property XCCTaskLauncher       *taskLauncher;
-@property CGFloat               operationsProgress;
 @property NSInteger             operationsTotal;
 @property NSInteger             operationsComplete;
+@property CGFloat               operationsProgress;
 @property NSMutableArray        *operations;
+@property XCCCappuccinoProject  *cappuccinoProject;
+@property XCCMainController     *mainXcodeCappController;
 
 
 - (id)initWithPath:(NSString*)aPath controller:(id)aController;
@@ -34,14 +39,12 @@ extern NSString * const XCCStopListeningProjectNotification;
 
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)resetProject:(id)aSender;
-- (IBAction)removeErrors:(id)aSender;
-- (IBAction)openXcodeProject:(id)sender;
+- (IBAction)cleanProjectErrors:(id)aSender;
+- (IBAction)openProjectInXcode:(id)sender;
 - (IBAction)openProjectInFinder:(id)sender;
 - (IBAction)openProjectInEditor:(id)sender;
 - (IBAction)openProjectInTerminal:(id)sender;
-
-- (void)openObjjFile:(id)sender;
-
+- (IBAction)openRelatedObjjFileInEditor:(id)sender;
 - (IBAction)switchProjectListeningStatus:(id)sender;
 
 @end

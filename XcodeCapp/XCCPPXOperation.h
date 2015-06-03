@@ -12,7 +12,7 @@
 @class XCCCappuccinoProject;
 @class XCCTaskLauncher;
 
-@interface XCCPbxCreationOperation : XCCAbstractOperation
+@interface XCCPPXOperation : XCCAbstractOperation
 
 extern NSString * const XCCPbxCreationDidStartNotification;
 extern NSString * const XCCPbxCreationGenerateErrorNotification;

@@ -382,13 +382,13 @@
 
 - (IBAction)cleanAllErrors:(id)aSender
 {
-    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(removeErrors:) withObject:self];
+    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(cleanProjectErrors:) withObject:self];
     [self reloadTotalNumberOfErrors];
 }
 
 - (IBAction)cleanSelectedProjectErrors:(id)aSender
 {
-    [self.currentCappuccinoProjectController removeErrors:aSender];
+    [self.currentCappuccinoProjectController cleanProjectErrors:aSender];
     [self reloadTotalNumberOfErrors];
 }
 
@@ -450,7 +450,7 @@
     
     [self->errorOutlineView setDelegate:self.currentCappuccinoProjectController];
     [self->errorOutlineView setDataSource:self.currentCappuccinoProjectController];
-    [self->errorOutlineView setDoubleAction:@selector(openObjjFile:)];
+    [self->errorOutlineView setDoubleAction:@selector(openRelatedObjjFileInEditor:)];
     [self->errorOutlineView setTarget:self.currentCappuccinoProjectController];
     [self reloadCurrentProjectErrors];
     
