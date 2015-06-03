@@ -13,11 +13,6 @@
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
 
-#import "AppDelegate.h"
-
-@interface XCCMainController()
-@property BOOL _isObserving;
-@end
 
 @implementation XCCMainController
 
@@ -66,20 +61,20 @@
 
 - (void)_addArrayControllerObserver
 {
-    if (self._isObserving)
+    if (self->isObserving)
         return;
     
-    self._isObserving = YES;
+    self->isObserving = YES;
     
     [self->includePathArrayController addObserver:self forKeyPath:@"arrangedObjects.name" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)_removeArrayControllerObserver
 {
-    if (!self._isObserving)
+    if (!self->isObserving)
         return;
     
-    self._isObserving = NO;
+    self->isObserving = NO;
     
     [self->includePathArrayController removeObserver:self forKeyPath:@"arrangedObjects.name"];
 }

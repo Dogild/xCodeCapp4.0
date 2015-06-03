@@ -32,6 +32,7 @@
     IBOutlet NSView                         *viewTabConfiguration;
     IBOutlet NSView                         *viewTabErrors;
     IBOutlet NSView                         *viewTabOperations;
+    BOOL                                    isObserving;
 }
 
 
