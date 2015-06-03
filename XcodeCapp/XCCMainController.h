@@ -39,6 +39,7 @@
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
 - (IBAction)updateSelectedTab:(id)aSender;
+- (IBAction)cleanSelectedProjectErrors:(id)aSender;
 - (IBAction)cleanAllErrors:(id)aSender;
 
 - (void)notifyCappuccinoControllersApplicationIsClosing;

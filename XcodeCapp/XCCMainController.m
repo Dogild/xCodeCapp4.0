@@ -379,6 +379,12 @@
 
 - (IBAction)cleanAllErrors:(id)aSender
 {
+    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(removeErrors:) withObject:self];
+    [self updateTotalNumberOfErrors];
+}
+
+- (IBAction)cleanSelectedProjectErrors:(id)aSender
+{
     [self.currentCappuccinoProjectController removeErrors:aSender];
     [self updateTotalNumberOfErrors];
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E17e" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E26a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
@@ -307,20 +307,14 @@
                         <items>
                             <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
                                 <connections>
-                                    <action selector="performMiniaturize:" target="-1" id="VwT-WD-YPe"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Zoom" id="R4o-n2-Eq4">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="performZoom:" target="-1" id="DIl-cC-cCs"/>
+                                    <action selector="miniaturize:" target="QvC-M9-y7g" id="PMs-ha-xY3"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
-                            <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
+                            <menuItem title="Open Main Window" id="LE2-aR-0XJ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="arrangeInFront:" target="-1" id="DRN-fu-gQh"/>
+                                    <action selector="showWindow:" target="923-ke-ovW" id="fcE-rQ-kNY"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -367,7 +361,7 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="72" rowSizeStyle="automatic" viewBased="YES" id="Mss-Tu-7kR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="246" height="681"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="246" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
@@ -1449,7 +1443,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="cleanAllErrors:" target="923-ke-ovW" id="Ne6-Zr-GEr"/>
+                                    <action selector="cleanSelectedProjectErrors:" target="923-ke-ovW" id="K6K-9G-M0w"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -1672,11 +1666,24 @@ Gw
         </box>
         <menu id="caT-Aq-Atw">
             <items>
-                <menuItem title="Hello" id="Hma-JF-E3r">
+                <menuItem title="Open Main Window" id="Hma-JF-E3r">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="showWindow:" target="923-ke-ovW" id="CH1-e1-2Br"/>
+                    </connections>
                 </menuItem>
-                <menuItem title="World" id="che-rf-vOB">
+                <menuItem isSeparatorItem="YES" id="NPy-na-TiY"/>
+                <menuItem title="Add New Project" id="aBo-oc-W83">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="addProject:" target="923-ke-ovW" id="71O-3y-CGb"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Clean Up All Errors" id="wyK-T2-mq1">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="cleanAllErrors:" target="923-ke-ovW" id="57P-DQ-D21"/>
+                    </connections>
                 </menuItem>
             </items>
             <point key="canvasLocation" x="744" y="-222.5"/>
