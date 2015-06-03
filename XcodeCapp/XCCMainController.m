@@ -237,7 +237,7 @@
     if (missingProjects.count)
     {
         NSRunAlertPanel(@"Missing Projects",
-                        @"Some managed project could not be found and have been removed:\n\n"
+                        @"Some managed projects could not be found and have been removed:\n\n"
                         @"%@\n\n",
                         @"OK",
                         nil,
