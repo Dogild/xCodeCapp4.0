@@ -19,7 +19,6 @@
 
 @implementation XCCMainController
 
-
 #pragma mark - Initialization
 
 - (void)windowDidLoad
@@ -381,6 +380,7 @@
 - (IBAction)cleanAllErrors:(id)aSender
 {
     [self.currentCappuccinoProjectController removeErrors:aSender];
+    [self updateTotalNumberOfErrors];
 }
 
 #pragma mark - SplitView delegate
@@ -434,11 +434,14 @@
     
     [self.operationTableView setDelegate:self.currentCappuccinoProjectController];
     [self.operationTableView setDataSource:self.currentCappuccinoProjectController];
+    [self reloadOperationsListForCurrentCappuccinoProject];
     
     [self.errorOutlineView setDelegate:self.currentCappuccinoProjectController];
     [self.errorOutlineView setDataSource:self.currentCappuccinoProjectController];
     [self.errorOutlineView setDoubleAction:@selector(openObjjFile:)];
     [self.errorOutlineView setTarget:self.currentCappuccinoProjectController];
+    [self reloadErrorsListForCurrentCappuccinoProject];
+    
     
     [self _addArrayControllerObserver];
     
@@ -515,6 +518,18 @@
     {
         return NO;
     }
+}
+
+- (void)updateTotalNumberOfErrors
+{
+    int totalErrors = 0;
+    
+    for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
+        totalErrors += controller.cappuccinoProject.errors.count;
+
+    [self willChangeValueForKey:@"totalNumberOfErrors"];
+    self.totalNumberOfErrors = totalErrors;
+    [self didChangeValueForKey:@"totalNumberOfErrors"];
 }
 
 @end

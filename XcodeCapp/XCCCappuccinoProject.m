@@ -230,23 +230,26 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
 
 - (void)addOperationError:(XCCOperationError *)operationError
 {
+    [self willChangeValueForKey:@"errors"];
+    
     if (![self.errors objectForKey:operationError.fileName])
         [self.errors setValue:[NSMutableArray new] forKey:operationError.fileName];
 
-    [self willChangeValueForKey:@"errors"];
     [[self.errors objectForKey:operationError.fileName] addObject:operationError];
+    
     [self didChangeValueForKey:@"errors"];
-
 }
 
 - (void)removeOperationError:(XCCOperationError *)operationError
 {
     [self willChangeValueForKey:@"errors"];
+    
     [[self.errors objectForKey:operationError.fileName] removeObject:operationError];
-    [self didChangeValueForKey:@"errors"];
     
     if (![[self.errors objectForKey:operationError.fileName] count])
         [self.errors removeObjectForKey:operationError.fileName];
+    
+    [self didChangeValueForKey:@"errors"];
 }
 
 - (void)removeAllOperationErrors

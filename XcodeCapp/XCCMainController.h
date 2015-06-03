@@ -28,13 +28,13 @@
 @property (strong) IBOutlet NSBox                   *viewErrorsMask;
 @property (strong) IBOutlet NSBox                   *viewOperationMask;
 @property (strong) IBOutlet NSBox                   *viewProjectMask;
-
 @property (strong) IBOutlet NSView                  *viewTabConfiguration;
 @property (strong) IBOutlet NSView                  *viewTabErrors;
 @property (strong) IBOutlet NSView                  *viewTabOperations;
 
 @property (strong) NSMutableArray                   *cappuccinoProjectControllers;
 @property (strong) XCCCappuccinoProjectController   *currentCappuccinoProjectController;
+@property (nonatomic) int                           totalNumberOfErrors;
 
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
@@ -45,9 +45,9 @@
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
 - (void)_restoreManagedProjectsFromUserDefaults;
 - (void)_saveManagedProjectsToUserDefaults;
-
 - (void)reloadErrorsListForCurrentCappuccinoProject;
 - (void)reloadOperationsListForCurrentCappuccinoProject;
+- (void)updateTotalNumberOfErrors;
 
 
 - (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;

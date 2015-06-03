@@ -76,14 +76,21 @@
     self.statusItem.length          = self.iconInactive.size.width + 12;
     
     [self.mainOperationQueue addObserver:self forKeyPath:@"operationCount" options:0 context:nil];
+    [self.mainWindowController addObserver:self forKeyPath:@"totalNumberOfErrors" options:0 context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    NSImage *image;
+    
     if (self.mainOperationQueue.operationCount)
-        [self.statusItem performSelectorOnMainThread:@selector(setImage:) withObject:self.iconWorking waitUntilDone:NO];
+        image = self.iconWorking;
+    else if ([self.mainWindowController totalNumberOfErrors])
+        image = self.iconError;
     else
-        [self.statusItem performSelectorOnMainThread:@selector(setImage:) withObject:self.iconInactive waitUntilDone:NO];
+        image = self.iconInactive;
+    
+    [self.statusItem performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
 }
 
 #pragma mark - Window managements
