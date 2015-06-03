@@ -34,16 +34,16 @@
     [self _selectLastProjectSelected];
     
     NSTabViewItem *itemConfiguration = [[NSTabViewItem alloc] initWithIdentifier:@"configuration"];
-    [itemConfiguration setView:self.viewTabConfiguration];
-    [self.tabViewProject addTabViewItem:itemConfiguration];
+    [itemConfiguration setView:self->viewTabConfiguration];
+    [self->tabViewProject addTabViewItem:itemConfiguration];
     
     NSTabViewItem *itemErrors = [[NSTabViewItem alloc] initWithIdentifier:@"errors"];
-    [itemErrors setView:self.viewTabErrors];
-    [self.tabViewProject addTabViewItem:itemErrors];
+    [itemErrors setView:self->viewTabErrors];
+    [self->tabViewProject addTabViewItem:itemErrors];
     
     NSTabViewItem *itemOperations = [[NSTabViewItem alloc] initWithIdentifier:@"operations"];
-    [itemOperations setView:self.viewTabOperations];
-    [self.tabViewProject addTabViewItem:itemOperations];
+    [itemOperations setView:self->viewTabOperations];
+    [self->tabViewProject addTabViewItem:itemOperations];
     
     NSMutableParagraphStyle *paragraphStyle= [NSMutableParagraphStyle new];
     [paragraphStyle setAlignment:NSCenterTextAlignment];
@@ -52,17 +52,17 @@
                             NSForegroundColorAttributeName: [NSColor whiteColor],
                             NSParagraphStyleAttributeName: paragraphStyle};
     
-    self.buttonSelectConfigurationTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self.buttonSelectConfigurationTab.title attributes:attrs];
-    self.buttonSelectErrorsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self.buttonSelectErrorsTab.title attributes:attrs];
-    self.buttonSelectOperationsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self.buttonSelectOperationsTab.title attributes:attrs];
+    self->buttonSelectConfigurationTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self->buttonSelectConfigurationTab.title attributes:attrs];
+    self->buttonSelectErrorsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self->buttonSelectErrorsTab.title attributes:attrs];
+    self->buttonSelectOperationsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self->buttonSelectOperationsTab.title attributes:attrs];
     
-    [self updateSelectedTab:self.buttonSelectConfigurationTab];
+    [self updateSelectedTab:self->buttonSelectConfigurationTab];
     
-    [self.projectTableView registerForDraggedTypes:[NSArray arrayWithObjects:@"projects", NSFilenamesPboardType, nil]];
+    [self->projectTableView registerForDraggedTypes:[NSArray arrayWithObjects:@"projects", NSFilenamesPboardType, nil]];
 }
 
 
-#pragma mark - Array Controller Observers
+#pragma mark - Observers
 
 - (void)_addArrayControllerObserver
 {
@@ -71,7 +71,7 @@
     
     self._isObserving = YES;
     
-    [self.includePathArrayController addObserver:self forKeyPath:@"arrangedObjects.name" options:NSKeyValueObservingOptionNew context:nil];
+    [self->includePathArrayController addObserver:self forKeyPath:@"arrangedObjects.name" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)_removeArrayControllerObserver
@@ -81,7 +81,7 @@
     
     self._isObserving = NO;
     
-    [self.includePathArrayController removeObserver:self forKeyPath:@"arrangedObjects.name"];
+    [self->includePathArrayController removeObserver:self forKeyPath:@"arrangedObjects.name"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -96,29 +96,28 @@
 }
 
 
-#pragma mark - Utilities
-
+#pragma mark - Private Utilities
 
 - (void)_showMaskingView:(BOOL)shouldShow
 {
     if (shouldShow)
     {
-        if (self.maskingView.superview)
+        if (self->maskingView.superview)
             return;
         
-        [self.projectViewContainer setHidden:YES];
+        [self->projectViewContainer setHidden:YES];
         
-        self.maskingView.frame = [[[self.splitView subviews] objectAtIndex:1] bounds];
-        [[[self.splitView subviews] objectAtIndex:1] addSubview:self.maskingView positioned:NSWindowAbove relativeTo:nil];
+        self->maskingView.frame = [[[self->splitView subviews] objectAtIndex:1] bounds];
+        [[[self->splitView subviews] objectAtIndex:1] addSubview:self->maskingView positioned:NSWindowAbove relativeTo:nil];
     }
     else
     {
-        if (!self.maskingView.superview)
+        if (!self->maskingView.superview)
             return;
         
-        [self.projectViewContainer setHidden:NO];
+        [self->projectViewContainer setHidden:NO];
         
-        [self.maskingView removeFromSuperview];
+        [self->maskingView removeFromSuperview];
     }
 }
 
@@ -126,22 +125,22 @@
 {
     if (shouldShow)
     {
-        if (self.viewErrorsMask.superview)
+        if (self->viewErrorsMask.superview)
             return;
         
-        [self.errorOutlineView setHidden:YES];
+        [self->errorOutlineView setHidden:YES];
         
-        self.viewErrorsMask.frame = [self.viewTabErrors bounds];
-        [self.viewTabErrors addSubview:self.viewErrorsMask positioned:NSWindowAbove relativeTo:nil];
+        self->viewErrorsMask.frame = [self->viewTabErrors bounds];
+        [self->viewTabErrors addSubview:self->viewErrorsMask positioned:NSWindowAbove relativeTo:nil];
     }
     else
     {
-        if (!self.viewErrorsMask.superview)
+        if (!self->viewErrorsMask.superview)
             return;
         
-        [self.errorOutlineView setHidden:NO];
+        [self->errorOutlineView setHidden:NO];
         
-        [self.viewErrorsMask removeFromSuperview];
+        [self->viewErrorsMask removeFromSuperview];
     }
 }
 
@@ -149,22 +148,22 @@
 {
     if (shouldShow)
     {
-        if (self.viewOperationMask.superview)
+        if (self->viewOperationMask.superview)
             return;
         
-        [self.operationTableView setHidden:YES];
+        [self->operationTableView setHidden:YES];
         
-        self.viewOperationMask.frame = [self.viewTabOperations bounds];
-        [self.viewTabOperations addSubview:self.viewOperationMask positioned:NSWindowAbove relativeTo:nil];
+        self->viewOperationMask.frame = [self->viewTabOperations bounds];
+        [self->viewTabOperations addSubview:self->viewOperationMask positioned:NSWindowAbove relativeTo:nil];
     }
     else
     {
-        if (!self.viewOperationMask.superview)
+        if (!self->viewOperationMask.superview)
             return;
         
-        [self.operationTableView setHidden:NO];
+        [self->operationTableView setHidden:NO];
         
-        [self.viewOperationMask removeFromSuperview];
+        [self->viewOperationMask removeFromSuperview];
     }
 }
 
@@ -172,35 +171,24 @@
 {
     if (shouldShow)
     {
-        if (self.viewProjectMask.superview)
+        if (self->viewProjectMask.superview)
             return;
         
-        [self.projectTableView setHidden:YES];
+        [self->projectTableView setHidden:YES];
         
-        self.viewProjectMask.frame = [self.splitView.superview bounds];
-        [self.splitView.superview addSubview:self.viewProjectMask positioned:NSWindowAbove relativeTo:nil];
+        self->viewProjectMask.frame = [self->splitView.superview bounds];
+        [self->splitView.superview addSubview:self->viewProjectMask positioned:NSWindowAbove relativeTo:nil];
     }
     else
     {
-        if (!self.viewProjectMask.superview)
+        if (!self->viewProjectMask.superview)
             return;
         
-        [self.projectTableView setHidden:NO];
+        [self->projectTableView setHidden:NO];
         
-        [self.viewProjectMask removeFromSuperview];
+        [self->viewProjectMask removeFromSuperview];
     }
 }
-
-
-#pragma mark - Application Lifecycle
-
-- (void)notifyCappuccinoControllersApplicationIsClosing
-{
-    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(applicationIsClosing)];
-}
-
-
-#pragma mark - Projects history
 
 - (void)_selectLastProjectSelected
 {
@@ -221,9 +209,9 @@
             }
         }
         
-        [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
+        [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
     }
-
+    
     
     DDLogVerbose(@"Stop : selecting last selected project");
 }
@@ -241,12 +229,26 @@
         [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
-    [self reloadProjectsList];
+    [self _reloadProjectsList];
     
     DDLogVerbose(@"Stop : managed  projects restored");
 }
 
-- (void)_saveManagedProjectsToUserDefaults
+- (void)_reloadProjectsList
+{
+    [self->projectTableView reloadData];
+    
+    if (self.cappuccinoProjectControllers.count == 0)
+        [self _showProjectsTableMaskingView:YES];
+    else
+        [self _showProjectsTableMaskingView:NO];
+    
+}
+
+
+#pragma mark - Public Utilities
+
+- (void)saveManagedProjectsToUserDefaults
 {
     NSMutableArray *historyProjectPaths = [NSMutableArray array];
     
@@ -256,9 +258,6 @@
     [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCCurrentManagedProjects];
 }
 
-
-#pragma mark - Public Utilities
-
 - (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController
 {
     NSInteger selectedCappuccinoProject = [self.cappuccinoProjectControllers indexOfObject:aController];
@@ -266,13 +265,13 @@
     if (selectedCappuccinoProject == -1)
         return;
     
-    [self.projectTableView deselectRow:selectedCappuccinoProject];
+    [self->projectTableView deselectRow:selectedCappuccinoProject];
     [aController cleanUpBeforeDeletion];
     [self.cappuccinoProjectControllers removeObjectAtIndex:selectedCappuccinoProject];
     
-    [self reloadProjectsList];
+    [self _reloadProjectsList];
     
-    [self _saveManagedProjectsToUserDefaults];
+    [self saveManagedProjectsToUserDefaults];
 }
 
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath
@@ -283,22 +282,22 @@
         return;
     }
     XCCCappuccinoProjectController *cappuccinoProjectController = [[XCCCappuccinoProjectController alloc] initWithPath:aProjectPath controller:self];
-
+    
     [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     
     NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];
-
-    [self reloadProjectsList];
     
-    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    [self.projectTableView scrollRowToVisible:index];
-    [self _saveManagedProjectsToUserDefaults];
+    [self _reloadProjectsList];
+    
+    [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+    [self->projectTableView scrollRowToVisible:index];
+    [self saveManagedProjectsToUserDefaults];
 }
 
-- (void)reloadErrorsListForCurrentCappuccinoProject
+- (void)reloadCurrentProjectErrors
 {
-    [self.errorOutlineView reloadData];
-    [self.errorOutlineView expandItem:nil expandChildren:YES];
+    [self->errorOutlineView reloadData];
+    [self->errorOutlineView expandItem:nil expandChildren:YES];
     
     if (!self.currentCappuccinoProjectController.cappuccinoProject.errors.count)
         [self _showErrorsTableMaskingView:YES];
@@ -306,9 +305,9 @@
         [self _showErrorsTableMaskingView:NO];
 }
 
-- (void)reloadOperationsListForCurrentCappuccinoProject
+- (void)reloadCurrentProjectOperations
 {
-    [self.operationTableView reloadData];
+    [self->operationTableView reloadData];
     
     if (!self.currentCappuccinoProjectController.operations.count)
         [self _showOperationsTableMaskingView:YES];
@@ -316,16 +315,23 @@
         [self _showOperationsTableMaskingView:NO];
 }
 
-- (void)reloadProjectsList
+- (void)notifyCappuccinoControllersApplicationIsClosing
 {
-    [self.projectTableView reloadData];
-    
-    if (self.cappuccinoProjectControllers.count == 0)
-        [self _showProjectsTableMaskingView:YES];
-    else
-        [self _showProjectsTableMaskingView:NO];
-
+    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(applicationIsClosing)];
 }
+
+- (void)reloadTotalNumberOfErrors
+{
+    int totalErrors = 0;
+    
+    for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
+        totalErrors += controller.cappuccinoProject.errors.count;
+    
+    [self willChangeValueForKey:@"totalNumberOfErrors"];
+    self.totalNumberOfErrors = totalErrors;
+    [self didChangeValueForKey:@"totalNumberOfErrors"];
+}
+
 
 #pragma mark - Actions
 
@@ -346,7 +352,7 @@
 
 - (IBAction)removeProject:(id)aSender
 {
-    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
+    NSInteger selectedCappuccinoProject = [self->projectTableView selectedRow];
     
     if (selectedCappuccinoProject == -1)
         return;
@@ -356,40 +362,41 @@
 
 - (IBAction)updateSelectedTab:(id)aSender
 {
-    self.buttonSelectConfigurationTab.state = NSOffState;
-    self.buttonSelectErrorsTab.state = NSOffState;
-    self.buttonSelectOperationsTab.state = NSOffState;
+    self->buttonSelectConfigurationTab.state = NSOffState;
+    self->buttonSelectErrorsTab.state = NSOffState;
+    self->buttonSelectOperationsTab.state = NSOffState;
     
-    if (aSender == self.buttonSelectConfigurationTab)
+    if (aSender == self->buttonSelectConfigurationTab)
     {
-        self.buttonSelectConfigurationTab.state = NSOnState;
-        [self.tabViewProject selectTabViewItemAtIndex:0];
+        self->buttonSelectConfigurationTab.state = NSOnState;
+        [self->tabViewProject selectTabViewItemAtIndex:0];
     }
     
-    if (aSender == self.buttonSelectErrorsTab)
+    if (aSender == self->buttonSelectErrorsTab)
     {
-        self.buttonSelectErrorsTab.state = NSOnState;
-        [self.tabViewProject selectTabViewItemAtIndex:1];
+        self->buttonSelectErrorsTab.state = NSOnState;
+        [self->tabViewProject selectTabViewItemAtIndex:1];
     }
 
-    if (aSender == self.buttonSelectOperationsTab)
+    if (aSender == self->buttonSelectOperationsTab)
     {
-        self.buttonSelectOperationsTab.state = NSOnState;
-        [self.tabViewProject selectTabViewItemAtIndex:2];
+        self->buttonSelectOperationsTab.state = NSOnState;
+        [self->tabViewProject selectTabViewItemAtIndex:2];
     }
 }
 
 - (IBAction)cleanAllErrors:(id)aSender
 {
     [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(removeErrors:) withObject:self];
-    [self updateTotalNumberOfErrors];
+    [self reloadTotalNumberOfErrors];
 }
 
 - (IBAction)cleanSelectedProjectErrors:(id)aSender
 {
     [self.currentCappuccinoProjectController removeErrors:aSender];
-    [self updateTotalNumberOfErrors];
+    [self reloadTotalNumberOfErrors];
 }
+
 
 #pragma mark - SplitView delegate
 
@@ -404,12 +411,14 @@
 }
 
 
-#pragma mark - TableView delegate
+#pragma mark - TableView DataSource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     return [self.cappuccinoProjectControllers count];
 }
+
+#pragma mark - TableView Delegates
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
@@ -423,15 +432,15 @@
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
-    NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
+    NSInteger selectedCappuccinoProject = [self->projectTableView selectedRow];
     
     [self _removeArrayControllerObserver];
     
     if (selectedCappuccinoProject == -1)
     {
         self.currentCappuccinoProjectController = nil;
-        [self.operationTableView setDelegate:nil];
-        [self.operationTableView setDataSource:nil];
+        [self->operationTableView setDelegate:nil];
+        [self->operationTableView setDataSource:nil];
 
         [self _showMaskingView:YES];
         [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kDefaultXCCLastSelectedProjectPath];
@@ -440,15 +449,15 @@
     
     self.currentCappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
     
-    [self.operationTableView setDelegate:self.currentCappuccinoProjectController];
-    [self.operationTableView setDataSource:self.currentCappuccinoProjectController];
-    [self reloadOperationsListForCurrentCappuccinoProject];
+    [self->operationTableView setDelegate:self.currentCappuccinoProjectController];
+    [self->operationTableView setDataSource:self.currentCappuccinoProjectController];
+    [self reloadCurrentProjectOperations];
     
-    [self.errorOutlineView setDelegate:self.currentCappuccinoProjectController];
-    [self.errorOutlineView setDataSource:self.currentCappuccinoProjectController];
-    [self.errorOutlineView setDoubleAction:@selector(openObjjFile:)];
-    [self.errorOutlineView setTarget:self.currentCappuccinoProjectController];
-    [self reloadErrorsListForCurrentCappuccinoProject];
+    [self->errorOutlineView setDelegate:self.currentCappuccinoProjectController];
+    [self->errorOutlineView setDataSource:self.currentCappuccinoProjectController];
+    [self->errorOutlineView setDoubleAction:@selector(openObjjFile:)];
+    [self->errorOutlineView setTarget:self.currentCappuccinoProjectController];
+    [self reloadCurrentProjectErrors];
     
     
     [self _addArrayControllerObserver];
@@ -517,8 +526,8 @@
         NSIndexSet  *rowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData:rowData];
 
         [self.cappuccinoProjectControllers moveIndexes:rowIndexes toIndex:row];
-        [self reloadProjectsList];
-        [self _saveManagedProjectsToUserDefaults];
+        [self _reloadProjectsList];
+        [self saveManagedProjectsToUserDefaults];
         
         return YES;
     }
@@ -526,18 +535,6 @@
     {
         return NO;
     }
-}
-
-- (void)updateTotalNumberOfErrors
-{
-    int totalErrors = 0;
-    
-    for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
-        totalErrors += controller.cappuccinoProject.errors.count;
-
-    [self willChangeValueForKey:@"totalNumberOfErrors"];
-    self.totalNumberOfErrors = totalErrors;
-    [self didChangeValueForKey:@"totalNumberOfErrors"];
 }
 
 @end

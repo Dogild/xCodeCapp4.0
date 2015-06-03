@@ -437,7 +437,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjj2ObjcSkeletonOperationErrorType];
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
 }
 
 - (void)_didReceiveObjjDidStartNotification:(NSNotification *)note
@@ -446,7 +446,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjjOperationErrorType];
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
 }
 
 - (void)_didReceiveNib2CibDidStartNotifcation:(NSNotification *)note
@@ -455,7 +455,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCNib2CibOperationErrorType];
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
 }
 
 - (void)_didReceiveCappLintDidStartNotification:(NSNotification *)note
@@ -464,7 +464,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCCappLintOperationErrorType];
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
 }
 
 - (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
@@ -487,7 +487,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Unknown Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -501,7 +501,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
         [self.cappuccinoProject addOperationError:operationError];
     
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -515,7 +515,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
     
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -528,7 +528,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"nib2cib Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -543,7 +543,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     for (XCCOperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
     
-    [self.mainWindowController updateTotalNumberOfErrors];
+    [self.mainWindowController reloadTotalNumberOfErrors];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -892,7 +892,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self.fm removeItemAtPath:shadowImplementationPath error:nil];
         
         [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:sourcePath errorType:XCCDefaultOperationErrorType];
-        [self.mainWindowController updateTotalNumberOfErrors];
+        [self.mainWindowController reloadTotalNumberOfErrors];
     }
     
     [self _reloadDataErrorsOutlineView];
@@ -1002,7 +1002,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
     
     [self resetProject:self];
-    [self.mainWindowController _saveManagedProjectsToUserDefaults];
+    [self.mainWindowController saveManagedProjectsToUserDefaults];
 }
 
 
@@ -1072,8 +1072,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)cancelOperation:(id)sender
 {
-    XCCSourceProcessingOperation *operation = [[self _projectRelatedOperations] objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
-    [operation cancel];
+//    XCCSourceProcessingOperation *operation = [[self _projectRelatedOperations] objectAtIndex:[self.mainWindowController.operationTableView rowForView:sender]];
+//    [operation cancel];
 }
 
 - (IBAction)removeErrors:(id)aSender
@@ -1288,7 +1288,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     //    if (self.lastReloadErrorsViewDate && ABS([self.lastReloadErrorsViewDate timeIntervalSinceNow]) < 0.5)
     //        return;
     
-    [self.mainWindowController reloadErrorsListForCurrentCappuccinoProject];
+    [self.mainWindowController reloadCurrentProjectErrors];
     
     self.lastReloadErrorsViewDate = [NSDate date];
 }
@@ -1298,7 +1298,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     //    if (self.lastReloadOperationsViewDate && ABS([self.lastReloadOperationsViewDate timeIntervalSinceNow]) < 0.5)
     //        return;
     
-    [self.mainWindowController reloadOperationsListForCurrentCappuccinoProject];
+    [self.mainWindowController reloadCurrentProjectOperations];
     
     self.lastReloadOperationsViewDate = [NSDate date];
 }
