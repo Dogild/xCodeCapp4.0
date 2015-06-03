@@ -11,6 +11,7 @@
 		0247DCC41B17DDDD00192FEF /* run.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC21B17DDDD00192FEF /* run.png */; };
 		0247DCC51B17DDDD00192FEF /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC31B17DDDD00192FEF /* stop.png */; };
 		0247DCC71B17DF2400192FEF /* resync.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC61B17DF2400192FEF /* resync.png */; };
+		0255B8401B1F71FB000CA4BC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0255B83F1B1F71FB000CA4BC /* AppDelegate.m */; };
 		0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */; };
 		0258003F1B1E29620000EB7D /* open-in-finder.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258003D1B1E29620000EB7D /* open-in-finder.png */; };
 		025800401B1E29620000EB7D /* open-in-xcode.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258003E1B1E29620000EB7D /* open-in-xcode.png */; };
@@ -37,7 +38,6 @@
 		6824CDDE1B0DA34500F73447 /* XCCMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDDD1B0DA34500F73447 /* XCCMainController.m */; };
 		6824CDEA1B0E9CDB00F73447 /* XCCOperationErrorDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDE91B0E9CDB00F73447 /* XCCOperationErrorDataView.m */; };
 		6824CDF01B0E9F1400F73447 /* XCCOperationError.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDEF1B0E9F1400F73447 /* XCCOperationError.m */; };
-		6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2411AF98CE600CFE60E /* AppDelegate.m */; };
 		6841F2441AF98CE600CFE60E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2431AF98CE600CFE60E /* main.m */; };
 		6841F2461AF98CE600CFE60E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2451AF98CE600CFE60E /* Images.xcassets */; };
 		6841F2491AF98CE600CFE60E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2471AF98CE600CFE60E /* MainMenu.xib */; };
@@ -107,6 +107,7 @@
 		0247DCC21B17DDDD00192FEF /* run.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = run.png; sourceTree = "<group>"; };
 		0247DCC31B17DDDD00192FEF /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 		0247DCC61B17DF2400192FEF /* resync.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = resync.png; sourceTree = "<group>"; };
+		0255B83F1B1F71FB000CA4BC /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		0258003A1B1E1C470000EB7D /* NSMutableArray+moveIndexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+moveIndexes.h"; sourceTree = "<group>"; };
 		0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+moveIndexes.m"; sourceTree = "<group>"; };
 		0258003D1B1E29620000EB7D /* open-in-finder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-finder.png"; sourceTree = "<group>"; };
@@ -146,7 +147,6 @@
 		6841F23B1AF98CE600CFE60E /* XcodeCapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XcodeCapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6841F23F1AF98CE600CFE60E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6841F2401AF98CE600CFE60E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		6841F2411AF98CE600CFE60E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6841F2431AF98CE600CFE60E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6841F2451AF98CE600CFE60E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6841F24E1AF98CE600CFE60E /* XcodeCappTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XcodeCappTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,7 +271,7 @@
 				6841F2451AF98CE600CFE60E /* Images.xcassets */,
 				6841F2471AF98CE600CFE60E /* MainMenu.xib */,
 				6841F2401AF98CE600CFE60E /* AppDelegate.h */,
-				6841F2411AF98CE600CFE60E /* AppDelegate.m */,
+				0255B83F1B1F71FB000CA4BC /* AppDelegate.m */,
 				6824CDDB1B0D976400F73447 /* Controllers */,
 				68F3B95A1B0CFBCF00A7EF70 /* Models */,
 				680621161B015BDB00CB24CD /* Views */,
@@ -565,6 +565,7 @@
 			files = (
 				6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */,
 				68B6BF321B1E2546003B265B /* XCCPbxCreationOperation.m in Sources */,
+				0255B8401B1F71FB000CA4BC /* AppDelegate.m in Sources */,
 				6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */,
 				0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */,
 				6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */,
@@ -586,7 +587,6 @@
 				686C697A1B0FC5930095BB3C /* ObjjUtils.m in Sources */,
 				6841F2CA1AFADEBC00CFE60E /* XCCSourcesFinderOperation.m in Sources */,
 				681ADE8F1B0D032C00FC8E08 /* XCCPath.m in Sources */,
-				6841F2421AF98CE600CFE60E /* AppDelegate.m in Sources */,
 				6841F2651AF98DCB00CFE60E /* DDASLLogger.m in Sources */,
 				6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */,
 				6824CDEA1B0E9CDB00F73447 /* XCCOperationErrorDataView.m in Sources */,

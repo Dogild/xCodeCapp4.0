@@ -46,6 +46,23 @@
     return YES;
 }
 
+- (BOOL)application:(NSApplication *)application openFile:(NSString *)filename
+{
+    BOOL isDir;
+    
+    [[NSFileManager defaultManager] fileExistsAtPath:filename isDirectory:&isDir];
+    
+    if (isDir)
+    {
+        [self.mainWindowController addCappuccinoProjectWithPath:filename];
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+
 #pragma mark - Window managements
 
 - (void)openWindow:(NSWindow *)aWindow
