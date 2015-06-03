@@ -12,6 +12,12 @@
 		0247DCC51B17DDDD00192FEF /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC31B17DDDD00192FEF /* stop.png */; };
 		0247DCC71B17DF2400192FEF /* resync.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC61B17DF2400192FEF /* resync.png */; };
 		0255B8401B1F71FB000CA4BC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0255B83F1B1F71FB000CA4BC /* AppDelegate.m */; };
+		0255B8531B1F7983000CA4BC /* status-icon-error.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B84D1B1F7983000CA4BC /* status-icon-error.png */; };
+		0255B8541B1F7983000CA4BC /* status-icon-error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B84E1B1F7983000CA4BC /* status-icon-error@2x.png */; };
+		0255B8551B1F7983000CA4BC /* status-icon-inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B84F1B1F7983000CA4BC /* status-icon-inactive.png */; };
+		0255B8561B1F7983000CA4BC /* status-icon-inactive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B8501B1F7983000CA4BC /* status-icon-inactive@2x.png */; };
+		0255B8571B1F7983000CA4BC /* status-icon-working.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B8511B1F7983000CA4BC /* status-icon-working.png */; };
+		0255B8581B1F7983000CA4BC /* status-icon-working@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B8521B1F7983000CA4BC /* status-icon-working@2x.png */; };
 		0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */; };
 		0258003F1B1E29620000EB7D /* open-in-finder.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258003D1B1E29620000EB7D /* open-in-finder.png */; };
 		025800401B1E29620000EB7D /* open-in-xcode.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258003E1B1E29620000EB7D /* open-in-xcode.png */; };
@@ -51,12 +57,6 @@
 		6841F27C1AF990C300CFE60E /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27A1AF990C300CFE60E /* Debug.xcconfig */; };
 		6841F27D1AF990C300CFE60E /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27B1AF990C300CFE60E /* Release.xcconfig */; };
 		6841F29A1AF9932300CFE60E /* help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27F1AF9932300CFE60E /* help.pdf */; };
-		6841F29D1AF9932300CFE60E /* icon-error.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2821AF9932300CFE60E /* icon-error.png */; };
-		6841F29E1AF9932300CFE60E /* icon-error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2831AF9932300CFE60E /* icon-error@2x.png */; };
-		6841F29F1AF9932300CFE60E /* icon-inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2841AF9932300CFE60E /* icon-inactive.png */; };
-		6841F2A01AF9932300CFE60E /* icon-inactive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2851AF9932300CFE60E /* icon-inactive@2x.png */; };
-		6841F2A11AF9932300CFE60E /* icon-working.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2861AF9932300CFE60E /* icon-working.png */; };
-		6841F2A21AF9932300CFE60E /* icon-working@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2871AF9932300CFE60E /* icon-working@2x.png */; };
 		6841F2A31AF9932300CFE60E /* icon_128x128.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2881AF9932300CFE60E /* icon_128x128.png */; };
 		6841F2A41AF9932300CFE60E /* icon_128x128@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2891AF9932300CFE60E /* icon_128x128@2x.png */; };
 		6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */ = {isa = PBXBuildFile; fileRef = 6841F28A1AF9932300CFE60E /* project.pbxproj */; };
@@ -106,6 +106,12 @@
 		0247DCC31B17DDDD00192FEF /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 		0247DCC61B17DF2400192FEF /* resync.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = resync.png; sourceTree = "<group>"; };
 		0255B83F1B1F71FB000CA4BC /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		0255B84D1B1F7983000CA4BC /* status-icon-error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-error.png"; sourceTree = "<group>"; };
+		0255B84E1B1F7983000CA4BC /* status-icon-error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-error@2x.png"; sourceTree = "<group>"; };
+		0255B84F1B1F7983000CA4BC /* status-icon-inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-inactive.png"; sourceTree = "<group>"; };
+		0255B8501B1F7983000CA4BC /* status-icon-inactive@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-inactive@2x.png"; sourceTree = "<group>"; };
+		0255B8511B1F7983000CA4BC /* status-icon-working.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-working.png"; sourceTree = "<group>"; };
+		0255B8521B1F7983000CA4BC /* status-icon-working@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-working@2x.png"; sourceTree = "<group>"; };
 		0258003A1B1E1C470000EB7D /* NSMutableArray+moveIndexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+moveIndexes.h"; sourceTree = "<group>"; };
 		0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+moveIndexes.m"; sourceTree = "<group>"; };
 		0258003D1B1E29620000EB7D /* open-in-finder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-finder.png"; sourceTree = "<group>"; };
@@ -165,12 +171,6 @@
 		6841F27A1AF990C300CFE60E /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		6841F27B1AF990C300CFE60E /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		6841F27F1AF9932300CFE60E /* help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = help.pdf; sourceTree = "<group>"; };
-		6841F2821AF9932300CFE60E /* icon-error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-error.png"; sourceTree = "<group>"; };
-		6841F2831AF9932300CFE60E /* icon-error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-error@2x.png"; sourceTree = "<group>"; };
-		6841F2841AF9932300CFE60E /* icon-inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-inactive.png"; sourceTree = "<group>"; };
-		6841F2851AF9932300CFE60E /* icon-inactive@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-inactive@2x.png"; sourceTree = "<group>"; };
-		6841F2861AF9932300CFE60E /* icon-working.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-working.png"; sourceTree = "<group>"; };
-		6841F2871AF9932300CFE60E /* icon-working@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-working@2x.png"; sourceTree = "<group>"; };
 		6841F2881AF9932300CFE60E /* icon_128x128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_128x128.png; sourceTree = "<group>"; };
 		6841F2891AF9932300CFE60E /* icon_128x128@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_128x128@2x.png"; sourceTree = "<group>"; };
 		6841F28A1AF9932300CFE60E /* project.pbxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.pbxproject; path = project.pbxproj; sourceTree = "<group>"; };
@@ -336,6 +336,12 @@
 		6841F27E1AF9932300CFE60E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0255B84D1B1F7983000CA4BC /* status-icon-error.png */,
+				0255B84E1B1F7983000CA4BC /* status-icon-error@2x.png */,
+				0255B84F1B1F7983000CA4BC /* status-icon-inactive.png */,
+				0255B8501B1F7983000CA4BC /* status-icon-inactive@2x.png */,
+				0255B8511B1F7983000CA4BC /* status-icon-working.png */,
+				0255B8521B1F7983000CA4BC /* status-icon-working@2x.png */,
 				0258005D1B1E937E0000EB7D /* open-in-editor-white.png */,
 				025800511B1E91AF0000EB7D /* open-in-finder-white.png */,
 				025800521B1E91AF0000EB7D /* open-in-terminal-white.png */,
@@ -355,12 +361,6 @@
 				0247DCC31B17DDDD00192FEF /* stop.png */,
 				0247DCC01B17DDC400192FEF /* open-in-editor.png */,
 				6841F27F1AF9932300CFE60E /* help.pdf */,
-				6841F2821AF9932300CFE60E /* icon-error.png */,
-				6841F2831AF9932300CFE60E /* icon-error@2x.png */,
-				6841F2841AF9932300CFE60E /* icon-inactive.png */,
-				6841F2851AF9932300CFE60E /* icon-inactive@2x.png */,
-				6841F2861AF9932300CFE60E /* icon-working.png */,
-				6841F2871AF9932300CFE60E /* icon-working@2x.png */,
 				6841F2881AF9932300CFE60E /* icon_128x128.png */,
 				6841F2891AF9932300CFE60E /* icon_128x128@2x.png */,
 				6841F28A1AF9932300CFE60E /* project.pbxproj */,
@@ -503,40 +503,40 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6841F29F1AF9932300CFE60E /* icon-inactive.png in Resources */,
 				0258005E1B1E937E0000EB7D /* open-in-editor-white.png in Resources */,
 				0258004E1B1E86180000EB7D /* cookie.png in Resources */,
 				0247DCC11B17DDC400192FEF /* open-in-editor.png in Resources */,
 				0258003F1B1E29620000EB7D /* open-in-finder.png in Resources */,
 				6841F2A31AF9932300CFE60E /* icon_128x128.png in Resources */,
+				0255B8551B1F7983000CA4BC /* status-icon-inactive.png in Resources */,
 				025800471B1E58A00000EB7D /* Icon.icns in Resources */,
 				6841F2461AF98CE600CFE60E /* Images.xcassets in Resources */,
-				6841F29E1AF9932300CFE60E /* icon-error@2x.png in Resources */,
 				6841F29A1AF9932300CFE60E /* help.pdf in Resources */,
+				0255B8541B1F7983000CA4BC /* status-icon-error@2x.png in Resources */,
 				025800571B1E91AF0000EB7D /* open-in-finder-white.png in Resources */,
 				025800501B1E88BF0000EB7D /* sleeping.png in Resources */,
 				025800421B1E30DD0000EB7D /* open-in-terminal.png in Resources */,
 				0258005B1B1E91AF0000EB7D /* run-white.png in Resources */,
-				6841F2A21AF9932300CFE60E /* icon-working@2x.png in Resources */,
 				0258004B1B1E67090000EB7D /* supawhich in Resources */,
 				6841F27C1AF990C300CFE60E /* Debug.xcconfig in Resources */,
 				6841F26E1AF98DDD00CFE60E /* pbxprojModifier.py in Resources */,
-				6841F2A11AF9932300CFE60E /* icon-working.png in Resources */,
+				0255B8561B1F7983000CA4BC /* status-icon-inactive@2x.png in Resources */,
+				0255B8531B1F7983000CA4BC /* status-icon-error.png in Resources */,
 				0247DCC41B17DDDD00192FEF /* run.png in Resources */,
 				0247DCC51B17DDDD00192FEF /* stop.png in Resources */,
 				6841F2A41AF9932300CFE60E /* icon_128x128@2x.png in Resources */,
-				6841F29D1AF9932300CFE60E /* icon-error.png in Resources */,
 				025800401B1E29620000EB7D /* open-in-xcode.png in Resources */,
 				0258005C1B1E91AF0000EB7D /* stop-white.png in Resources */,
 				025800491B1E58DF0000EB7D /* icon_512x512.png in Resources */,
 				6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */,
+				0255B8571B1F7983000CA4BC /* status-icon-working.png in Resources */,
 				025800581B1E91AF0000EB7D /* open-in-terminal-white.png in Resources */,
 				025800591B1E91AF0000EB7D /* open-in-xcode-white.png in Resources */,
-				6841F2A01AF9932300CFE60E /* icon-inactive@2x.png in Resources */,
 				6841F2491AF98CE600CFE60E /* MainMenu.xib in Resources */,
 				6841F27D1AF990C300CFE60E /* Release.xcconfig in Resources */,
 				0247DCC71B17DF2400192FEF /* resync.png in Resources */,
 				6841F26C1AF98DDD00CFE60E /* mod_pbxproj.py in Resources */,
+				0255B8581B1F7983000CA4BC /* status-icon-working@2x.png in Resources */,
 				0258005A1B1E91AF0000EB7D /* resync-white.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

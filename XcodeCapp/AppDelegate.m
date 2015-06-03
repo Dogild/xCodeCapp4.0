@@ -65,15 +65,15 @@
 
 - (void)_initStatusItem
 {
-    self.iconWorking = [NSImage imageNamed:@"icon-working"];
-    self.iconInactive = [NSImage imageNamed:@"icon-inactive"];
-    self.iconError = [NSImage imageNamed:@"icon-error"];
+    self.iconInactive   = [NSImage imageNamed:@"status-icon-inactive"];
+    self.iconWorking    = [NSImage imageNamed:@"status-icon-working"];
+    self.iconError      = [NSImage imageNamed:@"status-icon-error"];
     
-    self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
-    self.statusItem.menu = self.statusMenu;
-    self.statusItem.image = self.iconInactive;
-    self.statusItem.highlightMode = YES;
-    self.statusItem.length = self.iconInactive.size.width + 12;
+    self.statusItem                 = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+    self.statusItem.menu            = self.statusMenu;
+    self.statusItem.image           = self.iconInactive;
+    self.statusItem.highlightMode   = YES;
+    self.statusItem.length          = self.iconInactive.size.width + 12;
     
     [self.mainOperationQueue addObserver:self forKeyPath:@"operationCount" options:0 context:nil];
 }
@@ -81,9 +81,9 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (self.mainOperationQueue.operationCount)
-        self.statusItem.image = self.iconWorking;
+        [self.statusItem performSelectorOnMainThread:@selector(setImage:) withObject:self.iconWorking waitUntilDone:NO];
     else
-        self.statusItem.image = self.iconInactive;
+        [self.statusItem performSelectorOnMainThread:@selector(setImage:) withObject:self.iconInactive waitUntilDone:NO];
 }
 
 #pragma mark - Window managements

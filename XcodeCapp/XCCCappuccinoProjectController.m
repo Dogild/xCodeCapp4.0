@@ -89,8 +89,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                                    options:NSKeyValueObservingOptionNew
                                                    context:NULL];
         
-        [self _prepareXcodeSupport];
-        
         if (self.cappuccinoProject.autoStartListening)
             [self _loadProject];
     }
@@ -100,20 +98,19 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_init
 {
-    self.taskLauncher       = nil;
-    self.operations         = [NSMutableArray new];
-    self.operationQueue     = [[NSApp delegate] mainOperationQueue];
+    self.taskLauncher               = nil;
+    self.operations                 = [NSMutableArray new];
+    self.operationQueue             = [[NSApp delegate] mainOperationQueue];
+    self.lastEventId                = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastEventId];
+    self.projectPathFileDescriptor  = -1;
+
+    [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
 
     [self _resetOperationCounters];
-    
-    [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
-    
     [self _initPbxOperations];
-    [self.cappuccinoProject _init];
+    [self _prepareXcodeSupport];
     
-    self.lastEventId = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastEventId];
-    
-    self.projectPathFileDescriptor = -1;
+    [self.cappuccinoProject reinitialize];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -497,10 +494,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
-    {
         [self.cappuccinoProject addOperationError:operationError];
-        
-    }
 
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];

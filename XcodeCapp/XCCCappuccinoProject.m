@@ -91,13 +91,13 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
         [self _loadSettings];
         [self reloadXcodeCappIgnoreFile];
         
-        [self _init];
+        [self reinitialize];
     }
     
     return self;
 }
 
-- (void)_init
+- (void)reinitialize
 {
     self.projectPathsForSourcePaths = [NSMutableDictionary new];
     self.errors                     = [NSMutableDictionary new];

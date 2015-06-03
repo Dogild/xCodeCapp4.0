@@ -55,7 +55,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 + (NSArray*)defaultEnvironmentPaths;
 
 - (id)initWithPath:(NSString*)aPath;
-- (void)_init;
+- (void)reinitialize;
 
 - (void)addOperationError:(XCCOperationError *)operationError;
 - (void)removeOperationError:(XCCOperationError *)operationError;
