@@ -9,28 +9,26 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreServices/CoreServices.h>
 
-@class CappuccinoController;
 @class XCCMainController;
 
+
 @interface AppDelegate : NSObject <NSApplicationDelegate>
+{
+    IBOutlet NSMenu                         *statusMenu;
+    IBOutlet NSUserDefaultsController       *preferencesController;
+    IBOutlet NSPanel                        *aboutWindow;
+    IBOutlet NSWindow                       *preferencesWindow;
 
-@property (nonatomic) NSImage                           *iconInactive;
-@property (nonatomic) NSImage                           *iconWorking;
-@property (nonatomic) NSImage                           *iconError;
-@property NSStatusItem                                  *statusItem;
+    NSImage                                 *imageStatusInactive;
+    NSImage                                 *imageStatusProcessing;
+    NSImage                                 *imageStatusError;
+    NSStatusItem                            *statusItem;
+}
 
-@property (strong) IBOutlet NSMenu                      *statusMenu;
-@property (strong) IBOutlet NSUserDefaultsController    *preferencesController;
-@property (strong) IBOutlet NSPanel                     *aboutWindow;
-@property (strong) IBOutlet NSWindow                    *preferencesWindow;
-@property (strong) IBOutlet CappuccinoController        *cappuccinoController;
-@property (strong) IBOutlet XCCMainController           *mainWindowController;
-
-@property (strong) NSOperationQueue                     *mainOperationQueue;
-
+@property IBOutlet  XCCMainController       *mainWindowController;
+@property NSOperationQueue                  *mainOperationQueue;
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;
 
 @end
-

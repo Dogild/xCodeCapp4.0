@@ -13,6 +13,8 @@
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
 
+#import "AppDelegate.h"
+
 @interface XCCMainController()
 @property BOOL _isObserving;
 @end
@@ -27,7 +29,7 @@
     [self _showProjectsTableMaskingView:YES];
     [self _showErrorsTableMaskingView:YES];
     [self _showOperationsTableMaskingView:YES];
-    
+        
     [self _restoreManagedProjectsFromUserDefaults];
     [self _selectLastProjectSelected];
     

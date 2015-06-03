@@ -22,7 +22,7 @@
     [self initLogging];
     [self _initStatusItem];
     
-    [self.mainWindowController windowDidLoad];
+    [self->_mainWindowController windowDidLoad];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)app
@@ -34,9 +34,8 @@
     return NSTerminateNow;
 }
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    
-    // Insert code here to tear down your application
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
     DDLogVerbose(@"\n******************************\n**    XcodeCapp stopped     **\n******************************\n");
 }
 
@@ -65,15 +64,15 @@
 
 - (void)_initStatusItem
 {
-    self.iconInactive   = [NSImage imageNamed:@"status-icon-inactive"];
-    self.iconWorking    = [NSImage imageNamed:@"status-icon-working"];
-    self.iconError      = [NSImage imageNamed:@"status-icon-error"];
+    self->imageStatusInactive   = [NSImage imageNamed:@"status-icon-inactive"];
+    self->imageStatusProcessing    = [NSImage imageNamed:@"status-icon-working"];
+    self->imageStatusError      = [NSImage imageNamed:@"status-icon-error"];
     
-    self.statusItem                 = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
-    self.statusItem.menu            = self.statusMenu;
-    self.statusItem.image           = self.iconInactive;
-    self.statusItem.highlightMode   = YES;
-    self.statusItem.length          = self.iconInactive.size.width + 12;
+    self->statusItem                 = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+    self->statusItem.menu            = self->statusMenu;
+    self->statusItem.image           = self->imageStatusInactive;
+    self->statusItem.highlightMode   = YES;
+    self->statusItem.length          = self->imageStatusInactive.size.width + 12;
     
     [self.mainOperationQueue addObserver:self forKeyPath:@"operationCount" options:0 context:nil];
     [self.mainWindowController addObserver:self forKeyPath:@"totalNumberOfErrors" options:0 context:nil];
@@ -84,13 +83,13 @@
     NSImage *image;
     
     if (self.mainOperationQueue.operationCount)
-        image = self.iconWorking;
+        image = self->imageStatusProcessing;
     else if ([self.mainWindowController totalNumberOfErrors])
-        image = self.iconError;
+        image = self->imageStatusError;
     else
-        image = self.iconInactive;
+        image = self->imageStatusInactive;
     
-    [self.statusItem performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
+    [self->statusItem performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
 }
 
 #pragma mark - Window managements
@@ -106,7 +105,7 @@
 
 - (IBAction)openPreferences:(id)aSender
 {
-    [self openWindow:self.preferencesWindow];
+    [self openWindow:self->preferencesWindow];
 }
 
 
@@ -114,7 +113,7 @@
 
 - (IBAction)openAbout:(id)aSender
 {
-    [self openWindow:self.aboutWindow];
+    [self openWindow:self->aboutWindow];
 }
 
 - (NSString *)bundleVersion
