@@ -25,6 +25,9 @@
 @property (strong) IBOutlet NSButton                *buttonSelectConfigurationTab;
 @property (strong) IBOutlet NSButton                *buttonSelectErrorsTab;
 @property (strong) IBOutlet NSButton                *buttonSelectOperationsTab;
+@property (strong) IBOutlet NSBox                   *viewErrorsMask;
+@property (strong) IBOutlet NSBox                   *viewOperationMask;
+@property (strong) IBOutlet NSBox                   *viewProjectMask;
 
 @property (strong) IBOutlet NSView                  *viewTabConfiguration;
 @property (strong) IBOutlet NSView                  *viewTabErrors;

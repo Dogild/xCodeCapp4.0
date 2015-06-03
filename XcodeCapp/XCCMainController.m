@@ -101,7 +101,7 @@
         if (self.maskingView.superview)
             return;
         
-        [self.projectViewContainer setHidden:YES]; // try to remove and laught..
+        [self.projectViewContainer setHidden:YES];
         
         self.maskingView.frame = [[[self.splitView subviews] objectAtIndex:1] bounds];
         [[[self.splitView subviews] objectAtIndex:1] addSubview:self.maskingView positioned:NSWindowAbove relativeTo:nil];
@@ -111,9 +111,78 @@
         if (!self.maskingView.superview)
             return;
         
-        [self.projectViewContainer setHidden:NO]; // try to remove and laught..
+        [self.projectViewContainer setHidden:NO];
         
         [self.maskingView removeFromSuperview];
+    }
+}
+
+- (void)_showErrorsTableMaskingView:(BOOL)shouldShow
+{
+    if (shouldShow)
+    {
+        if (self.viewErrorsMask.superview)
+            return;
+        
+        [self.errorOutlineView setHidden:YES];
+        
+        self.viewErrorsMask.frame = [self.viewTabErrors bounds];
+        [self.viewTabErrors addSubview:self.viewErrorsMask positioned:NSWindowAbove relativeTo:nil];
+    }
+    else
+    {
+        if (!self.viewErrorsMask.superview)
+            return;
+        
+        [self.errorOutlineView setHidden:NO];
+        
+        [self.viewErrorsMask removeFromSuperview];
+    }
+}
+
+- (void)_showOperationsTableMaskingView:(BOOL)shouldShow
+{
+    if (shouldShow)
+    {
+        if (self.viewOperationMask.superview)
+            return;
+        
+        [self.operationTableView setHidden:YES];
+        
+        self.viewOperationMask.frame = [self.viewTabOperations bounds];
+        [self.viewTabOperations addSubview:self.viewOperationMask positioned:NSWindowAbove relativeTo:nil];
+    }
+    else
+    {
+        if (!self.viewOperationMask.superview)
+            return;
+        
+        [self.operationTableView setHidden:NO];
+        
+        [self.viewOperationMask removeFromSuperview];
+    }
+}
+
+- (void)_showProjectsTableMaskingView:(BOOL)shouldShow
+{
+    if (shouldShow)
+    {
+        if (self.viewProjectMask.superview)
+            return;
+        
+        [self.projectTableView setHidden:YES];
+        
+        self.viewProjectMask.frame = [self.splitView.superview bounds];
+        [self.splitView.superview addSubview:self.viewProjectMask positioned:NSWindowAbove relativeTo:nil];
+    }
+    else
+    {
+        if (!self.viewProjectMask.superview)
+            return;
+        
+        [self.projectTableView setHidden:NO];
+        
+        [self.viewProjectMask removeFromSuperview];
     }
 }
 
@@ -136,7 +205,7 @@
     NSString        *lastSelectedProjectPath = [defaults valueForKey:kDefaultXCCLastSelectedProjectPath];
     NSInteger       indexToSelect            = 0;
     
-    if (lastSelectedProjectPath)
+    if ([lastSelectedProjectPath length])
     {
         for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         {
@@ -146,9 +215,10 @@
                 break;
             }
         }
+        
+        [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
     }
-    
-    [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
+
     
     DDLogVerbose(@"Stop : selecting last selected project");
 }
@@ -166,7 +236,7 @@
         [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
-    [self.projectTableView reloadData];
+    [self reloadProjectsList];
     
     DDLogVerbose(@"Stop : managed  projects restored");
 }
@@ -194,7 +264,8 @@
     [self.projectTableView deselectRow:selectedCappuccinoProject];
     [aController cleanUpBeforeDeletion];
     [self.cappuccinoProjectControllers removeObjectAtIndex:selectedCappuccinoProject];
-    [self.projectTableView reloadData];
+    
+    [self reloadProjectsList];
     
     [self _saveManagedProjectsToUserDefaults];
 }
@@ -212,7 +283,8 @@
     
     NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];
 
-    [self.projectTableView reloadData];
+    [self reloadProjectsList];
+    
     [self.projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     [self.projectTableView scrollRowToVisible:index];
     [self _saveManagedProjectsToUserDefaults];
@@ -222,13 +294,33 @@
 {
     [self.errorOutlineView reloadData];
     [self.errorOutlineView expandItem:nil expandChildren:YES];
+    
+    if (![self.currentCappuccinoProjectController.cappuccinoProject.errors count])
+        [self _showErrorsTableMaskingView:YES];
+    else
+        [self _showErrorsTableMaskingView:NO];
 }
 
 - (void)reloadOperationsListForCurrentCappuccinoProject
 {
     [self.operationTableView reloadData];
+    
+    if (![self.currentCappuccinoProjectController.cappuccinoProject.errors count])
+        [self _showOperationsTableMaskingView:YES];
+    else
+        [self _showOperationsTableMaskingView:NO];
 }
 
+- (void)reloadProjectsList
+{
+    [self.projectTableView reloadData];
+    
+    if ([self.cappuccinoProjectControllers count] == 0)
+        [self _showProjectsTableMaskingView:YES];
+    else
+        [self _showProjectsTableMaskingView:NO];
+
+}
 
 #pragma mark - Actions
 
@@ -321,8 +413,6 @@
 {
     NSInteger selectedCappuccinoProject = [self.projectTableView selectedRow];
     
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
-    
     [self _removeArrayControllerObserver];
     
     if (selectedCappuccinoProject == -1)
@@ -330,8 +420,9 @@
         self.currentCappuccinoProjectController = nil;
         [self.operationTableView setDelegate:nil];
         [self.operationTableView setDataSource:nil];
-        
+
         [self _showMaskingView:YES];
+        [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kDefaultXCCLastSelectedProjectPath];
         return;
     }
     
@@ -348,6 +439,7 @@
     [self _addArrayControllerObserver];
     
     [self _showMaskingView:NO];
+    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
 }
 
 - (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)rowsIndexes toPasteboard:(NSPasteboard*)pasteboard
@@ -375,7 +467,8 @@
     
     [self.cappuccinoProjectControllers moveIndexes:rowIndexes toIndex:row];
     
-    [self.projectTableView reloadData];
+    [self reloadProjectsList];
+    
     [self _saveManagedProjectsToUserDefaults];
     
     return YES;
