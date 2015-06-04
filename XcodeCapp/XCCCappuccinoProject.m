@@ -204,13 +204,13 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         NSMutableArray *ignoredPatterns = [NSMutableArray new];
         
         for (NSString *pattern in [CappuccinoUtils defaultIgnoredPaths])
-            [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
+            [ignoredPatterns addObject:pattern];
         
         for (NSString *pattern in [self.XcodeCappIgnoreContent componentsSeparatedByString:@"\n"])
             if ([pattern length])
-                [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
+                [ignoredPatterns addObject:pattern];
 
-        NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
+        NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns basePath:self.projectPath];
         [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
         
         DDLogVerbose(@"Content of xcodecapp-ignorepath correctly updated %@", self.ignoredPathPredicates);

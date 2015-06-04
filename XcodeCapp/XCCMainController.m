@@ -67,6 +67,7 @@
     self->isObserving = YES;
     
     [self->includePathArrayController addObserver:self forKeyPath:@"arrangedObjects.name" options:NSKeyValueObservingOptionNew context:nil];
+    [self.currentCappuccinoProjectController.cappuccinoProject addObserver:self forKeyPath:@"XcodeCappIgnoreContent" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)_removeArrayControllerObserver
@@ -77,6 +78,7 @@
     self->isObserving = NO;
     
     [self->includePathArrayController removeObserver:self forKeyPath:@"arrangedObjects.name"];
+    [self.currentCappuccinoProjectController.cappuccinoProject removeObserver:self forKeyPath:@"XcodeCappIgnoreContent"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

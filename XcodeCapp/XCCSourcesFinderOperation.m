@@ -60,9 +60,6 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
         NSNumber    *isDirectory;
         NSNumber    *isSymlink;
 
-        if ([CappuccinoUtils pathMatchesIgnoredPaths:realPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
-            continue;
-
         [url getResourceValue:&isSymlink forKey:NSURLIsSymbolicLinkKey error:nil];
 
         if (isSymlink.boolValue == YES)
@@ -114,8 +111,8 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
             continue;
         }
 
-        if (self.isCancelled)
-            return;
+        if ([CappuccinoUtils pathMatchesIgnoredPaths:realPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
+            continue;
 
         NSString *projectSourcePath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:projectRelativePath];
 

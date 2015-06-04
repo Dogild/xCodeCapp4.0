@@ -20,7 +20,7 @@
 + (BOOL)isHeaderFile:(NSString *)path;
 + (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
 + (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
-+ (NSArray *)parseIgnorePaths:(NSArray *)paths;
++ (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath;
 + (BOOL)pathMatchesIgnoredPaths:(NSString*)aPath cappuccinoProjectIgnoredPathPredicates:(NSMutableArray*)cappuccinoProjectIgnoredPathPredicates;
 + (BOOL)shouldIgnoreDirectoryNamed:(NSString *)filename;
 

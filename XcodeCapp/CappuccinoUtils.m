@@ -105,7 +105,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     return ignore;
 }
 
-+ (NSArray *)parseIgnorePaths:(NSArray *)paths
++ (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath
 {
     NSMutableArray *parsedPaths = [NSMutableArray array];
     NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
@@ -114,10 +114,14 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     {
         if ([pattern stringByTrimmingCharactersInSet:whitespace].length == 0)
             continue;
-        
-        NSString *regexPattern = [self globToRegexPattern:pattern];
+
+        BOOL        exclude       = [pattern characterAtIndex:0] != '!';
+        NSString    *finalPattern = exclude ? pattern : [pattern substringFromIndex:1];
+
+        NSString *regexPattern = [self globToRegexPattern:[NSString stringWithFormat:@"%@/%@", basePath, finalPattern]];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF matches %@", regexPattern];
-        [parsedPaths addObject:@{ @"predicate": predicate, @"exclude": @([pattern characterAtIndex:0] != '!') }];
+        [parsedPaths addObject:@{ @"predicate": predicate,
+                                  @"exclude": [NSNumber numberWithBool:exclude]}];
     }
     
     return parsedPaths;
