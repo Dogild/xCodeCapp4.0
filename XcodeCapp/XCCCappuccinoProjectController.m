@@ -181,28 +181,30 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     // Get a file descriptor to the project directory so we can locate it if it moves
     self->projectPathFileDescriptor = open(self.cappuccinoProject.projectPath.UTF8String, O_EVTONLY);
     
-    NSArray *pathsToWatch = [CappuccinoUtils getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
-    
-    void *appPointer = (__bridge void *)self;
-    FSEventStreamContext context = { 0, appPointer, NULL, NULL, NULL };
-    CFTimeInterval latency = 2.0;
+    NSArray                 *pathsToWatch   = [CappuccinoUtils getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
+    void                    *appPointer     = (__bridge void *)self;
+    FSEventStreamContext    context         = { 0, appPointer, NULL, NULL, NULL };
+    CFTimeInterval          latency         = 2.0;
     
     UInt64 lastEvenID = self.cappuccinoProject.lastEventID.unsignedLongLongValue;
     
-//    if (!self.cappuccinoProject.lastEventID)
-//        lastEvenID = kFSEventStreamEventIdSinceNow;
+    if (!self.cappuccinoProject.lastEventID)
+        lastEvenID = kFSEventStreamEventIdSinceNow;
 
     self->stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
                                       (__bridge CFArrayRef) pathsToWatch,
-                                      kFSEventStreamEventIdSinceNow, //lastEvenID,
+                                      lastEvenID,
                                       latency,
                                       flags);
     
     FSEventStreamScheduleWithRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     [self _startFSEventStream];
-    
+
+    // yep, so, this is needed in order to ensure we get a FS event, so we actually get a valid last event ID.
+    [self->taskLauncher runTaskWithCommand:@"touch" arguments:@[self.cappuccinoProject.settingsPath] returnType:kTaskReturnTypeNone];
+
     DDLogVerbose(@"FSEventStream started for paths: %@", pathsToWatch);
 }
 
@@ -225,6 +227,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         
         [self _updateUserDefaultsWithLastFSEventID];
         [self _stopFSEventStream];
+
         FSEventStreamUnscheduleFromRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
         FSEventStreamInvalidate(self->stream);
         FSEventStreamRelease(self->stream);
@@ -339,8 +342,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_populateXcodeSupportDirectory
 {
     [self _populateXcodeSupportDirectoryWithProjectRelativePath:@""];
-//    [self _populateXcodeSupportDirectoryWithProjectRelativePath:self.cappuccinoProject.objjIncludePath];
-//    [self _populateXcodeSupportDirectoryWithProjectRelativePath:@"Resources"];
 }
 
 - (void)_populateXcodeSupportDirectoryWithProjectRelativePath:(NSString *)path
@@ -795,7 +796,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds
 {
     [self _reinitializePendingPBXOperations];
-    
+
     NSMutableArray *modifiedPaths       = [NSMutableArray new];
     NSMutableArray *renamedDirectories  = [NSMutableArray new];
     NSFileManager  *fm                  = [NSFileManager defaultManager];
@@ -806,7 +807,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         FSEventStreamEventFlags flags       = eventFlags[i];
         NSString                *path       = [paths[i] stringByStandardizingPath];
-        BOOL                    rootChanged = (flags & kFSEventStreamEventFlagRootChanged) != 0;
+
+        BOOL rootChanged = (flags & kFSEventStreamEventFlagRootChanged) != 0;
         
         if (rootChanged)
         {
@@ -1002,8 +1004,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     // Just in case the stream callback was never called...
     if (lastEventId != 0 && lastEventId != UINT64_MAX)
+    {
         self.cappuccinoProject.lastEventID = [NSNumber numberWithUnsignedLongLong:lastEventId];
+        [self.cappuccinoProject saveSettings];
+    }
 }
+
 
 #pragma mark - Third Party Application Management
 

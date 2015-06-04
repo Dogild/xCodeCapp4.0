@@ -234,6 +234,8 @@
     [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     [self->projectTableView scrollRowToVisible:index];
     [self saveManagedProjectsToUserDefaults];
+
+    [cappuccinoProjectController switchProjectListeningStatus:self];
 }
 
 - (void)reloadProjectsList
