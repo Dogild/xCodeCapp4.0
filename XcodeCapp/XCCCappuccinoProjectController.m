@@ -185,14 +185,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     FSEventStreamContext context = { 0, appPointer, NULL, NULL, NULL };
     CFTimeInterval latency = 2.0;
     
+    UInt64 lastEvenID = self.cappuccinoProject.lastEventID.unsignedLongLongValue;
+    
     if (!self.cappuccinoProject.lastEventID)
-        self.cappuccinoProject.lastEventID = kFSEventStreamEventIdSinceNow;
+        lastEvenID = kFSEventStreamEventIdSinceNow;
 
     self->stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
                                       (__bridge CFArrayRef) pathsToWatch,
-                                      kFSEventStreamEventIdSinceNow,//self.cappuccinoProject.lastEventID,
+                                      lastEvenID,
                                       latency,
                                       flags);
     
@@ -997,8 +999,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     UInt64 lastEventId = FSEventStreamGetLatestEventId(self->stream);
     
     // Just in case the stream callback was never called...
-    if (lastEventId != 0)
-        self.cappuccinoProject.lastEventID = lastEventId;
+    if (lastEventId != 0 && lastEventId != UINT64_MAX)
+        self.cappuccinoProject.lastEventID = [NSNumber numberWithUnsignedLongLong:lastEventId];
 }
 
 #pragma mark - Third Party Application Management

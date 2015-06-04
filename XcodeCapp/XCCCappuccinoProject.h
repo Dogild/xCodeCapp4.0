@@ -37,7 +37,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSString                      *XcodeProjectPath;
 @property NSString                      *settingsPath;
 @property NSString                      *XcodeCappIgnorePath;
-@property UInt64                        lastEventID;
+@property NSNumber                      *lastEventID;
 @property NSString                      *PBXModifierScriptPath;
 @property NSMutableDictionary           *projectPathsForSourcePaths;
 @property NSMutableArray                *ignoredPathPredicates;

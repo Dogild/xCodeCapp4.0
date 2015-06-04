@@ -56,8 +56,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
                                           XCCCappuccinoProjectBinPathsKey: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
                                           XCCCappuccinoObjjIncludePathKey: @"",
                                           XCCCappuccinoProjectNicknameKey: @"",
-                                          XCCCappuccinoProjectAutoStartListeningKey: @NO,
-                                          XCCCappuccinoProjectLastEventIDKey: [NSNumber numberWithInt:0]};
+                                          XCCCappuccinoProjectAutoStartListeningKey: @NO};
 }
 
 + (NSArray*)defaultEnvironmentPaths
@@ -151,7 +150,9 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     self.processObjj2ObjcSkeleton = [self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
     self.processNib2Cib           = [self->settings[XCCCappuccinoProcessNib2CibKey] boolValue];
     self.autoStartListening       = [self->settings[XCCCappuccinoProjectAutoStartListeningKey] boolValue];
-    self.lastEventID              = [self->settings[XCCCappuccinoProjectLastEventIDKey] longLongValue];
+    
+    if (self->settings[XCCCappuccinoProjectLastEventIDKey])
+        self.lastEventID = self->settings[XCCCappuccinoProjectLastEventIDKey];
 }
 
 - (void)_writeSettings
@@ -172,7 +173,9 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.processObjj2ObjcSkeleton];
     self->settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.processNib2Cib];
     self->settings[XCCCappuccinoProjectAutoStartListeningKey]    = [NSNumber numberWithBool:self.autoStartListening];
-    self->settings[XCCCappuccinoProjectLastEventIDKey]           = [NSNumber numberWithLongLong:self.lastEventID];
+    
+    if ([self.lastEventID boolValue])
+        self->settings[XCCCappuccinoProjectLastEventIDKey]           = self.lastEventID;
     
     [self _writeXcodeCappIgnoreFile];
     [self _writeSettings];
