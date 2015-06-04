@@ -73,7 +73,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     self->taskLauncher               = nil;
     self->operationQueue             = [[NSApp delegate] mainOperationQueue];
-    self->lastEventId                = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastEventId];
     self->projectPathFileDescriptor  = -1;
     
     self.operations                  = [NSMutableArray new];
@@ -174,13 +173,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     void *appPointer = (__bridge void *)self;
     FSEventStreamContext context = { 0, appPointer, NULL, NULL, NULL };
     CFTimeInterval latency = 2.0;
-    UInt64 eventID = self->lastEventId.unsignedLongLongValue;
     
     self->stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
                                       (__bridge CFArrayRef) pathsToWatch,
-                                      eventID,
+                                      self.cappuccinoProject.lastEventID.unsignedLongLongValue,
                                       latency,
                                       flags);
     
@@ -775,19 +773,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     FSEventStreamStop(self->stream);
 }
 
-- (void)_updateUserDefaultsWithLastFSEventID
-{
-    UInt64 eventID = FSEventStreamGetLatestEventId(self->stream);
-    
-    // Just in case the stream callback was never called...
-    if (eventID != 0)
-        self->lastEventId = [NSNumber numberWithUnsignedLongLong:eventID];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:self->lastEventId forKey:kDefaultXCCLastEventId];
-    [defaults synchronize];
-}
-
 - (void)_handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds
 {
     DDLogVerbose(@"FSEvents: %ld path(s)", paths.count);
@@ -997,6 +982,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self->operationQueue addOperation:operation];
 }
 
+- (void)_updateUserDefaultsWithLastFSEventID
+{
+    UInt64 lastEventId = FSEventStreamGetLatestEventId(self->stream);
+    
+    // Just in case the stream callback was never called...
+    if (lastEventId != 0)
+        self.cappuccinoProject.lastEventID = [NSNumber numberWithLongLong:lastEventId];
+}
 
 #pragma mark - Third Party Application Management
 

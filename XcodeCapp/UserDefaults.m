@@ -13,4 +13,3 @@ NSString * const kDefaultXCCCurrentManagedProjects  = @"XCCCurrentManagedProject
 NSString * const kDefaultXCCLogLevel                = @"XCCLogLevel";
 NSString * const kDefaultXCCLastSelectedProjectPath = @"XCCLastSelectedProjectPath";
 NSString * const kDefaultXCCMaxNumberOfOperations   = @"XCCMaxNumberOfOperations";
-NSString * const kDefaultXCCLastEventId             = @"XCCLastEventId";

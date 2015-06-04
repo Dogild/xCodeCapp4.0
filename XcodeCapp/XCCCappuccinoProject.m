@@ -28,6 +28,7 @@ NSString * const XCCCappuccinoProjectBinPathsKey            = @"XCCCappuccinoPro
 NSString * const XCCCappuccinoObjjIncludePathKey            = @"XCCCappuccinoObjjIncludePathKey";
 NSString * const XCCCappuccinoProjectNicknameKey            = @"XCCCappuccinoProjectNicknameKey";
 NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoProjectAutoStartListeningKey";
+NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoProjectLastEventIDKey";
 
 
 @implementation XCCCappuccinoProject
@@ -55,7 +56,8 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
                                           XCCCappuccinoProjectBinPathsKey: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
                                           XCCCappuccinoObjjIncludePathKey: @"",
                                           XCCCappuccinoProjectNicknameKey: @"",
-                                          XCCCappuccinoProjectAutoStartListeningKey: @NO};
+                                          XCCCappuccinoProjectAutoStartListeningKey: @NO,
+                                          XCCCappuccinoProjectLastEventIDKey: [NSNumber numberWithLongLong:kFSEventStreamEventIdSinceNow]};
 }
 
 + (NSArray*)defaultEnvironmentPaths
@@ -149,6 +151,7 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
     self.processObjj2ObjcSkeleton = [self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
     self.processNib2Cib           = [self->settings[XCCCappuccinoProcessNib2CibKey] boolValue];
     self.autoStartListening       = [self->settings[XCCCappuccinoProjectAutoStartListeningKey] boolValue];
+    self.lastEventID              = [NSNumber numberWithLongLong:[self->settings[XCCCappuccinoProjectLastEventIDKey] longLongValue]];
 }
 
 - (void)_writeSettings
@@ -169,6 +172,7 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
     self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.processObjj2ObjcSkeleton];
     self->settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.processNib2Cib];
     self->settings[XCCCappuccinoProjectAutoStartListeningKey]    = [NSNumber numberWithBool:self.autoStartListening];
+    self->settings[XCCCappuccinoProjectLastEventIDKey]           = self.lastEventID;
     
     [self _writeXcodeCappIgnoreFile];
     [self _writeSettings];

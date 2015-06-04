@@ -138,12 +138,8 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
         else if (isObjjFile)
         {
             [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
-            
-            if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusLoading && !isXibFile)
-            {
-                [self launchObjjCommandForPath:self.sourcePath];
-                [self launchCappLintCommandForPath:self.sourcePath];
-            }
+            [self launchObjjCommandForPath:self.sourcePath];
+            [self launchCappLintCommandForPath:self.sourcePath];
         }
         
         DDLogVerbose(@"Conversion ended: %@", self.sourcePath);

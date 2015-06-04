@@ -18,7 +18,6 @@
     XCCTaskLauncher             *taskLauncher;
     NSOperationQueue            *operationQueue;
     FSEventStreamRef            stream;
-    NSNumber                    *lastEventId;
     int                         projectPathFileDescriptor;
     NSMutableDictionary         *pendingPBXOperations;
     NSTimer                     *timerOperationQueueCompletionMonitor;
