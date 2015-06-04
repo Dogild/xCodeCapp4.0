@@ -13,7 +13,7 @@
 @class XCCOperationsViewController;
 @class XCCErrorsViewController;
 @class XCCSettingsViewController;
-
+@class XCCProjectsFolderDropView;
 
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 {
@@ -25,7 +25,7 @@
     IBOutlet NSButton                       *buttonSelectConfigurationTab;
     IBOutlet NSButton                       *buttonSelectErrorsTab;
     IBOutlet NSButton                       *buttonSelectOperationsTab;
-    IBOutlet NSBox                          *viewProjectMask;
+    IBOutlet XCCProjectsFolderDropView      *viewProjectMask;
 }
 
 @property IBOutlet XCCSettingsViewController    *settingsViewController;
@@ -35,8 +35,7 @@
 @property XCCCappuccinoProjectController        *currentCappuccinoProjectController;
 @property int                                   totalNumberOfErrors;
 
-- (XCCCappuccinoProjectController *)createNewCappuccinoProjectControllerFromPath:(NSString *)path;
-- (void)manageCappuccinoProjectController:(XCCCappuccinoProjectController *)aProjectPath;
+- (void)manageCappuccinoProjectControllerForPath:(NSString *)aProjectPath;
 - (void)unmanageCappuccinoProjectController:(XCCCappuccinoProjectController *)aController;
 - (void)reloadTotalNumberOfErrors;
 - (void)notifyCappuccinoControllersApplicationIsClosing;
