@@ -37,6 +37,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
                                  @".xcodecapp-ignore",
                                  @"*.git/*",
                                  @".cappenvs/*",
+                                 @"main.j",
                                  @"!Frameworks/Sources"
                                  ];
 }
