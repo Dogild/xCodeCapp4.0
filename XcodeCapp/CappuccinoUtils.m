@@ -29,14 +29,15 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     XCCDirectoriesToIgnorePredicate = [NSPredicate predicateWithFormat:@"SELF matches %@", XCCDirectoriesToIgnorePattern];
     
     XCCDefaultIgnoredPaths = @[
-                                 @"Frameworks*",
-                                 @"Build*",
-                                 @"*.xcodeproj*",
-                                 @".XcodeSupport*",
+                                 @"Frameworks/*",
+                                 @"Build/*",
+                                 @"*.xcodeproj/*",
+                                 @".XcodeSupport/*",
                                  @"NS_*.j",
                                  @".xcodecapp-ignore",
-                                 @".git*",
-                                 @".cappenvs*"
+                                 @"*.git/*",
+                                 @".cappenvs/*",
+                                 @"!Frameworks/Sources"
                                  ];
 }
 

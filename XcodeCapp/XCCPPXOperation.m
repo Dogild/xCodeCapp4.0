@@ -23,9 +23,10 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
 {
     if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {
-        self.PBXOperations          = [pbxOperations mutableCopy];
         self.operationDescription   = self.cappuccinoProject.projectPath;
         self.operationName          = @"Updating the Xcode project";
+
+        self->PBXOperations = [pbxOperations mutableCopy];
     }
     
     return self;
@@ -36,9 +37,6 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
 
 - (void)main
 {
-    if (self.isCancelled)
-        return;
-
     [self dispatchNotificationName:XCCPbxCreationDidStartNotification];
 
     DDLogVerbose(@"Pbx creation started: %@", self.cappuccinoProject.projectPath);
@@ -49,9 +47,9 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
         NSMutableArray *arguments           = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.PBXModifierScriptPath,
                                                @"update", self.cappuccinoProject.projectPath, nil];
 
-        for (NSString *action in self.PBXOperations)
+        for (NSString *action in self->PBXOperations)
         {
-            NSArray *paths = self.PBXOperations[action];
+            NSArray *paths = self->PBXOperations[action];
     
             if (paths.count)
             {
@@ -62,7 +60,7 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
             }
         }
         
-        if (!shouldLaunchTask)
+        if (shouldLaunchTask)
         {
             NSDictionary *result = [self->taskLauncher runTaskWithCommand:@"python" arguments:arguments returnType:kTaskReturnTypeStdError];
             

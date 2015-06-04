@@ -183,9 +183,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 - (void)main
 {
-    if (self.isCancelled)
-        return;
-
     DDLogVerbose(@"Conversion started: %@", self.sourcePath);
 
     [self dispatchNotificationName:XCCConversionDidStartNotification];

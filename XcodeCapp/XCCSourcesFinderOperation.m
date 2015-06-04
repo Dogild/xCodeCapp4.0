@@ -135,9 +135,6 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 - (void)_startSourceProcessingOperationForPath:(NSString *)projectSourcePath
 {
-    if (self.isCancelled)
-        return;
-
     XCCSourceProcessingOperation *op = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
                                                                                           taskLauncher:self->taskLauncher
                                                                                             sourcePath:projectSourcePath];
