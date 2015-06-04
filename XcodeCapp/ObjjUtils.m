@@ -38,7 +38,7 @@
     {
         NSDictionary *error = @{@"line" : @"0",
                                 @"message" : message,
-                                @"path" : [dictionary objectForKey:@"sourcePath"]};
+                                @"sourcePath" : [dictionary objectForKey:@"sourcePath"]};
         
         if (type == XCCObjjOperationErrorType)
             [operationErrors addObject:[XCCOperationError objjOperationErrorFromDictionary:error]];
