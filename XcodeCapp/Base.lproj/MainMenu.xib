@@ -914,7 +914,7 @@
                 <menuItem title="Clean Up All Errors" id="wyK-T2-mq1">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="cleanAllErrors:" target="923-ke-ovW" id="57P-DQ-D21"/>
+                        <action selector="cleanProjectErrors:" target="Pbk-dx-QfG" id="mS9-VU-zdx"/>
                     </connections>
                 </menuItem>
             </items>

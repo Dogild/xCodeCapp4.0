@@ -35,11 +35,10 @@
 @property XCCCappuccinoProjectController        *currentCappuccinoProjectController;
 @property int                                   totalNumberOfErrors;
 
-- (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
-- (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;
+- (XCCCappuccinoProjectController *)createNewCappuccinoProjectControllerFromPath:(NSString *)path;
+- (void)manageCappuccinoProjectController:(XCCCappuccinoProjectController *)aProjectPath;
+- (void)unmanageCappuccinoProjectController:(XCCCappuccinoProjectController *)aController;
 - (void)reloadTotalNumberOfErrors;
-- (void)reloadProjectsList;
-- (void)saveManagedProjectsToUserDefaults;
 - (void)notifyCappuccinoControllersApplicationIsClosing;
 
 - (IBAction)cleanAllErrors:(id)aSender;
