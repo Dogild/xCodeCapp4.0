@@ -84,7 +84,6 @@
 
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.nickname" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.XcodeCappIgnoreContent" options:NSKeyValueObservingOptionNew context:nil];
-    [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.XcodeCappIgnoreContent" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.processNib2Cib" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.processObjjWarnings" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.processCappLint" options:NSKeyValueObservingOptionNew context:nil];
