@@ -17,7 +17,6 @@ static NSDictionary* XCCDefaultInfoPlistConfigurations;
 
 // we replace the "/" by a weird unicode "/" in order to generate file names with "/" in .XcodeSupport. very clear huh?
 static NSString * const XCCSlashReplacement                 = @"∕";  // DIVISION SLASH, Unicode: U+2215
-static NSString * const XCCSupportFolderName                = @".XcodeSupport";
 
 
 NSString * const XCCCappuccinoProcessCappLintKey            = @"XCCCappuccinoProcessCappLintKey";
@@ -29,10 +28,6 @@ NSString * const XCCCappuccinoProjectBinPathsKey            = @"XCCCappuccinoPro
 NSString * const XCCCappuccinoObjjIncludePathKey            = @"XCCCappuccinoObjjIncludePathKey";
 NSString * const XCCCappuccinoProjectNicknameKey            = @"XCCCappuccinoProjectNicknameKey";
 NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoProjectAutoStartListeningKey";
-
-@interface XCCCappuccinoProject ()
-@property NSFileManager *fm;
-@end
 
 
 @implementation XCCCappuccinoProject
@@ -68,34 +63,37 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
     return XCCDefaultEnvironmentPaths;
 }
 
-
 #pragma mark - Init methods
 
 - (id)initWithPath:(NSString*)aPath
 {
-    self = [super init];
-    
-    if (self)
+    if (self = [super init])
     {
-        self.fm = [NSFileManager defaultManager];
-        self.projectPath = aPath;
-        self.XcodeCappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
-        self.name = [self.projectPath lastPathComponent];
-        self.PBXModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
+        self.name                   = [aPath lastPathComponent];
+        self.nickname               = self.name;
+        self.PBXModifierScriptPath  = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
         
-        NSString *projectName = [self.projectPath.lastPathComponent stringByAppendingString:@".xcodeproj"];
-        
-        self.XcodeProjectPath = [self.projectPath stringByAppendingPathComponent:projectName];
-        self.supportPath = [self.projectPath stringByAppendingPathComponent:XCCSupportFolderName];
-        self.infoPlistPath = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
-        
-        [self _loadSettings];
-        [self reloadXcodeCappIgnoreFile];
-        
-        [self reinitialize];
+        [self updateProjectPath:aPath];
     }
     
     return self;
+}
+
+- (void)updateProjectPath:(NSString *)path
+{
+    self.projectPath            = path;
+    self.XcodeProjectPath       = [self.projectPath stringByAppendingPathComponent:[[self.projectPath lastPathComponent] stringByAppendingString:@".xcodeproj"]];
+    self.XcodeCappIgnorePath    = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
+    self.supportPath            = [self.projectPath stringByAppendingPathComponent:@".XcodeSupport"];
+    self.settingsPath           = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
+    
+    if (self->settings)
+        [self saveSettings];
+    else
+        [self _loadSettings];
+    
+    [self reloadXcodeCappIgnoreFile];
+    [self reinitialize];
 }
 
 - (void)reinitialize
@@ -113,14 +111,14 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
     NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
     
     defaultSettings[XCCCappuccinoObjjIncludePathKey] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/"];
-    defaultSettings[XCCCappuccinoProjectNicknameKey] = [self.name copy];
+    defaultSettings[XCCCappuccinoProjectNicknameKey] = self.nickname;
     
     return defaultSettings;
 }
 
 - (void)_loadSettings
 {
-    self->settings = [[NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath] mutableCopy];
+    self->settings = [[NSDictionary dictionaryWithContentsOfFile:self.settingsPath] mutableCopy];
     
     if (!self->settings)
         self->settings = [[self _defaultSettings] mutableCopy];
@@ -157,7 +155,7 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
 {
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:self->settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
     
-    [data writeToFile:self.infoPlistPath atomically:YES];
+    [data writeToFile:self.settingsPath atomically:YES];
 }
 
 - (void)saveSettings
@@ -183,7 +181,7 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
 {
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:self->settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
     
-    [data writeToFile:self.infoPlistPath atomically:YES];
+    [data writeToFile:self.settingsPath atomically:YES];
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -227,7 +225,9 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
 {
     self.ignoredPathPredicates = [NSMutableArray new];
     
-    if ([self.fm fileExistsAtPath:self.XcodeCappIgnorePath])
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if ([fm fileExistsAtPath:self.XcodeCappIgnorePath])
         self.XcodeCappIgnoreContent = [NSString stringWithContentsOfFile:self.XcodeCappIgnorePath encoding:NSASCIIStringEncoding error:nil];
 }
 

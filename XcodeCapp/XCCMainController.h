@@ -45,6 +45,7 @@
 - (void)reloadCurrentProjectErrors;
 - (void)reloadCurrentProjectOperations;
 - (void)reloadTotalNumberOfErrors;
+- (void)reloadProjectsList;
 - (void)saveManagedProjectsToUserDefaults;
 - (void)notifyCappuccinoControllersApplicationIsClosing;
 

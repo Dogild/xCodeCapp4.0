@@ -229,11 +229,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _removeXcodeSupportDirectory];
     [self _removeCIBFiles];
-    
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if ([fm fileExistsAtPath:self.cappuccinoProject.XcodeProjectPath])
-        [fm removeItemAtPath:self.cappuccinoProject.XcodeProjectPath error:nil];
+    [self _removeXcodeProject];
     
     [self _reinitialize];
 }
@@ -437,6 +433,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     for (NSString *directory in directories)
     {
+        // if this is the project directory itself, it is handled by another method
+        if ([directory isEqualToString:self.cappuccinoProject.projectPath])
+            continue;
+        
         // If it doesn't exist, it's the old name. Nothing to do.
         // If it does exist, populate the project with the directory.
         
@@ -809,7 +809,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         {
             DDLogVerbose(@"Watched path changed: %@", path);
             
-            [self _handleDirectoryStructureModificationForPath:path];
+            [self _handleProjectPathChange:path];
             return;
         }
         
@@ -834,7 +834,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         if (needRescan)
         {
             // A rescan requires a reset
-            [self _handleDirectoryStructureModificationForPath:path];
+            [self _handleProjectPathChange:path];
             return;
         }
 
@@ -929,42 +929,40 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self _updateXcodeSupportFilesWithModifiedPaths:modifiedPaths];
 }
 
-- (void)_handleDirectoryStructureModificationForPath:(NSString *)path
+- (void)_handleProjectPathChange:(NSString *)path
 {
     // If a watched path changes we don't have much choice but to reset the project.
     [self _stopFSEventStream];
     
     if ([path isEqualToString:self.cappuccinoProject.projectPath])
     {
-        [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-        NSInteger response = NSRunAlertPanel(@"The project moved.", @"Your project directory has moved. Would you like to reload the project or unlink it from XcodeCapp?", @"Reload", @"Unlink", nil);
+        char newPathBuf[MAXPATHLEN + 1];
         
-        BOOL shouldUnlink = YES;
+        int result = fcntl(self->projectPathFileDescriptor, F_GETPATH, newPathBuf);
         
-        if (response == NSAlertDefaultReturn)
+        if (result == 0)
         {
-            char newPathBuf[MAXPATHLEN + 1];
+            [self _stopListeningToProject];
+            [self _cancelAllProjectRelatedOperations];
+
+            NSFileManager   *fm                  = [NSFileManager defaultManager];
+            NSString        *newPath             = [NSString stringWithUTF8String:newPathBuf];
+            NSString        *oldXcodeProjectPath = [newPath stringByAppendingPathComponent:self.cappuccinoProject.XcodeProjectPath.lastPathComponent];
             
-            int result = fcntl(self->projectPathFileDescriptor, F_GETPATH, newPathBuf);
+            [self.cappuccinoProject updateProjectPath:newPath];
+            [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
             
-            if (result == 0)
-            {
-                self.cappuccinoProject = [[XCCCappuccinoProject alloc] initWithPath:[NSString stringWithUTF8String:newPathBuf]];
-                shouldUnlink = NO;
-            }
-            else
-                NSRunAlertPanel(@"The project can’t be located.", @"I’m sorry Dave, but I don’t know where the project went. I’m afraid I have to quit now.", @"OK, HAL", nil, nil);
+            if ([fm fileExistsAtPath:oldXcodeProjectPath])
+                [fm removeItemAtPath:oldXcodeProjectPath error:nil];
+
+            [self _reinitialize];
+            [self switchProjectListeningStatus:self];
+            
+            [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
         }
-        
-        if (shouldUnlink)
-        {
-            [self.mainXcodeCappController removeCappuccinoProject:self];
-            return;
-        }
+        else
+            NSRunAlertPanel(@"The project can’t be located.", @"I’m sorry Dave, but I don’t know where the project went. I’m afraid I have to quit now.", @"OK, HAL", nil, nil);
     }
-    
-    [self resetProject:self];
-    [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
 }
 
 

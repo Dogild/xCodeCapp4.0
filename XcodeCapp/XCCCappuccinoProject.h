@@ -35,7 +35,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSString                      *name;
 @property NSString                      *nickname;
 @property NSString                      *XcodeProjectPath;
-@property NSString                      *infoPlistPath;
+@property NSString                      *settingsPath;
 @property NSString                      *XcodeCappIgnorePath;
 @property NSString                      *PBXModifierScriptPath;
 @property NSMutableDictionary           *projectPathsForSourcePaths;
@@ -57,6 +57,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)reinitialize;
+- (void)updateProjectPath:(NSString *)path;
 - (void)addOperationError:(XCCOperationError *)operationError;
 - (void)removeOperationError:(XCCOperationError *)operationError;
 - (void)removeAllOperationErrors;

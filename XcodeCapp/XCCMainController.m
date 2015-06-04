@@ -232,7 +232,7 @@
         [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
-    [self _reloadProjectsList];
+    [self reloadProjectsList];
     
     if (missingProjects.count)
     {
@@ -248,17 +248,6 @@
     }
     
     DDLogVerbose(@"Stop : managed  projects restored");
-}
-
-- (void)_reloadProjectsList
-{
-    [self->projectTableView reloadData];
-    
-    if (self.cappuccinoProjectControllers.count == 0)
-        [self _showProjectsTableMaskingView:YES];
-    else
-        [self _showProjectsTableMaskingView:NO];
-    
 }
 
 
@@ -285,7 +274,7 @@
     [aController cleanUpBeforeDeletion];
     [self.cappuccinoProjectControllers removeObjectAtIndex:selectedCappuccinoProject];
     
-    [self _reloadProjectsList];
+    [self reloadProjectsList];
     
     [self saveManagedProjectsToUserDefaults];
 }
@@ -303,7 +292,7 @@
     
     NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];
     
-    [self _reloadProjectsList];
+    [self reloadProjectsList];
     
     [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     [self->projectTableView scrollRowToVisible:index];
@@ -329,6 +318,17 @@
         [self _showOperationsTableMaskingView:YES];
     else
         [self _showOperationsTableMaskingView:NO];
+}
+
+- (void)reloadProjectsList
+{
+    [self->projectTableView reloadData];
+    
+    if (self.cappuccinoProjectControllers.count == 0)
+        [self _showProjectsTableMaskingView:YES];
+    else
+        [self _showProjectsTableMaskingView:NO];
+    
 }
 
 - (void)notifyCappuccinoControllersApplicationIsClosing
@@ -542,7 +542,7 @@
         NSIndexSet  *rowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData:rowData];
 
         [self.cappuccinoProjectControllers moveIndexes:rowIndexes toIndex:row];
-        [self _reloadProjectsList];
+        [self reloadProjectsList];
         [self saveManagedProjectsToUserDefaults];
         
         return YES;
