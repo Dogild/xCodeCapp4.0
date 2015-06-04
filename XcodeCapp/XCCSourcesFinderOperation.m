@@ -12,50 +12,33 @@
 
 NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSourceToProjectPathMappingNotification";
 
-@interface XCCSourcesFinderOperation ()
-@property XCCTaskLauncher   *taskLauncher;
-@property NSString          *projectPathToSearch;
-@end
-
 
 @implementation XCCSourcesFinderOperation
 
+
+#pragma mark - Initialization
+
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
 {
-    self = [super init];
-    
-    if (self)
+    if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {
-        self.cappuccinoProject      = aCappuccinoProject;
-        self.taskLauncher           = aTaskLauncher;
-        self.projectPathToSearch    = sourcePath;
+        self->searchPath = sourcePath;
     }
     
     return self;
 }
 
-- (void)main
-{
-    @try
-    {
-        [self findSourceFilesAtProjectPath:self.projectPathToSearch];
-    }
-    @catch (NSException *exception)
-    {
-        DDLogVerbose(@"Finding source files failed: %@", exception);
-    }
-}
 
-- (void)findSourceFilesAtProjectPath:(NSString *)aProjectPath
+#pragma mark - Utilities
+
+- (void)_findSourceFilesAtProjectPath:(NSString *)aProjectPath
 {
     if (self.isCancelled)
         return;
 
-    DDLogVerbose(@"-->findSourceFiles: %@", aProjectPath);
-    
-    NSError *error = NULL;
-    NSString *projectPath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:aProjectPath];
-    NSFileManager *fm = [NSFileManager defaultManager];
+    NSError         *error          = NULL;
+    NSString        *projectPath    = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:aProjectPath];
+    NSFileManager   *fm             = [NSFileManager defaultManager];
 
     NSArray *urls = [fm contentsOfDirectoryAtURL:[NSURL fileURLWithPath:projectPath.stringByResolvingSymlinksInPath]
                       includingPropertiesForKeys:@[NSURLIsDirectoryKey, NSURLIsSymbolicLinkKey]
@@ -65,20 +48,18 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     if (!urls)
         return;
 
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-
     for (NSURL *url in urls)
     {
         if (self.isCancelled)
             return;
-        
+
         NSString    *filename               = url.lastPathComponent;
         NSString    *projectRelativePath    = [aProjectPath stringByAppendingPathComponent:filename];
         NSString    *realPath               = url.path;
         NSURL       *resolvedURL            = url;
         NSNumber    *isDirectory;
         NSNumber    *isSymlink;
-        
+
         if ([CappuccinoUtils pathMatchesIgnoredPaths:realPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
             continue;
 
@@ -117,35 +98,31 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
                 {
                     DDLogVerbose(@"symlinked directory: %@ -> %@", projectRelativePath, realPath);
 
-                    NSDictionary *info =
-                          @{
-                                @"cappuccinoProject": self.cappuccinoProject,
-                                @"sourcePath":realPath,
-                                @"projectPath":fullProjectPath
-                           };
+                    NSMutableDictionary *info   = [self operationInformations];
+                    info[@"sourcePath"]         = realPath;
+                    info[@"projectPath"]        = fullProjectPath;
 
-                    if (self.isCancelled)
-                        return;
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [center postNotificationName:XCCNeedSourceToProjectPathMappingNotification object:self userInfo:info];
-                    });
+                    [self dispatchNotificationName:XCCNeedSourceToProjectPathMappingNotification userInfo:info];
                 }
                 else
                     DDLogVerbose(@"ignored symlinked directory: %@", projectRelativePath);
             }
 
-            [self findSourceFilesAtProjectPath:projectRelativePath];
+            DDLogVerbose(@"found directory. checking for source files: %@", filename);
+
+            [self _findSourceFilesAtProjectPath:projectRelativePath];
             continue;
         }
 
         if (self.isCancelled)
             return;
-        
+
         NSString *projectSourcePath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:projectRelativePath];
-        
+
         if ([CappuccinoUtils isObjjFile:filename] || [CappuccinoUtils isXibFile:filename])
         {
+            DDLogVerbose(@"found source file: %@", filename);
+
             NSString *processedPath;
 
             if ([CappuccinoUtils isObjjFile:filename])
@@ -154,21 +131,36 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
                 processedPath = [projectSourcePath.stringByDeletingPathExtension stringByAppendingPathExtension:@"cib"];
 
             if (![fm fileExistsAtPath:processedPath])
-                [self createProcessingOperationForProjectSourcePath:projectSourcePath];
+                [self _startSourceProcessingOperationForPath:projectSourcePath];
         }
     }
-
-    DDLogVerbose(@"<--findSourceFiles: %@", aProjectPath);
 }
 
-- (void)createProcessingOperationForProjectSourcePath:(NSString *)projectSourcePath
+- (void)_startSourceProcessingOperationForPath:(NSString *)projectSourcePath
 {
     if (self.isCancelled)
         return;
 
-    XCCSourceProcessingOperation *op = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self.taskLauncher sourcePath:projectSourcePath];
+    XCCSourceProcessingOperation *op = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
+                                                                                          taskLauncher:self->taskLauncher
+                                                                                            sourcePath:projectSourcePath];
     
     [[NSOperationQueue currentQueue] addOperation:op];
+}
+
+
+#pragma mark - NSOperation API
+
+- (void)main
+{
+    @try
+    {
+        [self _findSourceFilesAtProjectPath:self->searchPath];
+    }
+    @catch (NSException *exception)
+    {
+        DDLogVerbose(@"Finding source files failed: %@", exception);
+    }
 }
 
 @end

@@ -8,6 +8,36 @@
 
 #import "XCCAbstractOperation.h"
 
+
 @implementation XCCAbstractOperation
+
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher
+{
+    if (self = [super init])
+    {
+        self.cappuccinoProject  = aCappuccinoProject;
+        self->taskLauncher      = aTaskLauncher;
+    }
+
+    return self;
+}
+
+- (NSMutableDictionary *)operationInformations
+{
+    return [@{@"cappuccinoProject": self.cappuccinoProject} mutableCopy];
+}
+
+- (void)dispatchNotificationName:(NSString *)notificationName
+{
+    [self dispatchNotificationName:notificationName userInfo:[self operationInformations]];
+}
+
+- (void)dispatchNotificationName:(NSString *)notificationName userInfo:(id)userInfo
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
+    });
+}
+
 
 @end

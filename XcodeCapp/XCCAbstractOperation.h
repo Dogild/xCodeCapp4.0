@@ -13,7 +13,17 @@
 @class XCCCappuccinoProject;
 
 @interface XCCAbstractOperation : NSOperation
+{
+    XCCTaskLauncher             *taskLauncher;
+}
 
-@property XCCCappuccinoProject *cappuccinoProject;
+@property NSString              *operationName;
+@property NSString              *operationDescription;
+@property XCCCappuccinoProject  *cappuccinoProject;
+
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher;
+- (void)dispatchNotificationName:(NSString *)notificationName userInfo:(id)userInfo;
+- (void)dispatchNotificationName:(NSString *)notificationName;
+- (NSMutableDictionary *)operationInformations;
 
 @end

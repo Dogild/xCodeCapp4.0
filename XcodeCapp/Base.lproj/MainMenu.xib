@@ -1029,7 +1029,7 @@
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                         <connections>
-                                            <binding destination="fad-TR-Rcn" name="value" keyPath="arrangedObjects.name" id="Xir-xo-RDV">
+                                            <binding destination="fad-TR-Rcn" name="value" keyPath="arrangedObjects.name" id="dkQ-j0-Of7">
                                                 <dictionary key="options">
                                                     <bool key="NSCreatesSortDescriptor" value="NO"/>
                                                     <bool key="NSValidatesImmediately" value="YES"/>

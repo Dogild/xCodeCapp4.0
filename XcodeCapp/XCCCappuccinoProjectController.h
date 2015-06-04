@@ -21,6 +21,7 @@
     int                         projectPathFileDescriptor;
     NSMutableDictionary         *pendingPBXOperations;
     NSTimer                     *timerOperationQueueCompletionMonitor;
+    NSMutableDictionary         *sourceProcessingOperations;
 }
 
 @property NSInteger             operationsTotal;

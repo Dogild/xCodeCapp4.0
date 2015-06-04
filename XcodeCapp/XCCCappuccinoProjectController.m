@@ -57,8 +57,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kDefaultXCCMaxNumberOfOperations options:NSKeyValueObservingOptionNew context:NULL];
         
-        self.cappuccinoProject          = [[XCCCappuccinoProject alloc] initWithPath:aPath];
-        self.mainXcodeCappController    = aController;
+        self.cappuccinoProject              = [[XCCCappuccinoProject alloc] initWithPath:aPath];
+        self.mainXcodeCappController        = aController;
+        self->sourceProcessingOperations    = [NSMutableDictionary new];
         
         [self _reinitialize];
         
@@ -184,11 +185,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     FSEventStreamContext context = { 0, appPointer, NULL, NULL, NULL };
     CFTimeInterval latency = 2.0;
     
+    if (!self.cappuccinoProject.lastEventID)
+        self.cappuccinoProject.lastEventID = kFSEventStreamEventIdSinceNow;
+
     self->stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
                                       (__bridge CFArrayRef) pathsToWatch,
-                                      kFSEventStreamEventIdSinceNow,//self.cappuccinoProject.lastEventID.unsignedLongLongValue,
+                                      kFSEventStreamEventIdSinceNow,//self.cappuccinoProject.lastEventID,
                                       latency,
                                       flags);
     
@@ -235,7 +239,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _stopListeningToProject];
     [self _cancelAllProjectRelatedOperations];
     [self _removeXcodeSupportDirectory];
-    [self _removeCIBFiles];
     [self _removeXcodeProject];
     [self _reinitialize];
 }
@@ -329,35 +332,18 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
 }
 
-- (void)_removeCIBFiles
-{
-    NSFileManager   *fm             = [NSFileManager defaultManager];
-    NSString        *resourcesPath  = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:@"Resources"];
-    NSArray         *paths          = [fm contentsOfDirectoryAtPath:resourcesPath error:nil];
-    
-    for (NSString *path in paths)
-        if ([CappuccinoUtils isCibFile:path])
-            [fm removeItemAtPath:[resourcesPath stringByAppendingPathComponent:path] error:nil];
-}
-
 - (void)_populateXcodeSupportDirectory
 {
-    // Populate with all non-framework code
     [self _populateXcodeSupportDirectoryWithProjectRelativePath:@""];
-    
-    // Populate with any user source debug frameworks
-    [self _populateXcodeSupportDirectoryWithProjectRelativePath:@"Frameworks/Debug"];
-    
-    // Populate with any source frameworks
-    [self _populateXcodeSupportDirectoryWithProjectRelativePath:@"Frameworks/Source"];
-    
-    // Populate resources
-    [self _populateXcodeSupportDirectoryWithProjectRelativePath:@"Resources"];
+//    [self _populateXcodeSupportDirectoryWithProjectRelativePath:self.cappuccinoProject.objjIncludePath];
+//    [self _populateXcodeSupportDirectoryWithProjectRelativePath:@"Resources"];
 }
 
 - (void)_populateXcodeSupportDirectoryWithProjectRelativePath:(NSString *)path
 {
-    XCCSourcesFinderOperation *op = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self->taskLauncher sourcePath:path];
+    XCCSourcesFinderOperation *op = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
+                                                                                    taskLauncher:self->taskLauncher
+                                                                                      sourcePath:path];
     [self->operationQueue addOperation:op];
 }
 
@@ -398,9 +384,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateXcodeSupportFilesWithModifiedPaths:(NSArray *)modifiedPaths
 {
-    // Make sure we don't get any more events while handling these events
-    [self _stopFSEventStream];
-    
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
     
     DDLogVerbose(@"Modified files: %@", modifiedPaths);
@@ -413,6 +396,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         if (![fm fileExistsAtPath:path])
             continue;
+
+        [[self _sourceProcessingOperationsForPath:path] makeObjectsPerformSelector:@selector(cancel)];
         
         XCCSourceProcessingOperation *op = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
                                                                                               taskLauncher:self->taskLauncher
@@ -426,9 +411,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateXcodeSupportFilesWithRenamedDirectories:(NSArray *)directories
 {
-    // Make sure we don't get any more events while handling these events
-    [self _stopFSEventStream];
-    
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
     
     DDLogVerbose(@"Renamed directories: %@", directories);
@@ -680,9 +662,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     else
     {
         self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
-        
-        // If the event stream was temporarily stopped, restart it
-        [self _startFSEventStream];
     }
 }
 
@@ -707,11 +686,35 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self _reinitializeOperationsCounters];
 }
 
+- (void)_registerSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
+{
+    if (![self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath])
+        [self->sourceProcessingOperations setObject:[NSMutableArray new] forKey:sourceOperation.sourcePath];
+
+    [[self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath] addObject:sourceOperation];
+}
+
+- (void)_unregisterSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
+{
+    [[self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath] removeObject:sourceOperation];
+
+    if (![self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath])
+        [self->sourceProcessingOperations removeObjectForKey:sourceOperation.sourcePath];
+}
+
+- (NSArray *)_sourceProcessingOperationsForPath:(NSString *)path
+{
+    return [self->sourceProcessingOperations objectForKey:path];
+}
+
 - (void)_addOperation:(NSOperation *)anOperation
 {
     [self.operations addObject:anOperation];
     [self.mainXcodeCappController reloadCurrentProjectOperations];
     
+    if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
+        [self _registerSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
+
     if (self.operationsTotal == 0)
         self.operationsTotal++;
     
@@ -724,12 +727,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.operations removeObject:anOperation];
     [self.mainXcodeCappController reloadCurrentProjectOperations];
     
+    if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
+        [self _unregisterSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
+
     self.operationsComplete++;
     [self _updateOperationsProgress];
 }
 
 - (void)_cancelAllProjectRelatedOperations
 {
+    self->sourceProcessingOperations = [NSMutableDictionary new];
     [[self _projectRelatedOperations] makeObjectsPerformSelector:@selector(cancel)];
 }
 
@@ -839,8 +846,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         BOOL created            = (flags & kFSEventStreamEventFlagItemCreated)      != 0;
         BOOL removed            = (flags & kFSEventStreamEventFlagItemRemoved)      != 0;
         
-        DDLogVerbose(@"FSEvent: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
-        
         if (isDir)
         {
             /*
@@ -867,7 +872,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                  (created || modified || renamed || removed || inodeMetaModified) &&
                  [CappuccinoUtils isSourceFile:path cappuccinoProject:self.cappuccinoProject])
         {
-            DDLogVerbose(@"FSEvent accepted");
+            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
             
             if ([fm fileExistsAtPath:path])
             {
@@ -893,7 +898,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         }
         else if ((isFile || isSymlink) && (renamed || removed) && !(modified || created) && [CappuccinoUtils isCibFile:path])
         {
-            DDLogVerbose(@"FSEvent accepted");
+            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
             
             // If a cib is deleted, mark its xib as needing update so the cib is regenerated
             NSString *xibPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"xib"];
@@ -908,8 +913,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                  (created || modified || renamed || removed || inodeMetaModified) &&
                  [CappuccinoUtils isXCCIgnoreFile:path cappuccinoProject:self.cappuccinoProject])
         {
-            DDLogVerbose(@"FSEvent accepted");
-            
+            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
+
             [self.cappuccinoProject reloadXcodeCappIgnoreFile];
         }
     }
@@ -923,9 +928,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_handleProjectPathChange:(NSString *)path
 {
-    // If a watched path changes we don't have much choice but to reset the project.
-    [self _stopFSEventStream];
-    
     if (![path isEqualToString:self.cappuccinoProject.projectPath])
         return;
 
@@ -985,7 +987,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     XCCPPXOperation *operation = [[XCCPPXOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
                                                                                        taskLauncher:self->taskLauncher
-                                                                                      pbxOperations:self->pendingPBXOperations];
+                                                                                      PBXOperations:self->pendingPBXOperations];
     
     [self->operationQueue addOperation:operation];
 }
@@ -996,7 +998,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     // Just in case the stream callback was never called...
     if (lastEventId != 0)
-        self.cappuccinoProject.lastEventID = [NSNumber numberWithLongLong:lastEventId];
+        self.cappuccinoProject.lastEventID = lastEventId;
 }
 
 #pragma mark - Third Party Application Management
@@ -1109,7 +1111,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _cancelAllProjectRelatedOperations];
     [self.cappuccinoProject saveSettings];
-    
+
     [self _stopListeningToProject];
     [self _reinitializeTaskLauncher];
     [self _startListeningToProject];

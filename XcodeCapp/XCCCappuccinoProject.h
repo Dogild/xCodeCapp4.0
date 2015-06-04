@@ -23,7 +23,7 @@ typedef int XCCCappuccinoProjectStatus;
 
 @interface XCCCappuccinoProject : NSObject
 {
-    NSMutableDictionary           *settings;
+    NSMutableDictionary             *settings;
 }
 
 extern NSString * const XCCCompatibilityVersionKey;
@@ -37,7 +37,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSString                      *XcodeProjectPath;
 @property NSString                      *settingsPath;
 @property NSString                      *XcodeCappIgnorePath;
-@property NSNumber                      *lastEventID;
+@property UInt64                        lastEventID;
 @property NSString                      *PBXModifierScriptPath;
 @property NSMutableDictionary           *projectPathsForSourcePaths;
 @property NSMutableArray                *ignoredPathPredicates;

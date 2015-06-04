@@ -14,7 +14,11 @@
 
 extern NSString * const XCCNeedSourceToProjectPathMappingNotification;
 
+
 @interface XCCSourcesFinderOperation : XCCAbstractOperation
+{
+    NSString *searchPath;
+}
 
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)cappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath;
 

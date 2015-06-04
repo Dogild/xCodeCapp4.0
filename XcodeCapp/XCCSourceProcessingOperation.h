@@ -27,15 +27,16 @@ extern NSString * const XCCObjjDidGenerateErrorNotification;
 extern NSString * const XCCCappLintDidGenerateErrorNotification;
 extern NSString * const XCCObjj2ObjcSkeletonDidGenerateErrorNotification;
 extern NSString * const XCCNib2CibDidGenerateErrorNotification;
-extern NSString * const XCCConversionDidGenerateCancelNotification;
 
 
 @interface XCCSourceProcessingOperation : XCCAbstractOperation
+{
+    NSTask          *task;
+}
 
-@property NSTask                *task;
+@property NSString  *sourcePath;
 
-// sourcePath should be a path within the project (no resolved symlinks)
+
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath;
-- (NSString *)operationName;
-- (NSString *)operationDescription;
+
 @end

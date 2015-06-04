@@ -14,61 +14,44 @@ NSString * const XCCPbxCreationDidStartNotification = @"XCCPbxCreationDidStartNo
 NSString * const XCCPbxCreationGenerateErrorNotification = @"XCCPbxCreationDidGenerateErrorNotification";
 NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotification";
 
-@interface XCCPPXOperation ()
-
-@property XCCTaskLauncher *taskLauncher;
-@property NSMutableDictionary *pbxOperations;
-@end
 
 @implementation XCCPPXOperation
 
+#pragma mark - Initialization
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher pbxOperations:(NSMutableDictionary *)pbxOperations
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher PBXOperations:(NSMutableDictionary *)pbxOperations
 {
-    self = [super init];
-    
-    if (self)
+    if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {
-        self.taskLauncher = aTaskLauncher;
-        self.cappuccinoProject = aCappuccinoProject;
-        self.pbxOperations = [pbxOperations mutableCopy];
+        self.PBXOperations          = [pbxOperations mutableCopy];
+        self.operationDescription   = self.cappuccinoProject.projectPath;
+        self.operationName          = @"Updating the Xcode project";
     }
     
     return self;
 }
 
-- (NSString*)operationName
-{
-    return @"Updating the pbx file of the project";
-}
 
-- (NSString*)operationDescription
-{
-    return self.cappuccinoProject.projectPath;
-}
+#pragma mark - NSOperation API
 
 - (void)main
 {
     if (self.isCancelled)
         return;
-    
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    NSDictionary *info = @{@"cappuccinoProject":self.cappuccinoProject};
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [center postNotificationName:XCCPbxCreationDidStartNotification object:self userInfo:info];
-    });
+
+    [self dispatchNotificationName:XCCPbxCreationDidStartNotification];
+
     DDLogVerbose(@"Pbx creation started: %@", self.cappuccinoProject.projectPath);
     
     @try
     {
-        NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.PBXModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
-        
-        BOOL shouldLaunchTask = NO;
-    
-        for (NSString *action in self.pbxOperations)
+        BOOL            shouldLaunchTask    = NO;
+        NSMutableArray *arguments           = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.PBXModifierScriptPath,
+                                               @"update", self.cappuccinoProject.projectPath, nil];
+
+        for (NSString *action in self.PBXOperations)
         {
-            NSArray *paths = self.pbxOperations[action];
+            NSArray *paths = self.PBXOperations[action];
     
             if (paths.count)
             {
@@ -79,35 +62,28 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
             }
         }
         
-        if (shouldLaunchTask)
+        if (!shouldLaunchTask)
         {
-            NSDictionary *result = [self.taskLauncher runTaskWithCommand:@"python" arguments:arguments returnType:kTaskReturnTypeStdError];
+            NSDictionary *result = [self->taskLauncher runTaskWithCommand:@"python" arguments:arguments returnType:kTaskReturnTypeStdError];
             
             if ([result[@"status"] intValue] != 0)
             {
-                NSMutableDictionary *errorInfo = [info mutableCopy];
-                errorInfo[@"errors"] = result[@"message"];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [center postNotificationName:XCCPbxCreationGenerateErrorNotification object:self userInfo:errorInfo];
-                });
+                NSMutableDictionary *info  = [self operationInformations];
+                info[@"errors"]            = result[@"message"];
+
+                [self dispatchNotificationName:XCCPbxCreationGenerateErrorNotification userInfo:info];
             }
         }
     }
     @catch (NSException *exception)
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [center postNotificationName:XCCPbxCreationGenerateErrorNotification object:self userInfo:info];
-        });
-        
+        [self dispatchNotificationName:XCCPbxCreationGenerateErrorNotification];
         DDLogVerbose(@"Pbx creation failed: %@", exception);
     }
     @finally
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [center postNotificationName:XCCPbxCreationDidEndNotification object:self userInfo:info];
-        });
-        
+        [self dispatchNotificationName:XCCPbxCreationDidEndNotification];
+
         DDLogVerbose(@"Pbx creation ended: %@", self.cappuccinoProject.projectPath);
     }
 }
