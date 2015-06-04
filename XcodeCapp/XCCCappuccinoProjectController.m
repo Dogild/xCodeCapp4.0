@@ -101,7 +101,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.taskLauncher               = nil;
     self.operations                 = [NSMutableArray new];
     self.operationQueue             = [[NSApp delegate] mainOperationQueue];
-    self.lastEventId                = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCLastEventId];
     self.projectPathFileDescriptor  = -1;
 
     [self.operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
@@ -208,13 +207,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     void *appPointer = (__bridge void *)self;
     FSEventStreamContext context = { 0, appPointer, NULL, NULL, NULL };
     CFTimeInterval latency = 2.0;
-    UInt64 lastEventId = self.lastEventId.unsignedLongLongValue;
-    
+        
     self.stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
                                       (__bridge CFArrayRef) pathsToWatch,
-                                      lastEventId,
+                                      self.cappuccinoProject.lastEventID.unsignedLongLongValue,
                                       latency,
                                       flags);
     
@@ -911,11 +909,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     // Just in case the stream callback was never called...
     if (lastEventId != 0)
-        self.lastEventId = [NSNumber numberWithUnsignedLongLong:lastEventId];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:self.lastEventId forKey:kDefaultXCCLastEventId];
-    [defaults synchronize];
+        self.cappuccinoProject.lastEventID = [NSNumber numberWithLongLong:lastEventId];
 }
 
 - (void)_operationsDidFinish

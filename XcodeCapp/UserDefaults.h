@@ -18,8 +18,6 @@ extern NSString * const kDefaultXCCLogLevel;
 
 extern NSString * const kDefaultXCCLastSelectedProjectPath;
 
-extern NSString * const kDefaultXCCLastEventId;
-
 extern NSString * const kDefaultXCCMaxNumberOfOperations;
 
 #endif
