@@ -11,9 +11,6 @@
 #import "XCCCappuccinoProject.h"
 #import "XCCOperationDataView.h"
 
-@interface XCCOperationsViewController ()
-
-@end
 
 @implementation XCCOperationsViewController
 

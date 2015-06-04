@@ -25,6 +25,7 @@
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
 #import "XCCOperationsViewController.h"
+#import "XCCErrorsViewController.h"
 
 enum XCCLineSpecifier {
     kLineSpecifierNone,
@@ -377,12 +378,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [fm removeItemAtPath:shadowImplementationPath error:nil];
         
         [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:sourcePath errorType:XCCDefaultOperationErrorType];
-        [self.mainXcodeCappController reloadTotalNumberOfErrors];
+        [self.mainXcodeCappController.errorsViewController reload];
         
         [self _registerPathToRemoveFromPBX:sourcePath];
     }
     
-    [self.mainXcodeCappController reloadCurrentProjectErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
 }
 
 - (void)_updateXcodeSupportFilesWithModifiedPaths:(NSArray *)modifiedPaths
@@ -522,7 +523,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjj2ObjcSkeletonOperationErrorType];
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
 }
 
 - (void)_didReceiveObjjDidStartNotification:(NSNotification *)note
@@ -531,7 +532,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjjOperationErrorType];
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
 }
 
 - (void)_didReceiveNib2CibDidStartNotifcation:(NSNotification *)note
@@ -540,7 +541,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCNib2CibOperationErrorType];
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
 }
 
 - (void)_didReceiveCappLintDidStartNotification:(NSNotification *)note
@@ -549,7 +550,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCCappLintOperationErrorType];
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
 }
 
 - (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
@@ -563,7 +564,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self _registerPathToAddInPBX:path];
     
-    [self.mainXcodeCappController reloadCurrentProjectErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
 }
 
 - (void)_didReceiveConversionDidGenerateErrorNotification:(NSNotification *)note
@@ -572,7 +573,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Unknown Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -586,7 +587,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
         [self.cappuccinoProject addOperationError:operationError];
     
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -600,7 +601,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
     
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -613,7 +614,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self.mainXcodeCappController.errorsViewController reload];
     
     [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
                                  message:[NSString stringWithFormat:@"nib2cib Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
@@ -1153,12 +1154,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 //    [operation cancel];
 }
 
-- (IBAction)cleanProjectErrors:(id)aSender
-{
-    [self.cappuccinoProject removeAllOperationErrors];
-    [self.mainXcodeCappController reloadCurrentProjectErrors];
-}
-
 - (IBAction)resetProject:(id)aSender
 {
     [self _resetProject];
@@ -1267,64 +1262,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self _stopListeningToProject];
         self.cappuccinoProject.autoStartListening = NO;
     }
-}
-
-#pragma mark - outlineView data source and delegate
-
-- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
-{
-    if (!item)
-        return [[self.cappuccinoProject.errors allKeys] count];
-    
-    return [[self.cappuccinoProject.errors objectForKey:item] count];
-}
-
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
-{
-    return ![item isKindOfClass:[XCCOperationError class]];
-}
-
-- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
-{
-    if (!item)
-        return [[self.cappuccinoProject.errors allKeys] objectAtIndex:index];
-    
-    return [[self.cappuccinoProject.errors objectForKey:item] objectAtIndex:index];
-}
-
-- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
-{
-    return item;
-}
-
-- (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item
-{
-    if ([item isKindOfClass:[XCCOperationError class]])
-    {
-        XCCOperationErrorDataView *dataView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
-        dataView.errorOperation = item;
-        return dataView;
-    }
-    
-    XCCOperationErrorHeaderDataView *dataView = [outlineView makeViewWithIdentifier:@"OperationErrorHeaderCell" owner:nil];
-    
-    dataView.fileName = [[item stringByReplacingOccurrencesOfString:self.cappuccinoProject.projectPath withString:@""] substringFromIndex:1];
-    return dataView;
-}
-
-- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(XCCOperationError *)item
-{
-    if ([item isKindOfClass:[XCCOperationError class]])
-    {
-        CGRect frame = [item.message boundingRectWithSize:CGSizeMake([outlineView frame].size.width, CGFLOAT_MAX)
-                                                  options:NSStringDrawingUsesLineFragmentOrigin
-                                               attributes:@{ NSFontAttributeName:[NSFont fontWithName:@"Menlo" size:11] }];
-        
-        return frame.size.height + 38.0;
-    }
-    
-    else
-        return 20.0;
 }
 
 @end

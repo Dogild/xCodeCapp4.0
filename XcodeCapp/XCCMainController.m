@@ -13,6 +13,7 @@
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
 #import "XCCOperationsViewController.h"
+#import "XCCErrorsViewController.h"
 
 
 @implementation XCCMainController
@@ -23,7 +24,6 @@
 {
     [self _showMaskingView:YES];
     [self _showProjectsTableMaskingView:YES];
-    [self _showErrorsTableMaskingView:YES];
         
     [self _restoreManagedProjectsFromUserDefaults];
     [self _selectLastProjectSelected];
@@ -33,7 +33,7 @@
     [self->tabViewProject addTabViewItem:itemConfiguration];
     
     NSTabViewItem *itemErrors = [[NSTabViewItem alloc] initWithIdentifier:@"errors"];
-    [itemErrors setView:self->viewTabErrors];
+    [itemErrors setView:self.errorsViewController.view];
     [self->tabViewProject addTabViewItem:itemErrors];
     
     NSTabViewItem *itemOperations = [[NSTabViewItem alloc] initWithIdentifier:@"operations"];
@@ -115,29 +115,6 @@
         [self->projectViewContainer setHidden:NO];
         
         [self->maskingView removeFromSuperview];
-    }
-}
-
-- (void)_showErrorsTableMaskingView:(BOOL)shouldShow
-{
-    if (shouldShow)
-    {
-        if (self->viewErrorsMask.superview)
-            return;
-        
-        [self->errorOutlineView setHidden:YES];
-        
-        self->viewErrorsMask.frame = [self->viewTabErrors bounds];
-        [self->viewTabErrors addSubview:self->viewErrorsMask positioned:NSWindowAbove relativeTo:nil];
-    }
-    else
-    {
-        if (!self->viewErrorsMask.superview)
-            return;
-        
-        [self->errorOutlineView setHidden:NO];
-        
-        [self->viewErrorsMask removeFromSuperview];
     }
 }
 
@@ -279,16 +256,6 @@
     [self saveManagedProjectsToUserDefaults];
 }
 
-- (void)reloadCurrentProjectErrors
-{
-    [self->errorOutlineView reloadData];
-    [self->errorOutlineView expandItem:nil expandChildren:YES];
-    
-    if (!self.currentCappuccinoProjectController.cappuccinoProject.errors.count)
-        [self _showErrorsTableMaskingView:YES];
-    else
-        [self _showErrorsTableMaskingView:NO];
-}
 
 - (void)reloadProjectsList
 {
@@ -426,6 +393,7 @@
     {
         self.currentCappuccinoProjectController = nil;
         self.operationsViewController.cappuccinoProjectController = nil;
+        self.errorsViewController.cappuccinoProjectController = nil;
 
         [self _showMaskingView:YES];
         [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kDefaultXCCLastSelectedProjectPath];
@@ -433,15 +401,12 @@
     }
     
     self.currentCappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
+
     self.operationsViewController.cappuccinoProjectController = self.currentCappuccinoProjectController;
     [self.operationsViewController reload];
-    
-    [self->errorOutlineView setDelegate:self.currentCappuccinoProjectController];
-    [self->errorOutlineView setDataSource:self.currentCappuccinoProjectController];
-    [self->errorOutlineView setDoubleAction:@selector(openRelatedObjjFileInEditor:)];
-    [self->errorOutlineView setTarget:self.currentCappuccinoProjectController];
-    [self reloadCurrentProjectErrors];
-    
+
+    self.errorsViewController.cappuccinoProjectController = self.currentCappuccinoProjectController;
+    [self.errorsViewController reload];
     
     [self _addArrayControllerObserver];
     

@@ -12,34 +12,33 @@
 @class XCCCappuccinoProject;
 @class XCCCappuccinoProjectController;
 @class XCCOperationsViewController;
+@class XCCErrorsViewController;
+
 
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 {
     IBOutlet NSBox                          *maskingView;
     IBOutlet NSSplitView                    *splitView;
     IBOutlet NSTableView                    *projectTableView;
-    IBOutlet NSOutlineView                  *errorOutlineView;
     IBOutlet NSView                         *projectViewContainer;
     IBOutlet NSArrayController              *includePathArrayController;
     IBOutlet NSTabView                      *tabViewProject;
     IBOutlet NSButton                       *buttonSelectConfigurationTab;
     IBOutlet NSButton                       *buttonSelectErrorsTab;
     IBOutlet NSButton                       *buttonSelectOperationsTab;
-    IBOutlet NSBox                          *viewErrorsMask;
     IBOutlet NSBox                          *viewProjectMask;
     IBOutlet NSView                         *viewTabConfiguration;
-    IBOutlet NSView                         *viewTabErrors;
     BOOL                                    isObserving;
 }
 
 @property IBOutlet XCCOperationsViewController  *operationsViewController;
+@property IBOutlet XCCErrorsViewController      *errorsViewController;
 @property NSMutableArray                        *cappuccinoProjectControllers;
 @property XCCCappuccinoProjectController        *currentCappuccinoProjectController;
 @property int                                   totalNumberOfErrors;
 
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
 - (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;
-- (void)reloadCurrentProjectErrors;
 - (void)reloadTotalNumberOfErrors;
 - (void)reloadProjectsList;
 - (void)saveManagedProjectsToUserDefaults;

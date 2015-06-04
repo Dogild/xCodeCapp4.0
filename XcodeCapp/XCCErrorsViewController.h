@@ -1,5 +1,5 @@
 //
-//  XCCOperationsViewController.h
+//  XCCErrorsViewController.h
 //  XcodeCapp
 //
 //  Created by Antoine Mercadal on 6/4/15.
@@ -11,9 +11,9 @@
 @class XCCCappuccinoProjectController;
 
 
-@interface XCCOperationsViewController : NSViewController <NSTableViewDataSource, NSTableViewDelegate>
+@interface XCCErrorsViewController : NSViewController
 {
-    IBOutlet NSTableView                    *operationTableView;
+    IBOutlet NSOutlineView                  *errorOutlineView;
     IBOutlet NSBox                          *maskingView;
 }
 
