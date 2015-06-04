@@ -8,15 +8,15 @@
         <customObject id="-2" userLabel="File's Owner" customClass="XCCErrorsViewController">
             <connections>
                 <outlet property="errorOutlineView" destination="Wcz-on-5sJ" id="5Tx-At-ehM"/>
-                <outlet property="maskingView" destination="zzu-5V-jxy" id="Bgy-nb-86F"/>
-                <outlet property="view" destination="bBp-Me-gFz" id="ewh-51-Tos"/>
+                <outlet property="maskingView" destination="zzu-5V-jxy" id="o44-z3-rGK"/>
+                <outlet property="view" destination="bBp-Me-gFz" id="TMO-Xg-NHa"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="bBp-Me-gFz" userLabel="Main View">
             <rect key="frame" x="0.0" y="0.0" width="598" height="445"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="111" horizontalPageScroll="10" verticalLineScroll="111" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="qFG-4o-jZU">
                     <rect key="frame" x="0.0" y="25" width="598" height="420"/>
@@ -147,7 +147,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button toolTip="Clean errors" id="SZ7-yc-imn">
-                                <rect key="frame" x="559" y="3" width="36" height="21"/>
+                                <rect key="frame" x="559" y="3" width="36" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSMenuOnStateTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="JoN-We-vCY">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -196,7 +196,7 @@
             </view>
             <color key="borderColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-            <point key="canvasLocation" x="300" y="41"/>
+            <point key="canvasLocation" x="282" y="-150"/>
         </box>
     </objects>
     <resources>

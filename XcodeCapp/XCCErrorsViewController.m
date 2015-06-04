@@ -56,6 +56,7 @@
 {
     [self->errorOutlineView reloadData];
     [self->errorOutlineView expandItem:nil expandChildren:YES];
+
     [self _showMaskingView:!self.cappuccinoProjectController.cappuccinoProject.errors.count];
 }
 

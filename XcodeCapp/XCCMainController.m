@@ -177,6 +177,16 @@
     DDLogVerbose(@"Stop : managed  projects restored");
 }
 
+- (void)_saveSelectedProject
+{
+    NSString *path = self.currentCappuccinoProjectController.cappuccinoProject.projectPath;
+
+    if (!path)
+        path = @"";
+
+    [[NSUserDefaults standardUserDefaults] setObject:path forKey:kDefaultXCCLastSelectedProjectPath];
+}
+
 
 #pragma mark - Public Utilities
 
@@ -226,7 +236,6 @@
     [self saveManagedProjectsToUserDefaults];
 }
 
-
 - (void)reloadProjectsList
 {
     [self->projectTableView reloadData];
@@ -246,10 +255,10 @@
 - (void)reloadTotalNumberOfErrors
 {
     int totalErrors = 0;
-    
+
     for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         totalErrors += controller.cappuccinoProject.errors.count;
-    
+
     [self willChangeValueForKey:@"totalNumberOfErrors"];
     self.totalNumberOfErrors = totalErrors;
     [self didChangeValueForKey:@"totalNumberOfErrors"];
@@ -257,6 +266,12 @@
 
 
 #pragma mark - Actions
+
+- (IBAction)cleanAllErrors:(id)aSender
+{
+    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(cleanProjectErrors:) withObject:self];
+    [self reloadTotalNumberOfErrors];
+}
 
 - (IBAction)addProject:(id)aSender
 {
@@ -308,17 +323,6 @@
     }
 }
 
-- (IBAction)cleanAllErrors:(id)aSender
-{
-    [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(cleanProjectErrors:) withObject:self];
-    [self reloadTotalNumberOfErrors];
-}
-
-- (IBAction)cleanSelectedProjectErrors:(id)aSender
-{
-    [self.errorsViewController cleanProjectErrors:aSender];
-    [self reloadTotalNumberOfErrors];
-}
 
 
 #pragma mark - SplitView delegate
@@ -355,36 +359,22 @@
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
-    NSInteger selectedCappuccinoProject = [self->projectTableView selectedRow];
-    
-    if (selectedCappuccinoProject == -1)
-    {
-        self.currentCappuccinoProjectController = nil;
+    NSInteger selectedIndex = [self->projectTableView selectedRow];
 
-        self.operationsViewController.cappuccinoProjectController   = nil;
-        self.errorsViewController.cappuccinoProjectController       = nil;
-        self.settingsViewController.cappuccinoProjectController     = nil;
-
-        [self.operationsViewController reload];
-        [self.errorsViewController reload];
-        [self.settingsViewController reload];
-
-        [self _showMaskingView:YES];
-        [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kDefaultXCCLastSelectedProjectPath];
-        return;
-    }
-    
-    self.currentCappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
+    self.currentCappuccinoProjectController                     = (selectedIndex == -1) ? nil : [self.cappuccinoProjectControllers objectAtIndex:selectedIndex];
 
     self.operationsViewController.cappuccinoProjectController   = self.currentCappuccinoProjectController;
     self.errorsViewController.cappuccinoProjectController       = self.currentCappuccinoProjectController;
     self.settingsViewController.cappuccinoProjectController     = self.currentCappuccinoProjectController;
+
     [self.operationsViewController reload];
     [self.errorsViewController reload];
     [self.settingsViewController reload];
-    
-    [self _showMaskingView:NO];
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];
+
+    [self _showMaskingView:(selectedIndex == -1)];
+
+    [self _saveSelectedProject];
+
 }
 
 - (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)rowsIndexes toPasteboard:(NSPasteboard*)pasteboard

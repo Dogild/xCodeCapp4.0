@@ -64,9 +64,6 @@
                                                         <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="cYc-Zk-ufo">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
-                                                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
                                                         </buttonCell>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="Vil-NW-lEi">
@@ -106,7 +103,7 @@ Gw
                     </scroller>
                 </scrollView>
             </subviews>
-            <point key="canvasLocation" x="52" y="122"/>
+            <point key="canvasLocation" x="426" y="130"/>
         </customView>
         <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="rPm-ot-o84">
             <rect key="frame" x="0.0" y="0.0" width="264" height="220"/>

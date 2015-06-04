@@ -21,7 +21,6 @@
     IBOutlet NSSplitView                    *splitView;
     IBOutlet NSTableView                    *projectTableView;
     IBOutlet NSView                         *projectViewContainer;
-    IBOutlet NSArrayController              *includePathArrayController;
     IBOutlet NSTabView                      *tabViewProject;
     IBOutlet NSButton                       *buttonSelectConfigurationTab;
     IBOutlet NSButton                       *buttonSelectErrorsTab;
@@ -43,10 +42,9 @@
 - (void)saveManagedProjectsToUserDefaults;
 - (void)notifyCappuccinoControllersApplicationIsClosing;
 
+- (IBAction)cleanAllErrors:(id)aSender;
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
 - (IBAction)updateSelectedTab:(id)aSender;
-- (IBAction)cleanSelectedProjectErrors:(id)aSender;
-- (IBAction)cleanAllErrors:(id)aSender;
 
 @end

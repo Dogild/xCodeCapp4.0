@@ -151,5 +151,4 @@
     [self.cappuccinoProjectController reinitializeProjectFromSettings];
 }
 
-
 @end

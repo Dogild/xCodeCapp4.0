@@ -20,6 +20,7 @@
 @property XCCCappuccinoProjectController *cappuccinoProjectController;
 
 - (void)reload;
+
 - (IBAction)cleanProjectErrors:(id)aSender;
 
 @end
