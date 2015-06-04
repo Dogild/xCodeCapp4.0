@@ -78,12 +78,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.operations                  = [NSMutableArray new];
     
     [self->operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
-
+    
+    [self.cappuccinoProject reinitialize];
+    
     [self _reinitializeOperationsCounters];
     [self _reinitializePendingPBXOperations];
     [self _prepareXcodeSupport];
-    
-    [self.cappuccinoProject reinitialize];
 }
 
 - (void)_reinitializeTaskLauncher
@@ -150,6 +150,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_startListeningToProject
 {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if (![fm fileExistsAtPath:self.cappuccinoProject.projectPath isDirectory:nil])
+    {
+        NSRunAlertPanel(@"The project can’t be located.", @"It seems the project moved while XcodeCapp was not running.", @"Remove Project", nil, nil);
+        
+        [self.mainXcodeCappController removeCappuccinoProject:self];
+        return;
+    }
+    
     if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusStopped)
         return;
 
@@ -178,7 +188,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                       &fsevents_callback,
                                       &context,
                                       (__bridge CFArrayRef) pathsToWatch,
-                                      self.cappuccinoProject.lastEventID.unsignedLongLongValue,
+                                      kFSEventStreamEventIdSinceNow,//self.cappuccinoProject.lastEventID.unsignedLongLongValue,
                                       latency,
                                       flags);
     
@@ -224,11 +234,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self _stopListeningToProject];
     [self _cancelAllProjectRelatedOperations];
-    
     [self _removeXcodeSupportDirectory];
     [self _removeCIBFiles];
     [self _removeXcodeProject];
-    
     [self _reinitialize];
 }
 
@@ -520,7 +528,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
     
-    [self _addOperation:note.userInfo[@"operation"]];
+    [self _addOperation:note.object];
 }
 
 - (void)_didReceiveObjj2ObjcSkeletonDidStartNotification:(NSNotification *)note
@@ -564,7 +572,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
     
-    [self _removeOperation:note.userInfo[@"operation"]];
+    [self _removeOperation:note.object];
     
     NSString *path = note.userInfo[@"sourcePath"];
     
@@ -646,7 +654,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:aNotification])
         return;
     
-    [self _addOperation:aNotification.userInfo[@"operation"]];
+    [self _addOperation:aNotification.object];
 }
 
 - (void)_didReceiveUpdatePbxFileDidEndNotification:(NSNotification*)aNotification
@@ -656,7 +664,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     self.operationsComplete++;
     
-    [self _removeOperation:aNotification.userInfo[@"operation"]];
+    [self _removeOperation:aNotification.object];
     
     if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
     {
@@ -775,7 +783,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds
 {
-    DDLogVerbose(@"FSEvents: %ld path(s)", paths.count);
     [self _reinitializePendingPBXOperations];
     
     NSMutableArray *modifiedPaths       = [NSMutableArray new];
@@ -919,35 +926,36 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     // If a watched path changes we don't have much choice but to reset the project.
     [self _stopFSEventStream];
     
-    if ([path isEqualToString:self.cappuccinoProject.projectPath])
+    if (![path isEqualToString:self.cappuccinoProject.projectPath])
+        return;
+
+    char newPathBuf[MAXPATHLEN + 1];
+    
+    int result = fcntl(self->projectPathFileDescriptor, F_GETPATH, newPathBuf);
+    
+    if (result != 0)
     {
-        char newPathBuf[MAXPATHLEN + 1];
-        
-        int result = fcntl(self->projectPathFileDescriptor, F_GETPATH, newPathBuf);
-        
-        if (result == 0)
-        {
-            [self _stopListeningToProject];
-            [self _cancelAllProjectRelatedOperations];
-
-            NSFileManager   *fm                  = [NSFileManager defaultManager];
-            NSString        *newPath             = [NSString stringWithUTF8String:newPathBuf];
-            NSString        *oldXcodeProjectPath = [newPath stringByAppendingPathComponent:self.cappuccinoProject.XcodeProjectPath.lastPathComponent];
-            
-            [self.cappuccinoProject updateProjectPath:newPath];
-            [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
-            
-            if ([fm fileExistsAtPath:oldXcodeProjectPath])
-                [fm removeItemAtPath:oldXcodeProjectPath error:nil];
-
-            [self _reinitialize];
-            [self switchProjectListeningStatus:self];
-            
-            [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
-        }
-        else
-            NSRunAlertPanel(@"The project can’t be located.", @"I’m sorry Dave, but I don’t know where the project went. I’m afraid I have to quit now.", @"OK, HAL", nil, nil);
+        NSRunAlertPanel(@"The project can’t be located.", @"I’m sorry Dave, but I don’t know where the project went. I’m afraid I have to quit now.", @"OK, HAL", nil, nil);
+        return;
     }
+
+    [self _stopListeningToProject];
+    [self _cancelAllProjectRelatedOperations];
+
+    NSFileManager   *fm                  = [NSFileManager defaultManager];
+    NSString        *newPath             = [NSString stringWithUTF8String:newPathBuf];
+    NSString        *oldXcodeProjectPath = [newPath stringByAppendingPathComponent:self.cappuccinoProject.XcodeProjectPath.lastPathComponent];
+    
+    [self.cappuccinoProject updateProjectPath:newPath];
+    [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
+    
+    if ([fm fileExistsAtPath:oldXcodeProjectPath])
+        [fm removeItemAtPath:oldXcodeProjectPath error:nil];
+
+    [self _reinitialize];
+    [self switchProjectListeningStatus:self];
+    
+    [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
 }
 
 

@@ -92,7 +92,6 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
     if (self.isCancelled)
         return;
     
-//    [self.task interrupt];
     [self cancelWithUserInfo:[[self defaultUserInfo] mutableCopy] response:@"Operation canceled" notificationName:XCCConversionDidGenerateCancelNotification];
 }
 

@@ -53,8 +53,7 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
         return;
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    NSDictionary *info = @{@"cappuccinoProject":self.cappuccinoProject,
-                           @"operation":self};
+    NSDictionary *info = @{@"cappuccinoProject":self.cappuccinoProject};
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [center postNotificationName:XCCPbxCreationDidStartNotification object:self userInfo:info];

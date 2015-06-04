@@ -281,11 +281,14 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)addOperationError:(XCCOperationError *)operationError
 {
+    if (!operationError.fileName)
+        operationError.fileName = @"/No Filename";
+    
     [self willChangeValueForKey:@"errors"];
     
     if (![self.errors objectForKey:operationError.fileName])
         [self.errors setValue:[NSMutableArray new] forKey:operationError.fileName];
-
+    
     [[self.errors objectForKey:operationError.fileName] addObject:operationError];
     
     [self didChangeValueForKey:@"errors"];
@@ -293,6 +296,9 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)removeOperationError:(XCCOperationError *)operationError
 {
+    if (!operationError.fileName)
+        operationError.fileName = @"/No Filename";
+
     [self willChangeValueForKey:@"errors"];
     
     [[self.errors objectForKey:operationError.fileName] removeObject:operationError];
@@ -348,9 +354,8 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 {
     [self willChangeValueForKey:@"XcodeCappIgnoreContent"];
     _XcodeCappIgnoreContent = XcodeCappIgnoreContent;
-    [self didChangeValueForKey:@"XcodeCappIgnoreContent"];
-    
     [self _updateXcodeCappIgnorePredicates];
+    [self didChangeValueForKey:@"XcodeCappIgnoreContent"];
 }
 
 @end

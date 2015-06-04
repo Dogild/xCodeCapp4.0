@@ -14,62 +14,62 @@
 
 + (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    XCCOperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [self new];
     
-    operationError.fileName = aDictionary[@"sourcePath"];
-    operationError.message = aDictionary[@"errors"];
-    operationError.errorType = XCCDefaultOperationErrorType;
+    operationError.fileName     = aDictionary[@"sourcePath"];
+    operationError.message      = aDictionary[@"errors"];
+    operationError.errorType    = XCCDefaultOperationErrorType;
     
     return operationError;
 }
 
 + (instancetype)nib2cibOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    XCCOperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [self new];
     
-    operationError.fileName = aDictionary[@"sourcePath"];
-    operationError.message = aDictionary[@"errors"];
-    operationError.errorType = XCCNib2CibOperationErrorType;
-    operationError.command = @"nib2cib";
+    operationError.fileName     = aDictionary[@"sourcePath"];
+    operationError.message      = aDictionary[@"errors"];
+    operationError.errorType    = XCCNib2CibOperationErrorType;
+    operationError.command      = @"nib2cib";
     
     return operationError;
 }
 
 + (instancetype)objj2ObjcSkeletonOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    XCCOperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [self new];
     
-    operationError.fileName = aDictionary[@"path"];
-    operationError.message = aDictionary[@"message"];
-    operationError.lineNumber = aDictionary[@"line"];
-    operationError.errorType = XCCObjj2ObjcSkeletonOperationErrorType;
-    operationError.command = @"objj2objcskeleton";
+    operationError.fileName     = aDictionary[@"path"];
+    operationError.message      = aDictionary[@"message"];
+    operationError.lineNumber   = aDictionary[@"line"];
+    operationError.errorType    = XCCObjj2ObjcSkeletonOperationErrorType;
+    operationError.command      = @"objj2objcskeleton";
     
     return operationError;
 }
 
 + (instancetype)objjOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    XCCOperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [self new];
     
-    operationError.fileName = aDictionary[@"path"];
-    operationError.message = aDictionary[@"message"];
-    operationError.lineNumber = aDictionary[@"line"];
-    operationError.errorType = XCCObjjOperationErrorType;
-    operationError.command = @"objj";
+    operationError.fileName     = aDictionary[@"path"];
+    operationError.message      = aDictionary[@"message"];
+    operationError.lineNumber   = aDictionary[@"line"];
+    operationError.errorType    = XCCObjjOperationErrorType;
+    operationError.command      = @"objj";
     
     return operationError;
 }
 
 + (instancetype)cappLintOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
-    XCCOperationError *operationError = [[self alloc] init];
+    XCCOperationError *operationError = [self new];
     
-    operationError.fileName = aDictionary[@"path"];
-    operationError.message = aDictionary[@"message"];
-    operationError.lineNumber = aDictionary[@"line"];
-    operationError.errorType = XCCCappLintOperationErrorType;
-    operationError.command = @"capp_lint";
+    operationError.fileName     = aDictionary[@"path"];
+    operationError.message      = aDictionary[@"message"];
+    operationError.lineNumber   = aDictionary[@"line"];
+    operationError.errorType    = XCCCappLintOperationErrorType;
+    operationError.command      = @"capp_lint";
     
     return operationError;
 }

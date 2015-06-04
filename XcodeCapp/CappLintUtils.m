@@ -43,7 +43,7 @@
         
         NSDictionary *dict = @{@"line": line,
                                @"message": messageError,
-                               @"path": sourcePath};
+                               @"sourcePath": sourcePath};
         
         XCCOperationError *operationError = [XCCOperationError cappLintOperationErrorFromDictionary:dict];
         

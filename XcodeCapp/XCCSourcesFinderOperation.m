@@ -72,13 +72,16 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
         if (self.isCancelled)
             return;
         
-        NSString *filename = url.lastPathComponent;
+        NSString    *filename               = url.lastPathComponent;
+        NSString    *projectRelativePath    = [aProjectPath stringByAppendingPathComponent:filename];
+        NSString    *realPath               = url.path;
+        NSURL       *resolvedURL            = url;
+        NSNumber    *isDirectory;
+        NSNumber    *isSymlink;
+        
+        if ([CappuccinoUtils pathMatchesIgnoredPaths:realPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
+            continue;
 
-        NSString *projectRelativePath = [aProjectPath stringByAppendingPathComponent:filename];
-        NSString *realPath = url.path;
-        NSURL *resolvedURL = url;
-
-        NSNumber *isDirectory, *isSymlink;
         [url getResourceValue:&isSymlink forKey:NSURLIsSymbolicLinkKey error:nil];
 
         if (isSymlink.boolValue == YES)
@@ -116,10 +119,9 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
                     NSDictionary *info =
                           @{
-                                @"cappuccinoProject":self.cappuccinoProject,
+                                @"cappuccinoProject": self.cappuccinoProject,
                                 @"sourcePath":realPath,
-                                @"projectPath":fullProjectPath,
-                                @"operation":self
+                                @"projectPath":fullProjectPath
                            };
 
                     if (self.isCancelled)
@@ -140,9 +142,6 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
         if (self.isCancelled)
             return;
         
-        if ([CappuccinoUtils pathMatchesIgnoredPaths:realPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
-            continue;
-
         NSString *projectSourcePath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:projectRelativePath];
         
         if ([CappuccinoUtils isObjjFile:filename] || [CappuccinoUtils isXibFile:filename])

@@ -20,11 +20,11 @@ typedef int XCCOperationErrorType;
 
 @interface XCCOperationError : NSObject
 
-@property NSString  *fileName;
-@property NSString  *message;
-@property NSString  *command;
-@property NSString  *lineNumber;
-@property int       errorType;
+@property (copy) NSString  *fileName;
+@property (copy) NSString  *message;
+@property (copy) NSString  *command;
+@property (copy) NSString  *lineNumber;
+@property int              errorType;
 
 + (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary;
 + (instancetype)nib2cibOperationErrorFromDictionary:(NSDictionary*)aDictionary;
