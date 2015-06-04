@@ -159,7 +159,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         NSRunAlertPanel(@"The project can’t be located.", @"It seems the project moved while XcodeCapp was not running.", @"Remove Project", nil, nil);
         
-        [self.mainXcodeCappController removeCappuccinoProject:self];
+        [self.mainXcodeCappController unmanageCappuccinoProjectController:self];
         return;
     }
     
@@ -809,15 +809,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         NSString                *path       = [paths[i] stringByStandardizingPath];
 
         BOOL rootChanged = (flags & kFSEventStreamEventFlagRootChanged) != 0;
-        
-        if (rootChanged)
+        BOOL needRescan = (flags & kFSEventStreamEventFlagMustScanSubDirs) != 0;
+
+        if (rootChanged || needRescan)
         {
             DDLogVerbose(@"Watched path changed: %@", path);
             
             [self _handleProjectPathChange:path];
             return;
         }
-        
+
         BOOL isHistoryDoneSentinalEvent = (flags & kFSEventStreamEventFlagHistoryDone) != 0;
         
         if (isHistoryDoneSentinalEvent)
@@ -834,14 +835,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             continue;
         }
         
-        BOOL needRescan = (flags & kFSEventStreamEventFlagMustScanSubDirs) != 0;
-        
-        if (needRescan)
-        {
-            // A rescan requires a reset
-            [self _handleProjectPathChange:path];
-            return;
-        }
 
         BOOL inodeMetaModified  = (flags & kFSEventStreamEventFlagItemInodeMetaMod) != 0;
         BOOL isFile             = (flags & kFSEventStreamEventFlagItemIsFile)       != 0;
@@ -934,38 +927,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_handleProjectPathChange:(NSString *)path
 {
-    if (![path isEqualToString:self.cappuccinoProject.projectPath])
-        return;
+    NSRunAlertPanel(self.cappuccinoProject.nickname, @"The project directory changed. This project will be removed", @"OK", nil, nil, nil);
 
-    char newPathBuf[MAXPATHLEN + 1];
-    
-    int result = fcntl(self->projectPathFileDescriptor, F_GETPATH, newPathBuf);
-    
-    if (result != 0)
-    {
-        NSRunAlertPanel(@"The project can’t be located.", @"I’m sorry Dave, but I don’t know where the project went. I’m afraid I have to quit now.", @"OK, HAL", nil, nil);
-        return;
-    }
-
-    [self _stopListeningToProject];
-    [self _cancelAllProjectRelatedOperations];
-
-    NSFileManager   *fm                  = [NSFileManager defaultManager];
-    NSString        *newPath             = [NSString stringWithUTF8String:newPathBuf];
-    NSString        *oldXcodeProjectPath = [newPath stringByAppendingPathComponent:self.cappuccinoProject.XcodeProjectPath.lastPathComponent];
-    
-    [self.cappuccinoProject updateProjectPath:newPath];
-    [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
-    
-    if ([fm fileExistsAtPath:oldXcodeProjectPath])
-        [fm removeItemAtPath:oldXcodeProjectPath error:nil];
-
-    [self _reinitialize];
-    [self switchProjectListeningStatus:self];
-    
-    [self.mainXcodeCappController saveManagedProjectsToUserDefaults];
+    [self.mainXcodeCappController unmanageCappuccinoProjectController:self];
 }
-
 
 #pragma mark - PBX management
 

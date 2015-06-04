@@ -141,7 +141,7 @@
     
     if (isDir)
     {
-        [self.mainWindowController addCappuccinoProjectWithPath:filename];
+        [self.mainWindowController manageCappuccinoProjectController:[self.mainWindowController createNewCappuccinoProjectControllerFromPath:filename]];
         return YES;
     }
     else

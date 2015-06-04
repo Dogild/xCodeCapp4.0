@@ -59,10 +59,6 @@
 }
 
 
-#pragma mark - Observers
-
-
-
 
 #pragma mark - Private Utilities
 
@@ -159,7 +155,7 @@
         [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
     }
     
-    [self reloadProjectsList];
+    [self _reloadProjectsList];
     
     if (missingProjects.count)
     {
@@ -171,7 +167,7 @@
                         nil,
                         [missingProjects componentsJoinedByString:@", "]);
 
-        [self saveManagedProjectsToUserDefaults];
+        [self _saveManagedProjectsToUserDefaults];
     }
     
     DDLogVerbose(@"Stop : managed  projects restored");
@@ -187,20 +183,60 @@
     [[NSUserDefaults standardUserDefaults] setObject:path forKey:kDefaultXCCLastSelectedProjectPath];
 }
 
-
-#pragma mark - Public Utilities
-
-- (void)saveManagedProjectsToUserDefaults
+- (void)_saveManagedProjectsToUserDefaults
 {
     NSMutableArray *historyProjectPaths = [NSMutableArray array];
-    
+
     for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
-    
+
     [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCCurrentManagedProjects];
 }
 
-- (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController
+- (void)_reloadProjectsList
+{
+    [self->projectTableView reloadData];
+
+    if (self.cappuccinoProjectControllers.count == 0)
+        [self _showProjectsTableMaskingView:YES];
+    else
+        [self _showProjectsTableMaskingView:NO];
+    
+}
+
+
+#pragma mark - Public Utilities
+
+- (XCCCappuccinoProjectController *)createNewCappuccinoProjectControllerFromPath:(NSString *)path
+{
+    if ([[self.cappuccinoProjectControllers filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cappuccinoProject.projectPath == %@", path]] count])
+    {
+        NSRunAlertPanel(@"This project is already managed.", @"Please remove the other project or use the reset button.", @"OK", nil, nil, nil);
+        return nil;
+    }
+
+    return [[XCCCappuccinoProjectController alloc] initWithPath:path controller:self];
+}
+
+- (void)manageCappuccinoProjectController:(XCCCappuccinoProjectController*)aController
+{
+    if (!aController)
+        return;
+
+    [self.cappuccinoProjectControllers addObject:aController];
+
+    NSInteger index = [self.cappuccinoProjectControllers indexOfObject:aController];
+
+    [self _reloadProjectsList];
+
+    [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+    [self->projectTableView scrollRowToVisible:index];
+    [self _saveManagedProjectsToUserDefaults];
+
+    [aController switchProjectListeningStatus:self];
+}
+
+- (void)unmanageCappuccinoProjectController:(XCCCappuccinoProjectController*)aController
 {
     NSInteger selectedCappuccinoProject = [self.cappuccinoProjectControllers indexOfObject:aController];
     
@@ -211,43 +247,11 @@
     [aController cleanUpBeforeDeletion];
     [self.cappuccinoProjectControllers removeObjectAtIndex:selectedCappuccinoProject];
     
-    [self reloadProjectsList];
+    [self _reloadProjectsList];
     
-    [self saveManagedProjectsToUserDefaults];
+    [self _saveManagedProjectsToUserDefaults];
 }
 
-- (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath
-{
-    if ([[self.cappuccinoProjectControllers filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cappuccinoProject.projectPath == %@", aProjectPath]] count])
-    {
-        NSRunAlertPanel(@"This project is already managed.", @"Please remove the other project or use the reset button.", @"OK", nil, nil, nil);
-        return;
-    }
-    XCCCappuccinoProjectController *cappuccinoProjectController = [[XCCCappuccinoProjectController alloc] initWithPath:aProjectPath controller:self];
-    
-    [self.cappuccinoProjectControllers addObject:cappuccinoProjectController];
-    
-    NSInteger index = [self.cappuccinoProjectControllers indexOfObject:cappuccinoProjectController];
-    
-    [self reloadProjectsList];
-    
-    [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    [self->projectTableView scrollRowToVisible:index];
-    [self saveManagedProjectsToUserDefaults];
-
-    [cappuccinoProjectController switchProjectListeningStatus:self];
-}
-
-- (void)reloadProjectsList
-{
-    [self->projectTableView reloadData];
-    
-    if (self.cappuccinoProjectControllers.count == 0)
-        [self _showProjectsTableMaskingView:YES];
-    else
-        [self _showProjectsTableMaskingView:NO];
-    
-}
 
 - (void)notifyCappuccinoControllersApplicationIsClosing
 {
@@ -287,7 +291,8 @@
         return;
     
     NSString *projectPath = [[openPanel.URLs[0] path] stringByStandardizingPath];
-    [self addCappuccinoProjectWithPath:projectPath];
+
+    [self manageCappuccinoProjectController:[self createNewCappuccinoProjectControllerFromPath:projectPath]];
 }
 
 - (IBAction)removeProject:(id)aSender
@@ -297,7 +302,7 @@
     if (selectedCappuccinoProject == -1)
         return;
     
-    [self removeCappuccinoProject:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
+    [self unmanageCappuccinoProjectController:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
 }
 
 - (IBAction)updateSelectedTab:(id)aSender
@@ -428,8 +433,8 @@
     {
         NSArray *draggedFolders = [pboard propertyListForType:(NSString *)NSFilenamesPboardType];
         
-        for (NSString *folders in draggedFolders)
-            [self addCappuccinoProjectWithPath:folders];
+        for (NSString *folder in draggedFolders)
+            [self manageCappuccinoProjectController:[self createNewCappuccinoProjectControllerFromPath:folder]];
 
         return YES;
     }
@@ -439,8 +444,8 @@
         NSIndexSet  *rowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData:rowData];
 
         [self.cappuccinoProjectControllers moveIndexes:rowIndexes toIndex:row];
-        [self reloadProjectsList];
-        [self saveManagedProjectsToUserDefaults];
+        [self _reloadProjectsList];
+        [self _saveManagedProjectsToUserDefaults];
         
         return YES;
     }
