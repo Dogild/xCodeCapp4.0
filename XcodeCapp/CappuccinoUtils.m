@@ -29,16 +29,14 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     XCCDirectoriesToIgnorePredicate = [NSPredicate predicateWithFormat:@"SELF matches %@", XCCDirectoriesToIgnorePattern];
     
     XCCDefaultIgnoredPaths = @[
-                                 @"Frameworks/*",
-                                 @"AppKit/*",
-                                 @"Foundation/*",
-                                 @"Objective-J/*",
-                                 @"Build/*",
-                                 @"*.xcodeproj/*",
-                                 @".XcodeSupport/*",
+                                 @"Frameworks*",
+                                 @"Build*",
+                                 @"*.xcodeproj*",
+                                 @".XcodeSupport*",
                                  @"NS_*.j",
-                                 @"main.j",
-                                 @".xcodecapp-ignore"
+                                 @".xcodecapp-ignore",
+                                 @".git*",
+                                 @".cappenvs*"
                                  ];
 }
 
@@ -95,7 +93,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
 + (BOOL)pathMatchesIgnoredPaths:(NSString*)aPath cappuccinoProjectIgnoredPathPredicates:(NSMutableArray*)cappuccinoProjectIgnoredPathPredicates
 {
     BOOL ignore = NO;
-        
+
     for (NSDictionary *ignoreInfo in cappuccinoProjectIgnoredPathPredicates)
     {
         BOOL matches = [ignoreInfo[@"predicate"] evaluateWithObject:aPath];
@@ -103,7 +101,7 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
         if (matches)
             ignore = [ignoreInfo[@"exclude"] boolValue];
     }
-    
+
     return ignore;
 }
 
