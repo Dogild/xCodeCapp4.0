@@ -27,20 +27,20 @@
                 <outlet property="buttonSelectErrorsTab" destination="E4i-Ez-bfl" id="qES-Db-SF1"/>
                 <outlet property="buttonSelectOperationsTab" destination="UCo-MK-pOT" id="lzU-DB-b4t"/>
                 <outlet property="errorsViewController" destination="Pbk-dx-QfG" id="6eP-ln-wCg"/>
-                <outlet property="includePathArrayController" destination="fad-TR-Rcn" id="mZe-hM-Ju3"/>
                 <outlet property="maskingView" destination="fYW-ua-i1m" id="3nU-gf-IXn"/>
                 <outlet property="operationsViewController" destination="Exl-QQ-kUS" id="y6e-Ey-Elc"/>
                 <outlet property="projectTableView" destination="Mss-Tu-7kR" id="9OL-5g-uCj"/>
                 <outlet property="projectViewContainer" destination="uJC-CC-9au" id="DFi-3i-SI7"/>
+                <outlet property="settingsViewController" destination="SVc-KD-eve" id="O6Z-6D-CSB"/>
                 <outlet property="splitView" destination="tld-4e-icT" id="imM-Zo-TVk"/>
                 <outlet property="tabViewProject" destination="00d-fn-q41" id="iaN-Tj-Ejj"/>
                 <outlet property="viewProjectMask" destination="stz-Vu-tYo" id="MA2-8E-HfO"/>
-                <outlet property="viewTabConfiguration" destination="hRA-2S-Lbf" id="lXW-aG-ee1"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="kmQ-a1-l2O"/>
             </connections>
         </customObject>
         <viewController nibName="OperationsView" id="Exl-QQ-kUS" customClass="XCCOperationsViewController"/>
         <viewController nibName="ErrorsView" id="Pbk-dx-QfG" userLabel="ErrorView" customClass="XCCErrorsViewController"/>
+        <viewController nibName="SettingsView" id="SVc-KD-eve" userLabel="SettingsView" customClass="XCCSettingsViewController"/>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
                 <menuItem title="XcodeCapp" id="1Xt-HY-uBw">
@@ -800,18 +800,6 @@
             </view>
             <point key="canvasLocation" x="-156.5" y="-126"/>
         </window>
-        <arrayController objectClassName="XCCPath" automaticallyPreparesContent="YES" preservesSelection="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" automaticallyRearrangesObjects="YES" id="fad-TR-Rcn" userLabel="Configurations Array Controller">
-            <declaredKeys>
-                <string>name</string>
-            </declaredKeys>
-            <connections>
-                <binding destination="923-ke-ovW" name="contentArray" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.environmentsPaths" id="zhc-RH-966">
-                    <dictionary key="options">
-                        <bool key="NSValidatesImmediately" value="YES"/>
-                    </dictionary>
-                </binding>
-            </connections>
-        </arrayController>
         <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="fYW-ua-i1m">
             <rect key="frame" x="0.0" y="0.0" width="271" height="313"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -854,226 +842,6 @@
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <point key="canvasLocation" x="310.5" y="-302.5"/>
         </box>
-        <customView id="hRA-2S-Lbf">
-            <rect key="frame" x="0.0" y="0.0" width="702" height="651"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="dhg-mV-hHd">
-                    <rect key="frame" x="18" y="524" width="78" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Processing" id="mme-DG-mjR">
-                        <font key="font" metaFont="systemBold"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <button id="aE9-oN-5n3">
-                    <rect key="frame" x="18" y="500" width="146" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Convert xibs to cibs" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FFr-2R-eaa">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.processNib2Cib" id="Dkq-wm-TLe"/>
-                    </connections>
-                </button>
-                <button id="LFe-3o-5zf">
-                    <rect key="frame" x="18" y="480" width="270" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Check for compilation errors &amp; warnings" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Cqv-W8-Z4c">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.processObjjWarnings" id="7Gk-Ye-4Bv"/>
-                    </connections>
-                </button>
-                <button id="uJJ-bV-Usu">
-                    <rect key="frame" x="18" y="460" width="140" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Check coding style" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="PIE-fc-BuL">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.processCappLint" id="g7x-9x-Gx1"/>
-                    </connections>
-                </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="rji-df-OC8">
-                    <rect key="frame" x="18" y="427" width="57" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Paths" id="96X-XD-XVs">
-                        <font key="font" metaFont="systemBold"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="nzq-G1-jO4">
-                    <rect key="frame" x="18" y="260" width="164" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Auxilary Frameworks Path" id="C3o-W1-H2q">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField verticalHuggingPriority="750" id="7mx-kg-QOh">
-                    <rect key="frame" x="20" y="230" width="662" height="22"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="T06-D1-qCh">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.objjIncludePath" id="ZX2-gM-lvX">
-                            <dictionary key="options">
-                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                <bool key="NSValidatesImmediately" value="YES"/>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="y8r-zt-V25">
-                    <rect key="frame" x="18" y="589" width="113" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Project Nickname" id="kK4-wa-Iev">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField verticalHuggingPriority="750" id="hZb-Ys-Hl2">
-                    <rect key="frame" x="20" y="559" width="662" height="22"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="PgH-OK-BMI">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.nickname" id="ADQ-4x-Ik4">
-                            <dictionary key="options">
-                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                <bool key="NSValidatesImmediately" value="YES"/>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="ZJE-yN-f7x">
-                    <rect key="frame" x="18" y="614" width="60" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Settings" id="6js-Rb-DUI">
-                        <font key="font" metaFont="systemBold"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Zfd-GA-P0r">
-                    <rect key="frame" x="18" y="402" width="54" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Binaries" id="cDK-1v-0pe">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Z3K-Tu-e8W">
-                    <rect key="frame" x="18" y="205" width="139" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Ignored Paths Pattern" id="DzR-Ye-mXK">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField verticalHuggingPriority="750" id="6Be-xk-Rit">
-                    <rect key="frame" x="20" y="18" width="662" height="179"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="aVl-Tl-lxB">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="923-ke-ovW" name="value" keyPath="self.currentCappuccinoProjectController.cappuccinoProject.XcodeCappIgnoreContent" id="30y-3M-q2r"/>
-                    </connections>
-                </textField>
-                <scrollView autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="fzn-1q-0jR">
-                    <rect key="frame" x="20" y="316" width="662" height="78"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <clipView key="contentView" id="2cW-tq-WgB">
-                        <rect key="frame" x="1" y="1" width="660" height="76"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" columnSelection="YES" autosaveColumns="NO" id="qor-9K-Jon">
-                                <rect key="frame" x="0.0" y="0.0" width="660" height="24"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <size key="intercellSpacing" width="11" height="7"/>
-                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                <tableColumns>
-                                    <tableColumn width="649" minWidth="40" maxWidth="999999999999" id="rkO-Yt-MSt">
-                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                        </tableHeaderCell>
-                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="Bmt-2U-7qy">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
-                                        <connections>
-                                            <binding destination="fad-TR-Rcn" name="value" keyPath="arrangedObjects.name" id="dkQ-j0-Of7">
-                                                <dictionary key="options">
-                                                    <bool key="NSCreatesSortDescriptor" value="NO"/>
-                                                    <bool key="NSValidatesImmediately" value="YES"/>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </tableColumn>
-                                </tableColumns>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </clipView>
-                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="t2K-Wb-hnp">
-                        <rect key="frame" x="1" y="119" width="223" height="15"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="9Dy-WL-Dek">
-                        <rect key="frame" x="224" y="17" width="15" height="102"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </scroller>
-                </scrollView>
-                <button verticalHuggingPriority="750" id="4c0-3n-kET">
-                    <rect key="frame" x="44" y="290" width="27" height="25"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="Y0L-V5-ehQ">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="remove:" target="fad-TR-Rcn" id="y5r-3h-VQE"/>
-                    </connections>
-                </button>
-                <button verticalHuggingPriority="750" id="Jg5-7L-BZH">
-                    <rect key="frame" x="17" y="290" width="26" height="25"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSAddTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="OMd-oK-fbe">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="insert:" target="fad-TR-Rcn" id="Frp-u8-s97"/>
-                    </connections>
-                </button>
-            </subviews>
-            <point key="canvasLocation" x="873" y="1172.5"/>
-        </customView>
         <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="stz-Vu-tYo">
             <rect key="frame" x="0.0" y="-1" width="464" height="401"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

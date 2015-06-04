@@ -91,12 +91,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_reinitializeTaskLauncher
 {
-    NSArray *environmentPaths = [NSArray array];
+    NSArray *binaryPaths = [NSArray array];
     
-    if ([self.cappuccinoProject.environmentsPaths count])
-        environmentPaths = [self.cappuccinoProject.environmentsPaths valueForKeyPath:@"name"];
+    if ([self.cappuccinoProject.binaryPaths count])
+        binaryPaths = [self.cappuccinoProject.binaryPaths valueForKeyPath:@"name"];
     
-    self->taskLauncher = [[XCCTaskLauncher alloc] initWithEnvironementPaths:environmentPaths];
+    self->taskLauncher = [[XCCTaskLauncher alloc] initWithEnvironementPaths:binaryPaths];
     
     if (!self->taskLauncher.isValid)
     {
@@ -189,14 +189,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     UInt64 lastEvenID = self.cappuccinoProject.lastEventID.unsignedLongLongValue;
     
-    if (!self.cappuccinoProject.lastEventID)
-        lastEvenID = kFSEventStreamEventIdSinceNow;
+//    if (!self.cappuccinoProject.lastEventID)
+//        lastEvenID = kFSEventStreamEventIdSinceNow;
 
     self->stream = FSEventStreamCreate(NULL,
                                       &fsevents_callback,
                                       &context,
                                       (__bridge CFArrayRef) pathsToWatch,
-                                      lastEvenID,
+                                      kFSEventStreamEventIdSinceNow, //lastEvenID,
                                       latency,
                                       flags);
     
@@ -217,7 +217,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     [self->timerOperationQueueCompletionMonitor invalidate];
     [self _cancelAllProjectRelatedOperations];
-    [self cleanProjectErrors:self];
+    [self.mainXcodeCappController.errorsViewController cleanProjectErrors:self];
     
     if (self->stream)
     {

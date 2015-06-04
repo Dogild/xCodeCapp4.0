@@ -11,6 +11,8 @@
 		021B94671B20D1F800F12DDA /* OperationsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 021B94661B20D1F800F12DDA /* OperationsView.xib */; };
 		021B94691B20D6FC00F12DDA /* ErrorsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 021B94681B20D6FC00F12DDA /* ErrorsView.xib */; };
 		021B946C1B20D71200F12DDA /* XCCErrorsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B946B1B20D71200F12DDA /* XCCErrorsViewController.m */; };
+		021B94701B20E31F00F12DDA /* XCCSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B946E1B20E31F00F12DDA /* XCCSettingsViewController.m */; };
+		021B94711B20E31F00F12DDA /* SettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 021B946F1B20E31F00F12DDA /* SettingsView.xib */; };
 		0247DCC11B17DDC400192FEF /* open-in-editor.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC01B17DDC400192FEF /* open-in-editor.png */; };
 		0247DCC41B17DDDD00192FEF /* run.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC21B17DDDD00192FEF /* run.png */; };
 		0247DCC51B17DDDD00192FEF /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC31B17DDDD00192FEF /* stop.png */; };
@@ -111,6 +113,9 @@
 		021B94681B20D6FC00F12DDA /* ErrorsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ErrorsView.xib; sourceTree = "<group>"; };
 		021B946A1B20D71200F12DDA /* XCCErrorsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCErrorsViewController.h; sourceTree = "<group>"; };
 		021B946B1B20D71200F12DDA /* XCCErrorsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCErrorsViewController.m; sourceTree = "<group>"; };
+		021B946D1B20E31F00F12DDA /* XCCSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCSettingsViewController.h; sourceTree = "<group>"; };
+		021B946E1B20E31F00F12DDA /* XCCSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCSettingsViewController.m; sourceTree = "<group>"; };
+		021B946F1B20E31F00F12DDA /* SettingsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsView.xib; sourceTree = "<group>"; };
 		0247DCC01B17DDC400192FEF /* open-in-editor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-editor.png"; sourceTree = "<group>"; };
 		0247DCC21B17DDDD00192FEF /* run.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = run.png; sourceTree = "<group>"; };
 		0247DCC31B17DDDD00192FEF /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
@@ -162,7 +167,7 @@
 		6841F23F1AF98CE600CFE60E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6841F2401AF98CE600CFE60E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6841F2431AF98CE600CFE60E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		6841F2451AF98CE600CFE60E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		6841F2451AF98CE600CFE60E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../Images.xcassets; sourceTree = "<group>"; };
 		6841F24E1AF98CE600CFE60E /* XcodeCappTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XcodeCappTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6841F2531AF98CE600CFE60E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6841F2541AF98CE600CFE60E /* XcodeCappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XcodeCappTests.m; sourceTree = "<group>"; };
@@ -226,6 +231,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		021B94721B20E41B00F12DDA /* XIBs */ = {
+			isa = PBXGroup;
+			children = (
+				021B946F1B20E31F00F12DDA /* SettingsView.xib */,
+				021B94681B20D6FC00F12DDA /* ErrorsView.xib */,
+				021B94661B20D1F800F12DDA /* OperationsView.xib */,
+				6841F2471AF98CE600CFE60E /* MainMenu.xib */,
+			);
+			name = XIBs;
+			sourceTree = "<group>";
+		};
 		680621161B015BDB00CB24CD /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -252,6 +268,8 @@
 				021B94641B20CECA00F12DDA /* XCCOperationsViewController.m */,
 				021B946A1B20D71200F12DDA /* XCCErrorsViewController.h */,
 				021B946B1B20D71200F12DDA /* XCCErrorsViewController.m */,
+				021B946D1B20E31F00F12DDA /* XCCSettingsViewController.h */,
+				021B946E1B20E31F00F12DDA /* XCCSettingsViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -278,10 +296,7 @@
 		6841F23D1AF98CE600CFE60E /* XcodeCapp */ = {
 			isa = PBXGroup;
 			children = (
-				021B94681B20D6FC00F12DDA /* ErrorsView.xib */,
-				6841F2451AF98CE600CFE60E /* Images.xcassets */,
-				021B94661B20D1F800F12DDA /* OperationsView.xib */,
-				6841F2471AF98CE600CFE60E /* MainMenu.xib */,
+				021B94721B20E41B00F12DDA /* XIBs */,
 				6841F2401AF98CE600CFE60E /* AppDelegate.h */,
 				0255B83F1B1F71FB000CA4BC /* AppDelegate.m */,
 				6824CDDB1B0D976400F73447 /* Controllers */,
@@ -357,6 +372,7 @@
 				0255B84F1B1F7983000CA4BC /* status-icon-inactive.png */,
 				0255B8501B1F7983000CA4BC /* status-icon-inactive@2x.png */,
 				0255B8511B1F7983000CA4BC /* status-icon-working.png */,
+				6841F2451AF98CE600CFE60E /* Images.xcassets */,
 				0255B8521B1F7983000CA4BC /* status-icon-working@2x.png */,
 				0258005D1B1E937E0000EB7D /* open-in-editor-white.png */,
 				025800511B1E91AF0000EB7D /* open-in-finder-white.png */,
@@ -531,6 +547,7 @@
 				0255B8541B1F7983000CA4BC /* status-icon-error@2x.png in Resources */,
 				021B94671B20D1F800F12DDA /* OperationsView.xib in Resources */,
 				025800571B1E91AF0000EB7D /* open-in-finder-white.png in Resources */,
+				021B94711B20E31F00F12DDA /* SettingsView.xib in Resources */,
 				025800501B1E88BF0000EB7D /* sleeping.png in Resources */,
 				025800421B1E30DD0000EB7D /* open-in-terminal.png in Resources */,
 				0258005B1B1E91AF0000EB7D /* run-white.png in Resources */,
@@ -575,6 +592,7 @@
 			files = (
 				6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */,
 				68B6BF321B1E2546003B265B /* XCCPPXOperation.m in Sources */,
+				021B94701B20E31F00F12DDA /* XCCSettingsViewController.m in Sources */,
 				0255B8401B1F71FB000CA4BC /* AppDelegate.m in Sources */,
 				6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */,
 				0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */,

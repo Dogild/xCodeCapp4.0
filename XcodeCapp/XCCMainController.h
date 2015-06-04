@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NSMutableArray+moveIndexes.h"
 
 @class XCCCappuccinoProject;
 @class XCCCappuccinoProjectController;
 @class XCCOperationsViewController;
 @class XCCErrorsViewController;
+@class XCCSettingsViewController;
 
 
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
@@ -27,10 +27,9 @@
     IBOutlet NSButton                       *buttonSelectErrorsTab;
     IBOutlet NSButton                       *buttonSelectOperationsTab;
     IBOutlet NSBox                          *viewProjectMask;
-    IBOutlet NSView                         *viewTabConfiguration;
-    BOOL                                    isObserving;
 }
 
+@property IBOutlet XCCSettingsViewController    *settingsViewController;
 @property IBOutlet XCCOperationsViewController  *operationsViewController;
 @property IBOutlet XCCErrorsViewController      *errorsViewController;
 @property NSMutableArray                        *cappuccinoProjectControllers;

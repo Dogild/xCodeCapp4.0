@@ -11,7 +11,7 @@
 @class XCCCappuccinoProjectController;
 
 
-@interface XCCErrorsViewController : NSViewController
+@interface XCCErrorsViewController : NSViewController  <NSOutlineViewDataSource, NSOutlineViewDelegate>
 {
     IBOutlet NSOutlineView                  *errorOutlineView;
     IBOutlet NSBox                          *maskingView;
@@ -20,5 +20,6 @@
 @property XCCCappuccinoProjectController *cappuccinoProjectController;
 
 - (void)reload;
+- (IBAction)cleanProjectErrors:(id)aSender;
 
 @end

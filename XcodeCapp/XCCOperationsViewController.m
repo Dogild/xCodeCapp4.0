@@ -62,13 +62,10 @@
     XCCOperationDataView *datView = [tableView makeViewWithIdentifier:@"OperationDataView" owner:nil];
     [datView setOperation:[self.cappuccinoProjectController.operations objectAtIndex:row]];
 
-    //    [cellView.cancelButton setTarget:self];
-    //    [cellView.cancelButton setAction:@selector(cancelOperation:)];
+    //    [datView.cancelButton setTarget:self];
+    //    [datView.cancelButton setAction:@selector(cancelOperation:)];
 
     return datView;
 }
-
-
-
 
 @end

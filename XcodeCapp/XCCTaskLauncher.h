@@ -25,7 +25,7 @@ typedef enum XCCTaskReturnType XCCTaskReturnType;
 
 @property BOOL isValid;
 
-@property NSMutableArray *environmentPaths;
+@property NSMutableArray *binaryPaths;
 @property NSMutableDictionary *environment;
 
 @property NSArray *executables;

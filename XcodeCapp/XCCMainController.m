@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
+#import "NSMutableArray+moveIndexes.h"
 #import "XCCMainController.h"
 #import "XCCCappuccinoProject.h"
 #import "XCCCappuccinoProjectController.h"
@@ -14,6 +15,7 @@
 #import "UserDefaults.h"
 #import "XCCOperationsViewController.h"
 #import "XCCErrorsViewController.h"
+#import "XCCSettingsViewController.h"
 
 
 @implementation XCCMainController
@@ -29,7 +31,7 @@
     [self _selectLastProjectSelected];
     
     NSTabViewItem *itemConfiguration = [[NSTabViewItem alloc] initWithIdentifier:@"configuration"];
-    [itemConfiguration setView:self->viewTabConfiguration];
+    [itemConfiguration setView:self.settingsViewController.view];
     [self->tabViewProject addTabViewItem:itemConfiguration];
     
     NSTabViewItem *itemErrors = [[NSTabViewItem alloc] initWithIdentifier:@"errors"];
@@ -59,38 +61,7 @@
 
 #pragma mark - Observers
 
-- (void)_addArrayControllerObserver
-{
-    if (self->isObserving)
-        return;
-    
-    self->isObserving = YES;
-    
-    [self->includePathArrayController addObserver:self forKeyPath:@"arrangedObjects.name" options:NSKeyValueObservingOptionNew context:nil];
-    [self.currentCappuccinoProjectController.cappuccinoProject addObserver:self forKeyPath:@"XcodeCappIgnoreContent" options:NSKeyValueObservingOptionNew context:nil];
-}
 
-- (void)_removeArrayControllerObserver
-{
-    if (!self->isObserving)
-        return;
-    
-    self->isObserving = NO;
-    
-    [self->includePathArrayController removeObserver:self forKeyPath:@"arrangedObjects.name"];
-    [self.currentCappuccinoProjectController.cappuccinoProject removeObserver:self forKeyPath:@"XcodeCappIgnoreContent"];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (!self.currentCappuccinoProjectController)
-        return;
-    
-    if (self.currentCappuccinoProjectController.cappuccinoProject.status != XCCCappuccinoProjectStatusListening)
-        return;
-    
-    [self.currentCappuccinoProjectController reinitializeProjectFromSettings];
-}
 
 
 #pragma mark - Private Utilities
@@ -117,7 +88,6 @@
         [self->maskingView removeFromSuperview];
     }
 }
-
 
 - (void)_showProjectsTableMaskingView:(BOOL)shouldShow
 {
@@ -346,7 +316,7 @@
 
 - (IBAction)cleanSelectedProjectErrors:(id)aSender
 {
-    [self.currentCappuccinoProjectController cleanProjectErrors:aSender];
+    [self.errorsViewController cleanProjectErrors:aSender];
     [self reloadTotalNumberOfErrors];
 }
 
@@ -387,13 +357,17 @@
 {
     NSInteger selectedCappuccinoProject = [self->projectTableView selectedRow];
     
-    [self _removeArrayControllerObserver];
-    
     if (selectedCappuccinoProject == -1)
     {
         self.currentCappuccinoProjectController = nil;
-        self.operationsViewController.cappuccinoProjectController = nil;
-        self.errorsViewController.cappuccinoProjectController = nil;
+
+        self.operationsViewController.cappuccinoProjectController   = nil;
+        self.errorsViewController.cappuccinoProjectController       = nil;
+        self.settingsViewController.cappuccinoProjectController     = nil;
+
+        [self.operationsViewController reload];
+        [self.errorsViewController reload];
+        [self.settingsViewController reload];
 
         [self _showMaskingView:YES];
         [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kDefaultXCCLastSelectedProjectPath];
@@ -402,13 +376,12 @@
     
     self.currentCappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
 
-    self.operationsViewController.cappuccinoProjectController = self.currentCappuccinoProjectController;
+    self.operationsViewController.cappuccinoProjectController   = self.currentCappuccinoProjectController;
+    self.errorsViewController.cappuccinoProjectController       = self.currentCappuccinoProjectController;
+    self.settingsViewController.cappuccinoProjectController     = self.currentCappuccinoProjectController;
     [self.operationsViewController reload];
-
-    self.errorsViewController.cappuccinoProjectController = self.currentCappuccinoProjectController;
     [self.errorsViewController reload];
-    
-    [self _addArrayControllerObserver];
+    [self.settingsViewController reload];
     
     [self _showMaskingView:NO];
     [[NSUserDefaults standardUserDefaults] setObject:self.currentCappuccinoProjectController.cappuccinoProject.projectPath forKey:kDefaultXCCLastSelectedProjectPath];

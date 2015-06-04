@@ -26,17 +26,17 @@
     {
         // Add possible executable paths to PATH
         self.environment = [NSProcessInfo processInfo].environment.mutableCopy;
-        self.environmentPaths = [environementPaths mutableCopy];
+        self.binaryPaths = [environementPaths mutableCopy];
         
-        [self.environmentPaths addObject:@"/usr/bin"];
-        [self.environmentPaths addObject:@"/usr/local/bin"];
-        [self.environmentPaths addObject:@"~/bin"];
-        [self.environmentPaths addObject:@"/usr/local/narwhal/bin"];
-        [self.environmentPaths addObject:@"~/narwhal/bin"];
+        [self.binaryPaths addObject:@"/usr/bin"];
+        [self.binaryPaths addObject:@"/usr/local/bin"];
+        [self.binaryPaths addObject:@"~/bin"];
+        [self.binaryPaths addObject:@"/usr/local/narwhal/bin"];
+        [self.binaryPaths addObject:@"~/narwhal/bin"];
         
-        DDLogError(@"Init task manager with  environements %@", self.environmentPaths);
+        DDLogError(@"Init task manager with  environements %@", self.binaryPaths);
         
-        NSMutableArray *paths = [self.environmentPaths mutableCopy];
+        NSMutableArray *paths = [self.binaryPaths mutableCopy];
         
         for (NSInteger i = 0; i < paths.count; ++i)
             paths[i] = [paths[i] stringByExpandingTildeInPath];

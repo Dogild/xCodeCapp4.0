@@ -44,7 +44,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSMutableDictionary           *errors;
 @property NSString                      *version;
 @property NSString                      *objjIncludePath;
-@property NSArray                       *environmentsPaths;
+@property NSMutableArray                *binaryPaths;
 @property NSString                      *XcodeCappIgnoreContent;
 @property BOOL                          isBusy;
 @property BOOL                          autoStartListening;
@@ -54,7 +54,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property BOOL                          processNib2Cib;
 @property XCCCappuccinoProjectStatus    status;
 
-+ (NSArray*)defaultEnvironmentPaths;
++ (NSArray*)defaultBinaryPaths;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)reinitialize;

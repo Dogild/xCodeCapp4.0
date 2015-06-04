@@ -13,7 +13,7 @@
 @class XCCMainController;
 
 
-@interface XCCCappuccinoProjectController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
+@interface XCCCappuccinoProjectController : NSObject
 {
     XCCTaskLauncher             *taskLauncher;
     NSOperationQueue            *operationQueue;
@@ -39,7 +39,6 @@
 
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)resetProject:(id)aSender;
-- (IBAction)cleanProjectErrors:(id)aSender;
 - (IBAction)openProjectInXcode:(id)sender;
 - (IBAction)openProjectInFinder:(id)sender;
 - (IBAction)openProjectInEditor:(id)sender;

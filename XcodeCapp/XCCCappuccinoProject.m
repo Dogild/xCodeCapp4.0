@@ -12,7 +12,7 @@
 #import "CappuccinoUtils.h"
 #import "XCCPath.h"
 
-static NSArray * XCCDefaultEnvironmentPaths;
+static NSArray * XCCDefaultBinaryPaths;
 static NSDictionary* XCCDefaultInfoPlistConfigurations;
 
 // we replace the "/" by a weird unicode "/" in order to generate file names with "/" in .XcodeSupport. very clear huh?
@@ -31,6 +31,7 @@ NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoPro
 NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoProjectLastEventIDKey";
 
 
+
 @implementation XCCCappuccinoProject
 
 @synthesize XcodeCappIgnoreContent  = _XcodeCappIgnoreContent;
@@ -44,7 +45,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     if (self != [XCCCappuccinoProject class])
         return;
     
-    XCCDefaultEnvironmentPaths = [NSArray arrayWithObjects:[[XCCPath alloc] initWithName:@"~/bin"], nil];
+    XCCDefaultBinaryPaths = [NSArray arrayWithObjects:[[XCCPath alloc] initWithName:@"~/bin"], nil];
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
     
@@ -53,15 +54,15 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
                                           XCCCappuccinoProcessObjjKey: @YES,
                                           XCCCappuccinoProcessNib2CibKey: @YES,
                                           XCCCappuccinoProcessObjj2ObjcSkeletonKey: @YES,
-                                          XCCCappuccinoProjectBinPathsKey: [XCCDefaultEnvironmentPaths valueForKeyPath:@"name"],
+                                          XCCCappuccinoProjectBinPathsKey: [XCCDefaultBinaryPaths valueForKeyPath:@"name"],
                                           XCCCappuccinoObjjIncludePathKey: @"",
                                           XCCCappuccinoProjectNicknameKey: @"",
                                           XCCCappuccinoProjectAutoStartListeningKey: @NO};
 }
 
-+ (NSArray*)defaultEnvironmentPaths
++ (NSArray*)defaultBinaryPaths
 {
-    return XCCDefaultEnvironmentPaths;
+    return XCCDefaultBinaryPaths;
 }
 
 #pragma mark - Init methods
@@ -138,10 +139,10 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     }
     else
     {
-        mutablePaths = [[[self class] defaultEnvironmentPaths] mutableCopy];
+        mutablePaths = [[[self class] defaultBinaryPaths] mutableCopy];
     }
     
-    self.environmentsPaths        = mutablePaths;
+    self.binaryPaths        = mutablePaths;
     self.nickname                 = self->settings[XCCCappuccinoProjectNicknameKey];
     self.objjIncludePath          = self->settings[XCCCappuccinoObjjIncludePathKey];
     self.version                  = self->settings[XCCCompatibilityVersionKey];
@@ -164,7 +165,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)saveSettings
 {
-    self->settings[XCCCappuccinoProjectBinPathsKey]              = [self.environmentsPaths valueForKeyPath:@"name"];
+    self->settings[XCCCappuccinoProjectBinPathsKey]              = [self.binaryPaths valueForKeyPath:@"name"];
     self->settings[XCCCappuccinoObjjIncludePathKey]              = self.objjIncludePath;
     self->settings[XCCCappuccinoProjectNicknameKey]              = self.nickname;
     self->settings[XCCCompatibilityVersionKey]                   = self.version;
