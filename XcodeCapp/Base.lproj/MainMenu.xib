@@ -610,9 +610,9 @@
                                                         <button verticalHuggingPriority="750" id="sNm-EJ-c40">
                                                             <rect key="frame" x="15" y="2" width="147" height="19"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                            <buttonCell key="cell" type="recessed" title="Settings" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fel-8z-zmY">
+                                                            <buttonCell key="cell" type="recessed" title="Settings" bezelStyle="recessed" alignment="center" refusesFirstResponder="YES" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fel-8z-zmY">
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <font key="font" metaFont="systemBold" size="12"/>
                                                             </buttonCell>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="tag">
@@ -626,9 +626,9 @@
                                                         <button verticalHuggingPriority="750" id="E4i-Ez-bfl">
                                                             <rect key="frame" x="205" y="2" width="147" height="19"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                            <buttonCell key="cell" type="recessed" title="Errors &amp; Warnings" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="x1c-0h-XNs">
+                                                            <buttonCell key="cell" type="recessed" title="Errors &amp; Warnings" bezelStyle="recessed" alignment="center" refusesFirstResponder="YES" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="x1c-0h-XNs">
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <font key="font" metaFont="systemBold" size="12"/>
                                                             </buttonCell>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="tag">
@@ -642,9 +642,9 @@
                                                         <button verticalHuggingPriority="750" id="UCo-MK-pOT">
                                                             <rect key="frame" x="391" y="2" width="147" height="19"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                            <buttonCell key="cell" type="recessed" title="Operations" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZxW-hd-KKo">
+                                                            <buttonCell key="cell" type="recessed" title="Operations" bezelStyle="recessed" alignment="center" refusesFirstResponder="YES" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZxW-hd-KKo">
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <font key="font" metaFont="systemBold" size="12"/>
                                                             </buttonCell>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="tag">
