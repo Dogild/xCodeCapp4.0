@@ -15,6 +15,9 @@
 
 @implementation XCCErrorsViewController
 
+
+#pragma mark - Initialization
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -22,6 +25,9 @@
     [self->errorOutlineView setDoubleAction:@selector(openRelatedObjjFileInEditor:)];
     [self->errorOutlineView bind:NSTargetBinding toObject:self withKeyPath:@"cappuccinoProjectController" options:nil];
 }
+
+
+#pragma mark - Utilities
 
 - (void)_showMaskingView:(BOOL)shouldShow
 {
@@ -52,6 +58,9 @@
     [self->errorOutlineView expandItem:nil expandChildren:YES];
     [self _showMaskingView:!self.cappuccinoProjectController.cappuccinoProject.errors.count];
 }
+
+
+#pragma mark - Actions
 
 - (IBAction)cleanProjectErrors:(id)aSender
 {
@@ -122,6 +131,5 @@
     else
         return 20.0;
 }
-
 
 @end

@@ -23,6 +23,9 @@
     [super viewDidLoad];
 }
 
+
+#pragma Utilities
+
 - (void)reload
 {
     XCCCappuccinoProject * project = self.cappuccinoProjectController.cappuccinoProject;

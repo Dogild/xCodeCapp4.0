@@ -14,10 +14,15 @@
 
 @implementation XCCOperationsViewController
 
+#pragma nark - Initialization
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 }
+
+
+#pragma nark - Utilities
 
 - (void)_showMaskingView:(BOOL)shouldShow
 {
