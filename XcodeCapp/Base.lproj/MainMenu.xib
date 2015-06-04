@@ -34,7 +34,7 @@
                 <outlet property="settingsViewController" destination="SVc-KD-eve" id="O6Z-6D-CSB"/>
                 <outlet property="splitView" destination="tld-4e-icT" id="imM-Zo-TVk"/>
                 <outlet property="tabViewProject" destination="00d-fn-q41" id="iaN-Tj-Ejj"/>
-                <outlet property="viewProjectMask" destination="stz-Vu-tYo" id="F4M-lx-p6f"/>
+                <outlet property="welcomeViewMask" destination="stz-Vu-tYo" id="fzd-bU-D3Y"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="kmQ-a1-l2O"/>
             </connections>
         </customObject>
@@ -332,7 +332,7 @@
                 </menuItem>
             </items>
         </menu>
-        <window title="XcodeCapp" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="XcodeCapp" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -842,7 +842,7 @@
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <point key="canvasLocation" x="310.5" y="-302.5"/>
         </box>
-        <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="stz-Vu-tYo" customClass="XCCProjectsFolderDropView">
+        <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="stz-Vu-tYo" customClass="XCCWelcomeView">
             <rect key="frame" x="0.0" y="-1" width="464" height="401"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <view key="contentView">
@@ -894,12 +894,20 @@
                                     <action selector="addProject:" target="923-ke-ovW" id="uyu-VJ-KmD"/>
                                 </connections>
                             </button>
+                            <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" id="vPH-Iq-Ray">
+                                <rect key="frame" x="200" y="40" width="32" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </progressIndicator>
                         </subviews>
                     </customView>
                 </subviews>
             </view>
             <color key="borderColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <connections>
+                <outlet property="boxImport" destination="Tbj-mM-87j" id="Nly-uI-l8C"/>
+                <outlet property="loadingIndicator" destination="vPH-Iq-Ray" id="qiU-X4-gPI"/>
+            </connections>
             <point key="canvasLocation" x="262" y="-248.5"/>
         </box>
         <menu id="caT-Aq-Atw">
