@@ -34,7 +34,7 @@
                 <outlet property="settingsViewController" destination="SVc-KD-eve" id="O6Z-6D-CSB"/>
                 <outlet property="splitView" destination="tld-4e-icT" id="imM-Zo-TVk"/>
                 <outlet property="tabViewProject" destination="00d-fn-q41" id="iaN-Tj-Ejj"/>
-                <outlet property="viewProjectMask" destination="stz-Vu-tYo" id="MA2-8E-HfO"/>
+                <outlet property="viewProjectMask" destination="stz-Vu-tYo" id="F4M-lx-p6f"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="kmQ-a1-l2O"/>
             </connections>
         </customObject>
@@ -842,7 +842,7 @@
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <point key="canvasLocation" x="310.5" y="-302.5"/>
         </box>
-        <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="stz-Vu-tYo">
+        <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="stz-Vu-tYo" customClass="XCCProjectsFolderDropView">
             <rect key="frame" x="0.0" y="-1" width="464" height="401"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <view key="contentView">
@@ -853,11 +853,6 @@
                         <rect key="frame" x="15" y="15" width="432" height="369"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="fLV-am-RIG">
-                                <rect key="frame" x="123" y="145" width="186" height="186"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon_512x512" id="3Lm-zL-5Um"/>
-                            </imageView>
                             <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="FVR-yM-GAZ">
                                 <rect key="frame" x="40" y="116" width="352" height="5"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
@@ -888,13 +883,24 @@
                                 <color key="borderColor" red="0.97254901960784312" green="0.50196078431372548" blue="0.15686274509803921" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </box>
+                            <button focusRingType="none" id="wdl-kS-DYD">
+                                <rect key="frame" x="123" y="150" width="186" height="186"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="icon_512x512" imagePosition="only" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="OC7-Ci-3pt">
+                                    <behavior key="behavior" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="addProject:" target="923-ke-ovW" id="uyu-VJ-KmD"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </customView>
                 </subviews>
             </view>
             <color key="borderColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-            <point key="canvasLocation" x="284" y="-269.5"/>
+            <point key="canvasLocation" x="262" y="-248.5"/>
         </box>
         <menu id="caT-Aq-Atw">
             <items>

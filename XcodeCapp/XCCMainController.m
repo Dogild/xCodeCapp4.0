@@ -16,6 +16,7 @@
 #import "XCCOperationsViewController.h"
 #import "XCCErrorsViewController.h"
 #import "XCCSettingsViewController.h"
+#import "XCCProjectsFolderDropView.h"
 
 
 @implementation XCCMainController
@@ -24,7 +25,10 @@
 
 - (void)windowDidLoad
 {
+    self->viewProjectMask.mainXcodeCappController = self;
+
     [self _showMaskingView:YES];
+
     [self _showProjectsTableMaskingView:YES];
         
     [self _restoreManagedProjectsFromUserDefaults];
@@ -55,7 +59,7 @@
     
     [self updateSelectedTab:self->buttonSelectConfigurationTab];
     
-    [self->projectTableView registerForDraggedTypes:[NSArray arrayWithObjects:@"projects", NSFilenamesPboardType, nil]];
+    [self->projectTableView registerForDraggedTypes:@[@"projects", NSFilenamesPboardType]];
 }
 
 
@@ -207,33 +211,27 @@
 
 #pragma mark - Public Utilities
 
-- (XCCCappuccinoProjectController *)createNewCappuccinoProjectControllerFromPath:(NSString *)path
+- (void)manageCappuccinoProjectControllerForPath:(NSString *)path
 {
     if ([[self.cappuccinoProjectControllers filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cappuccinoProject.projectPath == %@", path]] count])
     {
         NSRunAlertPanel(@"This project is already managed.", @"Please remove the other project or use the reset button.", @"OK", nil, nil, nil);
-        return nil;
+        return;
     }
 
-    return [[XCCCappuccinoProjectController alloc] initWithPath:path controller:self];
-}
+    XCCCappuccinoProjectController *controller = [[XCCCappuccinoProjectController alloc] initWithPath:path controller:self];
 
-- (void)manageCappuccinoProjectController:(XCCCappuccinoProjectController*)aController
-{
-    if (!aController)
-        return;
+    [self.cappuccinoProjectControllers addObject:controller];
 
-    [self.cappuccinoProjectControllers addObject:aController];
-
-    NSInteger index = [self.cappuccinoProjectControllers indexOfObject:aController];
+    NSInteger index = [self.cappuccinoProjectControllers indexOfObject:controller];
 
     [self _reloadProjectsList];
-
     [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     [self->projectTableView scrollRowToVisible:index];
+
     [self _saveManagedProjectsToUserDefaults];
 
-    [aController switchProjectListeningStatus:self];
+    [controller switchProjectListeningStatus:self];
 }
 
 - (void)unmanageCappuccinoProjectController:(XCCCappuccinoProjectController*)aController
@@ -286,13 +284,13 @@
     openPanel.canCreateDirectories = YES;
     openPanel.canChooseDirectories = YES;
     openPanel.canChooseFiles = NO;
-    
+
     if ([openPanel runModal] != NSFileHandlingPanelOKButton)
         return;
     
     NSString *projectPath = [[openPanel.URLs[0] path] stringByStandardizingPath];
 
-    [self manageCappuccinoProjectController:[self createNewCappuccinoProjectControllerFromPath:projectPath]];
+    [self manageCappuccinoProjectControllerForPath:projectPath];
 }
 
 - (IBAction)removeProject:(id)aSender
@@ -434,7 +432,7 @@
         NSArray *draggedFolders = [pboard propertyListForType:(NSString *)NSFilenamesPboardType];
         
         for (NSString *folder in draggedFolders)
-            [self manageCappuccinoProjectController:[self createNewCappuccinoProjectControllerFromPath:folder]];
+            [self manageCappuccinoProjectControllerForPath:folder];
 
         return YES;
     }

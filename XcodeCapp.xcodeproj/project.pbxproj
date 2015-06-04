@@ -13,6 +13,7 @@
 		021B946C1B20D71200F12DDA /* XCCErrorsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B946B1B20D71200F12DDA /* XCCErrorsViewController.m */; };
 		021B94701B20E31F00F12DDA /* XCCSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B946E1B20E31F00F12DDA /* XCCSettingsViewController.m */; };
 		021B94711B20E31F00F12DDA /* SettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 021B946F1B20E31F00F12DDA /* SettingsView.xib */; };
+		021B94751B21112500F12DDA /* XCCProjectsFolderDropView.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B94741B21112500F12DDA /* XCCProjectsFolderDropView.m */; };
 		0247DCC11B17DDC400192FEF /* open-in-editor.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC01B17DDC400192FEF /* open-in-editor.png */; };
 		0247DCC41B17DDDD00192FEF /* run.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC21B17DDDD00192FEF /* run.png */; };
 		0247DCC51B17DDDD00192FEF /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC31B17DDDD00192FEF /* stop.png */; };
@@ -116,6 +117,8 @@
 		021B946D1B20E31F00F12DDA /* XCCSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCSettingsViewController.h; sourceTree = "<group>"; };
 		021B946E1B20E31F00F12DDA /* XCCSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCSettingsViewController.m; sourceTree = "<group>"; };
 		021B946F1B20E31F00F12DDA /* SettingsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsView.xib; sourceTree = "<group>"; };
+		021B94731B21112500F12DDA /* XCCProjectsFolderDropView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCProjectsFolderDropView.h; sourceTree = "<group>"; };
+		021B94741B21112500F12DDA /* XCCProjectsFolderDropView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCProjectsFolderDropView.m; sourceTree = "<group>"; };
 		0247DCC01B17DDC400192FEF /* open-in-editor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-editor.png"; sourceTree = "<group>"; };
 		0247DCC21B17DDDD00192FEF /* run.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = run.png; sourceTree = "<group>"; };
 		0247DCC31B17DDDD00192FEF /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
@@ -253,6 +256,8 @@
 				6824CDE91B0E9CDB00F73447 /* XCCOperationErrorDataView.m */,
 				686C696F1B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.h */,
 				686C69701B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m */,
+				021B94731B21112500F12DDA /* XCCProjectsFolderDropView.h */,
+				021B94741B21112500F12DDA /* XCCProjectsFolderDropView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -610,6 +615,7 @@
 				025800451B1E3F010000EB7D /* XCCAbstractOperation.m in Sources */,
 				686C69711B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m in Sources */,
 				6824CDF01B0E9F1400F73447 /* XCCOperationError.m in Sources */,
+				021B94751B21112500F12DDA /* XCCProjectsFolderDropView.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,
 				686C69741B0FC2EB0095BB3C /* CappLintUtils.m in Sources */,
 				6841F2441AF98CE600CFE60E /* main.m in Sources */,
