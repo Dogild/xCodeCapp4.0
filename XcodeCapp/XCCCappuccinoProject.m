@@ -228,8 +228,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)reloadXcodeCappIgnoreFile
 {
-    self.ignoredPathPredicates = [NSMutableArray new];
-    
     NSFileManager *fm = [NSFileManager defaultManager];
     
     if ([fm fileExistsAtPath:self.XcodeCappIgnorePath])
