@@ -24,6 +24,7 @@
 #import "XCCTaskLauncher.h"
 #import "UserDefaults.h"
 #import "XcodeProjectCloser.h"
+#import "XCCOperationsViewController.h"
 
 enum XCCLineSpecifier {
     kLineSpecifierNone,
@@ -712,7 +713,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_addOperation:(NSOperation *)anOperation
 {
     [self.operations addObject:anOperation];
-    [self.mainXcodeCappController reloadCurrentProjectOperations];
+    [self.mainXcodeCappController.operationsViewController reload];
     
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _registerSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
@@ -727,7 +728,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_removeOperation:(NSOperation *)anOperation
 {
     [self.operations removeObject:anOperation];
-    [self.mainXcodeCappController reloadCurrentProjectOperations];
+    [self.mainXcodeCappController.operationsViewController reload];
     
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _unregisterSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
@@ -1143,7 +1144,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self _cancelAllProjectRelatedOperations];
     [self.operations removeAllObjects];
-    [self.mainXcodeCappController reloadCurrentProjectOperations];
+    [self.mainXcodeCappController.operationsViewController reload];
 }
 
 - (IBAction)cancelOperation:(id)sender
@@ -1267,26 +1268,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         self.cappuccinoProject.autoStartListening = NO;
     }
 }
-
-
-#pragma mark - tableView delegate and datasource
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
-{
-    return [self.operations count];
-}
-
-- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
-{
-    XCCOperationDataView *cellView = [tableView makeViewWithIdentifier:@"OperationCell" owner:nil];
-    [cellView setOperation:[self.operations objectAtIndex:row]];
-    
-//    [cellView.cancelButton setTarget:self];
-//    [cellView.cancelButton setAction:@selector(cancelOperation:)];
-    
-    return cellView;
-}
-
 
 #pragma mark - outlineView data source and delegate
 

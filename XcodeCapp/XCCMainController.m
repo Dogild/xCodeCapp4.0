@@ -12,6 +12,7 @@
 #import "XCCCappuccinoProjectControllerDataView.h"
 #import "CappuccinoUtils.h"
 #import "UserDefaults.h"
+#import "XCCOperationsViewController.h"
 
 
 @implementation XCCMainController
@@ -23,7 +24,6 @@
     [self _showMaskingView:YES];
     [self _showProjectsTableMaskingView:YES];
     [self _showErrorsTableMaskingView:YES];
-    [self _showOperationsTableMaskingView:YES];
         
     [self _restoreManagedProjectsFromUserDefaults];
     [self _selectLastProjectSelected];
@@ -37,7 +37,7 @@
     [self->tabViewProject addTabViewItem:itemErrors];
     
     NSTabViewItem *itemOperations = [[NSTabViewItem alloc] initWithIdentifier:@"operations"];
-    [itemOperations setView:self->viewTabOperations];
+    [itemOperations setView:self.operationsViewController.view];
     [self->tabViewProject addTabViewItem:itemOperations];
     
     NSMutableParagraphStyle *paragraphStyle= [NSMutableParagraphStyle new];
@@ -141,28 +141,6 @@
     }
 }
 
-- (void)_showOperationsTableMaskingView:(BOOL)shouldShow
-{
-    if (shouldShow)
-    {
-        if (self->viewOperationMask.superview)
-            return;
-        
-        [self->operationTableView setHidden:YES];
-        
-        self->viewOperationMask.frame = [self->viewTabOperations bounds];
-        [self->viewTabOperations addSubview:self->viewOperationMask positioned:NSWindowAbove relativeTo:nil];
-    }
-    else
-    {
-        if (!self->viewOperationMask.superview)
-            return;
-        
-        [self->operationTableView setHidden:NO];
-        
-        [self->viewOperationMask removeFromSuperview];
-    }
-}
 
 - (void)_showProjectsTableMaskingView:(BOOL)shouldShow
 {
@@ -312,16 +290,6 @@
         [self _showErrorsTableMaskingView:NO];
 }
 
-- (void)reloadCurrentProjectOperations
-{
-    [self->operationTableView reloadData];
-    
-    if (!self.currentCappuccinoProjectController.operations.count)
-        [self _showOperationsTableMaskingView:YES];
-    else
-        [self _showOperationsTableMaskingView:NO];
-}
-
 - (void)reloadProjectsList
 {
     [self->projectTableView reloadData];
@@ -457,8 +425,7 @@
     if (selectedCappuccinoProject == -1)
     {
         self.currentCappuccinoProjectController = nil;
-        [self->operationTableView setDelegate:nil];
-        [self->operationTableView setDataSource:nil];
+        self.operationsViewController.cappuccinoProjectController = nil;
 
         [self _showMaskingView:YES];
         [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kDefaultXCCLastSelectedProjectPath];
@@ -466,10 +433,8 @@
     }
     
     self.currentCappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject];
-    
-    [self->operationTableView setDelegate:self.currentCappuccinoProjectController];
-    [self->operationTableView setDataSource:self.currentCappuccinoProjectController];
-    [self reloadCurrentProjectOperations];
+    self.operationsViewController.cappuccinoProjectController = self.currentCappuccinoProjectController;
+    [self.operationsViewController reload];
     
     [self->errorOutlineView setDelegate:self.currentCappuccinoProjectController];
     [self->errorOutlineView setDataSource:self.currentCappuccinoProjectController];

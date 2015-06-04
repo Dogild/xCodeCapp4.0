@@ -11,14 +11,13 @@
 
 @class XCCCappuccinoProject;
 @class XCCCappuccinoProjectController;
-
+@class XCCOperationsViewController;
 
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 {
     IBOutlet NSBox                          *maskingView;
     IBOutlet NSSplitView                    *splitView;
     IBOutlet NSTableView                    *projectTableView;
-    IBOutlet NSTableView                    *operationTableView;
     IBOutlet NSOutlineView                  *errorOutlineView;
     IBOutlet NSView                         *projectViewContainer;
     IBOutlet NSArrayController              *includePathArrayController;
@@ -27,23 +26,20 @@
     IBOutlet NSButton                       *buttonSelectErrorsTab;
     IBOutlet NSButton                       *buttonSelectOperationsTab;
     IBOutlet NSBox                          *viewErrorsMask;
-    IBOutlet NSBox                          *viewOperationMask;
     IBOutlet NSBox                          *viewProjectMask;
     IBOutlet NSView                         *viewTabConfiguration;
     IBOutlet NSView                         *viewTabErrors;
-    IBOutlet NSView                         *viewTabOperations;
     BOOL                                    isObserving;
 }
 
-
-@property NSMutableArray                   *cappuccinoProjectControllers;
-@property XCCCappuccinoProjectController   *currentCappuccinoProjectController;
-@property int                              totalNumberOfErrors;
+@property IBOutlet XCCOperationsViewController  *operationsViewController;
+@property NSMutableArray                        *cappuccinoProjectControllers;
+@property XCCCappuccinoProjectController        *currentCappuccinoProjectController;
+@property int                                   totalNumberOfErrors;
 
 - (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
 - (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;
 - (void)reloadCurrentProjectErrors;
-- (void)reloadCurrentProjectOperations;
 - (void)reloadTotalNumberOfErrors;
 - (void)reloadProjectsList;
 - (void)saveManagedProjectsToUserDefaults;
