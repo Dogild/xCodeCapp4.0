@@ -12,45 +12,46 @@
 @class XCCCappuccinoProject;
 @class XCCCappuccinoProjectController;
 
+
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
+{
+    IBOutlet NSBox                          *maskingView;
+    IBOutlet NSSplitView                    *splitView;
+    IBOutlet NSTableView                    *projectTableView;
+    IBOutlet NSTableView                    *operationTableView;
+    IBOutlet NSOutlineView                  *errorOutlineView;
+    IBOutlet NSView                         *projectViewContainer;
+    IBOutlet NSArrayController              *includePathArrayController;
+    IBOutlet NSTabView                      *tabViewProject;
+    IBOutlet NSButton                       *buttonSelectConfigurationTab;
+    IBOutlet NSButton                       *buttonSelectErrorsTab;
+    IBOutlet NSButton                       *buttonSelectOperationsTab;
+    IBOutlet NSBox                          *viewErrorsMask;
+    IBOutlet NSBox                          *viewOperationMask;
+    IBOutlet NSBox                          *viewProjectMask;
+    IBOutlet NSView                         *viewTabConfiguration;
+    IBOutlet NSView                         *viewTabErrors;
+    IBOutlet NSView                         *viewTabOperations;
+    BOOL                                    isObserving;
+}
 
-@property (strong) IBOutlet NSBox                   *maskingView;
-@property (strong) IBOutlet NSSplitView             *splitView;
-@property (strong) IBOutlet NSTableView             *projectTableView;
-@property (strong) IBOutlet NSTableView             *operationTableView;
-@property (strong) IBOutlet NSOutlineView           *errorOutlineView;
-@property (strong) IBOutlet NSView                  *projectViewContainer;
-@property (strong) IBOutlet NSArrayController       *includePathArrayController;
-@property (strong) IBOutlet NSTabView               *tabViewProject;
-@property (strong) IBOutlet NSButton                *buttonSelectConfigurationTab;
-@property (strong) IBOutlet NSButton                *buttonSelectErrorsTab;
-@property (strong) IBOutlet NSButton                *buttonSelectOperationsTab;
-@property (strong) IBOutlet NSBox                   *viewErrorsMask;
-@property (strong) IBOutlet NSBox                   *viewOperationMask;
-@property (strong) IBOutlet NSBox                   *viewProjectMask;
-@property (strong) IBOutlet NSView                  *viewTabConfiguration;
-@property (strong) IBOutlet NSView                  *viewTabErrors;
-@property (strong) IBOutlet NSView                  *viewTabOperations;
 
-@property (strong) NSMutableArray                   *cappuccinoProjectControllers;
-@property (strong) XCCCappuccinoProjectController   *currentCappuccinoProjectController;
-@property (nonatomic) int                           totalNumberOfErrors;
+@property NSMutableArray                   *cappuccinoProjectControllers;
+@property XCCCappuccinoProjectController   *currentCappuccinoProjectController;
+@property int                              totalNumberOfErrors;
+
+- (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
+- (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;
+- (void)reloadCurrentProjectErrors;
+- (void)reloadCurrentProjectOperations;
+- (void)reloadTotalNumberOfErrors;
+- (void)saveManagedProjectsToUserDefaults;
+- (void)notifyCappuccinoControllersApplicationIsClosing;
 
 - (IBAction)addProject:(id)aSender;
 - (IBAction)removeProject:(id)aSender;
 - (IBAction)updateSelectedTab:(id)aSender;
 - (IBAction)cleanSelectedProjectErrors:(id)aSender;
 - (IBAction)cleanAllErrors:(id)aSender;
-
-- (void)notifyCappuccinoControllersApplicationIsClosing;
-- (void)addCappuccinoProjectWithPath:(NSString*)aProjectPath;
-- (void)_restoreManagedProjectsFromUserDefaults;
-- (void)_saveManagedProjectsToUserDefaults;
-- (void)reloadErrorsListForCurrentCappuccinoProject;
-- (void)reloadOperationsListForCurrentCappuccinoProject;
-- (void)updateTotalNumberOfErrors;
-
-
-- (void)removeCappuccinoProject:(XCCCappuccinoProjectController*)aController;
 
 @end

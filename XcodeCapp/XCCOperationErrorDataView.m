@@ -11,27 +11,30 @@
 
 @implementation XCCOperationErrorDataView
 
-- (void)setOperationError:(XCCOperationError *)operationError
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
-    if (operationError.message)
-        self.textField.stringValue = operationError.message;
-    else
-        self.textField.stringValue = @"No message";
+    if (!newWindow)
+        return;
     
-    if (operationError.lineNumber)
-        self.fieldLineNumber.stringValue = operationError.lineNumber;
+    if (self.errorOperation.message)
+        self->fieldMessage.stringValue = self.errorOperation.message;
     else
-        self.fieldLineNumber.stringValue = @"0";
+        self->fieldMessage.stringValue = @"No message";
     
-    switch (operationError.errorType)
+    if (self.errorOperation.lineNumber)
+        self->fieldLineNumber.stringValue = self.errorOperation.lineNumber;
+    else
+        self->fieldLineNumber.stringValue = @"0";
+    
+    switch (self.errorOperation.errorType)
     {
         case XCCCappLintOperationErrorType:
         case XCCNib2CibOperationErrorType:
-            [self.imageViewType setImage:[NSImage imageNamed:@"NSStatusPartiallyAvailable"]];
+            [self->imageViewType setImage:[NSImage imageNamed:@"NSStatusPartiallyAvailable"]];
             break;
         
         default:
-            [self.imageViewType setImage:[NSImage imageNamed:@"NSStatusUnavailable"]];
+            [self->imageViewType setImage:[NSImage imageNamed:@"NSStatusUnavailable"]];
     }
 }
 

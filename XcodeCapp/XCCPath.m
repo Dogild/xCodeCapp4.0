@@ -10,28 +10,17 @@
 
 @implementation XCCPath
 
-- (instancetype)init
+- (instancetype)initWithName:(NSString*)aName
 {
-    self = [super init];
-    
-    if (self)
-    {
-        self.name = @"~/bin";
-    }
+    if (self = [super init])
+        self.name = aName;
     
     return self;
 }
 
-- (instancetype)initWithName:(NSString*)aName
+- (instancetype)init
 {
-    self = [super init];
-    
-    if (self)
-    {
-        self.name = aName;
-    }
-    
-    return self;
+    return [self initWithName:@"~/bin"];
 }
 
 @end

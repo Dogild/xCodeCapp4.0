@@ -11,19 +11,20 @@
 
 
 @interface XCCCappuccinoProjectControllerDataView : NSTableCellView
+{
+    IBOutlet NSTextField                    *fieldNickname;
+    IBOutlet NSTextField                    *fieldPath;
+    IBOutlet NSButton                       *buttonSwitchStatus;
+    IBOutlet NSButton                       *buttonOpenXcodeProject;
+    IBOutlet NSButton                       *buttonResetProject;
+    IBOutlet NSButton                       *buttonOpenInFinder;
+    IBOutlet NSButton                       *buttonOpenInEditor;
+    IBOutlet NSButton                       *buttonOpenInTerminal;
+    IBOutlet NSBox                          *boxStatus;
+    IBOutlet NSProgressIndicator            *operationsProgressIndicator;
+    IBOutlet NSProgressIndicator            *waitingProgressIndicator;
+}
 
-@property (nonatomic, retain) IBOutlet NSTextField                  *pathTextField;
-@property (nonatomic, retain) IBOutlet NSButton                     *buttonSwitchStatus;
-@property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenXcodeProject;
-@property (nonatomic, retain) IBOutlet NSButton                     *buttonResetProject;
-@property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenInFinder;
-@property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenInEditor;
-@property (nonatomic, retain) IBOutlet NSButton                     *buttonOpenInTerminal;
-@property (nonatomic, retain) IBOutlet NSBox                        *boxStatus;
-@property (nonatomic, retain) IBOutlet NSProgressIndicator          *operationsProgressIndicator;
-@property (nonatomic, retain) IBOutlet NSProgressIndicator          *waitingProgressIndicator;
-
-@property (nonatomic, retain) XCCCappuccinoProjectController        *controller;
-
+@property XCCCappuccinoProjectController    *controller;
 
 @end

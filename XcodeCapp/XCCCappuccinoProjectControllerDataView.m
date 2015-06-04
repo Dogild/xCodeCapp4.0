@@ -19,6 +19,8 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
 
 @implementation XCCCappuccinoProjectControllerDataView
 
+@synthesize controller = _controller;
+
 + (void)initialize
 {
     XCCCappuccinoProjectDataViewColorLoading     = [NSColor colorWithCalibratedRed:107.0/255.0 green:148.0/255.0 blue:236.0/255.0 alpha:1.0];
@@ -28,61 +30,52 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     XCCCappuccinoProjectDataViewColorError       = [NSColor colorWithCalibratedRed:247.0/255.0 green:97.0/255.0 blue:89.0/255.0 alpha:1.0];
 }
 
-- (void)setController:(XCCCappuccinoProjectController *)controller
-{
-    [self willChangeValueForKey:@"controller"];
-    _controller = controller;
-    [self didChangeValueForKey:@"controller"];
-    
-    [self.buttonSwitchStatus setTarget:controller];
-    [self.buttonSwitchStatus setAction:@selector(switchProjectListeningStatus:)];
-    
-    [self.buttonOpenXcodeProject setTarget:controller];
-    [self.buttonOpenXcodeProject setAction:@selector(openXcodeProject:)];
-    
-    [self.buttonResetProject setTarget:controller];
-    [self.buttonResetProject setAction:@selector(resetProject:)];
-    
-    [self.buttonOpenInEditor setTarget:controller];
-    [self.buttonOpenInEditor setAction:@selector(openProjectInEditor:)];
-    
-    [self.buttonOpenInFinder setTarget:controller];
-    [self.buttonOpenInFinder setAction:@selector(openProjectInFinder:)];
-    
-    [self.buttonOpenInTerminal setTarget:controller];
-    [self.buttonOpenInTerminal setAction:@selector(openProjectInTerminal:)];
-
-    
-    self.boxStatus.borderColor  = [NSColor clearColor];
-    self.boxStatus.fillColor    = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
-    [self.waitingProgressIndicator startAnimation:self];
-}
-
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
     if (newWindow)
     {
+        [self->buttonSwitchStatus setTarget:self.controller];
+        [self->buttonSwitchStatus setAction:@selector(switchProjectListeningStatus:)];
+        [self->buttonOpenXcodeProject setTarget:self.controller];
+        [self->buttonOpenXcodeProject setAction:@selector(openProjectInXcode:)];
+        [self->buttonResetProject setTarget:self.controller];
+        [self->buttonResetProject setAction:@selector(resetProject:)];
+        [self->buttonOpenInEditor setTarget:self.controller];
+        [self->buttonOpenInEditor setAction:@selector(openProjectInEditor:)];
+        [self->buttonOpenInFinder setTarget:self.controller];
+        [self->buttonOpenInFinder setAction:@selector(openProjectInFinder:)];
+        [self->buttonOpenInTerminal setTarget:self.controller];
+        [self->buttonOpenInTerminal setAction:@selector(openProjectInTerminal:)];
+        
+        self->boxStatus.borderColor  = [NSColor clearColor];
+        self->boxStatus.fillColor    = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
+        
+        [self->waitingProgressIndicator startAnimation:self];
+        
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
         
         NSDictionary *options = @{NSValueTransformerNameBindingOption: NSNegateBooleanTransformerName};
-        [self.operationsProgressIndicator bind:NSValueBinding toObject:self.controller withKeyPath:@"operationsProgress" options:nil];
-        [self.operationsProgressIndicator bind:NSHiddenBinding toObject:self.controller withKeyPath:@"operationsTotal" options:options];
-        [self.waitingProgressIndicator bind:NSHiddenBinding toObject:self.controller.cappuccinoProject withKeyPath:@"isBusy" options:options];
-        [self.waitingProgressIndicator bind:@"hidden2" toObject:self.controller withKeyPath:@"operationsTotal" options:nil];
-        [self.textField bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"nickname" options:nil];
-        [self.pathTextField bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"projectPath" options:nil];
+        [self->operationsProgressIndicator bind:NSValueBinding toObject:self.controller withKeyPath:@"operationsProgress" options:nil];
+        [self->operationsProgressIndicator bind:NSHiddenBinding toObject:self.controller withKeyPath:@"operationsTotal" options:options];
+        [self->waitingProgressIndicator bind:NSHiddenBinding toObject:self.controller.cappuccinoProject withKeyPath:@"isBusy" options:options];
+        [self->waitingProgressIndicator bind:@"hidden2" toObject:self.controller withKeyPath:@"operationsTotal" options:nil];
+        [self->fieldNickname bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"nickname" options:nil];
+        [self->fieldPath bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"projectPath" options:nil];
     }
     else
     {
+        [self->waitingProgressIndicator stopAnimation:self];
+        
         [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"status"];
         [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"errors"];
-        [self.operationsProgressIndicator unbind:NSValueBinding];
-        [self.operationsProgressIndicator unbind:NSHiddenBinding];
-        [self.waitingProgressIndicator unbind:NSHiddenBinding];
-        [self.waitingProgressIndicator unbind:@"hidden2"];
-        [self.textField unbind:NSValueBinding];
-        [self.pathTextField unbind:NSValueBinding];
+        
+        [self->operationsProgressIndicator unbind:NSValueBinding];
+        [self->operationsProgressIndicator unbind:NSHiddenBinding];
+        [self->waitingProgressIndicator unbind:NSHiddenBinding];
+        [self->waitingProgressIndicator unbind:@"hidden2"];
+        [self->fieldNickname unbind:NSValueBinding];
+        [self->fieldPath unbind:NSValueBinding];
     }
     
     [self _updateDataView];
@@ -99,34 +92,34 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     {
         case XCCCappuccinoProjectStatusInitialized:
         case XCCCappuccinoProjectStatusStopped:
-            self.boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorStopped;
-            self.buttonSwitchStatus.enabled     = YES;
-            self.buttonOpenXcodeProject.enabled = NO;
-            self.buttonResetProject.enabled     = NO;
-            self.buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
+            self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorStopped;
+            self->buttonSwitchStatus.enabled     = YES;
+            self->buttonOpenXcodeProject.enabled = NO;
+            self->buttonResetProject.enabled     = NO;
+            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
             break;
             
         case XCCCappuccinoProjectStatusLoading:
-            self.boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorLoading;
-            self.buttonSwitchStatus.enabled     = NO;
-            self.buttonOpenXcodeProject.enabled = NO;
-            self.buttonResetProject.enabled     = NO;
+            self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorLoading;
+            self->buttonSwitchStatus.enabled     = NO;
+            self->buttonOpenXcodeProject.enabled = NO;
+            self->buttonResetProject.enabled     = NO;
             break;
             
         case XCCCappuccinoProjectStatusListening:
-            self.boxStatus.fillColor            = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
-            self.buttonSwitchStatus.enabled     = YES;
-            self.buttonOpenXcodeProject.enabled = YES;
-            self.buttonResetProject.enabled     = YES;
-            self.buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
+            self->boxStatus.fillColor            = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
+            self->buttonSwitchStatus.enabled     = YES;
+            self->buttonOpenXcodeProject.enabled = YES;
+            self->buttonResetProject.enabled     = YES;
+            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
             break;
             
         case XCCCappuccinoProjectStatusProcessing:
-            self.boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorProcessing;
-            self.buttonSwitchStatus.enabled     = YES;
-            self.buttonOpenXcodeProject.enabled = NO;
-            self.buttonResetProject.enabled     = NO;
-            self.buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
+            self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorProcessing;
+            self->buttonSwitchStatus.enabled     = YES;
+            self->buttonOpenXcodeProject.enabled = NO;
+            self->buttonResetProject.enabled     = NO;
+            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
             break;
     }
 }
@@ -137,23 +130,25 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     
     if (backgroundStyle == NSBackgroundStyleDark)
     {
-        self.pathTextField.textColor        = [NSColor windowBackgroundColor];
-        self.buttonSwitchStatus.image       = isStopped ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"stop-white"];
-        self.buttonOpenInFinder.image       = [NSImage imageNamed:@"open-in-finder-white"];
-        self.buttonOpenInEditor.image       = [NSImage imageNamed:@"open-in-editor-white"];
-        self.buttonOpenInTerminal.image     = [NSImage imageNamed:@"open-in-terminal-white"];
-        self.buttonOpenXcodeProject.image   = [NSImage imageNamed:@"open-in-xcode-white"];
-        self.buttonResetProject.image       = [NSImage imageNamed:@"resync-white"];
+        self->fieldNickname.textColor        = [NSColor whiteColor];
+        self->fieldPath.textColor            = [NSColor whiteColor];
+        self->buttonSwitchStatus.image       = isStopped ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"stop-white"];
+        self->buttonOpenInFinder.image       = [NSImage imageNamed:@"open-in-finder-white"];
+        self->buttonOpenInEditor.image       = [NSImage imageNamed:@"open-in-editor-white"];
+        self->buttonOpenInTerminal.image     = [NSImage imageNamed:@"open-in-terminal-white"];
+        self->buttonOpenXcodeProject.image   = [NSImage imageNamed:@"open-in-xcode-white"];
+        self->buttonResetProject.image       = [NSImage imageNamed:@"resync-white"];
     }
     else
     {
-        self.pathTextField.textColor        = [NSColor secondaryLabelColor];
-        self.buttonSwitchStatus.image       = isStopped ? [NSImage imageNamed:@"run"] : [NSImage imageNamed:@"stop"];
-        self.buttonOpenInFinder.image       = [NSImage imageNamed:@"open-in-finder"];
-        self.buttonOpenInEditor.image       = [NSImage imageNamed:@"open-in-editor"];
-        self.buttonOpenInTerminal.image     = [NSImage imageNamed:@"open-in-terminal"];
-        self.buttonOpenXcodeProject.image   = [NSImage imageNamed:@"open-in-xcode"];
-        self.buttonResetProject.image       = [NSImage imageNamed:@"resync"];
+        self->fieldNickname.textColor        = [NSColor controlTextColor];
+        self->fieldPath.textColor            = [NSColor secondaryLabelColor];
+        self->buttonSwitchStatus.image       = isStopped ? [NSImage imageNamed:@"run"] : [NSImage imageNamed:@"stop"];
+        self->buttonOpenInFinder.image       = [NSImage imageNamed:@"open-in-finder"];
+        self->buttonOpenInEditor.image       = [NSImage imageNamed:@"open-in-editor"];
+        self->buttonOpenInTerminal.image     = [NSImage imageNamed:@"open-in-terminal"];
+        self->buttonOpenXcodeProject.image   = [NSImage imageNamed:@"open-in-xcode"];
+        self->buttonResetProject.image       = [NSImage imageNamed:@"resync"];
     }
 
     [super setBackgroundStyle:backgroundStyle];

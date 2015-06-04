@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "XCCPbxCreationOperation.h"
+#import "XCCPPXOperation.h"
 #import "XCCCappuccinoProject.h"
 #import "XCCTaskLauncher.h"
 
@@ -14,13 +14,13 @@ NSString * const XCCPbxCreationDidStartNotification = @"XCCPbxCreationDidStartNo
 NSString * const XCCPbxCreationGenerateErrorNotification = @"XCCPbxCreationDidGenerateErrorNotification";
 NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotification";
 
-@interface XCCPbxCreationOperation ()
+@interface XCCPPXOperation ()
 
 @property XCCTaskLauncher *taskLauncher;
 @property NSMutableDictionary *pbxOperations;
 @end
 
-@implementation XCCPbxCreationOperation
+@implementation XCCPPXOperation
 
 
 - (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher pbxOperations:(NSMutableDictionary *)pbxOperations
@@ -63,7 +63,7 @@ NSString * const XCCPbxCreationDidEndNotification = @"XCCPbxCreationDidEndNotifi
     
     @try
     {
-        NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.pbxModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
+        NSMutableArray *arguments = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.PBXModifierScriptPath, @"update", self.cappuccinoProject.projectPath, nil];
         
         BOOL shouldLaunchTask = NO;
     

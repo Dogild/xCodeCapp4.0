@@ -175,7 +175,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 - (void)launchObjj2ObjcSkeletonCommandForPath:(NSString*)aPath
 {
-    if (![self.cappuccinoProject shouldProcessWithObjj2ObjcSkeleton] || self.isCancelled)
+    if (!self.cappuccinoProject.processObjj2ObjcSkeleton || self.isCancelled)
         return;
     
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
@@ -211,7 +211,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 - (void)launchNib2CibCommandForPath:(NSString*)aPath
 {
-    if (![self.cappuccinoProject shouldProcessWithNib2Cib] || self.isCancelled)
+    if (!self.cappuccinoProject.processNib2Cib || self.isCancelled)
         return;
 
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
@@ -242,7 +242,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 - (void)launchObjjCommandForPath:(NSString*)aPath
 {
-    if (![self.cappuccinoProject shouldProcessWithObjjWarnings] || self.isCancelled)
+    if (!self.cappuccinoProject.processObjjWarnings || self.isCancelled)
         return;
     
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];
@@ -275,7 +275,7 @@ NSString * const XCCNib2CibDidEndNotification = @"XCCNib2CibDidEndNotification";
 
 - (void)launchCappLintCommandForPath:(NSString*)aPath
 {
-    if (![self.cappuccinoProject shouldProcessWithCappLint] || self.isCancelled)
+    if (!self.cappuccinoProject.processCappLint || self.isCancelled)
         return;
     
     NSMutableDictionary *info = [[self defaultUserInfo] mutableCopy];

@@ -11,10 +11,13 @@
 @class XCCSourceProcessingOperation;
 
 @interface XCCOperationDataView : NSTableCellView
+{
+    IBOutlet NSTextField                *fieldName;
+    IBOutlet NSTextField                *fieldDescription;
+    IBOutlet NSButton                   *buttonCancel;
+    
+}
 
-@property (nonatomic, retain) IBOutlet NSTextField *fieldDescription;
-
-@property (nonatomic, retain) IBOutlet NSButton *cancelButton;
-@property (nonatomic, retain) XCCSourceProcessingOperation *operation;
+@property XCCSourceProcessingOperation  *operation;
 
 @end

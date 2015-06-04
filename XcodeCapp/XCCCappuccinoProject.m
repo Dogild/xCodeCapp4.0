@@ -70,6 +70,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     return XCCDefaultEnvironmentPaths;
 }
 
+
 #pragma mark - Init methods
 
 - (id)initWithPath:(NSString*)aPath
@@ -82,7 +83,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         self.projectPath = aPath;
         self.XcodeCappIgnorePath = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
         self.name = [self.projectPath lastPathComponent];
-        self.pbxModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
+        self.PBXModifierScriptPath = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
         
         NSString *projectName = [self.projectPath.lastPathComponent stringByAppendingString:@".xcodeproj"];
         
@@ -106,14 +107,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     self.status                     = XCCCappuccinoProjectStatusInitialized;
 }
 
-- (void)reloadXcodeCappIgnoreFile
-{
-    self.ignoredPathPredicates = [NSMutableArray new];
-    
-    if ([self.fm fileExistsAtPath:self.XcodeCappIgnorePath])
-        self.XcodeCappIgnoreContent = [NSString stringWithContentsOfFile:self.XcodeCappIgnorePath encoding:NSASCIIStringEncoding error:nil];
-}
-
 
 #pragma mark - Settings Management
 
@@ -129,13 +122,13 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)_loadSettings
 {
-    self.settings = [[NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath] mutableCopy];
+    self->settings = [[NSDictionary dictionaryWithContentsOfFile:self.infoPlistPath] mutableCopy];
     
-    if (!self.settings)
-        self.settings = [[self _defaultSettings] mutableCopy];
+    if (!self->settings)
+        self->settings = [[self _defaultSettings] mutableCopy];
     
     NSMutableArray *mutablePaths = [NSMutableArray array];
-    NSArray        *paths        = self.settings[XCCCappuccinoProjectBinPathsKey];
+    NSArray        *paths        = self->settings[XCCCappuccinoProjectBinPathsKey];
     
     if (paths)
     {
@@ -151,38 +144,48 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         mutablePaths = [[[self class] defaultEnvironmentPaths] mutableCopy];
     }
     
-    self.environmentsPaths                  = mutablePaths;
-    self.nickname                           = self.settings[XCCCappuccinoProjectNicknameKey];
-    self.objjIncludePath                    = self.settings[XCCCappuccinoObjjIncludePathKey];
-    self.version                            = self.settings[XCCCompatibilityVersionKey];
-    self.shouldProcessWithObjjWarnings      = [self.settings[XCCCappuccinoProcessObjjKey] boolValue];
-    self.shouldProcessWithCappLint          = [self.settings[XCCCappuccinoProcessCappLintKey] boolValue];
-    self.shouldProcessWithObjj2ObjcSkeleton = [self.settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
-    self.shouldProcessWithNib2Cib           = [self.settings[XCCCappuccinoProcessNib2CibKey] boolValue];
-    self.autoStartListening                 = [self.settings[XCCCappuccinoProjectAutoStartListeningKey] boolValue];
-    self.lastEventID                        = [NSNumber numberWithLongLong:[self.settings[XCCCappuccinoProjectLastEventIDKey] longLongValue]];
+    self.environmentsPaths        = mutablePaths;
+    self.nickname                 = self->settings[XCCCappuccinoProjectNicknameKey];
+    self.objjIncludePath          = self->settings[XCCCappuccinoObjjIncludePathKey];
+    self.version                  = self->settings[XCCCompatibilityVersionKey];
+    self.processObjjWarnings      = [self->settings[XCCCappuccinoProcessObjjKey] boolValue];
+    self.processCappLint          = [self->settings[XCCCappuccinoProcessCappLintKey] boolValue];
+    self.processObjj2ObjcSkeleton = [self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
+    self.processNib2Cib           = [self->settings[XCCCappuccinoProcessNib2CibKey] boolValue];
+    self.autoStartListening       = [self->settings[XCCCappuccinoProjectAutoStartListeningKey] boolValue];
+    self.lastEventID              = [NSNumber numberWithLongLong:[self->settings[XCCCappuccinoProjectLastEventIDKey] longLongValue]];
+}
+
+- (void)_writeSettings
+{
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self->settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
+    
+    [data writeToFile:self.infoPlistPath atomically:YES];
 }
 
 - (void)saveSettings
 {
-    self.settings[XCCCappuccinoProjectBinPathsKey]              = [self.environmentsPaths valueForKeyPath:@"name"];
-    self.settings[XCCCappuccinoObjjIncludePathKey]              = self.objjIncludePath;
-    self.settings[XCCCappuccinoProjectNicknameKey]              = self.nickname;
-    self.settings[XCCCompatibilityVersionKey]                   = self.version;
-    self.settings[XCCCappuccinoProcessObjjKey]                  = [NSNumber numberWithBool:self.shouldProcessWithObjjWarnings];
-    self.settings[XCCCappuccinoProcessCappLintKey]              = [NSNumber numberWithBool:self.shouldProcessWithCappLint];
-    self.settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.shouldProcessWithObjj2ObjcSkeleton];
-    self.settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.shouldProcessWithNib2Cib];
-    self.settings[XCCCappuccinoProjectAutoStartListeningKey]    = [NSNumber numberWithBool:self.autoStartListening];
-    self.settings[XCCCappuccinoProjectLastEventIDKey]           = self.lastEventID;
-
+    self->settings[XCCCappuccinoProjectBinPathsKey]              = [self.environmentsPaths valueForKeyPath:@"name"];
+    self->settings[XCCCappuccinoObjjIncludePathKey]              = self.objjIncludePath;
+    self->settings[XCCCappuccinoProjectNicknameKey]              = self.nickname;
+    self->settings[XCCCompatibilityVersionKey]                   = self.version;
+    self->settings[XCCCappuccinoProcessObjjKey]                  = [NSNumber numberWithBool:self.processObjjWarnings];
+    self->settings[XCCCappuccinoProcessCappLintKey]              = [NSNumber numberWithBool:self.processCappLint];
+    self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.processObjj2ObjcSkeleton];
+    self->settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.processNib2Cib];
+    self->settings[XCCCappuccinoProjectAutoStartListeningKey]    = [NSNumber numberWithBool:self.autoStartListening];
+    self->settings[XCCCappuccinoProjectLastEventIDKey]           = self.lastEventID;
+    
     [self _writeXcodeCappIgnoreFile];
+    [self _writeSettings];
 }
 
 
+#pragma mark - XcodeCapp Ignore
+
 - (void)_writeXcodeCappIgnoreFile
 {
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:self->settings format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
     
     [data writeToFile:self.infoPlistPath atomically:YES];
     
@@ -194,7 +197,46 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         [fm removeItemAtPath:self.XcodeCappIgnorePath error:nil];
 }
 
-#pragma mark path methods
+- (void)_updateXcodeCappIgnorePredicates
+{
+    self.ignoredPathPredicates = [NSMutableArray new];
+    
+    @try
+    {
+        NSMutableArray *ignoredPatterns = [NSMutableArray new];
+        
+        for (NSString *pattern in [CappuccinoUtils defaultIgnoredPaths])
+            [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
+        
+        for (NSString *pattern in [self.XcodeCappIgnoreContent componentsSeparatedByString:@"\n"])
+            if ([pattern length])
+                [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
+        
+        NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
+        [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
+        
+        DDLogVerbose(@"Content of xcodecapp-ignorepath correctly updated %@", self.ignoredPathPredicates);
+    }
+    @catch(NSException *exception)
+    {
+        DDLogVerbose(@"Content of xcodecapp-ignorepath does not math the expected input");
+        self.ignoredPathPredicates = [NSMutableArray array];
+    }
+    
+    [self _writeXcodeCappIgnoreFile];
+
+}
+
+- (void)reloadXcodeCappIgnoreFile
+{
+    self.ignoredPathPredicates = [NSMutableArray new];
+    
+    if ([self.fm fileExistsAtPath:self.XcodeCappIgnorePath])
+        self.XcodeCappIgnoreContent = [NSString stringWithContentsOfFile:self.XcodeCappIgnorePath encoding:NSASCIIStringEncoding error:nil];
+}
+
+
+#pragma mark Paths Management
 
 - (NSString *)projectRelativePathForPath:(NSString *)path
 {
@@ -208,8 +250,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     
     return projectPath ? [projectPath stringByAppendingPathComponent:path.lastPathComponent] : path;
 }
-
-#pragma mark - Shadow Files Management
 
 - (NSString *)shadowBasePathForProjectSourcePath:(NSString *)path
 {
@@ -229,8 +269,15 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     return [self.projectPath stringByAppendingPathComponent:filename];
 }
 
+- (NSString *)flattenedXcodeSupportFileNameForPath:(NSString *)aPath
+{
+    NSString *relativePath = [[aPath stringByDeletingPathExtension] stringByReplacingOccurrencesOfString:[self.projectPath stringByAppendingString:@"/"] withString:@""];
+    
+    return [relativePath stringByReplacingOccurrencesOfString:@"/" withString:XCCSlashReplacement];
+}
 
-#pragma marks Setting accessors
+
+#pragma marks Operation Management
 
 - (void)addOperationError:(XCCOperationError *)operationError
 {
@@ -275,50 +322,8 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         [self removeOperationError:error];
 }
 
-- (NSString *)flattenedXcodeSupportFileNameForPath:(NSString *)aPath
-{
-    NSString *relativePath = [[aPath stringByDeletingPathExtension] stringByReplacingOccurrencesOfString:[self.projectPath stringByAppendingString:@"/"] withString:@""];
-    
-    return [relativePath stringByReplacingOccurrencesOfString:@"/" withString:XCCSlashReplacement];
-}
 
-- (NSString *)XcodeCappIgnoreContent
-{
-    return _XcodeCappIgnoreContent;
-}
-
-- (void)setXcodeCappIgnoreContent:(NSString *)XcodeCappIgnoreContent
-{
-    [self willChangeValueForKey:@"XcodeCappIgnoreContent"];
-    _XcodeCappIgnoreContent = XcodeCappIgnoreContent;
-    [self didChangeValueForKey:@"XcodeCappIgnoreContent"];
-    
-    self.ignoredPathPredicates = [NSMutableArray new];
-    
-    @try
-    {
-        NSMutableArray *ignoredPatterns = [NSMutableArray new];
-        
-        for (NSString *pattern in [CappuccinoUtils defaultIgnoredPaths])
-            [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
-        
-        for (NSString *pattern in [self.XcodeCappIgnoreContent componentsSeparatedByString:@"\n"])
-            if ([pattern length])
-                [ignoredPatterns addObject:[NSString stringWithFormat:@"%@/%@", self.projectPath, pattern]];
-        
-        NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns];
-        [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
-        
-        DDLogVerbose(@"Content of xcodecapp-ignorepath correctly updated %@", self.ignoredPathPredicates);
-    }
-    @catch(NSException *exception)
-    {
-        DDLogVerbose(@"Content of xcodecapp-ignorepath does not math the expected input");
-        self.ignoredPathPredicates = [NSMutableArray array];
-    }
-
-    [self _writeXcodeCappIgnoreFile];
-}
+#pragma mark - Custom Getters and Setters
 
 - (XCCCappuccinoProjectStatus)status
 {
@@ -332,6 +337,20 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     [self didChangeValueForKey:@"status"];
     
     self.isBusy = (_status == XCCCappuccinoProjectStatusLoading || _status == XCCCappuccinoProjectStatusProcessing);
+}
+
+- (NSString *)XcodeCappIgnoreContent
+{
+    return _XcodeCappIgnoreContent;
+}
+
+- (void)setXcodeCappIgnoreContent:(NSString *)XcodeCappIgnoreContent
+{
+    [self willChangeValueForKey:@"XcodeCappIgnoreContent"];
+    _XcodeCappIgnoreContent = XcodeCappIgnoreContent;
+    [self didChangeValueForKey:@"XcodeCappIgnoreContent"];
+    
+    [self _updateXcodeCappIgnorePredicates];
 }
 
 @end

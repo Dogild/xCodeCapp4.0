@@ -17,13 +17,14 @@ enum {
 };
 typedef int XCCOperationErrorType;
 
+
 @interface XCCOperationError : NSObject
 
-@property (nonatomic, retain) NSString *fileName;
-@property (nonatomic, retain) NSString *message;
-@property (nonatomic, retain) NSString *command;
-@property (nonatomic, retain) NSString *lineNumber;
-@property int errorType;
+@property NSString  *fileName;
+@property NSString  *message;
+@property NSString  *command;
+@property NSString  *lineNumber;
+@property int       errorType;
 
 + (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary;
 + (instancetype)nib2cibOperationErrorFromDictionary:(NSDictionary*)aDictionary;
