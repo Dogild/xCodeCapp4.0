@@ -69,7 +69,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
     else if ([commandName isEqualToString:@"capp_lint"])
         self.operationName = @"Checking style errors";
-
     else
         self.operationName = commandName;
 
@@ -88,6 +87,7 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
     info[@"errors"]           = errors;
 
     [self dispatchNotificationName:notificationName userInfo:info];
+    [self cancel];
 }
 
 - (NSDictionary*)_launchTaskWithCommand:(NSString*)aCommand arguments:(NSArray*)arguments
