@@ -24,6 +24,8 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 {
     if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {
+        self.operationName = @"Searching for Objective-J files";
+        self.operationDescription = self.cappuccinoProject.name;
         self->searchPath = sourcePath;
     }
     

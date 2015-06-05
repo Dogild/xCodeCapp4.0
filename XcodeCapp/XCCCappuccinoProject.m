@@ -57,7 +57,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
                                           XCCCappuccinoProjectBinPathsKey: [XCCDefaultBinaryPaths valueForKeyPath:@"name"],
                                           XCCCappuccinoObjjIncludePathKey: @"",
                                           XCCCappuccinoProjectNicknameKey: @"",
-                                          XCCCappuccinoProjectAutoStartListeningKey: @YES};
+                                          XCCCappuccinoProjectAutoStartListeningKey: @NO};
 }
 
 + (NSArray*)defaultBinaryPaths

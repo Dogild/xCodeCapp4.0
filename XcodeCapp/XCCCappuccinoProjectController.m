@@ -103,7 +103,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                         nil,
                         [self->taskLauncher.executables componentsJoinedByString:@", "]);
         
-        self.cappuccinoProject.status = XCCCappuccinoProjectStatusInitialized;
+        [self _reinitializeProjectController];
     }
 }
 
@@ -1014,8 +1014,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     [self _stopListeningToProject];
     [self _reinitializeTaskLauncher];
-    [self _startListeningToProject];
-    
+
+//    if (self->taskLauncher.isValid)
+//        [self _startListeningToProject];
+
     DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
 }
 
