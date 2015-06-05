@@ -359,7 +359,7 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="72" rowSizeStyle="automatic" viewBased="YES" id="Mss-Tu-7kR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="246" height="589"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="246" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
@@ -385,7 +385,7 @@
                                                                             <rect key="frame" x="17" y="49" width="206" height="17"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="Table View Cell" id="HCp-It-Jhp">
-                                                                                <font key="font" metaFont="systemBold"/>
+                                                                                <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                             </textFieldCell>
@@ -505,11 +505,11 @@
                                             </subviews>
                                             <nil key="backgroundColor"/>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="GIE-ju-XbD">
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="GIE-ju-XbD">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="NO" id="pb5-AF-zGg">
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="pb5-AF-zGg">
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>

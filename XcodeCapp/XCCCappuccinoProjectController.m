@@ -688,7 +688,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         self->pendingPBXOperation = nil;
 
-        if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusProcessing)
+        if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusProcessing || self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
             self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
         else
             self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
