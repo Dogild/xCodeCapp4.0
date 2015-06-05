@@ -54,15 +54,9 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
+        [self.controller addObserver:self forKeyPath:@"operationsTotal" options:NSKeyValueObservingOptionNew context:nil];
         
-        NSDictionary *options = @{NSValueTransformerNameBindingOption: NSNegateBooleanTransformerName};
-
         [self->operationsProgressIndicator bind:NSValueBinding toObject:self.controller withKeyPath:@"operationsProgress" options:nil];
-        [self->operationsProgressIndicator bind:NSHiddenBinding toObject:self.controller withKeyPath:@"operationsTotal" options:options];
-
-        [self->waitingProgressIndicator bind:NSHiddenBinding toObject:self.controller.cappuccinoProject withKeyPath:@"isBusy" options:options];
-        [self->waitingProgressIndicator bind:@"hidden2" toObject:self.controller withKeyPath:@"operationsTotal" options:nil];
-
         [self->fieldNickname bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"nickname" options:nil];
         [self->fieldPath bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"projectPath" options:nil];
     }
@@ -72,11 +66,9 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         
         [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"status"];
         [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"errors"];
+        [self.controller removeObserver:self forKeyPath:@"operationsTotal"];
         
         [self->operationsProgressIndicator unbind:NSValueBinding];
-        [self->operationsProgressIndicator unbind:NSHiddenBinding];
-        [self->waitingProgressIndicator unbind:NSHiddenBinding];
-        [self->waitingProgressIndicator unbind:@"hidden2"];
         [self->fieldNickname unbind:NSValueBinding];
         [self->fieldPath unbind:NSValueBinding];
     }
@@ -95,23 +87,25 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     {
         case XCCCappuccinoProjectStatusInitialized:
         case XCCCappuccinoProjectStatusStopped:
-            self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorStopped;
-            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
+            self->boxStatus.fillColor = XCCCappuccinoProjectDataViewColorStopped;
+            self->buttonSwitchStatus.image = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
+            self->waitingProgressIndicator.hidden = YES;
+            self->operationsProgressIndicator.hidden = YES;
             break;
-            
+
         case XCCCappuccinoProjectStatusLoading:
-            self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorLoading;
-            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
-            break;
-            
-        case XCCCappuccinoProjectStatusListening:
-            self->boxStatus.fillColor            = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
-            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
-            break;
-            
         case XCCCappuccinoProjectStatusProcessing:
-            self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorProcessing;
-            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
+            self->boxStatus.fillColor = XCCCappuccinoProjectDataViewColorProcessing;
+            self->buttonSwitchStatus.image = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
+            self->waitingProgressIndicator.hidden = (self.controller.operationsTotal > 4);
+            self->operationsProgressIndicator.hidden = (self.controller.operationsTotal <= 4);
+            break;
+
+        case XCCCappuccinoProjectStatusListening:
+            self->boxStatus.fillColor = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
+            self->buttonSwitchStatus.image  = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
+            self->waitingProgressIndicator.hidden = YES;
+            self->operationsProgressIndicator.hidden = YES;
             break;
     }
 }

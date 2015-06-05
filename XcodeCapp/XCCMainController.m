@@ -180,9 +180,9 @@
                         nil,
                         nil,
                         [missingProjects componentsJoinedByString:@", "]);
-
-        [self _saveManagedProjectsToUserDefaults];
     }
+
+    [self _saveManagedProjectsToUserDefaults];
     
     DDLogVerbose(@"Stop : managed  projects restored");
 }
