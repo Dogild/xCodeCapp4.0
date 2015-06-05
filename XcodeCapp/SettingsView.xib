@@ -78,17 +78,17 @@
                         </buttonCell>
                     </button>
                     <button id="SKq-er-x3F">
-                        <rect key="frame" x="22" y="534" width="192" height="18"/>
+                        <rect key="frame" x="22" y="534" width="196" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="check" title="Verify compilation warnings" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bnz-A8-KNi">
+                        <buttonCell key="cell" type="check" title="Verify Compilation Warnings" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bnz-A8-KNi">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                     </button>
                     <button id="exr-30-Q2Y">
-                        <rect key="frame" x="22" y="497" width="135" height="18"/>
+                        <rect key="frame" x="22" y="497" width="139" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="check" title="Verify coding style" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Qeb-PZ-NHe">
+                        <buttonCell key="cell" type="check" title="Verify Coding Style" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Qeb-PZ-NHe">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -146,7 +146,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" columnSelection="YES" autosaveColumns="NO" id="StS-tw-b37">
-                                    <rect key="frame" x="0.0" y="0.0" width="657" height="48"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="657" height="24"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="11" height="7"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -210,9 +210,9 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="4mo-sA-kKg">
-                        <rect key="frame" x="42" y="521" width="201" height="11"/>
+                        <rect key="frame" x="42" y="521" width="206" height="11"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Verify if your code has compilations warning" id="cvO-EN-bma">
+                        <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Verify if your code has compilations warnings" id="cvO-EN-bma">
                             <font key="font" metaFont="miniSystem"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

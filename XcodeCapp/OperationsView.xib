@@ -26,7 +26,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView identifier="OperationsTableView" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="40" rowSizeStyle="automatic" viewBased="YES" id="L6L-Ia-hHw">
-                                <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="0.0"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="5" height="10"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -50,7 +50,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="NB8-Q7-Qqc">
-                                                        <rect key="frame" x="1" y="20" width="375" height="17"/>
+                                                        <rect key="frame" x="19" y="20" width="357" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="jvO-Vq-NgM">
                                                             <font key="font" metaFont="systemBold"/>
@@ -58,14 +58,6 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <button verticalHuggingPriority="750" id="0Ug-FJ-WS5">
-                                                        <rect key="frame" x="373" y="14" width="18" height="18"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="cYc-Zk-ufo">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                    </button>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="Vil-NW-lEi">
                                                         <rect key="frame" x="1" y="3" width="375" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -75,9 +67,19 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <box autoresizesSubviews="NO" borderWidth="0.0" cornerRadius="100" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="t7U-ts-XEf">
+                                                        <rect key="frame" x="6" y="24" width="10" height="10"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <view key="contentView">
+                                                            <rect key="frame" x="0.0" y="0.0" width="10" height="10"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        </view>
+                                                        <color key="borderColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    </box>
                                                 </subviews>
                                                 <connections>
-                                                    <outlet property="buttonCancel" destination="0Ug-FJ-WS5" id="wUO-t5-dAT"/>
+                                                    <outlet property="boxStatus" destination="t7U-ts-XEf" id="jMq-Om-cvI"/>
                                                     <outlet property="fieldDescription" destination="Vil-NW-lEi" id="x2T-S4-Ft7"/>
                                                     <outlet property="fieldName" destination="NB8-Q7-Qqc" id="mht-28-aVp"/>
                                                 </connections>
@@ -103,7 +105,7 @@
                     </scroller>
                 </scrollView>
             </subviews>
-            <point key="canvasLocation" x="0.0" y="105"/>
+            <point key="canvasLocation" x="279" y="155"/>
         </customView>
         <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="rPm-ot-o84">
             <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>
@@ -140,7 +142,6 @@
         </box>
     </objects>
     <resources>
-        <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
         <image name="sleeping" width="256" height="256"/>
     </resources>
 </document>

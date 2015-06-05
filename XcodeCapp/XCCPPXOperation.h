@@ -12,14 +12,17 @@
 @class XCCCappuccinoProject;
 @class XCCTaskLauncher;
 
-extern NSString * const XCCPbxCreationDidStartNotification;
+extern NSString * const XCCPBXOperationDidStartNotification;
 extern NSString * const XCCPbxCreationGenerateErrorNotification;
-extern NSString * const XCCPbxCreationDidEndNotification;
+extern NSString * const XCCPBXOperationDidEndNotification;
 
 @interface XCCPPXOperation : XCCAbstractOperation
 {
     NSMutableDictionary *PBXOperations;
+    NSTask              *task;
 }
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher PBXOperations:(NSMutableDictionary *)pbxOperations;
+- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher;
+- (void)registerPathToAddInPBX:(NSString *)path;
+- (void)registerPathToRemoveFromPBX:(NSString *)path;
 @end

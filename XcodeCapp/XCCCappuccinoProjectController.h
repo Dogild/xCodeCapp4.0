@@ -12,6 +12,7 @@
 @class XCCCappuccinoProject;
 @class XCCTaskLauncher;
 @class XCCMainController;
+@class XCCPPXOperation;
 
 
 @interface XCCCappuccinoProjectController : NSObject
@@ -20,15 +21,13 @@
     NSOperationQueue            *operationQueue;
     FSEventStreamRef            stream;
     int                         projectPathFileDescriptor;
-    NSMutableDictionary         *pendingPBXOperations;
     NSTimer                     *timerOperationQueueCompletionMonitor;
     NSMutableDictionary         *sourceProcessingOperations;
+    XCCPPXOperation             *pendingPBXOperation;
 }
 
 @property NSInteger             operationsTotal;
-@property NSInteger             operationsComplete;
 @property CGFloat               operationsProgress;
-@property NSMutableArray        *operations;
 @property XCCCappuccinoProject  *cappuccinoProject;
 @property XCCMainController     *mainXcodeCappController;
 
@@ -40,7 +39,8 @@
 - (void)operationDidStart:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 - (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 - (void)launchEditorForPath:(NSString*)path line:(NSInteger)line;
-
+- (NSArray*)projectRelatedOperations;
+;
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)resetProject:(id)aSender;
 - (IBAction)openProjectInXcode:(id)sender;

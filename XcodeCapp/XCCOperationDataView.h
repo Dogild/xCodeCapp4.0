@@ -12,9 +12,9 @@
 
 @interface XCCOperationDataView : NSTableCellView
 {
+    IBOutlet NSBox                      *boxStatus;
     IBOutlet NSTextField                *fieldName;
     IBOutlet NSTextField                *fieldDescription;
-    IBOutlet NSButton                   *buttonCancel;
     
 }
 

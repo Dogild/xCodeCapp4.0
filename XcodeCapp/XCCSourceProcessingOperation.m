@@ -1,4 +1,4 @@
-//
+
 //  ProcessSourceOperation.m
 //  XcodeCapp
 //
@@ -35,7 +35,17 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 {
     if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {
-        self.sourcePath = sourcePath;
+        NSString *projectPath       = [NSString stringWithFormat:@"%@/", self.cappuccinoProject.projectPath];
+
+        self.sourcePath             = sourcePath;
+        self.operationName          = @"Pending source processing";
+        self.operationDescription   = [self.sourcePath stringByReplacingOccurrencesOfString:projectPath withString:@""];
+
+        __block XCCSourceProcessingOperation *weakOperation = self;
+
+        self.completionBlock = ^{
+            [weakOperation dispatchNotificationName:XCCConversionDidEndNotification];
+        };
     }
 
     return self;
@@ -56,23 +66,20 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 - (void)_updateOperationInformation
 {
     NSString *commandName = self->task.launchPath.lastPathComponent;
-    NSString *projectPath = [NSString stringWithFormat:@"%@/", self.cappuccinoProject.projectPath];
 
     if ([commandName isEqualToString:@"objj2objcskeleton"])
-        self.operationName = @"Creating Xcode mirror files";
+        self.operationName = @"Creating Objective-C Class Pair";
 
     else if ([commandName isEqualToString:@"nib2cib"])
-        self.operationName = @"Converting xib files";
+        self.operationName = @"Converting Interface Files";
 
     else if ([commandName isEqualToString:@"objj"])
-        self.operationName = @"Checking compilation errors";
+        self.operationName = @"Verifying compilation Warnings";
 
     else if ([commandName isEqualToString:@"capp_lint"])
-        self.operationName = @"Checking style errors";
+        self.operationName = @"Verifying coding style";
     else
         self.operationName = commandName;
-
-    self.operationDescription = [self.sourcePath stringByReplacingOccurrencesOfString:projectPath withString:@""];
 }
 
 - (void)_postProcessingErrorNotificationName:(NSString *)notificationName error:(NSString *)errors
@@ -211,10 +218,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
     @catch (NSException *exception)
     {
         DDLogVerbose(@"Conversion failed: %@", exception);
-    }
-    @finally
-    {
-        [self dispatchNotificationName:XCCConversionDidEndNotification];
     }
 }
 

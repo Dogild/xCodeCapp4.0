@@ -13,101 +13,21 @@
 #import "XCCSourcesFinderOperation.h"
 #import "XCCSourceProcessingOperation.h"
 #import "XCCPPXOperation.h"
-
+#import "AppDelegate.h"
 
 @implementation XCCOperationsViewController
 
+@synthesize cappuccinoProjectController = _cappuccinoProjectController;
 
 #pragma nark - Initialization
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    self->operationQueue = [((AppDelegate *)[NSApp delegate]) mainOperationQueue];
 }
 
-
-#pragma mark - Notifications
-
-- (void)startListeningToNotifications
-{
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    
-    [center addObserver:self selector:@selector(_didReceiveSourcesFinderOperationDidEndNotification:) name:XCCSourcesFinderOperationDidEndNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveConversionDidEndNotification:) name:XCCConversionDidEndNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveConversionDidStartNotification:) name:XCCConversionDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveNeedSourceToProjectPathMappingNotification:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidStartNotification:) name:XCCPbxCreationDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidEndNotification:) name:XCCPbxCreationDidEndNotification object:nil];
-}
-
-- (void)stopListeningToNotifications
-{
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    
-    [center removeObserver:self name:XCCSourcesFinderOperationDidEndNotification object:nil];
-    [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
-    [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
-    [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
-    [center removeObserver:self name:XCCPbxCreationDidStartNotification object:nil];
-    [center removeObserver:self name:XCCPbxCreationDidEndNotification object:nil];
-}
-
-- (BOOL)_doesNotificationBelongToCurrentProject:(NSNotification *)note
-{
-    return note.userInfo[@"cappuccinoProject"] == self.cappuccinoProjectController.cappuccinoProject;
-}
-
-- (void)_didReceiveSourcesFinderOperationDidEndNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProjectController operationDidEnd:nil type:XCCSourcesFinderOperationDidEndNotification userInfo:note.userInfo];
-}
-
-- (void)_didReceiveNeedSourceToProjectPathMappingNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    self.cappuccinoProjectController.cappuccinoProject.projectPathsForSourcePaths[note.userInfo[@"sourcePath"]] = note.userInfo[@"projectPath"];
-}
-
-- (void)_didReceiveConversionDidStartNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProjectController operationDidStart:note.object type:note.name userInfo:note.userInfo];
-    [self reload];
-}
-
-- (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProjectController operationDidEnd:note.object type:note.name userInfo:note.userInfo];
-    [self reload];
-}
-
-- (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProjectController operationDidStart:note.object type:note.name userInfo:note.userInfo];
-    [self reload];
-}
-
-- (void)_didReceiveUpdatePbxFileDidEndNotification:(NSNotification*)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProjectController operationDidEnd:note.object type:note.name userInfo:note.userInfo];
-    [self reload];
-}
 
 #pragma nark - Utilities
 
@@ -138,7 +58,7 @@
 {
     [self->operationTableView reloadData];
 
-    [self _showMaskingView:!self.cappuccinoProjectController.operations.count];
+    [self _showMaskingView:![self.cappuccinoProjectController projectRelatedOperations].count];
 }
 
 
@@ -146,18 +66,26 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return self.cappuccinoProjectController.operations.count;
+    // we create a snapshot at that moment, so if some operations are removed during the time between
+    // the count and reloadData, we don't crash.
+     self->operationsSnaphsot = [[[self.cappuccinoProjectController projectRelatedOperations] sortedArrayUsingComparator:^(NSOperation * op1, NSOperation * op2){
+        if (op1.isExecuting && !op2.isExecuting)
+            return NSOrderedAscending;
+        else if (!op1.isExecuting && op2.isExecuting)
+            return NSOrderedDescending;
+        else
+            return NSOrderedSame;
+    }] copy];
+
+    return self->operationsSnaphsot.count;
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    XCCOperationDataView *datView = [tableView makeViewWithIdentifier:@"OperationDataView" owner:nil];
-    [datView setOperation:[self.cappuccinoProjectController.operations objectAtIndex:row]];
+    XCCOperationDataView *dataView = [tableView makeViewWithIdentifier:@"OperationDataView" owner:nil];
+    [dataView setOperation:[self->operationsSnaphsot objectAtIndex:row]];
 
-    //    [datView.cancelButton setTarget:self];
-    //    [datView.cancelButton setAction:@selector(cancelOperation:)];
-
-    return datView;
+    return dataView;
 }
 
 @end

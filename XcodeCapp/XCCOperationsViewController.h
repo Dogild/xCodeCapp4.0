@@ -15,12 +15,14 @@
 {
     IBOutlet NSTableView                    *operationTableView;
     IBOutlet NSBox                          *maskingView;
+    NSOperationQueue                        *operationQueue;
+    NSArray                                 *operationsSnaphsot;
 }
 
 @property XCCCappuccinoProjectController *cappuccinoProjectController;
 
 - (void)reload;
-- (void)startListeningToNotifications;
-- (void)stopListeningToNotifications;
+- (void)_startListeningToOperationsNotifications;
+- (void)_stopListeningToOperationsNotifications;
 
 @end

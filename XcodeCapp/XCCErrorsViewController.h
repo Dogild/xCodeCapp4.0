@@ -20,8 +20,6 @@
 @property XCCCappuccinoProjectController *cappuccinoProjectController;
 
 - (void)reload;
-- (void)startListeningToNotifications;
-- (void)stopListeningToNotifications;
 
 - (IBAction)openErroredFileInEditor:(id)sender;
 - (IBAction)cleanProjectErrors:(id)aSender;
