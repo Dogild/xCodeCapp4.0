@@ -32,34 +32,22 @@
 
 + (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary type:(XCCOperationErrorType)type
 {
-    NSString        *message         = [self cleanUpObjjXMLResponse:[dictionary objectForKey:@"errors"]];
-    NSMutableArray  *operationErrors = [NSMutableArray array];
+    NSArray         *errors = [[self cleanUpObjjXMLResponse:[dictionary objectForKey:@"errors"]] propertyList];
+    NSMutableArray  *ret    = [NSMutableArray array];
 
-    @try
+    for (NSDictionary *error in errors)
     {
-        NSArray *errors = [message propertyList];
+        XCCOperationError *operationError;
 
-        for (NSDictionary *error in errors)
-        {
-            if (type == XCCObjjOperationErrorType)
-                [operationErrors addObject:[XCCOperationError objjOperationErrorFromDictionary:error]];
-            else
-                [operationErrors addObject:[XCCOperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
-        }
-    }
-    @catch (NSException *exception)
-    {
-        NSDictionary *error = @{@"line" : @"0",
-                                @"message" : message,
-                                @"sourcePath" : [dictionary objectForKey:@"sourcePath"]};
-        
         if (type == XCCObjjOperationErrorType)
-            [operationErrors addObject:[XCCOperationError objjOperationErrorFromDictionary:error]];
+            operationError = [XCCOperationError objjOperationErrorFromDictionary:error];
         else
-            [operationErrors addObject:[XCCOperationError objj2ObjcSkeletonOperationErrorFromDictionary:error]];
+            operationError = [XCCOperationError objj2ObjcSkeletonOperationErrorFromDictionary:error];
+
+        [ret addObject:operationError];
     }
-    
-    return operationErrors;
+
+    return ret;
 }
 
 @end
