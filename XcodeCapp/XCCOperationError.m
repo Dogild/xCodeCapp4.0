@@ -28,7 +28,7 @@
 {
     XCCOperationError *operationError = [self new];
     
-    operationError.fileName     = aDictionary[@"sourcePath"];
+    operationError.fileName     = aDictionary[@"path"];
     operationError.message      = aDictionary[@"message"];
     operationError.lineNumber   = aDictionary[@"line"];
     operationError.errorType    = XCCObjj2ObjcSkeletonOperationErrorType;

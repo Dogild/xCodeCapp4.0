@@ -15,17 +15,30 @@
     return [self operationErrorsFromDictionary:dictionary type:XCCObjjOperationErrorType];
 }
 
++ (NSString *)cleanUpObjjXMLResponse:(NSString *)aString
+{
+    NSMutableString *ASCIICharacters = [NSMutableString string];
+
+    for (NSInteger i = 32; i < 127; i++)
+        [ASCIICharacters appendFormat:@"%c", (char)i];
+
+    NSCharacterSet *set = [[NSCharacterSet characterSetWithCharactersInString:ASCIICharacters] invertedSet];
+
+    aString = [[aString componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""];
+    aString = [aString stringByReplacingOccurrencesOfString:@"[0m" withString:@""];
+
+    return aString;
+}
+
 + (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary type:(XCCOperationErrorType)type
 {
-    NSMutableString *message = [[dictionary objectForKey:@"errors"] mutableCopy];
-    NSMutableArray *operationErrors = [NSMutableArray array];
-    
-    [message replaceOccurrencesOfString:@"[0m" withString:@"" options:0 range:NSMakeRange(0, [message length])];
-    
+    NSString        *message         = [self cleanUpObjjXMLResponse:[dictionary objectForKey:@"errors"]];
+    NSMutableArray  *operationErrors = [NSMutableArray array];
+
     @try
     {
         NSArray *errors = [message propertyList];
-        
+
         for (NSDictionary *error in errors)
         {
             if (type == XCCObjjOperationErrorType)
