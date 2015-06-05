@@ -9,11 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @class XCCCappuccinoProject;
-@class CappuccinoError;
 
 
 @interface CappuccinoUtils : NSObject
-+ (NSArray *)defaultIgnoredPaths;
+
 + (BOOL)isObjjFile:(NSString *)path;
 + (BOOL)isXibFile:(NSString *)path;
 + (BOOL)isCibFile:(NSString *)path;

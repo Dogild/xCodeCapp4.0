@@ -67,14 +67,14 @@
 		6841F2A31AF9932300CFE60E /* icon_128x128.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2881AF9932300CFE60E /* icon_128x128.png */; };
 		6841F2A41AF9932300CFE60E /* icon_128x128@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2891AF9932300CFE60E /* icon_128x128@2x.png */; };
 		6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */ = {isa = PBXBuildFile; fileRef = 6841F28A1AF9932300CFE60E /* project.pbxproj */; };
-		6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2B61AFA83D500CFE60E /* UserDefaults.m */; };
+		6841F2B71AFA83D500CFE60E /* XCCUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2B61AFA83D500CFE60E /* XCCUserDefaults.m */; };
 		6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */; };
 		6841F2C41AFABD7200CFE60E /* XCCCappuccinoProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C31AFABD7200CFE60E /* XCCCappuccinoProject.m */; };
 		6841F2CA1AFADEBC00CFE60E /* XCCSourcesFinderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C71AFADEBC00CFE60E /* XCCSourcesFinderOperation.m */; };
 		6841F2CB1AFADEBC00CFE60E /* XCCSourceProcessingOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C91AFADEBC00CFE60E /* XCCSourceProcessingOperation.m */; };
 		684228C71B016AFA00493AD3 /* mod_pbxproj.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6841F2691AF98DDD00CFE60E /* mod_pbxproj.py */; };
 		684228C81B016AFA00493AD3 /* pbxprojModifier.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6841F26B1AF98DDD00CFE60E /* pbxprojModifier.py */; };
-		6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6863FBA21AFD55A900040C8E /* LogUtils.m */; };
+		6863FBA31AFD55A900040C8E /* XCCFSEventLogUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6863FBA21AFD55A900040C8E /* XCCFSEventLogUtils.m */; };
 		686ACD311B16397F0089EB03 /* XCCCappuccinoProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = 686ACD301B16397F0089EB03 /* XCCCappuccinoProjectController.m */; };
 		686C69711B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69701B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m */; };
 		686C69741B0FC2EB0095BB3C /* CappLintUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69731B0FC2EB0095BB3C /* CappLintUtils.m */; };
@@ -192,8 +192,8 @@
 		6841F2881AF9932300CFE60E /* icon_128x128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_128x128.png; sourceTree = "<group>"; };
 		6841F2891AF9932300CFE60E /* icon_128x128@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_128x128@2x.png"; sourceTree = "<group>"; };
 		6841F28A1AF9932300CFE60E /* project.pbxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.pbxproject; path = project.pbxproj; sourceTree = "<group>"; };
-		6841F2B61AFA83D500CFE60E /* UserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDefaults.m; sourceTree = "<group>"; };
-		6841F2B81AFA83E900CFE60E /* UserDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserDefaults.h; sourceTree = "<group>"; };
+		6841F2B61AFA83D500CFE60E /* XCCUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCUserDefaults.m; sourceTree = "<group>"; };
+		6841F2B81AFA83E900CFE60E /* XCCUserDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCCUserDefaults.h; sourceTree = "<group>"; };
 		6841F2BD1AFA965300CFE60E /* XCCTaskLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCTaskLauncher.h; sourceTree = "<group>"; };
 		6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCTaskLauncher.m; sourceTree = "<group>"; };
 		6841F2C21AFABD7200CFE60E /* XCCCappuccinoProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XCCCappuccinoProject.h; path = XcodeCapp/XCCCappuccinoProject.h; sourceTree = "<group>"; };
@@ -202,8 +202,8 @@
 		6841F2C71AFADEBC00CFE60E /* XCCSourcesFinderOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCSourcesFinderOperation.m; sourceTree = "<group>"; };
 		6841F2C81AFADEBC00CFE60E /* XCCSourceProcessingOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCSourceProcessingOperation.h; sourceTree = "<group>"; };
 		6841F2C91AFADEBC00CFE60E /* XCCSourceProcessingOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCSourceProcessingOperation.m; sourceTree = "<group>"; };
-		6863FBA11AFD55A900040C8E /* LogUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
-		6863FBA21AFD55A900040C8E /* LogUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogUtils.m; sourceTree = "<group>"; };
+		6863FBA11AFD55A900040C8E /* XCCFSEventLogUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCFSEventLogUtils.h; sourceTree = "<group>"; };
+		6863FBA21AFD55A900040C8E /* XCCFSEventLogUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCFSEventLogUtils.m; sourceTree = "<group>"; };
 		686ACD301B16397F0089EB03 /* XCCCappuccinoProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCCappuccinoProjectController.m; sourceTree = "<group>"; };
 		686ACD331B1691AA0089EB03 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		686C696F1B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCOperationErrorHeaderDataView.h; sourceTree = "<group>"; };
@@ -408,8 +408,8 @@
 		6841F2C01AFABD0900CFE60E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				6841F2B61AFA83D500CFE60E /* UserDefaults.m */,
-				6841F2B81AFA83E900CFE60E /* UserDefaults.h */,
+				6841F2B61AFA83D500CFE60E /* XCCUserDefaults.m */,
+				6841F2B81AFA83E900CFE60E /* XCCUserDefaults.h */,
 				6841F2BD1AFA965300CFE60E /* XCCTaskLauncher.h */,
 				6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */,
 				6841F2761AF98FA300CFE60E /* DDLogLevel.h */,
@@ -418,8 +418,8 @@
 				6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */,
 				6815BBE91AFC24430030D8BB /* XcodeProjectCloser.h */,
 				6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */,
-				6863FBA11AFD55A900040C8E /* LogUtils.h */,
-				6863FBA21AFD55A900040C8E /* LogUtils.m */,
+				6863FBA11AFD55A900040C8E /* XCCFSEventLogUtils.h */,
+				6863FBA21AFD55A900040C8E /* XCCFSEventLogUtils.m */,
 				686C69721B0FC2EB0095BB3C /* CappLintUtils.h */,
 				686C69731B0FC2EB0095BB3C /* CappLintUtils.m */,
 				686C69781B0FC5930095BB3C /* ObjjUtils.h */,
@@ -610,7 +610,7 @@
 				6841F2CB1AFADEBC00CFE60E /* XCCSourceProcessingOperation.m in Sources */,
 				6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */,
 				6824CDDE1B0DA34500F73447 /* XCCMainController.m in Sources */,
-				6863FBA31AFD55A900040C8E /* LogUtils.m in Sources */,
+				6863FBA31AFD55A900040C8E /* XCCFSEventLogUtils.m in Sources */,
 				680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */,
 				025800451B1E3F010000EB7D /* XCCAbstractOperation.m in Sources */,
 				686C69711B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m in Sources */,
@@ -624,7 +624,7 @@
 				6841F2CA1AFADEBC00CFE60E /* XCCSourcesFinderOperation.m in Sources */,
 				681ADE8F1B0D032C00FC8E08 /* XCCPath.m in Sources */,
 				6841F2651AF98DCB00CFE60E /* DDASLLogger.m in Sources */,
-				6841F2B71AFA83D500CFE60E /* UserDefaults.m in Sources */,
+				6841F2B71AFA83D500CFE60E /* XCCUserDefaults.m in Sources */,
 				6824CDEA1B0E9CDB00F73447 /* XCCOperationErrorDataView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

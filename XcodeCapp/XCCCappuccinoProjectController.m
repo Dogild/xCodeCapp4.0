@@ -12,7 +12,7 @@
 #import "CappuccinoUtils.h"
 #import "CappLintUtils.h"
 #import "ObjjUtils.h"
-#import "LogUtils.h"
+#import "XCCFSEventLogUtils.h"
 #import "XCCSourcesFinderOperation.h"
 #import "XCCPPXOperation.h"
 #import "XCCSourceProcessingOperation.h"
@@ -22,7 +22,7 @@
 #import "XCCOperationErrorDataView.h"
 #import "XCCOperationErrorHeaderDataView.h"
 #import "XCCTaskLauncher.h"
-#import "UserDefaults.h"
+#import "XCCUserDefaults.h"
 #import "XcodeProjectCloser.h"
 #import "XCCOperationsViewController.h"
 #import "XCCErrorsViewController.h"
@@ -65,9 +65,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         self->operationQueue                = [[NSApp delegate] mainOperationQueue];
         
         [self _reinitializeProjectController];
-
-        if (self.cappuccinoProject.autoStartListening)
-            [self _loadProject];
     }
     
     return self;
@@ -307,7 +304,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     XCCSourcesFinderOperation *op = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
                                                                                     taskLauncher:self->taskLauncher
                                                                                       sourcePath:path];
-    [self->operationQueue addOperation:op];
+    [self _enqueueOperation:op];
 }
 
 - (void)_removeXcodeSupportOrphanFiles
@@ -353,9 +350,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     DDLogVerbose(@"Modified files: %@", modifiedPaths);
     
     [self _removeXcodeSupportOrphanFiles];
-    [self _reinitializeOperationsCounters];
     
-    NSFileManager *fm = [NSFileManager defaultManager];
+    NSFileManager *fm                       = [NSFileManager defaultManager];
+    NSInteger     scheduledOperationsCount  = 0;
 
     for (NSString *path in modifiedPaths)
     {
@@ -363,23 +360,26 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             continue;
 
         if (!self->pendingPBXOperation)
+        {
             self->pendingPBXOperation = [[XCCPPXOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self->taskLauncher];
+            scheduledOperationsCount++;
+        }
 
-        [[self _sourceProcessingOperationsForPath:path] makeObjectsPerformSelector:@selector(cancel)];
+        [self _cancelSourceOperationsForPath:path];
 
         XCCSourceProcessingOperation *processingOperation = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
                                                                                               taskLauncher:self->taskLauncher
                                                                                                 sourcePath:[self.cappuccinoProject projectPathForSourcePath:path]];
         
         [self->pendingPBXOperation addDependency:processingOperation];
-
-        [self->operationQueue addOperation:processingOperation];
+        [self _enqueueOperation:processingOperation];
+        scheduledOperationsCount++;
     }
 
     if (self->pendingPBXOperation)
-        [self->operationQueue addOperation:self->pendingPBXOperation];
+        [self _enqueueOperation:self->pendingPBXOperation];
 
-    self.operationsTotal = [modifiedPaths count];
+    self.operationsTotal += scheduledOperationsCount;
     [self _updateOperationsProgress];
 }
 
@@ -506,6 +506,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self.mainXcodeCappController reloadTotalNumberOfErrors];
+
+    [self operationDidEnd:note.object type:note.name userInfo:note.userInfo];
 }
 
 - (void)_didReceiveSourcesFinderOperationDidStartNotification:(NSNotification *)note
@@ -521,7 +523,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self operationDidEnd:note.object type:XCCSourcesFinderOperationDidEndNotification userInfo:note.userInfo];
+    [self operationDidEnd:note.object type:note.name userInfo:note.userInfo];
 }
 
 - (void)_didReceiveNeedSourceToProjectPathMappingNotification:(NSNotification *)note
@@ -620,14 +622,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)operationDidStart:(XCCAbstractOperation*)anOperation type:(NSString *)aType userInfo:(NSDictionary*)userInfo
 {
-    [self _addOperation:anOperation];
     [self.mainXcodeCappController.operationsViewController reload];
     [self.mainXcodeCappController.errorsViewController reload];
 }
 
 - (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString *)aType userInfo:(NSDictionary*)userInfo
 {
-    [self _removeOperation:anOperation];
+    [self _dequeueOperation:anOperation];
 
     if ([aType isEqualToString:XCCSourcesFinderOperationDidEndNotification])
     {
@@ -678,7 +679,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateOperationsProgress
 {
-    self.operationsRemaining =  [self projectRelatedOperations].count;
+    self.operationsRemaining =  [[self projectRelatedOperations] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cancelled = NO"]].count;
     self.operationsProgress = 1.0 - self.operationsRemaining / (float)self.operationsTotal;
 
     self.operationsRemainingString = [NSString stringWithFormat:@"%d total operations, %d remaining", (int)self.operationsTotal, (int)self.operationsRemaining];
@@ -692,7 +693,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath])
         [self->sourceProcessingOperations setObject:[NSMutableArray new] forKey:sourceOperation.sourcePath];
 
-    [[self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath] addObject:sourceOperation];
+    NSMutableArray *operations = [self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath];
+
+    if (![operations containsObject:sourceOperation])
+        [operations addObject:sourceOperation];
 }
 
 - (void)_unregisterSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
@@ -708,15 +712,17 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     return [self->sourceProcessingOperations objectForKey:path];
 }
 
-- (void)_addOperation:(NSOperation *)anOperation
+- (void)_enqueueOperation:(NSOperation *)anOperation
 {
+    [self->operationQueue addOperation:anOperation];
+
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _registerSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
 
     [self _updateOperationsProgress];
 }
 
-- (void)_removeOperation:(NSOperation *)anOperation
+- (void)_dequeueOperation:(NSOperation *)anOperation
 {
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _unregisterSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
@@ -724,10 +730,22 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _updateOperationsProgress];
 }
 
+- (void)_cancelSourceOperationsForPath:(NSString *)path
+{
+    NSArray *operations = [self _sourceProcessingOperationsForPath:path];
+
+    for (NSOperation * operation in operations)
+    {
+        [operation cancel];
+        [self _dequeueOperation:operation];
+    }
+}
+
 - (void)_cancelAllProjectRelatedOperations
 {
-    self->sourceProcessingOperations = [NSMutableDictionary new];
     [[self projectRelatedOperations] makeObjectsPerformSelector:@selector(cancel)];
+    self->sourceProcessingOperations = [NSMutableDictionary new];
+    self->pendingPBXOperation = nil;
 }
 
 - (NSArray*)projectRelatedOperations
@@ -824,7 +842,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                  (created || modified || renamed || removed || inodeMetaModified) &&
                  [CappuccinoUtils isSourceFile:path cappuccinoProject:self.cappuccinoProject])
         {
-            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
+            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [XCCFSEventLogUtils dumpFSEventFlags:flags]);
             
             if ([fm fileExistsAtPath:path])
             {
@@ -850,7 +868,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         }
         else if ((isFile || isSymlink) && (renamed || removed) && !(modified || created) && [CappuccinoUtils isCibFile:path])
         {
-            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
+            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [XCCFSEventLogUtils dumpFSEventFlags:flags]);
             
             // If a cib is deleted, mark its xib as needing update so the cib is regenerated
             NSString *xibPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"xib"];
@@ -865,7 +883,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                  (created || modified || renamed || removed || inodeMetaModified) &&
                  [CappuccinoUtils isXCCIgnoreFile:path cappuccinoProject:self.cappuccinoProject])
         {
-            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [LogUtils dumpFSEventFlags:flags]);
+            DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [XCCFSEventLogUtils dumpFSEventFlags:flags]);
 
             [self.cappuccinoProject reloadXcodeCappIgnoreFile];
         }

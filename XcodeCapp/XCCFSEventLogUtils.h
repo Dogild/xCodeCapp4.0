@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface LogUtils : NSObject
+@interface XCCFSEventLogUtils : NSObject
 
 + (NSString *)dumpFSEventFlags:(FSEventStreamEventFlags)flags;
 

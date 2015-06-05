@@ -765,7 +765,7 @@
                         </buttonCell>
                         <connections>
                             <action selector="save:" target="GHK-nR-IEq" id="fuj-dR-oLv"/>
-                            <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCAutoOpenXcodeProject" id="p9U-vM-aMX">
+                            <binding destination="GHK-nR-IEq" name="value" keyPath="values.XCCUserDefaultsAutoOpenXcodeProject" id="b7q-Uh-KtP">
                                 <dictionary key="options">
                                     <bool key="NSValidatesImmediately" value="YES"/>
                                 </dictionary>
@@ -799,7 +799,7 @@
                             </menu>
                         </popUpButtonCell>
                         <connections>
-                            <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCMaxNumberOfOperations" id="j7z-8T-ux4"/>
+                            <binding destination="GHK-nR-IEq" name="selectedValue" keyPath="values.XCCUserDefaultsMaxNumberOfConcurrentOperations" id="gpI-YW-A6a"/>
                         </connections>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" id="axH-wD-X4l">

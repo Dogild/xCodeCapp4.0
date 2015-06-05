@@ -13,11 +13,12 @@
 #import "XCCPath.h"
 
 static NSArray * XCCDefaultBinaryPaths;
-static NSDictionary* XCCDefaultInfoPlistConfigurations;
+static NSDictionary* XCCCappuccinoProjectDefaultSettings;
 
 // we replace the "/" by a weird unicode "/" in order to generate file names with "/" in .XcodeSupport. very clear huh?
 static NSString * const XCCSlashReplacement                 = @"∕";  // DIVISION SLASH, Unicode: U+2215
 
+static NSArray *XCCCappuccinoProjectDefaultIgnoredPaths = nil;
 
 NSString * const XCCCappuccinoProcessCappLintKey            = @"XCCCappuccinoProcessCappLintKey";
 NSString * const XCCCappuccinoProcessObjjKey                = @"XCCCappuccinoProcessObjjKey";
@@ -29,6 +30,7 @@ NSString * const XCCCappuccinoObjjIncludePathKey            = @"XCCCappuccinoObj
 NSString * const XCCCappuccinoProjectNicknameKey            = @"XCCCappuccinoProjectNicknameKey";
 NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoProjectAutoStartListeningKey";
 NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoProjectLastEventIDKey";
+
 
 
 
@@ -49,7 +51,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
     
-    XCCDefaultInfoPlistConfigurations = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
+    XCCCappuccinoProjectDefaultSettings = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
                                           XCCCappuccinoProcessCappLintKey: @NO,
                                           XCCCappuccinoProcessObjjKey: @NO,
                                           XCCCappuccinoProcessNib2CibKey: @YES,
@@ -58,6 +60,19 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
                                           XCCCappuccinoObjjIncludePathKey: @"",
                                           XCCCappuccinoProjectNicknameKey: @"",
                                           XCCCappuccinoProjectAutoStartListeningKey: @NO};
+
+    XCCCappuccinoProjectDefaultIgnoredPaths = @[
+                                                @"Frameworks/*",
+                                                @"Build/*",
+                                                @"*.xcodeproj/*",
+                                                @".XcodeSupport/*",
+                                                @"NS_*.j",
+                                                @".xcodecapp-ignore",
+                                                @"*.git/*",
+                                                @".cappenvs/*",
+                                                @"main.j",
+                                                @"!Frameworks/Sources"
+                                                ];
 }
 
 + (NSArray*)defaultBinaryPaths
@@ -111,7 +126,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (id)_defaultSettings
 {
-    NSMutableDictionary *defaultSettings = [XCCDefaultInfoPlistConfigurations mutableCopy];
+    NSMutableDictionary *defaultSettings = [XCCCappuccinoProjectDefaultSettings mutableCopy];
     
     defaultSettings[XCCCappuccinoObjjIncludePathKey] = [NSString stringWithFormat:@"%@/%@", self.projectPath, @"Frameworks/Debug"];
     defaultSettings[XCCCappuccinoProjectNicknameKey] = self.nickname;
@@ -208,7 +223,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     {
         NSMutableArray *ignoredPatterns = [NSMutableArray new];
         
-        for (NSString *pattern in [CappuccinoUtils defaultIgnoredPaths])
+        for (NSString *pattern in XCCCappuccinoProjectDefaultIgnoredPaths)
             [ignoredPatterns addObject:pattern];
         
         for (NSString *pattern in [self.XcodeCappIgnoreContent componentsSeparatedByString:@"\n"])

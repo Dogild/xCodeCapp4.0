@@ -10,14 +10,8 @@
 #import "XCCCappuccinoProject.h"
 #import "XcodeProjectCloser.h"
 
-// The regex above is used with this predicate for testing.
 static NSPredicate * XCCDirectoriesToIgnorePredicate = nil;
-
-// When scanning the project, we immediately ignore directories that match this regex.
 static NSString * const XCCDirectoriesToIgnorePattern = @"^(?:Build|F(?:rameworks|oundation)|AppKit|Objective-J|(?:Browser|CommonJS)\\.environment|Resources|XcodeSupport|.+\\.xcodeproj)$";
-
-// An array of the default predicates used to ignore paths.
-static NSArray *XCCDefaultIgnoredPaths = nil;
 
 @implementation CappuccinoUtils
 
@@ -28,23 +22,6 @@ static NSArray *XCCDefaultIgnoredPaths = nil;
     
     XCCDirectoriesToIgnorePredicate = [NSPredicate predicateWithFormat:@"SELF matches %@", XCCDirectoriesToIgnorePattern];
     
-    XCCDefaultIgnoredPaths = @[
-                                 @"Frameworks/*",
-                                 @"Build/*",
-                                 @"*.xcodeproj/*",
-                                 @".XcodeSupport/*",
-                                 @"NS_*.j",
-                                 @".xcodecapp-ignore",
-                                 @"*.git/*",
-                                 @".cappenvs/*",
-                                 @"main.j",
-                                 @"!Frameworks/Sources"
-                                 ];
-}
-
-+ (NSArray *)defaultIgnoredPaths
-{
-    return XCCDefaultIgnoredPaths;
 }
 
 + (BOOL)isObjjFile:(NSString *)path

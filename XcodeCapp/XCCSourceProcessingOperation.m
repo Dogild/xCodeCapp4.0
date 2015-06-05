@@ -184,6 +184,8 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
     if (self->task.isRunning)
         [self->task terminate];
 
+    self.operationName = @"Canceled source processing";
+
     [super cancel];
 }
 

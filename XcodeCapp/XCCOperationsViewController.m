@@ -78,12 +78,28 @@
     // we create a snapshot at that moment, so if some operations are removed during the time between
     // the count and reloadData, we don't crash.
      self->operationsSnaphsot = [[[self.cappuccinoProjectController projectRelatedOperations] sortedArrayUsingComparator:^(NSOperation * op1, NSOperation * op2){
-        if (op1.isExecuting && !op2.isExecuting)
-            return NSOrderedAscending;
-        else if (!op1.isExecuting && op2.isExecuting)
+
+        if (op1.isCancelled)
             return NSOrderedDescending;
-        else
-            return NSOrderedSame;
+
+         if (op2.isCancelled)
+             return NSOrderedAscending;
+
+         if ([op1.dependencies containsObject:op2])
+             return NSOrderedDescending;
+
+         if ([op2.dependencies containsObject:op1])
+             return NSOrderedAscending;
+
+         if (op1.isExecuting && !op2.isExecuting)
+            return NSOrderedAscending;
+
+         if (!op1.isExecuting && op2.isExecuting)
+            return NSOrderedDescending;
+
+
+
+        return NSOrderedSame;
     }] copy];
 
     return self->operationsSnaphsot.count;

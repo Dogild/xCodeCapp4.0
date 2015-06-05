@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "XCCMainController.h"
-#import "UserDefaults.h"
+#import "XCCUserDefaults.h"
 
 @implementation AppDelegate
 
@@ -18,9 +18,9 @@
 - (void)_initUserDefaults
 {
     NSDictionary *appDefaults = @{
-                                kDefaultXCCAutoOpenXcodeProject: @YES,
-                                kDefaultXCCLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN],
-                                kDefaultXCCMaxNumberOfOperations: @20
+                                XCCUserDefaultsAutoOpenXcodeProject: @YES,
+                                XCCUserDefaultsLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN],
+                                XCCUserDefaultsMaxNumberOfConcurrentOperations: @20
                                 };
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
@@ -50,7 +50,7 @@
     [DDLog addLogger:[DDASLLogger sharedInstance]];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    int logLevel = (int)[defaults integerForKey:kDefaultXCCLogLevel];
+    int logLevel = (int)[defaults integerForKey:XCCUserDefaultsLogLevel];
     NSUInteger modifiers = [NSEvent modifierFlags];
     
     if (modifiers & NSAlternateKeyMask)
@@ -84,7 +84,7 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == [NSUserDefaults standardUserDefaults] && [keyPath isEqualToString:kDefaultXCCMaxNumberOfOperations])
+    if (object == [NSUserDefaults standardUserDefaults] && [keyPath isEqualToString:XCCUserDefaultsMaxNumberOfConcurrentOperations])
     {
         [self.mainOperationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
     }
@@ -112,9 +112,9 @@
     
     self.mainOperationQueue = [NSOperationQueue new];
 
-    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kDefaultXCCMaxNumberOfOperations options:NSKeyValueObservingOptionNew context:NULL];
+    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:XCCUserDefaultsMaxNumberOfConcurrentOperations options:NSKeyValueObservingOptionNew context:NULL];
     self.mainOperationQueue             = [[NSApp delegate] mainOperationQueue];
-    [self.mainOperationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
+    [self.mainOperationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:XCCUserDefaultsMaxNumberOfConcurrentOperations] intValue]];
 
 
     [self _initLogging];

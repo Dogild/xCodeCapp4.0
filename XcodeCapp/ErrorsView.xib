@@ -53,7 +53,7 @@
                                                         <rect key="frame" x="6" y="3" width="394" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="Table View Cell" id="T9K-ex-2Wj">
-                                                            <font key="font" size="12" name="Menlo-Bold"/>
+                                                            <font key="font" size="12" name="Menlo-Regular"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -89,16 +89,16 @@
                                                         <color key="fillColor" red="0.97414338089999997" green="0.97084119989999995" blue="0.97744556179999997" alpha="1" colorSpace="calibratedRGB"/>
                                                     </box>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="ng2-IC-e85">
-                                                        <rect key="frame" x="16" y="85" width="74" height="14"/>
+                                                        <rect key="frame" x="16" y="87" width="74" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Line number" id="jKW-4V-hZZ">
-                                                            <font key="font" metaFont="smallSystemBold"/>
+                                                            <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="my2-jo-uaH">
-                                                        <rect key="frame" x="93" y="85" width="233" height="14"/>
+                                                        <rect key="frame" x="93" y="87" width="233" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="200" id="uhp-6F-EA1">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -107,12 +107,12 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="7DM-NL-nZw">
-                                                        <rect key="frame" x="3" y="86" width="12" height="12"/>
+                                                        <rect key="frame" x="3" y="88" width="12" height="12"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSRemoveTemplate" id="jaI-iA-MGK"/>
                                                     </imageView>
                                                     <button toolTip="Edit in Code Editor" verticalHuggingPriority="750" id="mMx-zB-OZi">
-                                                        <rect key="frame" x="325" y="84" width="33" height="16"/>
+                                                        <rect key="frame" x="325" y="86" width="33" height="16"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="open-in-editor" imagePosition="overlaps" alignment="center" controlSize="small" imageScaling="proportionallyUpOrDown" inset="2" id="eLG-E9-mZh">
                                                             <behavior key="behavior" lightByContents="YES"/>

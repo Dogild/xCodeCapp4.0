@@ -12,7 +12,7 @@
 #import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProjectControllerDataView.h"
 #import "CappuccinoUtils.h"
-#import "UserDefaults.h"
+#import "XCCUserDefaults.h"
 #import "XCCOperationsViewController.h"
 #import "XCCErrorsViewController.h"
 #import "XCCSettingsViewController.h"
@@ -127,7 +127,7 @@
     DDLogVerbose(@"Start : selecting last selected project");
     
     NSUserDefaults  *defaults                = [NSUserDefaults standardUserDefaults];
-    NSString        *lastSelectedProjectPath = [defaults valueForKey:kDefaultXCCLastSelectedProjectPath];
+    NSString        *lastSelectedProjectPath = [defaults valueForKey:XCCUserDefaultsSelectedProjectPath];
     NSInteger       indexToSelect            = 0;
     
     if ([lastSelectedProjectPath length])
@@ -150,18 +150,20 @@
 
 - (void)_restoreManagedProjects
 {
-    DDLogVerbose(@"Start : restore managed projects");
+    DDLogVerbose(@"restore managed projects");
     self.cappuccinoProjectControllers = [NSMutableArray new];
     
-    NSArray         *projectHistory  = [[NSUserDefaults standardUserDefaults] arrayForKey:kDefaultXCCCurrentManagedProjects];
+    NSArray         *projectHistory  = [[NSUserDefaults standardUserDefaults] arrayForKey:XCCUserDefaultsManagedProjects];
     NSFileManager   *fm              = [NSFileManager defaultManager];
     NSMutableArray  *missingProjects = [NSMutableArray new];
     
     for (NSString *path in projectHistory)
     {
+        DDLogVerbose(@"Checking previously managed project at path: %@", path);
         if (![fm fileExistsAtPath:path isDirectory:nil])
         {
             [missingProjects addObject:path];
+            DDLogVerbose(@"Not found: project at path: %@", path);
             continue;
         }
         
@@ -183,8 +185,14 @@
     }
 
     [self _saveManagedProjectsToUserDefaults];
-    
-    DDLogVerbose(@"Stop : managed  projects restored");
+
+    for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
+    {
+        if (controller.cappuccinoProject.autoStartListening)
+            [controller switchProjectListeningStatus:self];
+    }
+
+    DDLogVerbose(@"managed projects restored");
 }
 
 - (void)_saveSelectedProject
@@ -194,7 +202,7 @@
     if (!path)
         path = @"";
 
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:kDefaultXCCLastSelectedProjectPath];
+    [[NSUserDefaults standardUserDefaults] setObject:path forKey:XCCUserDefaultsSelectedProjectPath];
 }
 
 - (void)_saveManagedProjectsToUserDefaults
@@ -204,7 +212,7 @@
     for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
 
-    [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:kDefaultXCCCurrentManagedProjects];
+    [[NSUserDefaults standardUserDefaults] setObject:historyProjectPaths forKey:XCCUserDefaultsManagedProjects];
 }
 
 - (void)_reloadProjectsList

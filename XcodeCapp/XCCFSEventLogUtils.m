@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "LogUtils.h"
+#import "XCCFSEventLogUtils.h"
 
-@implementation LogUtils
+@implementation XCCFSEventLogUtils
 
 + (NSString *)dumpFSEventFlags:(FSEventStreamEventFlags)flags
 {
