@@ -130,6 +130,8 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     
     if (backgroundStyle == NSBackgroundStyleDark)
     {
+        self->lineBottom.hidden = YES;
+        
         self->fieldNickname.textColor        = [NSColor whiteColor];
         self->fieldPath.textColor            = [NSColor whiteColor];
         self->buttonSwitchStatus.image       = isStopped ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"stop-white"];
@@ -141,6 +143,8 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     }
     else
     {
+        self->lineBottom.hidden = NO;
+
         self->fieldNickname.textColor        = [NSColor controlTextColor];
         self->fieldPath.textColor            = [NSColor secondaryLabelColor];
         self->buttonSwitchStatus.image       = isStopped ? [NSImage imageNamed:@"run"] : [NSImage imageNamed:@"stop"];

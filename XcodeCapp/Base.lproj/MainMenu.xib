@@ -489,6 +489,7 @@
                                                                         <outlet property="buttonSwitchStatus" destination="PoH-Du-Pas" id="6Fa-UY-KXy"/>
                                                                         <outlet property="fieldNickname" destination="nss-wl-6TY" id="zri-Wn-gKS"/>
                                                                         <outlet property="fieldPath" destination="PN4-Zx-XTz" id="jWb-sW-lU4"/>
+                                                                        <outlet property="lineBottom" destination="MsY-oY-iIn" id="iIw-Ck-3dl"/>
                                                                         <outlet property="operationsProgressIndicator" destination="dZP-lW-STI" id="nyZ-nv-RH6"/>
                                                                         <outlet property="waitingProgressIndicator" destination="p3u-tG-2hS" id="RH1-PG-ELB"/>
                                                                     </connections>
