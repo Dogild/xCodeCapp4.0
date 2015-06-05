@@ -57,14 +57,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     if (self = [super init])
     {
-        [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kDefaultXCCMaxNumberOfOperations options:NSKeyValueObservingOptionNew context:NULL];
         [self _startListeningToOperationsNotifications];
 
         self.cappuccinoProject              = [[XCCCappuccinoProject alloc] initWithPath:aPath];
         self.mainXcodeCappController        = aController;
         self->sourceProcessingOperations    = [NSMutableDictionary new];
+        self->operationQueue                = [[NSApp delegate] mainOperationQueue];
         
-        [self _reinitialize];
+        [self _reinitializeProjectController];
 
         if (self.cappuccinoProject.autoStartListening)
             [self _loadProject];
@@ -73,16 +73,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     return self;
 }
 
-- (void)_reinitialize
+- (void)_reinitializeProjectController
 {
-    self->taskLauncher               = nil;
-    self->operationQueue             = [[NSApp delegate] mainOperationQueue];
-    self->projectPathFileDescriptor  = -1;
-    
-    [self->operationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
-    
     [self.cappuccinoProject reinitialize];
-    
     [self _reinitializeOperationsCounters];
     [self _prepareXcodeSupport];
 }
@@ -115,34 +108,22 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 }
 
 
-
-#pragma mark - Observers
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:kDefaultXCCMaxNumberOfOperations])
-        [self->operationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
-}
-
-
 #pragma mark - Project State Management
 
 - (void)_loadProject
 {
     DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
     
-    if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusInitialized)
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
         return;
-    
-    [self _reinitialize];
-    
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusLoading;
 
+    [self _reinitializeProjectController];
     [self _reinitializeTaskLauncher];
 
     if (!self->taskLauncher.isValid)
         return;
 
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusLoading;
     [self _populateXcodeSupportDirectoryWithProjectRelativePath:@""];
 }
 
@@ -158,21 +139,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     }
     
-    if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusStopped)
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusListening)
         return;
 
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
 
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
     
-    FSEventStreamCreateFlags flags = kFSEventStreamCreateFlagUseCFTypes |
-    kFSEventStreamCreateFlagWatchRoot  |
-    kFSEventStreamCreateFlagIgnoreSelf |
-    kFSEventStreamCreateFlagNoDefer |
-    kFSEventStreamCreateFlagFileEvents;
-    
-    // Get a file descriptor to the project directory so we can locate it if it moves
-    self->projectPathFileDescriptor = open(self.cappuccinoProject.projectPath.UTF8String, O_EVTONLY);
+    FSEventStreamCreateFlags flags = kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagWatchRoot
+                                        | kFSEventStreamCreateFlagIgnoreSelf | kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagFileEvents;
     
     NSArray                 *pathsToWatch   = [CappuccinoUtils getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
     void                    *appPointer     = (__bridge void *)self;
@@ -222,12 +197,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         FSEventStreamRelease(self->stream);
         self->stream = NULL;
     }
-    
-    if (self->projectPathFileDescriptor >= 0)
-    {
-        close(self->projectPathFileDescriptor);
-        self->projectPathFileDescriptor = -1;
-    }
 
     [self.cappuccinoProject saveSettings];
 }
@@ -238,7 +207,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     [self _removeXcodeSupportDirectory];
     [self _removeXcodeProject];
-    [self _reinitialize];
+    [self _reinitializeProjectController];
 
     self.cappuccinoProject.autoStartListening = YES;
     [self.cappuccinoProject saveSettings];
@@ -688,7 +657,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         self->pendingPBXOperation = nil;
 
-        if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusProcessing || self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
+        if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading && self.cappuccinoProject.autoStartListening)
+            [self _startListeningToProject];
+        else if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusProcessing)
             self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
         else
             self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
@@ -1058,7 +1029,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self cancelAllOperations:self];
 
-    [self _startListeningToOperationsNotifications];
+    [self _stopListeningToOperationsNotifications];
     [self _stopListeningToProject];
     [self _removeXcodeProject];
     [self _removeXcodeSupportDirectory];

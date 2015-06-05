@@ -30,7 +30,7 @@
 - (void)_initStatusItem
 {
     self->imageStatusInactive   = [NSImage imageNamed:@"status-icon-inactive"];
-    self->imageStatusProcessing    = [NSImage imageNamed:@"status-icon-working"];
+    self->imageStatusProcessing = [NSImage imageNamed:@"status-icon-working"];
     self->imageStatusError      = [NSImage imageNamed:@"status-icon-error"];
     
     self->statusItem                 = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
@@ -84,16 +84,23 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSImage *image;
-    
-    if (self.mainOperationQueue.operationCount)
-        image = self->imageStatusProcessing;
-    else if ([self.mainWindowController totalNumberOfErrors])
-        image = self->imageStatusError;
+    if (object == [NSUserDefaults standardUserDefaults] && [keyPath isEqualToString:kDefaultXCCMaxNumberOfOperations])
+    {
+        [self.mainOperationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
+    }
     else
-        image = self->imageStatusInactive;
-    
-    [self->statusItem performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
+    {
+        NSImage *image;
+
+        if (self.mainOperationQueue.operationCount)
+            image = self->imageStatusProcessing;
+        else if ([self.mainWindowController totalNumberOfErrors])
+            image = self->imageStatusError;
+        else
+            image = self->imageStatusInactive;
+
+        [self->statusItem performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
+    }
 }
 
 
@@ -104,7 +111,12 @@
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
     
     self.mainOperationQueue = [NSOperationQueue new];
-    
+
+    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kDefaultXCCMaxNumberOfOperations options:NSKeyValueObservingOptionNew context:NULL];
+    self.mainOperationQueue             = [[NSApp delegate] mainOperationQueue];
+    [self.mainOperationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultXCCMaxNumberOfOperations] intValue]];
+
+
     [self _initLogging];
     [self _initUserDefaults];
     [self _initStatusItem];
