@@ -17,11 +17,11 @@
 
 @interface XCCCappuccinoProjectController : NSObject
 {
+    BOOL                        isListeningToOperationNotifications;
     XCCTaskLauncher             *taskLauncher;
     NSOperationQueue            *operationQueue;
     FSEventStreamRef            stream;
     int                         projectPathFileDescriptor;
-    NSTimer                     *timerOperationQueueCompletionMonitor;
     NSMutableDictionary         *sourceProcessingOperations;
     XCCPPXOperation             *pendingPBXOperation;
 }

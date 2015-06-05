@@ -9,7 +9,21 @@
 #import "XCCOperationDataView.h"
 #import "XCCSourceProcessingOperation.h"
 
+static NSColor * XCCOperationDataViewColorExecuting;
+static NSColor * XCCOperationDataViewColorPending;
+static NSColor * XCCOperationDataViewColorFinished;
+static NSColor * XCCOperationDataViewColorCanceled;
+
+
 @implementation XCCOperationDataView
+
++ (void)initialize
+{
+    XCCOperationDataViewColorExecuting  = [NSColor colorWithCalibratedRed:107.0/255.0 green:148.0/255.0 blue:236.0/255.0 alpha:1.0];
+    XCCOperationDataViewColorPending    = [NSColor colorWithCalibratedRed:236.0/255.0 green:236.0/255.0 blue:236.0/255.0 alpha:1.0];
+    XCCOperationDataViewColorFinished   = [NSColor colorWithCalibratedRed:179.0/255.0 green:214.0/255.0 blue:69.0/255.0 alpha:1.0];
+    XCCOperationDataViewColorCanceled   = [NSColor colorWithCalibratedRed:253.0/255.0 green:125/255.0 blue:8.0/255.0 alpha:1.0];
+}
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
@@ -39,7 +53,15 @@
 {
     self->fieldName.stringValue         = self.operation.operationName;
     self->fieldDescription.stringValue  = self.operation.operationDescription;
-    self->boxStatus.fillColor           = self.operation.isExecuting ? [NSColor greenColor] : [NSColor grayColor];
+
+    if (self.operation.isExecuting)
+        self->boxStatus.fillColor = XCCOperationDataViewColorExecuting;
+    else if (self.operation.isCancelled)
+        self->boxStatus.fillColor = XCCOperationDataViewColorCanceled;
+    else if (self.operation.isFinished)
+        self->boxStatus.fillColor = XCCOperationDataViewColorFinished;
+    else
+        self->boxStatus.fillColor = XCCOperationDataViewColorPending;
 }
 
 @end

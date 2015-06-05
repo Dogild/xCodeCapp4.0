@@ -58,14 +58,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (self = [super init])
     {
         [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:kDefaultXCCMaxNumberOfOperations options:NSKeyValueObservingOptionNew context:NULL];
-        
+        [self _startListeningToOperationsNotifications];
+
         self.cappuccinoProject              = [[XCCCappuccinoProject alloc] initWithPath:aPath];
         self.mainXcodeCappController        = aController;
         self->sourceProcessingOperations    = [NSMutableDictionary new];
         
         [self _reinitialize];
-
-        [self _startListeningToOperationsNotifications];
 
         if (self.cappuccinoProject.autoStartListening)
             [self _loadProject];
@@ -143,7 +142,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     if (!self->taskLauncher.isValid)
         return;
-    
+
     [self _populateXcodeSupportDirectoryWithProjectRelativePath:@""];
 }
 
@@ -163,7 +162,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
-    
+
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
     
     FSEventStreamCreateFlags flags = kFSEventStreamCreateFlagUseCFTypes |
@@ -206,12 +205,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_stopListeningToProject
 {
-    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
-        return;
-    
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
 
-    [self->timerOperationQueueCompletionMonitor invalidate];
     [self _cancelAllProjectRelatedOperations];
     [self.mainXcodeCappController.errorsViewController cleanProjectErrors:self];
     
@@ -240,10 +235,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_resetProject
 {
     [self _stopListeningToProject];
-    [self _cancelAllProjectRelatedOperations];
+
     [self _removeXcodeSupportDirectory];
     [self _removeXcodeProject];
     [self _reinitialize];
+
+    self.cappuccinoProject.autoStartListening = YES;
+    [self.cappuccinoProject saveSettings];
 }
 
 
@@ -457,6 +455,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_startListeningToOperationsNotifications
 {
+    if (self->isListeningToOperationNotifications)
+        return;
+
+    self->isListeningToOperationNotifications = YES;
+
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didReceiveConversionDidStartNotification:) name:XCCConversionDidStartNotification object:nil];
@@ -484,6 +487,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_stopListeningToOperationsNotifications
 {
+    if (!self->isListeningToOperationNotifications)
+        return;
+
+    self->isListeningToOperationNotifications = NO;
+
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 
     [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
@@ -679,7 +687,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     else if ([aType isEqualToString:XCCPBXOperationDidEndNotification])
     {
         self->pendingPBXOperation = nil;
-        self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
+
+        if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusProcessing)
+            self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
+        else
+            self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
     }
 
     [self.mainXcodeCappController.operationsViewController reload];
@@ -1046,10 +1058,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self cancelAllOperations:self];
 
-    [self _stopListeningToOperationsNotifications];
+    [self _startListeningToOperationsNotifications];
     [self _stopListeningToProject];
     [self _removeXcodeProject];
     [self _removeXcodeSupportDirectory];
+
+    [self.mainXcodeCappController.operationsViewController reload];
+    [self.mainXcodeCappController.errorsViewController reload];
 }
 
 
@@ -1136,7 +1151,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [script executeAndReturnError:nil];
 }
 
-
 - (IBAction)switchProjectListeningStatus:(id)sender
 {
     if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusInitialized)
@@ -1154,6 +1168,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self _stopListeningToProject];
         self.cappuccinoProject.autoStartListening = NO;
     }
+
+    [self.cappuccinoProject saveSettings];
 }
 
 @end

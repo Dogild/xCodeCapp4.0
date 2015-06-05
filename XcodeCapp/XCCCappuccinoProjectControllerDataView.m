@@ -93,32 +93,21 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         case XCCCappuccinoProjectStatusInitialized:
         case XCCCappuccinoProjectStatusStopped:
             self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorStopped;
-            self->buttonSwitchStatus.enabled     = YES;
-            self->buttonOpenXcodeProject.enabled = NO;
-            self->buttonResetProject.enabled     = NO;
             self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
             break;
             
         case XCCCappuccinoProjectStatusLoading:
             self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorLoading;
-            self->buttonSwitchStatus.enabled     = NO;
-            self->buttonOpenXcodeProject.enabled = NO;
-            self->buttonResetProject.enabled     = NO;
+            self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
             break;
             
         case XCCCappuccinoProjectStatusListening:
             self->boxStatus.fillColor            = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
-            self->buttonSwitchStatus.enabled     = YES;
-            self->buttonOpenXcodeProject.enabled = YES;
-            self->buttonResetProject.enabled     = YES;
             self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
             break;
             
         case XCCCappuccinoProjectStatusProcessing:
             self->boxStatus.fillColor            = XCCCappuccinoProjectDataViewColorProcessing;
-            self->buttonSwitchStatus.enabled     = YES;
-            self->buttonOpenXcodeProject.enabled = NO;
-            self->buttonResetProject.enabled     = NO;
             self->buttonSwitchStatus.image       = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
             break;
     }
