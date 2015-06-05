@@ -241,6 +241,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         close(self->projectPathFileDescriptor);
         self->projectPathFileDescriptor = -1;
     }
+
+    [self.cappuccinoProject saveSettings];
 }
 
 - (void)_resetProject

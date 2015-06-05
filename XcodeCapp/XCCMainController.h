@@ -17,6 +17,7 @@
 
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 {
+    IBOutlet NSMenu                         *menuTableViewProject;
     IBOutlet NSBox                          *maskingView;
     IBOutlet NSSplitView                    *splitView;
     IBOutlet NSTableView                    *projectTableView;

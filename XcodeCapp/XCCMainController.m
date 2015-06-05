@@ -31,10 +31,7 @@
     [self->welcomeViewMask showLoading:YES];
     [self _showWelcomeView:YES];
     [self _showMaskingView:YES];
-        
-    [self _restoreManagedProjectsFromUserDefaults];
-    [self _selectLastProjectSelected];
-    
+
     NSTabViewItem *itemConfiguration = [[NSTabViewItem alloc] initWithIdentifier:@"configuration"];
     [itemConfiguration setView:self.settingsViewController.view];
     [self->tabViewProject addTabViewItem:itemConfiguration];
@@ -63,6 +60,9 @@
     [self->projectTableView registerForDraggedTypes:@[@"projects", NSFilenamesPboardType]];
 
     [self->welcomeViewMask showLoading:NO];
+
+    [self _restoreManagedProjects];
+    [self _restoreLastSelectedProject];
 }
 
 
@@ -115,7 +115,7 @@
     }
 }
 
-- (void)_selectLastProjectSelected
+- (void)_restoreLastSelectedProject
 {
     DDLogVerbose(@"Start : selecting last selected project");
     
@@ -141,7 +141,7 @@
     DDLogVerbose(@"Stop : selecting last selected project");
 }
 
-- (void)_restoreManagedProjectsFromUserDefaults
+- (void)_restoreManagedProjects
 {
     DDLogVerbose(@"Start : restore managed projects");
     self.cappuccinoProjectControllers = [NSMutableArray new];
