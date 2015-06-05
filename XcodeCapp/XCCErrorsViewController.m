@@ -6,12 +6,15 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
+#import "CappLintUtils.h"
+#import "ObjjUtils.h"
 #import "XCCErrorsViewController.h"
 #import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProject.h"
 #import "XCCOperationErrorDataView.h"
 #import "XCCOperationErrorHeaderDataView.h"
-
+#import "XCCMainController.h"
+#import "XCCSourceProcessingOperation.h"
 
 @implementation XCCErrorsViewController
 
@@ -26,6 +29,155 @@
     [self->errorOutlineView bind:NSTargetBinding toObject:self withKeyPath:@"cappuccinoProjectController" options:nil];
 }
 
+#pragma mark - Notifications
+
+- (void)startListeningToNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(_didReceiveConversionDidGenerateErrorNotification:) name:XCCConversionDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveCappLintDidGenerateErrorNotification:) name:XCCCappLintDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveCappLintDidStartNotification:) name:XCCCappLintDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveNib2CibDidGenerateErrorNotification:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveNib2CibDidStartNotifcation:) name:XCCNib2CibDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjj2ObjcSkeletonDidStartNotification:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjjDidGenerateErrorNotification:) name:XCCObjjDidGenerateErrorNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveObjjDidStartNotification:) name:XCCObjjDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveConversionDidEndNotification:) name:XCCConversionDidEndNotification object:nil];
+}
+
+- (void)stopListeningToNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center removeObserver:self name:XCCCappLintDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCCappLintDidStartNotification object:nil];
+    [center removeObserver:self name:XCCConversionDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCNib2CibDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCNib2CibDidStartNotification object:nil];
+    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
+    [center removeObserver:self name:XCCObjjDidGenerateErrorNotification object:nil];
+    [center removeObserver:self name:XCCObjjDidStartNotification object:nil];
+    [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
+}
+
+- (BOOL)_doesNotificationBelongToCurrentProject:(NSNotification *)note
+{
+    return note.userInfo[@"cappuccinoProject"] == self.cappuccinoProjectController.cappuccinoProject;
+}
+
+- (void)_didReceiveObjj2ObjcSkeletonDidStartNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjj2ObjcSkeletonOperationErrorType];
+    [self reload];
+}
+
+- (void)_didReceiveObjjDidStartNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjjOperationErrorType];
+    [self reload];
+}
+
+- (void)_didReceiveNib2CibDidStartNotifcation:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCNib2CibOperationErrorType];
+    [self reload];
+}
+
+- (void)_didReceiveCappLintDidStartNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCCappLintOperationErrorType];
+    [self reload];
+}
+
+- (void)_didReceiveConversionDidGenerateErrorNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
+    [self reload];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProjectController.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Unknown Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
+}
+
+- (void)_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
+        [self.cappuccinoProjectController.cappuccinoProject addOperationError:operationError];
+    
+    [self reload];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProjectController.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
+}
+
+- (void)_didReceiveObjjDidGenerateErrorNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
+        [self.cappuccinoProjectController.cappuccinoProject addOperationError:operationError];
+    
+    [self reload];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProjectController.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
+    
+}
+
+- (void)_didReceiveNib2CibDidGenerateErrorNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
+    [self reload];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProjectController.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Error nib2cib : %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
+    
+}
+
+- (void)_didReceiveCappLintDidGenerateErrorNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    for (XCCOperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
+        [self.cappuccinoProjectController.cappuccinoProject addOperationError:operationError];
+    
+    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProjectController.cappuccinoProject.nickname
+                                 message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
+}
+
+- (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self reload];
+    [self.cappuccinoProjectController.mainXcodeCappController reloadTotalNumberOfErrors];
+}
 
 #pragma mark - Utilities
 

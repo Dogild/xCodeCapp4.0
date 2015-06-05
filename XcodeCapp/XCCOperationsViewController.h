@@ -20,5 +20,7 @@
 @property XCCCappuccinoProjectController *cappuccinoProjectController;
 
 - (void)reload;
+- (void)startListeningToNotifications;
+- (void)stopListeningToNotifications;
 
 @end
