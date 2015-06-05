@@ -32,18 +32,18 @@
 
     if (project)
     {
-        [self->fieldNickname bind:NSValueBinding toObject:project withKeyPath:@"nickname" options:nil];
         [self->fieldXcodeCappIgnoreContent bind:NSValueBinding toObject:project withKeyPath:@"XcodeCappIgnoreContent" options:nil];
         [self->fieldObjjIncludePath bind:NSValueBinding toObject:project withKeyPath:@"objjIncludePath" options:nil];
+        [self->checkBoxProcessObjj2Skeleton bind:NSValueBinding toObject:project withKeyPath:@"processObjj2ObjcSkeleton" options:nil];
         [self->checkBoxProcessNib2Cib bind:NSValueBinding toObject:project withKeyPath:@"processNib2Cib" options:nil];
         [self->checkBoxProcessObjj bind:NSValueBinding toObject:project withKeyPath:@"processObjjWarnings" options:nil];
         [self->checkBoxProcessCappLint bind:NSValueBinding toObject:project withKeyPath:@"processCappLint" options:nil];
     }
     else
     {
-        [self->fieldNickname unbind:NSValueBinding];
         [self->fieldXcodeCappIgnoreContent unbind:NSValueBinding];
         [self->fieldObjjIncludePath unbind:NSValueBinding];
+        [self->checkBoxProcessObjj2Skeleton unbind:NSValueBinding];
         [self->checkBoxProcessNib2Cib unbind:NSValueBinding];
         [self->checkBoxProcessObjj unbind:NSValueBinding];
         [self->checkBoxProcessCappLint unbind:NSValueBinding];
@@ -84,6 +84,7 @@
 
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.nickname" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.XcodeCappIgnoreContent" options:NSKeyValueObservingOptionNew context:nil];
+    [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.processObjj2ObjcSkeleton" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.processNib2Cib" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.processObjjWarnings" options:NSKeyValueObservingOptionNew context:nil];
     [self.cappuccinoProjectController addObserver:self forKeyPath:@"cappuccinoProject.processCappLint" options:NSKeyValueObservingOptionNew context:nil];
@@ -98,6 +99,7 @@
 
     [self.cappuccinoProjectController removeObserver:self forKeyPath:@"cappuccinoProject.nickname"];
     [self.cappuccinoProjectController removeObserver:self forKeyPath:@"cappuccinoProject.XcodeCappIgnoreContent"];
+    [self.cappuccinoProjectController removeObserver:self forKeyPath:@"cappuccinoProject.processObjj2ObjcSkeleton"];
     [self.cappuccinoProjectController removeObserver:self forKeyPath:@"cappuccinoProject.processNib2Cib"];
     [self.cappuccinoProjectController removeObserver:self forKeyPath:@"cappuccinoProject.processObjjWarnings"];
     [self.cappuccinoProjectController removeObserver:self forKeyPath:@"cappuccinoProject.processCappLint"];

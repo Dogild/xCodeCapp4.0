@@ -50,8 +50,8 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
     
     XCCDefaultInfoPlistConfigurations = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
-                                          XCCCappuccinoProcessCappLintKey: @YES,
-                                          XCCCappuccinoProcessObjjKey: @YES,
+                                          XCCCappuccinoProcessCappLintKey: @NO,
+                                          XCCCappuccinoProcessObjjKey: @NO,
                                           XCCCappuccinoProcessNib2CibKey: @YES,
                                           XCCCappuccinoProcessObjj2ObjcSkeletonKey: @YES,
                                           XCCCappuccinoProjectBinPathsKey: [XCCDefaultBinaryPaths valueForKeyPath:@"name"],

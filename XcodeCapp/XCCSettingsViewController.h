@@ -19,7 +19,6 @@
     IBOutlet    NSButton        *checkBoxProcessObjj2Skeleton;
     IBOutlet    NSButton        *checkBoxProcessCappLint;
     IBOutlet    NSTextField     *fieldObjjIncludePath;
-    IBOutlet    NSTextField     *fieldNickname;
     IBOutlet    NSTextField     *fieldXcodeCappIgnoreContent;
 
     BOOL                        isObserving;
