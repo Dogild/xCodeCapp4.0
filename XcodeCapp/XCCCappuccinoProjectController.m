@@ -490,6 +490,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if ([aType isEqualToString:XCCPbxCreationDidEndNotification])
     {
         self.operationsComplete++;
+        [self _updateOperationsProgress];
         
         if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
         {
@@ -551,7 +552,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_addOperation:(NSOperation *)anOperation
 {
     [self.operations addObject:anOperation];
-    [self.mainXcodeCappController.operationsViewController reload];
     
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _registerSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
@@ -566,7 +566,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_removeOperation:(NSOperation *)anOperation
 {
     [self.operations removeObject:anOperation];
-    [self.mainXcodeCappController.operationsViewController reload];
     
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _unregisterSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];

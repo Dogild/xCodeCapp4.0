@@ -69,6 +69,7 @@
         return;
     
     [self.cappuccinoProjectController operationDidStart:note.object type:note.name userInfo:note.userInfo];
+    [self reload];
 }
 
 - (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
@@ -77,6 +78,7 @@
         return;
     
     [self.cappuccinoProjectController operationDidEnd:note.object type:note.name userInfo:note.userInfo];
+    [self reload];
 }
 
 - (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)note
@@ -85,6 +87,7 @@
         return;
     
     [self.cappuccinoProjectController operationDidStart:note.object type:note.name userInfo:note.userInfo];
+    [self reload];
 }
 
 - (void)_didReceiveUpdatePbxFileDidEndNotification:(NSNotification*)note
@@ -93,6 +96,7 @@
         return;
     
     [self.cappuccinoProjectController operationDidEnd:note.object type:note.name userInfo:note.userInfo];
+    [self reload];
 }
 
 #pragma nark - Utilities
