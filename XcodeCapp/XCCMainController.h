@@ -13,10 +13,11 @@
 @class XCCOperationsViewController;
 @class XCCErrorsViewController;
 @class XCCSettingsViewController;
-@class XCCProjectsFolderDropView;
+@class XCCWelcomeView;
 
 @interface XCCMainController : NSWindowController <NSSplitViewDelegate, NSTableViewDataSource, NSTableViewDelegate>
 {
+    IBOutlet NSMenu                         *menuTableViewProject;
     IBOutlet NSBox                          *maskingView;
     IBOutlet NSSplitView                    *splitView;
     IBOutlet NSTableView                    *projectTableView;
@@ -25,7 +26,7 @@
     IBOutlet NSButton                       *buttonSelectConfigurationTab;
     IBOutlet NSButton                       *buttonSelectErrorsTab;
     IBOutlet NSButton                       *buttonSelectOperationsTab;
-    IBOutlet XCCProjectsFolderDropView      *viewProjectMask;
+    IBOutlet XCCWelcomeView                 *welcomeViewMask;
 }
 
 @property IBOutlet XCCSettingsViewController    *settingsViewController;

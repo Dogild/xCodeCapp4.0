@@ -16,7 +16,7 @@
 #import "XCCOperationsViewController.h"
 #import "XCCErrorsViewController.h"
 #import "XCCSettingsViewController.h"
-#import "XCCProjectsFolderDropView.h"
+#import "XCCWelcomeView.h"
 
 
 @implementation XCCMainController
@@ -25,15 +25,13 @@
 
 - (void)windowDidLoad
 {
-    self->viewProjectMask.mainXcodeCappController = self;
+    [self showWindow:self];
 
+    self->welcomeViewMask.mainXcodeCappController = self;
+    [self->welcomeViewMask showLoading:YES];
+    [self _showWelcomeView:YES];
     [self _showMaskingView:YES];
 
-    [self _showProjectsTableMaskingView:YES];
-        
-    [self _restoreManagedProjectsFromUserDefaults];
-    [self _selectLastProjectSelected];
-    
     NSTabViewItem *itemConfiguration = [[NSTabViewItem alloc] initWithIdentifier:@"configuration"];
     [itemConfiguration setView:self.settingsViewController.view];
     [self->tabViewProject addTabViewItem:itemConfiguration];
@@ -60,6 +58,11 @@
     [self updateSelectedTab:self->buttonSelectConfigurationTab];
     
     [self->projectTableView registerForDraggedTypes:@[@"projects", NSFilenamesPboardType]];
+
+    [self->welcomeViewMask showLoading:NO];
+
+    [self _restoreManagedProjects];
+    [self _restoreLastSelectedProject];
 }
 
 
@@ -89,30 +92,30 @@
     }
 }
 
-- (void)_showProjectsTableMaskingView:(BOOL)shouldShow
+- (void)_showWelcomeView:(BOOL)shouldShow
 {
     if (shouldShow)
     {
-        if (self->viewProjectMask.superview)
+        if (self->welcomeViewMask.superview)
             return;
         
         [self->projectTableView setHidden:YES];
         
-        self->viewProjectMask.frame = [self->splitView.superview bounds];
-        [self->splitView.superview addSubview:self->viewProjectMask positioned:NSWindowAbove relativeTo:nil];
+        self->welcomeViewMask.frame = [self->splitView.superview bounds];
+        [self->splitView.superview addSubview:self->welcomeViewMask positioned:NSWindowAbove relativeTo:nil];
     }
     else
     {
-        if (!self->viewProjectMask.superview)
+        if (!self->welcomeViewMask.superview)
             return;
         
         [self->projectTableView setHidden:NO];
         
-        [self->viewProjectMask removeFromSuperview];
+        [self->welcomeViewMask removeFromSuperview];
     }
 }
 
-- (void)_selectLastProjectSelected
+- (void)_restoreLastSelectedProject
 {
     DDLogVerbose(@"Start : selecting last selected project");
     
@@ -138,7 +141,7 @@
     DDLogVerbose(@"Stop : selecting last selected project");
 }
 
-- (void)_restoreManagedProjectsFromUserDefaults
+- (void)_restoreManagedProjects
 {
     DDLogVerbose(@"Start : restore managed projects");
     self.cappuccinoProjectControllers = [NSMutableArray new];
@@ -202,9 +205,9 @@
     [self->projectTableView reloadData];
 
     if (self.cappuccinoProjectControllers.count == 0)
-        [self _showProjectsTableMaskingView:YES];
+        [self _showWelcomeView:YES];
     else
-        [self _showProjectsTableMaskingView:NO];
+        [self _showWelcomeView:NO];
     
 }
 

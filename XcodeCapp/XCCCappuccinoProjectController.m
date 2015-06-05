@@ -205,6 +205,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     // yep, so, this is needed in order to ensure we get a FS event, so we actually get a valid last event ID.
     [self->taskLauncher runTaskWithCommand:@"touch" arguments:@[self.cappuccinoProject.settingsPath] returnType:kTaskReturnTypeNone];
 
+    [self.cappuccinoProject saveSettings];
+
     DDLogVerbose(@"FSEventStream started for paths: %@", pathsToWatch);
 }
 
@@ -239,6 +241,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         close(self->projectPathFileDescriptor);
         self->projectPathFileDescriptor = -1;
     }
+
+    [self.cappuccinoProject saveSettings];
 }
 
 - (void)_resetProject

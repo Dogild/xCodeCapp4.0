@@ -6,15 +6,42 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "XCCProjectsFolderDropView.h"
+#import "XCCWelcomeView.h"
 #import "XCCMainController.h"
 
-@implementation XCCProjectsFolderDropView
+@implementation XCCWelcomeView
+
+
+#pragma mark - Initialization
 
 - (void)awakeFromNib
 {
     [self registerForDraggedTypes:@[NSFilenamesPboardType]];
 }
+
+
+#pragma mark - Utilities
+
+- (void)showLoading:(BOOL)shouldShow
+{
+    if (shouldShow)
+    {
+        self->boxImport.hidden       = YES;
+        self->loadingIndicator.hidden   = NO;
+
+        [self->loadingIndicator startAnimation:self];
+    }
+    else
+    {
+        self->boxImport.hidden       = NO;
+        self->loadingIndicator.hidden   = YES;
+
+        [self->loadingIndicator stopAnimation:self];
+    }
+}
+
+
+#pragma mark Drag and Drop
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)info
 {
