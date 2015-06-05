@@ -816,15 +816,15 @@
             </view>
             <point key="canvasLocation" x="-156.5" y="-126"/>
         </window>
-        <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="fYW-ua-i1m">
+        <box borderWidth="0.0" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="fYW-ua-i1m">
             <rect key="frame" x="0.0" y="0.0" width="271" height="313"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <view key="contentView">
-                <rect key="frame" x="1" y="1" width="269" height="311"/>
+                <rect key="frame" x="0.0" y="0.0" width="271" height="313"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <customView id="vKu-AP-6l9">
-                        <rect key="frame" x="15" y="15" width="239" height="281"/>
+                        <rect key="frame" x="16" y="16" width="239" height="281"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="9iO-X5-hpo">
@@ -855,29 +855,29 @@
                 </subviews>
             </view>
             <color key="borderColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-            <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="fillColor" red="0.98039221759999995" green="0.98039221759999995" blue="0.98039221759999995" alpha="1" colorSpace="deviceRGB"/>
             <point key="canvasLocation" x="310.5" y="-302.5"/>
         </box>
-        <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="stz-Vu-tYo" customClass="XCCWelcomeView">
+        <box borderWidth="0.0" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="stz-Vu-tYo" customClass="XCCWelcomeView">
             <rect key="frame" x="0.0" y="-1" width="464" height="401"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <view key="contentView">
-                <rect key="frame" x="1" y="1" width="462" height="399"/>
+                <rect key="frame" x="0.0" y="0.0" width="464" height="401"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <customView id="3EK-jb-wmc">
-                        <rect key="frame" x="15" y="15" width="432" height="369"/>
+                        <rect key="frame" x="15" y="16" width="434" height="369"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="FVR-yM-GAZ">
-                                <rect key="frame" x="40" y="116" width="352" height="5"/>
+                                <rect key="frame" x="40" y="116" width="354" height="5"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                 <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <font key="titleFont" metaFont="system"/>
                             </box>
                             <box autoresizesSubviews="NO" cornerRadius="100" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="Tbj-mM-87j">
-                                <rect key="frame" x="188" y="28" width="57" height="57"/>
+                                <rect key="frame" x="189" y="28" width="57" height="57"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <view key="contentView">
                                     <rect key="frame" x="1" y="1" width="55" height="55"/>
@@ -900,7 +900,7 @@
                                 <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </box>
                             <button focusRingType="none" id="wdl-kS-DYD">
-                                <rect key="frame" x="123" y="150" width="186" height="186"/>
+                                <rect key="frame" x="124" y="150" width="186" height="186"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="icon_512x512" imagePosition="only" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="OC7-Ci-3pt">
                                     <behavior key="behavior" lightByContents="YES"/>
@@ -911,7 +911,7 @@
                                 </connections>
                             </button>
                             <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" id="vPH-Iq-Ray">
-                                <rect key="frame" x="200" y="40" width="32" height="32"/>
+                                <rect key="frame" x="201" y="40" width="32" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </progressIndicator>
                         </subviews>
