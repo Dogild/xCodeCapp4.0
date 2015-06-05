@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class XCCAbstractOperation;
 @class XCCCappuccinoProject;
 @class XCCTaskLauncher;
 @class XCCMainController;
@@ -36,6 +37,8 @@
 - (void)reinitializeProjectFromSettings;
 - (void)applicationIsClosing;
 - (void)cleanUpBeforeDeletion;
+- (void)operationDidStart:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
+- (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)resetProject:(id)aSender;

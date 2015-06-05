@@ -458,220 +458,52 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_startListeningToNotifications
 {
     [self _stopListeningToNotifications];
-    
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    
-    [center addObserver:self selector:@selector(_didReceiveCappLintDidGenerateErrorNotification:) name:XCCCappLintDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveCappLintDidStartNotification:) name:XCCCappLintDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveConversionDidEndNotification:) name:XCCConversionDidEndNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveConversionDidGenerateErrorNotification:) name:XCCConversionDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveConversionDidStartNotification:) name:XCCConversionDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveNeedSourceToProjectPathMappingNotification:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveNib2CibDidGenerateErrorNotification:) name:XCCNib2CibDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveNib2CibDidStartNotifcation:) name:XCCNib2CibDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:) name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveObjj2ObjcSkeletonDidStartNotification:) name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveObjjDidGenerateErrorNotification:) name:XCCObjjDidGenerateErrorNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveObjjDidStartNotification:) name:XCCObjjDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidStartNotification:) name:XCCPbxCreationDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidEndNotification:) name:XCCPbxCreationDidEndNotification object:nil];
+    [self.mainXcodeCappController.errorsViewController startListeningToNotifications];
+    [self.mainXcodeCappController.operationsViewController startListeningToNotifications];
 }
 
 - (void)_stopListeningToNotifications
 {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    
-    [center removeObserver:self name:XCCCappLintDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCCappLintDidStartNotification object:nil];
-    [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
-    [center removeObserver:self name:XCCConversionDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
-    [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
-    [center removeObserver:self name:XCCNib2CibDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCNib2CibDidStartNotification object:nil];
-    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCObjj2ObjcSkeletonDidStartNotification object:nil];
-    [center removeObserver:self name:XCCObjjDidGenerateErrorNotification object:nil];
-    [center removeObserver:self name:XCCObjjDidStartNotification object:nil];
-    [center removeObserver:self name:XCCPbxCreationDidStartNotification object:nil];
-    [center removeObserver:self name:XCCPbxCreationDidEndNotification object:nil];
-}
-
-- (BOOL)_doesNotificationBelongToCurrentProject:(NSNotification *)note
-{
-    return note.userInfo[@"cappuccinoProject"] == self.cappuccinoProject;
-}
-
-- (void)_didReceiveNeedSourceToProjectPathMappingNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    self.cappuccinoProject.projectPathsForSourcePaths[note.userInfo[@"sourcePath"]] = note.userInfo[@"projectPath"];
-}
-
-- (void)_didReceiveConversionDidStartNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self _addOperation:note.object];
-}
-
-- (void)_didReceiveObjj2ObjcSkeletonDidStartNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjj2ObjcSkeletonOperationErrorType];
-    [self.mainXcodeCappController.errorsViewController reload];
-}
-
-- (void)_didReceiveObjjDidStartNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjjOperationErrorType];
-    [self.mainXcodeCappController.errorsViewController reload];
-}
-
-- (void)_didReceiveNib2CibDidStartNotifcation:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCNib2CibOperationErrorType];
-    [self.mainXcodeCappController.errorsViewController reload];
-}
-
-- (void)_didReceiveCappLintDidStartNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCCappLintOperationErrorType];
-    [self.mainXcodeCappController.errorsViewController reload];
-}
-
-- (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self _removeOperation:note.object];
-    
-    NSString *path = note.userInfo[@"sourcePath"];
-    
-    [self _registerPathToAddInPBX:path];
-    
-    [self.mainXcodeCappController.errorsViewController reload];
-}
-
-- (void)_didReceiveConversionDidGenerateErrorNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    [self.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
-    [self.mainXcodeCappController.errorsViewController reload];
-    
-    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
-                                 message:[NSString stringWithFormat:@"Unknown Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
-}
-
-- (void)_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-    
-    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
-        [self.cappuccinoProject addOperationError:operationError];
-    
-    [self.mainXcodeCappController.errorsViewController reload];
-    
-    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
-                                 message:[NSString stringWithFormat:@"Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
-}
-
-- (void)_didReceiveObjjDidGenerateErrorNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-
-    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
-        [self.cappuccinoProject addOperationError:operationError];
-    
-    [self.mainXcodeCappController.errorsViewController reload];
-    
-    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
-                                 message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
-
-}
-
-- (void)_didReceiveNib2CibDidGenerateErrorNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-
-    [self.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
-    [self.mainXcodeCappController.errorsViewController reload];
-    
-    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
-                                 message:[NSString stringWithFormat:@"nib2cib Error: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
-
-}
-
-- (void)_didReceiveCappLintDidGenerateErrorNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-
-    for (XCCOperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
-        [self.cappuccinoProject addOperationError:operationError];
-    
-    [self.mainXcodeCappController reloadTotalNumberOfErrors];
-    
-    [CappuccinoUtils notifyUserWithTitle:self.cappuccinoProject.nickname
-                                 message:[NSString stringWithFormat:@"Warning: %@", [note.userInfo[@"sourcePath"] lastPathComponent]]];
-}
-
-- (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)aNotification
-{
-    if (![self _doesNotificationBelongToCurrentProject:aNotification])
-        return;
-    
-    [self _addOperation:aNotification.object];
-}
-
-- (void)_didReceiveUpdatePbxFileDidEndNotification:(NSNotification*)aNotification
-{
-    if (![self _doesNotificationBelongToCurrentProject:aNotification])
-        return;
-    
-    self.operationsComplete++;
-    
-    [self _removeOperation:aNotification.object];
-    
-    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
-    {
-        self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
-        
-        [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
-        
-        DDLogVerbose(@"Project finished loading");
-        
-        if (self.cappuccinoProject.autoStartListening)
-            [self _startListeningToProject];
-    }
-    else
-    {
-        self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
-    }
+    [self.mainXcodeCappController.errorsViewController stopListeningToNotifications];
+    [self.mainXcodeCappController.operationsViewController stopListeningToNotifications];
 }
 
 
 #pragma mark - Operation Management
+
+- (void)operationDidStart:(XCCAbstractOperation*)anOperation type:(NSString *)aType userInfo:(NSDictionary*)userInfo
+{
+    [self _addOperation:anOperation];
+}
+
+- (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString *)aType userInfo:(NSDictionary*)userInfo
+{
+    [self _removeOperation:anOperation];
+    
+    if ([aType isEqualToString:XCCConversionDidEndNotification])
+        [self _registerPathToAddInPBX:userInfo[@"sourcePath"]];
+    
+    if ([aType isEqualToString:XCCPbxCreationDidEndNotification])
+    {
+        self.operationsComplete++;
+        
+        if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
+        {
+            self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
+            
+            [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
+            
+            DDLogVerbose(@"Project finished loading");
+            
+            if (self.cappuccinoProject.autoStartListening)
+                [self _startListeningToProject];
+        }
+        else
+        {
+            self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
+        }
+    }
+}
 
 - (void)_reinitializeOperationsCounters
 {

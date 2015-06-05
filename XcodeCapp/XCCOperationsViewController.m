@@ -10,6 +10,9 @@
 #import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProject.h"
 #import "XCCOperationDataView.h"
+#import "XCCSourcesFinderOperation.h"
+#import "XCCSourceProcessingOperation.h"
+#import "XCCPPXOperation.h"
 
 
 @implementation XCCOperationsViewController
@@ -22,6 +25,75 @@
     [super viewDidLoad];
 }
 
+
+#pragma mark - Notifications
+
+- (void)startListeningToNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(_didReceiveConversionDidEndNotification:) name:XCCConversionDidEndNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveConversionDidStartNotification:) name:XCCConversionDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveNeedSourceToProjectPathMappingNotification:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidStartNotification:) name:XCCPbxCreationDidStartNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveUpdatePbxFileDidEndNotification:) name:XCCPbxCreationDidEndNotification object:nil];
+}
+
+- (void)stopListeningToNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
+    [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
+    [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
+    [center removeObserver:self name:XCCPbxCreationDidStartNotification object:nil];
+    [center removeObserver:self name:XCCPbxCreationDidEndNotification object:nil];
+}
+
+- (BOOL)_doesNotificationBelongToCurrentProject:(NSNotification *)note
+{
+    return note.userInfo[@"cappuccinoProject"] == self.cappuccinoProjectController.cappuccinoProject;
+}
+
+- (void)_didReceiveNeedSourceToProjectPathMappingNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    self.cappuccinoProjectController.cappuccinoProject.projectPathsForSourcePaths[note.userInfo[@"sourcePath"]] = note.userInfo[@"projectPath"];
+}
+
+- (void)_didReceiveConversionDidStartNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController operationDidStart:note.object type:note.name userInfo:note.userInfo];
+}
+
+- (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController operationDidEnd:note.object type:note.name userInfo:note.userInfo];
+}
+
+- (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController operationDidStart:note.object type:note.name userInfo:note.userInfo];
+}
+
+- (void)_didReceiveUpdatePbxFileDidEndNotification:(NSNotification*)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController operationDidEnd:note.object type:note.name userInfo:note.userInfo];
+}
 
 #pragma nark - Utilities
 
