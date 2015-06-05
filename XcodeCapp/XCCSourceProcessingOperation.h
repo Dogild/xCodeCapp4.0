@@ -13,7 +13,6 @@
 @class XCCTaskLauncher;
 
 extern NSString * const XCCConversionDidStartNotification;
-extern NSString * const XCCConversionDidGenerateErrorNotification;
 extern NSString * const XCCConversionDidEndNotification;
 extern NSString * const XCCObjjDidStartNotification;
 extern NSString * const XCCObjjDidEndNotification;

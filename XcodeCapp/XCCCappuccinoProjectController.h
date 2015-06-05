@@ -27,6 +27,8 @@
 
 @property NSInteger             operationsTotal;
 @property CGFloat               operationsProgress;
+@property NSInteger             operationsRemaining;
+@property NSString              *operationsRemainingString;
 @property XCCCappuccinoProject  *cappuccinoProject;
 @property XCCMainController     *mainXcodeCappController;
 

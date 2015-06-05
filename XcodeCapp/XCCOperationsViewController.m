@@ -62,6 +62,15 @@
 }
 
 
+#pragma mark - actions
+
+- (IBAction)cancelAllOperations:(id)sender
+{
+    [self.cappuccinoProjectController cancelAllOperations:sender];
+    [self reload];
+}
+
+
 #pragma mark - tableView delegate and datasource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView

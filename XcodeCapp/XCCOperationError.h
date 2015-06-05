@@ -26,10 +26,9 @@ typedef int XCCOperationErrorType;
 @property (copy) NSString  *lineNumber;
 @property int              errorType;
 
-+ (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary;
-+ (instancetype)nib2cibOperationErrorFromDictionary:(NSDictionary*)aDictionary;
-+ (instancetype)objj2ObjcSkeletonOperationErrorFromDictionary:(NSDictionary*)aDictionary;
-+ (instancetype)objjOperationErrorFromDictionary:(NSDictionary*)aDictionary;
-+ (instancetype)cappLintOperationErrorFromDictionary:(NSDictionary*)aDictionary;
++ (instancetype)objj2ObjcSkeletonOperationErrorFromDictionary:(NSDictionary *)aDictionary;
++ (instancetype)nib2cibOperationErrorFromDictionary:(NSDictionary *)aDictionary;
++ (instancetype)objjOperationErrorFromDictionary:(NSDictionary *)aDictionary;
++ (instancetype)cappLintOperationErrorFromDictionary:(NSDictionary *)aDictionary;
 
 @end

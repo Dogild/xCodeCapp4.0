@@ -432,9 +432,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didReceiveConversionDidStartNotification:) name:XCCConversionDidStartNotification object:nil];
-    [center addObserver:self selector:@selector(_didReceiveConversionDidGenerateErrorNotification:) name:XCCConversionDidGenerateErrorNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveConversionDidEndNotification:) name:XCCConversionDidEndNotification object:nil];
 
+    [center addObserver:self selector:@selector(_didReceiveSourcesFinderOperationDidStartNotification:) name:XCCSourcesFinderOperationDidStartNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveSourcesFinderOperationDidEndNotification:) name:XCCSourcesFinderOperationDidEndNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveNeedSourceToProjectPathMappingNotification:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
 
@@ -464,9 +464,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 
     [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
-    [center removeObserver:self name:XCCConversionDidGenerateErrorNotification object:nil];
     [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
 
+    [center removeObserver:self name:XCCSourcesFinderOperationDidStartNotification object:nil];
     [center removeObserver:self name:XCCSourcesFinderOperationDidEndNotification object:nil];
     [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
 
@@ -500,14 +500,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self operationDidStart:note.object type:note.name userInfo:note.userInfo];
 }
 
-- (void)_didReceiveConversionDidGenerateErrorNotification:(NSNotification *)note
-{
-    if (![self _doesNotificationBelongToCurrentProject:note])
-        return;
-
-    [self.cappuccinoProject addOperationError:[XCCOperationError defaultOperationErrorFromDictionary:note.userInfo]];
-}
-
 - (void)_didReceiveConversionDidEndNotification:(NSNotification *)note
 {
     if (![self _doesNotificationBelongToCurrentProject:note])
@@ -516,12 +508,20 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self.mainXcodeCappController reloadTotalNumberOfErrors];
 }
 
+- (void)_didReceiveSourcesFinderOperationDidStartNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+
+    [self operationDidStart:note.object type:note.name userInfo:note.userInfo];
+}
+
 - (void)_didReceiveSourcesFinderOperationDidEndNotification:(NSNotification *)note
 {
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self operationDidEnd:nil type:XCCSourcesFinderOperationDidEndNotification userInfo:note.userInfo];
+    [self operationDidEnd:note.object type:XCCSourcesFinderOperationDidEndNotification userInfo:note.userInfo];
 }
 
 - (void)_didReceiveNeedSourceToProjectPathMappingNotification:(NSNotification *)note
@@ -671,13 +671,17 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_reinitializeOperationsCounters
 {
-    self.operationsProgress = 1.0;
-    self.operationsTotal    = 0;
+    self.operationsProgress  = 1.0;
+    self.operationsTotal     = 0;
+    self.operationsRemaining = 0;
 }
 
 - (void)_updateOperationsProgress
 {
-    self.operationsProgress = 1.0 - (float)[self projectRelatedOperations].count / (float)self.operationsTotal;
+    self.operationsRemaining =  [self projectRelatedOperations].count;
+    self.operationsProgress = 1.0 - self.operationsRemaining / (float)self.operationsTotal;
+
+    self.operationsRemainingString = [NSString stringWithFormat:@"%d total operations, %d remaining", (int)self.operationsTotal, (int)self.operationsRemaining];
 
     if (self.operationsProgress == 1.0)
         [self _reinitializeOperationsCounters];
@@ -1014,9 +1018,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     [self _stopListeningToProject];
     [self _reinitializeTaskLauncher];
-
-//    if (self->taskLauncher.isValid)
-//        [self _startListeningToProject];
 
     DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
 }

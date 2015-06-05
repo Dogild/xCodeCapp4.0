@@ -10,7 +10,6 @@
 #import "XCCTaskLauncher.h"
 
 NSString * const XCCConversionDidEndNotification                    = @"XCCConversionDidStopNotification";
-NSString * const XCCConversionDidGenerateErrorNotification          = @"XCCConversionDidGenerateErrorNotification";
 NSString * const XCCConversionDidStartNotification                  = @"XCCConversionDidStartNotification";
 NSString * const XCCObjjDidStartNotification                        = @"XCCObjjDidStartNotification";
 NSString * const XCCObjjDidGenerateErrorNotification                = @"XCCObjjDidGenerateErrorNotification";

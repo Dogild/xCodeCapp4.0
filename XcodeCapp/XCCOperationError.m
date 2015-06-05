@@ -12,17 +12,6 @@
 
 @synthesize message = _message;
 
-+ (instancetype)defaultOperationErrorFromDictionary:(NSDictionary*)aDictionary
-{
-    XCCOperationError *operationError = [self new];
-    
-    operationError.fileName     = aDictionary[@"sourcePath"];
-    operationError.message      = aDictionary[@"errors"];
-    operationError.errorType    = XCCDefaultOperationErrorType;
-    
-    return operationError;
-}
-
 + (instancetype)nib2cibOperationErrorFromDictionary:(NSDictionary*)aDictionary
 {
     XCCOperationError *operationError = [self new];
@@ -39,7 +28,7 @@
 {
     XCCOperationError *operationError = [self new];
     
-    operationError.fileName     = aDictionary[@"path"];
+    operationError.fileName     = aDictionary[@"sourcePath"];
     operationError.message      = aDictionary[@"message"];
     operationError.lineNumber   = aDictionary[@"line"];
     operationError.errorType    = XCCObjj2ObjcSkeletonOperationErrorType;

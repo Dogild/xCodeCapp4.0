@@ -22,7 +22,6 @@
 @property XCCCappuccinoProjectController *cappuccinoProjectController;
 
 - (void)reload;
-- (void)_startListeningToOperationsNotifications;
-- (void)_stopListeningToOperationsNotifications;
+- (IBAction)cancelAllOperations:(id)sender;
 
 @end
