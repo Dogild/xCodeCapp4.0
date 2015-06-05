@@ -163,7 +163,7 @@
                     <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                 </box>
             </subviews>
-            <point key="canvasLocation" x="342.5" y="-454"/>
+            <point key="canvasLocation" x="342" y="-464"/>
         </customView>
         <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="zzu-5V-jxy">
             <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>

@@ -44,20 +44,16 @@
     [itemOperations setView:self.operationsViewController.view];
     [self->tabViewProject addTabViewItem:itemOperations];
     
-    NSMutableParagraphStyle *paragraphStyle= [NSMutableParagraphStyle new];
-    [paragraphStyle setAlignment:NSCenterTextAlignment];
-    
-    NSDictionary *attrs = @{NSFontAttributeName: [NSFont systemFontOfSize:11],
-                            NSForegroundColorAttributeName: [NSColor whiteColor],
-                            NSParagraphStyleAttributeName: paragraphStyle};
-    
-    self->buttonSelectConfigurationTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self->buttonSelectConfigurationTab.title attributes:attrs];
-    self->buttonSelectErrorsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self->buttonSelectErrorsTab.title attributes:attrs];
-    self->buttonSelectOperationsTab.attributedTitle = [[NSMutableAttributedString alloc] initWithString:self->buttonSelectOperationsTab.title attributes:attrs];
-    
+
+    [self _setTextColor:[NSColor controlTextColor] forButton:self->buttonSelectConfigurationTab];
+    [self _setTextColor:[NSColor controlTextColor] forButton:self->buttonSelectErrorsTab];
+    [self _setTextColor:[NSColor controlTextColor] forButton:self->buttonSelectOperationsTab];
+
+
     [self updateSelectedTab:self->buttonSelectConfigurationTab];
     
     [self->projectTableView registerForDraggedTypes:@[@"projects", NSFilenamesPboardType]];
+    [self->projectTableView setAllowsEmptySelection:YES];
 
     [self->welcomeViewMask showLoading:NO];
 
@@ -65,7 +61,18 @@
     [self _restoreLastSelectedProject];
 }
 
+- (void)_setTextColor:(NSColor *)color forButton:(NSButton *)button
+{
+    NSMutableParagraphStyle *paragraphStyle= [NSMutableParagraphStyle new];
+    [paragraphStyle setAlignment:NSCenterTextAlignment];
 
+    NSDictionary *attrs = @{NSFontAttributeName: [NSFont systemFontOfSize:11],
+                                 NSForegroundColorAttributeName: color,
+                                 NSParagraphStyleAttributeName: paragraphStyle};
+
+    button.attributedTitle = [[NSMutableAttributedString alloc] initWithString:button.title attributes:attrs];
+
+}
 
 #pragma mark - Private Utilities
 
@@ -76,7 +83,7 @@
         if (self->maskingView.superview)
             return;
         
-        [self->projectViewContainer setHidden:YES];
+        self->projectViewContainer.hidden = YES;
         
         self->maskingView.frame = [[[self->splitView subviews] objectAtIndex:1] bounds];
         [[[self->splitView subviews] objectAtIndex:1] addSubview:self->maskingView positioned:NSWindowAbove relativeTo:nil];
@@ -86,7 +93,7 @@
         if (!self->maskingView.superview)
             return;
         
-        [self->projectViewContainer setHidden:NO];
+        self->projectViewContainer.hidden = NO;
         
         [self->maskingView removeFromSuperview];
     }
@@ -98,8 +105,8 @@
     {
         if (self->welcomeViewMask.superview)
             return;
-        
-        [self->projectTableView setHidden:YES];
+
+        self->splitView.hidden = YES;
         
         self->welcomeViewMask.frame = [self->splitView.superview bounds];
         [self->splitView.superview addSubview:self->welcomeViewMask positioned:NSWindowAbove relativeTo:nil];
@@ -108,8 +115,8 @@
     {
         if (!self->welcomeViewMask.superview)
             return;
-        
-        [self->projectTableView setHidden:NO];
+
+        self->splitView.hidden = NO;
         
         [self->welcomeViewMask removeFromSuperview];
     }
@@ -306,29 +313,25 @@
     [self unmanageCappuccinoProjectController:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
 }
 
-- (IBAction)updateSelectedTab:(id)aSender
+- (IBAction)updateSelectedTab:(NSButton *)sender
 {
     self->buttonSelectConfigurationTab.state = NSOffState;
     self->buttonSelectErrorsTab.state = NSOffState;
     self->buttonSelectOperationsTab.state = NSOffState;
-    
-    if (aSender == self->buttonSelectConfigurationTab)
-    {
-        self->buttonSelectConfigurationTab.state = NSOnState;
-        [self->tabViewProject selectTabViewItemAtIndex:0];
-    }
-    
-    if (aSender == self->buttonSelectErrorsTab)
-    {
-        self->buttonSelectErrorsTab.state = NSOnState;
-        [self->tabViewProject selectTabViewItemAtIndex:1];
-    }
 
-    if (aSender == self->buttonSelectOperationsTab)
-    {
-        self->buttonSelectOperationsTab.state = NSOnState;
+    [self _setTextColor:[NSColor controlTextColor] forButton:self->buttonSelectConfigurationTab];
+    [self _setTextColor:[NSColor controlTextColor] forButton:self->buttonSelectErrorsTab];
+    [self _setTextColor:[NSColor controlTextColor] forButton:self->buttonSelectOperationsTab];
+
+    sender.state = NSOnState;
+    [self _setTextColor:[NSColor colorWithCalibratedRed:107.0/255.0 green:148.0/255.0 blue:236.0/255.0 alpha:1.0] forButton:sender];
+
+    if (sender == self->buttonSelectConfigurationTab)
+        [self->tabViewProject selectTabViewItemAtIndex:0];
+    if (sender == self->buttonSelectErrorsTab)
+        [self->tabViewProject selectTabViewItemAtIndex:1];
+    if (sender == self->buttonSelectOperationsTab)
         [self->tabViewProject selectTabViewItemAtIndex:2];
-    }
 }
 
 

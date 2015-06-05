@@ -12,6 +12,7 @@
 
 @interface XCCCappuccinoProjectControllerDataView : NSTableCellView
 {
+    IBOutlet NSBox                          *lineBottom;
     IBOutlet NSTextField                    *fieldNickname;
     IBOutlet NSTextField                    *fieldPath;
     IBOutlet NSButton                       *buttonSwitchStatus;
