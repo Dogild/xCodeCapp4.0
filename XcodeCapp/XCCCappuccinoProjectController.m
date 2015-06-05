@@ -148,7 +148,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self _populateXcodeSupportDirectory];
-    [self _monitorOperationQueueCompletion];
 }
 
 - (void)_startListeningToProject
@@ -393,11 +392,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateXcodeSupportFilesWithModifiedPaths:(NSArray *)modifiedPaths
 {
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
+    if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusLoading)
+        self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
     
     DDLogVerbose(@"Modified files: %@", modifiedPaths);
     
     [self _removeXcodeSupportOrphanFiles];
+    [self _reinitializeOperationsCounters];
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -416,6 +417,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
     
     [self _monitorOperationQueueCompletion];
+    
+    // + 1 because the pbx which will be processed at the end
+    self.operationsTotal = [modifiedPaths count] + 1;
+    [self _updateOperationsProgress];
 }
 
 - (void)_updateXcodeSupportFilesWithRenamedDirectories:(NSArray *)directories
@@ -482,10 +487,19 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString *)aType userInfo:(NSDictionary*)userInfo
 {
+    if ([aType isEqualToString:XCCSourcesFinderOperationDidEndNotification])
+    {
+        [self _updateXcodeSupportFilesWithModifiedPaths:userInfo[@"sourcePaths"]];
+        return;
+    }
+    
     [self _removeOperation:anOperation];
     
     if ([aType isEqualToString:XCCConversionDidEndNotification])
+    {
         [self _registerPathToAddInPBX:userInfo[@"sourcePath"]];
+        return;
+    }
     
     if ([aType isEqualToString:XCCPbxCreationDidEndNotification])
     {
@@ -519,11 +533,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateOperationsProgress
 {
-    if (self.operationsTotal == 0)
-        [self _reinitializeOperationsCounters];
-    
     self.operationsProgress = (float)self.operationsComplete / (float)self.operationsTotal;
-    
+
     if (self.operationsProgress == 1.0)
         [self _reinitializeOperationsCounters];
 }
@@ -555,12 +566,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _registerSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
-
-    if (self.operationsTotal == 0)
-        self.operationsTotal++;
-    
-    self.operationsTotal++;
-    [self _updateOperationsProgress];
 }
 
 - (void)_removeOperation:(NSOperation *)anOperation

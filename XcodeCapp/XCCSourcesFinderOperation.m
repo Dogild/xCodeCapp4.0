@@ -10,6 +10,8 @@
 #import "XCCSourceProcessingOperation.h"
 #import "XCCTaskLauncher.h"
 
+NSString * const XCCSourcesFinderOperationDidStartNotification = @"XCCSourcesFinderOperationDidStartNotification";
+NSString * const XCCSourcesFinderOperationDidEndNotification = @"XCCSourcesFinderOperationDidEndNotification";
 NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSourceToProjectPathMappingNotification";
 
 
@@ -31,27 +33,28 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 #pragma mark - Utilities
 
-- (void)_findSourceFilesAtProjectPath:(NSString *)aProjectPath
+- (NSArray*)_findSourceFilesAtProjectPath:(NSString *)aProjectPath
 {
     if (self.isCancelled)
-        return;
-
+        return @[];
+    
     NSError         *error          = NULL;
     NSString        *projectPath    = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:aProjectPath];
     NSFileManager   *fm             = [NSFileManager defaultManager];
-
+    NSMutableArray  *sourcePaths    = [NSMutableArray array];
+    
     NSArray *urls = [fm contentsOfDirectoryAtURL:[NSURL fileURLWithPath:projectPath.stringByResolvingSymlinksInPath]
                       includingPropertiesForKeys:@[NSURLIsDirectoryKey, NSURLIsSymbolicLinkKey]
                                          options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants
                                            error:&error];
 
     if (!urls)
-        return;
+        return @[];
 
     for (NSURL *url in urls)
     {
         if (self.isCancelled)
-            return;
+            return @[];
 
         NSString    *filename               = url.lastPathComponent;
         NSString    *projectRelativePath    = [aProjectPath stringByAppendingPathComponent:filename];
@@ -107,7 +110,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
             DDLogVerbose(@"found directory. checking for source files: %@", filename);
 
-            [self _findSourceFilesAtProjectPath:projectRelativePath];
+            [sourcePaths addObjectsFromArray:[self _findSourceFilesAtProjectPath:projectRelativePath]];
             continue;
         }
 
@@ -128,18 +131,11 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
                 processedPath = [projectSourcePath.stringByDeletingPathExtension stringByAppendingPathExtension:@"cib"];
 
             if (![fm fileExistsAtPath:processedPath])
-                [self _startSourceProcessingOperationForPath:projectSourcePath];
+                [sourcePaths addObject:projectSourcePath];
         }
     }
-}
-
-- (void)_startSourceProcessingOperationForPath:(NSString *)projectSourcePath
-{
-    XCCSourceProcessingOperation *op = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
-                                                                                          taskLauncher:self->taskLauncher
-                                                                                            sourcePath:projectSourcePath];
     
-    [[NSOperationQueue currentQueue] addOperation:op];
+    return sourcePaths;
 }
 
 
@@ -149,7 +145,9 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 {
     @try
     {
-        [self _findSourceFilesAtProjectPath:self->searchPath];
+        [self dispatchNotificationName:XCCSourcesFinderOperationDidStartNotification userInfo:@{@"cappuccinoProject": self.cappuccinoProject, @"sourcePaths" : @[]}];
+        NSArray *sourcesPaths = [self _findSourceFilesAtProjectPath:self->searchPath];
+        [self dispatchNotificationName:XCCSourcesFinderOperationDidEndNotification userInfo:@{@"cappuccinoProject": self.cappuccinoProject, @"sourcePaths" : sourcesPaths}];
     }
     @catch (NSException *exception)
     {

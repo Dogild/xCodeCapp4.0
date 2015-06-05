@@ -32,6 +32,7 @@
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
+    [center addObserver:self selector:@selector(_didReceiveSourcesFinderOperationDidEndNotification:) name:XCCSourcesFinderOperationDidEndNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveConversionDidEndNotification:) name:XCCConversionDidEndNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveConversionDidStartNotification:) name:XCCConversionDidStartNotification object:nil];
     [center addObserver:self selector:@selector(_didReceiveNeedSourceToProjectPathMappingNotification:) name:XCCNeedSourceToProjectPathMappingNotification object:nil];
@@ -43,6 +44,7 @@
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
+    [center removeObserver:self name:XCCSourcesFinderOperationDidEndNotification object:nil];
     [center removeObserver:self name:XCCConversionDidEndNotification object:nil];
     [center removeObserver:self name:XCCConversionDidStartNotification object:nil];
     [center removeObserver:self name:XCCNeedSourceToProjectPathMappingNotification object:nil];
@@ -53,6 +55,14 @@
 - (BOOL)_doesNotificationBelongToCurrentProject:(NSNotification *)note
 {
     return note.userInfo[@"cappuccinoProject"] == self.cappuccinoProjectController.cappuccinoProject;
+}
+
+- (void)_didReceiveSourcesFinderOperationDidEndNotification:(NSNotification *)note
+{
+    if (![self _doesNotificationBelongToCurrentProject:note])
+        return;
+    
+    [self.cappuccinoProjectController operationDidEnd:nil type:XCCSourcesFinderOperationDidEndNotification userInfo:note.userInfo];
 }
 
 - (void)_didReceiveNeedSourceToProjectPathMappingNotification:(NSNotification *)note
