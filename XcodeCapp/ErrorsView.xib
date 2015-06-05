@@ -200,26 +200,15 @@
                 <rect key="frame" x="1" y="1" width="398" height="398"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <customView id="ESH-Mb-rhx">
-                        <rect key="frame" x="83" y="105" width="232" height="188"/>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="g7p-NU-xFT">
+                        <rect key="frame" x="101" y="188" width="196" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="2Nh-E0-ZPJ">
-                                <rect key="frame" x="64" y="63" width="105" height="105"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="cookie" id="1CT-5m-NhS"/>
-                            </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="g7p-NU-xFT">
-                                <rect key="frame" x="18" y="20" width="196" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Looks Good" id="cSp-kD-F9V">
-                                    <font key="font" metaFont="systemBold" size="23"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                        </subviews>
-                    </customView>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="No Issues" id="cSp-kD-F9V">
+                            <font key="font" metaFont="system" size="18"/>
+                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
             <color key="borderColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -230,7 +219,6 @@
     <resources>
         <image name="NSMenuOnStateTemplate" width="12" height="12"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
-        <image name="cookie" width="96" height="96.480003356933594"/>
         <image name="open-in-editor" width="32" height="32"/>
     </resources>
 </document>

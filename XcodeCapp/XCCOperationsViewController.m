@@ -41,7 +41,7 @@
         [self->operationTableView setHidden:YES];
 
         self->maskingView.frame = [self.view bounds];
-        [self.view addSubview:self->maskingView positioned:NSWindowAbove relativeTo:nil];
+        [self.view addSubview:self->maskingView];
     }
     else
     {
