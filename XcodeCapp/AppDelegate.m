@@ -22,7 +22,7 @@
                                 XCCUserDefaultsLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN],
                                 XCCUserDefaultsMaxNumberOfConcurrentOperations: @20
                                 };
-    
+
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -120,9 +120,9 @@
 
     self.version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
 
-    [self _initOperationQueue];
-    [self _initLogging];
     [self _initUserDefaults];
+    [self _initLogging];
+    [self _initOperationQueue];
     [self _initStatusItem];
 
     [self _startObservers];
