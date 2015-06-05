@@ -18,6 +18,7 @@
     IBOutlet NSImageView    *imageViewType;
 }
 
+@property IBOutlet NSButton *buttonOpenInEditor;
 @property XCCOperationError *errorOperation;
 
 @end

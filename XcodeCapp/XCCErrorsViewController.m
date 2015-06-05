@@ -25,8 +25,8 @@
 {
     [super viewDidLoad];
 
-    [self->errorOutlineView setDoubleAction:@selector(openRelatedObjjFileInEditor:)];
-    [self->errorOutlineView bind:NSTargetBinding toObject:self withKeyPath:@"cappuccinoProjectController" options:nil];
+    [self->errorOutlineView setTarget:self];
+    [self->errorOutlineView setDoubleAction:@selector(openErroredFileInEditor:)];
 }
 
 #pragma mark - Notifications
@@ -221,6 +221,29 @@
     [self reload];
 }
 
+- (IBAction)openErroredFileInEditor:(NSView *)sender
+{
+    id dataView;
+
+    if (sender != self->errorOutlineView)
+    {
+        dataView = [self->errorOutlineView viewAtColumn:0 row:[self->errorOutlineView rowForView:sender] makeIfNecessary:NO];
+    }
+    else
+    {
+        dataView = [self->errorOutlineView viewAtColumn:0 row:[self->errorOutlineView selectedRow] makeIfNecessary:NO];
+    }
+
+    if (![dataView isKindOfClass:[XCCOperationErrorDataView class]])
+        return;
+
+    NSString *path = ((XCCOperationErrorDataView*)dataView).errorOperation.fileName;
+    NSInteger line = ((XCCOperationErrorDataView*)dataView).errorOperation.lineNumber.intValue;
+
+
+    [self.cappuccinoProjectController launchEditorForPath:path line:line];
+    
+}
 
 #pragma mark - outlineView data source and delegate
 
@@ -257,6 +280,8 @@
         XCCOperationErrorDataView *dataView = [outlineView makeViewWithIdentifier:@"OperationErrorCell" owner:nil];
 
         dataView.errorOperation = item;
+        [dataView.buttonOpenInEditor setTarget:self];
+        [dataView.buttonOpenInEditor setAction:@selector(openErroredFileInEditor:)];
 
         return dataView;
     }

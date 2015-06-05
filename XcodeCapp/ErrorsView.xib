@@ -26,7 +26,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" multipleSelection="NO" autosaveColumns="NO" rowHeight="101" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="YdX-BQ-xQG" id="Wcz-on-5sJ">
-                                <rect key="frame" x="0.0" y="0.0" width="400" height="375"/>
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="0.0"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="5" height="10"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -98,7 +98,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="my2-jo-uaH">
-                                                        <rect key="frame" x="93" y="85" width="296" height="14"/>
+                                                        <rect key="frame" x="93" y="85" width="233" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="200" id="uhp-6F-EA1">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -111,8 +111,17 @@
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSRemoveTemplate" id="jaI-iA-MGK"/>
                                                     </imageView>
+                                                    <button toolTip="Edit in Code Editor" verticalHuggingPriority="750" id="mMx-zB-OZi">
+                                                        <rect key="frame" x="325" y="84" width="33" height="16"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="open-in-editor" imagePosition="overlaps" alignment="center" controlSize="small" imageScaling="proportionallyUpOrDown" inset="2" id="eLG-E9-mZh">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                    </button>
                                                 </subviews>
                                                 <connections>
+                                                    <outlet property="buttonOpenInEditor" destination="mMx-zB-OZi" id="PSh-eP-PHa"/>
                                                     <outlet property="fieldLineNumber" destination="my2-jo-uaH" id="SJQ-Rt-O7D"/>
                                                     <outlet property="fieldMessage" destination="fAM-P0-o5o" id="2xz-hF-bfY"/>
                                                     <outlet property="imageViewType" destination="7DM-NL-nZw" id="ebl-MA-9pc"/>
@@ -163,7 +172,7 @@
                     <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                 </box>
             </subviews>
-            <point key="canvasLocation" x="342" y="-464"/>
+            <point key="canvasLocation" x="319" y="-459"/>
         </customView>
         <box title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="zzu-5V-jxy">
             <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>
@@ -203,5 +212,6 @@
         <image name="NSMenuOnStateTemplate" width="12" height="12"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="cookie" width="96" height="96.480003356933594"/>
+        <image name="open-in-editor" width="32" height="32"/>
     </resources>
 </document>

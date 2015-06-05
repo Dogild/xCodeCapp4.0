@@ -823,7 +823,14 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     return success ? app : nil;
 }
 
-- (void)_launchEditorForPath:(NSString*)path line:(NSInteger)line applicationIdentifier:(NSString *)applicationIdentifier
+- (void)launchEditorForPath:(NSString*)path line:(NSInteger)line
+{
+    NSString *applicationIdentifier = [self _managingApplicationIdenfierForFilePath:path];
+
+    [self launchEditorForPath:path line:line applicationIdentifier:applicationIdentifier];
+}
+
+- (void)launchEditorForPath:(NSString*)path line:(NSInteger)line applicationIdentifier:(NSString *)applicationIdentifier
 {
     if (!applicationIdentifier)
         return;
@@ -1025,7 +1032,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (!applicationIdentifier)
         return;
     
-    [self _launchEditorForPath:self.cappuccinoProject.projectPath line:0 applicationIdentifier:applicationIdentifier];
+    [self launchEditorForPath:self.cappuccinoProject.projectPath line:0 applicationIdentifier:applicationIdentifier];
 }
 
 - (IBAction)openProjectInTerminal:(id)sender;
@@ -1035,21 +1042,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [script executeAndReturnError:nil];
 }
 
-- (void)openRelatedObjjFileInEditor:(id)sender
-{
-    id item = [sender itemAtRow:[sender selectedRow]];
-    
-    NSString *path = item;
-    NSInteger line = 1;
-    
-    if ([item isKindOfClass:[XCCOperationError class]])
-    {
-        path = [(XCCOperationError*)item fileName];
-        line = [[(XCCOperationError*)item lineNumber] intValue];
-    }
-
-    [self _launchEditorForPath:path line:line applicationIdentifier:[self _managingApplicationIdenfierForFilePath:path]];
-}
 
 - (IBAction)switchProjectListeningStatus:(id)sender
 {

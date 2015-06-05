@@ -39,6 +39,7 @@
 - (void)cleanUpBeforeDeletion;
 - (void)operationDidStart:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 - (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
+- (void)launchEditorForPath:(NSString*)path line:(NSInteger)line;
 
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)resetProject:(id)aSender;
@@ -46,7 +47,6 @@
 - (IBAction)openProjectInFinder:(id)sender;
 - (IBAction)openProjectInEditor:(id)sender;
 - (IBAction)openProjectInTerminal:(id)sender;
-- (IBAction)openRelatedObjjFileInEditor:(id)sender;
 - (IBAction)switchProjectListeningStatus:(id)sender;
 
 @end
