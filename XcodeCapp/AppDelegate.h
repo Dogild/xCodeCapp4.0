@@ -27,6 +27,7 @@
 
 @property IBOutlet  XCCMainController       *mainWindowController;
 @property NSOperationQueue                  *mainOperationQueue;
+@property NSString                          *version;
 
 - (IBAction)openAbout:(id)aSender;
 - (IBAction)openPreferences:(id)aSender;

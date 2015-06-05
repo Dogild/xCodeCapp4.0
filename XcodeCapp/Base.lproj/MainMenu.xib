@@ -732,6 +732,9 @@
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="self.version" id="Nfs-HY-nea"/>
+                        </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" id="IH1-cn-Xc9">
                         <rect key="frame" x="18" y="20" width="260" height="14"/>
@@ -833,10 +836,10 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon_512x512" id="1zG-V8-6bF"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="lpR-ul-R4k">
-                                <rect key="frame" x="40" y="32" width="158" height="35"/>
+                                <rect key="frame" x="40" y="42" width="158" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="XcodeCapp" id="Oar-AW-2i5">
-                                    <font key="font" metaFont="systemBold" size="23"/>
+                                    <font key="font" metaFont="system" size="18"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -849,6 +852,9 @@
                                     <color key="textColor" white="0.31343064259999998" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <binding destination="Voe-Tx-rLC" name="value" keyPath="self.version" id="sRc-tF-Tkx"/>
+                                </connections>
                             </textField>
                         </subviews>
                     </customView>

@@ -60,12 +60,12 @@
 #endif
 }
 
-- (void)_initObservers
+- (void)_initOperationQueue
 {
-    [self.mainOperationQueue addObserver:self forKeyPath:@"operationCount" options:0 context:nil];
-    [self.mainWindowController addObserver:self forKeyPath:@"totalNumberOfErrors" options:0 context:nil];
-}
+    self.mainOperationQueue = [NSOperationQueue new];
 
+    [self.mainOperationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:XCCUserDefaultsMaxNumberOfConcurrentOperations] intValue]];
+}
 
 #pragma mark - Actions
 
@@ -81,6 +81,14 @@
 
 
 #pragma mark - Observers
+
+- (void)_startObservers
+{
+    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:XCCUserDefaultsMaxNumberOfConcurrentOperations options:NSKeyValueObservingOptionNew context:nil];
+
+    [self.mainOperationQueue addObserver:self forKeyPath:@"operationCount" options:NSKeyValueObservingOptionNew context:nil];
+    [self.mainWindowController addObserver:self forKeyPath:@"totalNumberOfErrors" options:NSKeyValueObservingOptionNew context:nil];
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -109,18 +117,15 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     DDLogVerbose(@"\n******************************\n**    XcodeCapp started     **\n******************************\n");
-    
-    self.mainOperationQueue = [NSOperationQueue new];
 
-    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:XCCUserDefaultsMaxNumberOfConcurrentOperations options:NSKeyValueObservingOptionNew context:NULL];
-    self.mainOperationQueue             = [[NSApp delegate] mainOperationQueue];
-    [self.mainOperationQueue setMaxConcurrentOperationCount:[[[NSUserDefaults standardUserDefaults] objectForKey:XCCUserDefaultsMaxNumberOfConcurrentOperations] intValue]];
+    self.version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
 
-
+    [self _initOperationQueue];
     [self _initLogging];
     [self _initUserDefaults];
     [self _initStatusItem];
-    [self _initObservers];
+
+    [self _startObservers];
     
     [self->_mainWindowController windowDidLoad];
 }
