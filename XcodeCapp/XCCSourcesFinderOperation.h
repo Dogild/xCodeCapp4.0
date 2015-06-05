@@ -13,6 +13,8 @@
 @class XCCTaskLauncher;
 
 extern NSString * const XCCNeedSourceToProjectPathMappingNotification;
+extern NSString * const XCCSourcesFinderOperationDidStartNotification;
+extern NSString * const XCCSourcesFinderOperationDidEndNotification;
 
 
 @interface XCCSourcesFinderOperation : XCCAbstractOperation
