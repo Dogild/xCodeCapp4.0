@@ -514,6 +514,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self.mainXcodeCappController reloadTotalNumberOfErrors];
+    [self _updateOperationsProgress];
 }
 
 - (void)_didReceiveSourcesFinderOperationDidEndNotification:(NSNotification *)note
