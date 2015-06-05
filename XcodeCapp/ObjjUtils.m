@@ -8,23 +8,29 @@
 
 #import "ObjjUtils.h"
 
+static NSCharacterSet * XCCObjjUtilsNonASCIICharactersSet;
+
 @implementation ObjjUtils
 
-+ (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary
-{
-    return [self operationErrorsFromDictionary:dictionary type:XCCObjjOperationErrorType];
-}
-
-+ (NSString *)cleanUpObjjXMLResponse:(NSString *)aString
++ (void)initialize
 {
     NSMutableString *ASCIICharacters = [NSMutableString string];
 
     for (NSInteger i = 32; i < 127; i++)
         [ASCIICharacters appendFormat:@"%c", (char)i];
 
-    NSCharacterSet *set = [[NSCharacterSet characterSetWithCharactersInString:ASCIICharacters] invertedSet];
+    XCCObjjUtilsNonASCIICharactersSet = [[NSCharacterSet characterSetWithCharactersInString:ASCIICharacters] invertedSet];
 
-    aString = [[aString componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""];
+}
++ (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary
+{
+    return [self operationErrorsFromDictionary:dictionary type:XCCObjjOperationErrorType];
+}
+
++ (NSString *)_cleanUpXMLString:(NSString *)aString
+{
+
+    aString = [[aString componentsSeparatedByCharactersInSet:XCCObjjUtilsNonASCIICharactersSet] componentsJoinedByString:@""];
     aString = [aString stringByReplacingOccurrencesOfString:@"[0m" withString:@""];
 
     return aString;
@@ -32,7 +38,7 @@
 
 + (NSArray*)operationErrorsFromDictionary:(NSDictionary*)dictionary type:(XCCOperationErrorType)type
 {
-    NSArray         *errors = [[self cleanUpObjjXMLResponse:[dictionary objectForKey:@"errors"]] propertyList];
+    NSArray         *errors = [[self _cleanUpXMLString:dictionary[@"errors"]] propertyList];
     NSMutableArray  *ret    = [NSMutableArray array];
 
     for (NSDictionary *error in errors)
