@@ -36,7 +36,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 @synthesize XcodeCappIgnoreContent  = _XcodeCappIgnoreContent;
 @synthesize status                  = _status;
-
+@synthesize numberOfErrors          = _numberOfErrors;
 
 #pragma mark - Class methods
 
@@ -71,6 +71,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 {
     if (self = [super init])
     {
+        self.numberOfErrors         = 0;
         self.name                   = [aPath lastPathComponent];
         self.nickname               = self.name;
         self.PBXModifierScriptPath  = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
@@ -291,6 +292,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     [[self.errors objectForKey:operationError.fileName] addObject:operationError];
     
     [self didChangeValueForKey:@"errors"];
+    self.numberOfErrors++;
 }
 
 - (void)removeOperationError:(XCCOperationError *)operationError
@@ -306,6 +308,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         [self.errors removeObjectForKey:operationError.fileName];
     
     [self didChangeValueForKey:@"errors"];
+    self.numberOfErrors--;
 }
 
 - (void)removeAllOperationErrors
@@ -313,6 +316,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     [self willChangeValueForKey:@"errors"];
     [self.errors removeAllObjects];
     [self didChangeValueForKey:@"errors"];
+    self.numberOfErrors = 0;
 }
 
 - (void)removeOperationErrorsRelatedToSourcePath:(NSString *)aPath errorType:(int)anErrorType
@@ -358,6 +362,30 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     _XcodeCappIgnoreContent = XcodeCappIgnoreContent;
     [self _updateXcodeCappIgnorePredicates];
     [self didChangeValueForKey:@"XcodeCappIgnoreContent"];
+}
+
+- (NSInteger)numberOfErrors
+{
+    return _numberOfErrors;
+}
+
+- (void)setNumberOfErrors:(NSInteger)numberOfErrors
+{
+    if (numberOfErrors == _numberOfErrors)
+        return;
+
+    [self willChangeValueForKey:@"numberOfErrors"];
+    _numberOfErrors = numberOfErrors;
+    [self didChangeValueForKey:@"numberOfErrors"];
+
+    if (!_numberOfErrors)
+        self.errorsCountString = @"";
+    else
+    {
+        NSString *plural1 = self.numberOfErrors > 1 ? @"s" : @"";
+        NSString *plural2 = self.errors.count > 1 ? @"s" : @"";
+        self.errorsCountString = [NSString stringWithFormat:@"%d issue%@ in %d file%@", (int)self.numberOfErrors, plural1, (int)self.errors.count, plural2];
+    }
 }
 
 @end
