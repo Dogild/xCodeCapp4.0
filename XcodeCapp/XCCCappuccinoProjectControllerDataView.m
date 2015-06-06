@@ -85,34 +85,25 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
 {
     switch (self.controller.cappuccinoProject.status)
     {
-        case XCCCappuccinoProjectStatusInitialized:
         case XCCCappuccinoProjectStatusStopped:
             self->boxStatus.fillColor = XCCCappuccinoProjectDataViewColorStopped;
             self->buttonSwitchStatus.image = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
-            self->waitingProgressIndicator.hidden = YES;
-            self->operationsProgressIndicator.hidden = YES;
-            break;
-
-        case XCCCappuccinoProjectStatusLoading:
-        case XCCCappuccinoProjectStatusProcessing:
-            self->boxStatus.fillColor = XCCCappuccinoProjectDataViewColorProcessing;
-            self->buttonSwitchStatus.image = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
-            self->waitingProgressIndicator.hidden = (self.controller.operationsTotal > 4);
-            self->operationsProgressIndicator.hidden = (self.controller.operationsTotal <= 4);
             break;
 
         case XCCCappuccinoProjectStatusListening:
             self->boxStatus.fillColor = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
             self->buttonSwitchStatus.image  = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
-            self->waitingProgressIndicator.hidden = YES;
-            self->operationsProgressIndicator.hidden = YES;
             break;
     }
+
+    self->waitingProgressIndicator.hidden = (!self.controller.operationsTotal ||  self.controller.operationsTotal > 4);
+    self->operationsProgressIndicator.hidden = (!self.controller.operationsTotal || self.controller.operationsTotal <= 4);
+
 }
 
 - (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle
 {
-    BOOL isStopped = (self.controller.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped || self.controller.cappuccinoProject.status == XCCCappuccinoProjectStatusInitialized);
+    BOOL isStopped = self.controller.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped;
     
     if (backgroundStyle == NSBackgroundStyleDark)
     {

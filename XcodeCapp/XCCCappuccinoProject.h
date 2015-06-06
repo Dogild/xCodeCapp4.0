@@ -10,11 +10,8 @@
 #import "XCCOperationError.h"
 
 enum {
-    XCCCappuccinoProjectStatusInitialized   = 0,
-    XCCCappuccinoProjectStatusStopped       = 1,
-    XCCCappuccinoProjectStatusLoading       = 2,
-    XCCCappuccinoProjectStatusListening     = 3,
-    XCCCappuccinoProjectStatusProcessing    = 4
+    XCCCappuccinoProjectStatusStopped       = 0,
+    XCCCappuccinoProjectStatusListening     = 1
 };
 typedef int XCCCappuccinoProjectStatus;
 
@@ -48,7 +45,6 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSString                      *objjIncludePath;
 @property NSMutableArray                *binaryPaths;
 @property NSString                      *XcodeCappIgnoreContent;
-@property BOOL                          isBusy;
 @property BOOL                          autoStartListening;
 @property BOOL                          processObjjWarnings;
 @property BOOL                          processCappLint;

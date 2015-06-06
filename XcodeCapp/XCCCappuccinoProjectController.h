@@ -13,6 +13,7 @@
 @class XCCTaskLauncher;
 @class XCCMainController;
 @class XCCPPXOperation;
+@class XCCSourcesFinderOperation;
 
 
 @interface XCCCappuccinoProjectController : NSObject
@@ -23,6 +24,7 @@
     FSEventStreamRef            stream;
     NSMutableDictionary         *sourceProcessingOperations;
     XCCPPXOperation             *pendingPBXOperation;
+    XCCSourcesFinderOperation   *currentFindSourceOperation;
 }
 
 @property NSInteger             operationsTotal;

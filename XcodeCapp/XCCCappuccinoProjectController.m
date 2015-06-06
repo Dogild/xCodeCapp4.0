@@ -27,6 +27,8 @@
 #import "XCCOperationsViewController.h"
 #import "XCCErrorsViewController.h"
 
+static FSEventStreamCreateFlags const XCCProjectControllerFSEventFlags = kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagWatchRoot
+                                                                    | kFSEventStreamCreateFlagIgnoreSelf | kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagFileEvents;
 enum XCCLineSpecifier {
     kLineSpecifierNone,
     kLineSpecifierColon,
@@ -107,45 +109,20 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 #pragma mark - Project State Management
 
-- (void)_loadProject
-{
-    DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
-    
-    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
-        return;
-
-    [self _reinitializeProjectController];
-    [self _reinitializeTaskLauncher];
-
-    if (!self->taskLauncher.isValid)
-        return;
-
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusLoading;
-    [self _populateXcodeSupportDirectoryWithProjectRelativePath:@""];
-}
-
 - (void)_startListeningToProject
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if (![fm fileExistsAtPath:self.cappuccinoProject.projectPath isDirectory:nil])
-    {
-        NSRunAlertPanel(@"The project can’t be located.", @"It seems the project moved while XcodeCapp was not running.", @"Remove Project", nil, nil);
-        
-        [self.mainXcodeCappController unmanageCappuccinoProjectController:self];
+    if (![self _projectPathExists])
         return;
-    }
-    
+
     if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusListening)
         return;
 
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
 
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
-    
-    FSEventStreamCreateFlags flags = kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagWatchRoot
-                                        | kFSEventStreamCreateFlagIgnoreSelf | kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagFileEvents;
-    
+
+    [self _synchronizeXcodeSupport];
+
     NSArray                 *pathsToWatch   = [CappuccinoUtils getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
     void                    *appPointer     = (__bridge void *)self;
     FSEventStreamContext    context         = { 0, appPointer, NULL, NULL, NULL };
@@ -162,7 +139,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                                       (__bridge CFArrayRef) pathsToWatch,
                                       lastEvenID,
                                       latency,
-                                      flags);
+                                      XCCProjectControllerFSEventFlags);
     
     FSEventStreamScheduleWithRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     [self _startFSEventStream];
@@ -177,7 +154,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_stopListeningToProject
 {
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
+        return;
 
     [self _cancelAllProjectRelatedOperations];
     [self.mainXcodeCappController.errorsViewController cleanProjectErrors:self];
@@ -196,12 +174,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
 
     [self.cappuccinoProject saveSettings];
+
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
 }
 
 - (void)_resetProject
 {
-    [self _stopListeningToProject];
-
     [self _removeXcodeSupportDirectory];
     [self _removeXcodeProject];
     [self _reinitializeProjectController];
@@ -213,25 +191,49 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 #pragma mark - XcodeSupport Management
 
-- (BOOL)_prepareXcodeSupport
+- (BOOL)_projectPathExists
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    
-    // If either the project or the supmport directory are missing, recreate them both to ensure they are in sync
+
+    if (![fm fileExistsAtPath:self.cappuccinoProject.projectPath isDirectory:nil])
+    {
+        NSRunAlertPanel(@"The project can’t be located.", @"It seems the project moved while XcodeCapp was not running.", @"Remove Project", nil, nil);
+
+        [self.mainXcodeCappController unmanageCappuccinoProjectController:self];
+        return NO;
+    }
+
+    return YES;
+}
+
+- (void)_synchronizeXcodeSupport
+{
+    DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
+
+    [self _reinitializeProjectController];
+    [self _reinitializeTaskLauncher];
+
+    if (!self->taskLauncher.isValid)
+        return;
+
+    [self _synchronizeXcodeSupportFromPath:@""];
+}
+
+- (void)_prepareXcodeSupport
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+
     BOOL projectExists, projectIsDirectory;
     projectExists = [fm fileExistsAtPath:self.cappuccinoProject.XcodeProjectPath isDirectory:&projectIsDirectory];
     
     BOOL supportExists, supportIsDirectory;
     supportExists = [fm fileExistsAtPath:self.cappuccinoProject.supportPath isDirectory:&supportIsDirectory];
-    
+
     if (!projectExists || !projectIsDirectory || !supportExists)
         [self _createXcodeProject];
-    
-    // If the project did not exist, reset the XcodeSupport directory to force the new empty project to be populated
+
     if (!supportExists || !supportIsDirectory || !projectExists || ![self _isXcodeSupportCompatible])
         [self _createXcodeSupportDirectory];
-    
-    return projectExists && supportExists;
 }
 
 - (BOOL)_isXcodeSupportCompatible
@@ -299,12 +301,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [fm removeItemAtPath:self.cappuccinoProject.supportPath error:nil];
 }
 
-- (void)_populateXcodeSupportDirectoryWithProjectRelativePath:(NSString *)path
+- (void)_synchronizeXcodeSupportFromPath:(NSString *)path
 {
-    XCCSourcesFinderOperation *op = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
-                                                                                    taskLauncher:self->taskLauncher
-                                                                                      sourcePath:path];
-    [self _enqueueOperation:op];
+    self->operationQueue.suspended = YES;
+    [self _cancelCurrentSourceFinderOperation];
+    [self _scheduleFinderSourceOperationForPath:path];
+    self->operationQueue.suspended = NO;
 }
 
 - (void)_removeXcodeSupportOrphanFiles
@@ -344,49 +346,36 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateXcodeSupportFilesWithModifiedPaths:(NSArray *)modifiedPaths
 {
-    if (self.cappuccinoProject.status != XCCCappuccinoProjectStatusLoading)
-        self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
-    
+    if (!modifiedPaths.count)
+        return;
+
     DDLogVerbose(@"Modified files: %@", modifiedPaths);
-    
+
     [self _removeXcodeSupportOrphanFiles];
-    
-    NSFileManager *fm                       = [NSFileManager defaultManager];
-    NSInteger     scheduledOperationsCount  = 0;
+
+    NSInteger additionalOperations = 0;
 
     for (NSString *path in modifiedPaths)
     {
-        if (![fm fileExistsAtPath:path])
+        if (![[NSFileManager defaultManager] fileExistsAtPath:path])
             continue;
 
-        if (!self->pendingPBXOperation)
-        {
-            self->pendingPBXOperation = [[XCCPPXOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self->taskLauncher];
-            scheduledOperationsCount++;
-        }
+        [self _scheduleSourceProcessingOperationForPath:path];
 
-        [self _cancelSourceOperationsForPath:path];
-
-        XCCSourceProcessingOperation *processingOperation = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
-                                                                                              taskLauncher:self->taskLauncher
-                                                                                                sourcePath:[self.cappuccinoProject projectPathForSourcePath:path]];
-        
-        [self->pendingPBXOperation addDependency:processingOperation];
-        [self _enqueueOperation:processingOperation];
-        scheduledOperationsCount++;
+        additionalOperations++;
     }
 
-    if (self->pendingPBXOperation)
-        [self _enqueueOperation:self->pendingPBXOperation];
+    if (additionalOperations)
+        [self _schedulePBXOperation];
 
-    self.operationsTotal += scheduledOperationsCount;
+    self.operationsTotal += additionalOperations;
+
     [self _updateOperationsProgress];
 }
 
+
 - (void)_updateXcodeSupportFilesWithRenamedDirectories:(NSArray *)directories
 {
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusProcessing;
-    
     DDLogVerbose(@"Renamed directories: %@", directories);
     
     [self _removeXcodeSupportOrphanFiles];
@@ -407,10 +396,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             // If the directory is within the project, we can populate it directly.
             // Otherwise we have to start at the top level and repopulate everything.
             if ([directory hasPrefix:self.cappuccinoProject.projectPath])
-                [self _populateXcodeSupportDirectoryWithProjectRelativePath:[self.cappuccinoProject projectRelativePathForPath:directory]];
+                [self _synchronizeXcodeSupportFromPath:[self.cappuccinoProject projectRelativePathForPath:directory]];
             else
             {
-                [self _populateXcodeSupportDirectoryWithProjectRelativePath:@""];
+                [self _synchronizeXcodeSupportFromPath:@""];
                 
                 // Since everything has been repopulated, no point in continuing
                 break;
@@ -632,23 +621,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     if ([aType isEqualToString:XCCSourcesFinderOperationDidEndNotification])
     {
-        NSArray *sourcePaths = userInfo[@"sourcePaths"];
-
-        if (sourcePaths.count)
-        {
-            [self _updateXcodeSupportFilesWithModifiedPaths:sourcePaths];
-        }
-        else if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading)
-        {
-            self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
-
-            [CappuccinoUtils notifyUserWithTitle:@"Project loaded" message:self.cappuccinoProject.projectPath.lastPathComponent];
-
-            DDLogVerbose(@"Project finished loading");
-
-            if (self.cappuccinoProject.autoStartListening)
-                [self _startListeningToProject];
-        }
+        self->currentFindSourceOperation = nil;
+        [self _updateXcodeSupportFilesWithModifiedPaths:userInfo[@"sourcePaths"]];
+        self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
     }
     else if ([aType isEqualToString:XCCConversionDidEndNotification])
     {
@@ -658,12 +633,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         self->pendingPBXOperation = nil;
 
-        if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusLoading && self.cappuccinoProject.autoStartListening)
-            [self _startListeningToProject];
-        else if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusProcessing)
+        if (self->stream)
             self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
-        else
-            self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
     }
 
     [self.mainXcodeCappController.operationsViewController reload];
@@ -714,6 +685,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_enqueueOperation:(NSOperation *)anOperation
 {
+    if ([self->operationQueue.operations containsObject:anOperation])
+        return;
+
     [self->operationQueue addOperation:anOperation];
 
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
@@ -752,6 +726,64 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     return [self->operationQueue.operations filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cappuccinoProject.projectPath == %@", self.cappuccinoProject.projectPath]];
 }
+
+- (NSArray *)projectRelatedSourceProcessingOperations
+{
+    return [[self projectRelatedOperations] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self isKindOfClass:  %@", [XCCSourceProcessingOperation class]]];
+}
+
+- (void)_cancelCurrentSourceFinderOperation
+{
+    if (!self->currentFindSourceOperation)
+        return;
+
+    [[self projectRelatedSourceProcessingOperations] makeObjectsPerformSelector:@selector(removeDependency:) withObject:self->currentFindSourceOperation];
+    [self->currentFindSourceOperation cancel];
+    [self _dequeueOperation:self->currentFindSourceOperation];
+    self->currentFindSourceOperation = nil;
+}
+
+- (void)_scheduleFinderSourceOperationForPath:(NSString *)path
+{
+    if (self->currentFindSourceOperation)
+        return;
+
+    self->currentFindSourceOperation = [[XCCSourcesFinderOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self->taskLauncher sourcePath:path];
+    [[self projectRelatedSourceProcessingOperations] makeObjectsPerformSelector:@selector(addDependency:) withObject:self->currentFindSourceOperation];
+    [self _enqueueOperation:self->currentFindSourceOperation];
+}
+
+- (void)_schedulePBXOperation
+{
+    BOOL needsEnqueue = NO;
+
+    if (!self->pendingPBXOperation)
+    {
+        self->pendingPBXOperation = [[XCCPPXOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self->taskLauncher];
+        self.operationsTotal++;
+        needsEnqueue = YES;
+    }
+
+    for (XCCSourceProcessingOperation *operation in [self projectRelatedSourceProcessingOperations])
+        [self->pendingPBXOperation addDependency:operation];
+
+    if (needsEnqueue)
+        [self _enqueueOperation:self->pendingPBXOperation];
+}
+
+- (void)_scheduleSourceProcessingOperationForPath:(NSString *)path
+{
+    [self _cancelSourceOperationsForPath:path];
+
+    XCCSourceProcessingOperation *operation = [[XCCSourceProcessingOperation alloc] initWithCappuccinoProject:self.cappuccinoProject
+                                                                                                 taskLauncher:self->taskLauncher
+                                                                                                   sourcePath:[self.cappuccinoProject projectPathForSourcePath:path]];
+    if (self->currentFindSourceOperation)
+        [operation addDependency:self->currentFindSourceOperation];
+
+    [self _enqueueOperation:operation];
+}
+
 
 
 #pragma mark - FS Event Management
@@ -1070,8 +1102,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)resetProject:(id)aSender
 {
+    [self _stopListeningToProject];
     [self _resetProject];
-    [self _loadProject];
+    [self _startListeningToProject];
 }
 
 - (IBAction)openProjectInXcode:(id)aSender
@@ -1145,12 +1178,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)switchProjectListeningStatus:(id)sender
 {
-    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusInitialized)
-    {
-        [self _loadProject];
-        self.cappuccinoProject.autoStartListening = YES;
-    }
-    else if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
+    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
     {
         [self _startListeningToProject];
         self.cappuccinoProject.autoStartListening = YES;

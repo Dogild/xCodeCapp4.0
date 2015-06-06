@@ -118,7 +118,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 {
     self.projectPathsForSourcePaths = [NSMutableDictionary new];
     self.errors                     = [NSMutableDictionary new];
-    self.status                     = XCCCappuccinoProjectStatusInitialized;
+    self.status                     = XCCCappuccinoProjectStatusStopped;
 }
 
 
@@ -348,20 +348,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 
 #pragma mark - Custom Getters and Setters
-
-- (XCCCappuccinoProjectStatus)status
-{
-    return _status;
-}
-
-- (void)setStatus:(XCCCappuccinoProjectStatus)status
-{
-    [self willChangeValueForKey:@"status"];
-    _status = status;
-    [self didChangeValueForKey:@"status"];
-    
-    self.isBusy = (_status == XCCCappuccinoProjectStatusLoading || _status == XCCCappuccinoProjectStatusProcessing);
-}
 
 - (NSString *)XcodeCappIgnoreContent
 {
