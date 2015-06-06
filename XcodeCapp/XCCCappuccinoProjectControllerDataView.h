@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "XCCCappuccinoProjectController.h"
-
+#import "YRKSpinningProgressIndicator.h"
 
 @interface XCCCappuccinoProjectControllerDataView : NSTableCellView
 {
@@ -22,7 +22,7 @@
     IBOutlet NSButton                       *buttonOpenInEditor;
     IBOutlet NSButton                       *buttonOpenInTerminal;
     IBOutlet NSBox                          *boxStatus;
-    IBOutlet NSProgressIndicator            *operationsProgressIndicator;
+    IBOutlet YRKSpinningProgressIndicator   *operationsProgressIndicator;
     IBOutlet NSProgressIndicator            *waitingProgressIndicator;
 }
 

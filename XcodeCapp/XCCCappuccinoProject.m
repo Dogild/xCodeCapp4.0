@@ -87,6 +87,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     if (self = [super init])
     {
         self.numberOfErrors         = 0;
+        self.processing             = NO;
         self.name                   = [aPath lastPathComponent];
         self.nickname               = self.name;
         self.PBXModifierScriptPath  = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];

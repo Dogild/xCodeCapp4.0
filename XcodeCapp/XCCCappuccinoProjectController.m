@@ -178,16 +178,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
 }
 
-- (void)_resetProject
-{
-    [self _removeXcodeSupportDirectory];
-    [self _removeXcodeProject];
-    [self _reinitializeProjectController];
-
-    self.cappuccinoProject.autoStartListening = YES;
-    [self.cappuccinoProject saveSettings];
-}
-
 
 #pragma mark - XcodeSupport Management
 
@@ -367,8 +357,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     if (additionalOperations)
         [self _schedulePBXOperation];
-
-    self.operationsTotal += additionalOperations;
 
     [self _updateOperationsProgress];
 }
@@ -650,13 +638,24 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateOperationsProgress
 {
-    self.operationsRemaining =  [[self projectRelatedOperations] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cancelled = NO"]].count;
-    self.operationsProgress = 1.0 - self.operationsRemaining / (float)self.operationsTotal;
+    if (!self.operationsTotal)
+    {
+        self.operationsRemaining = 0;
+        self.operationsProgress = 1.0;
+    }
+    else
+    {
+        self.operationsRemaining =  [[self projectRelatedOperations] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cancelled = NO"]].count;
+        self.operationsProgress = 1.0 - (float)self.operationsRemaining / (float)self.operationsTotal;
+    }
 
     self.operationsRemainingString = [NSString stringWithFormat:@"%d total operations, %d remaining", (int)self.operationsTotal, (int)self.operationsRemaining];
 
     if (self.operationsProgress == 1.0)
+    {
+        self.cappuccinoProject.processing = NO;
         [self _reinitializeOperationsCounters];
+    }
 }
 
 - (void)_registerSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
@@ -689,10 +688,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self->operationQueue addOperation:anOperation];
+    self.cappuccinoProject.processing = YES;
 
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _registerSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
 
+    self.operationsTotal++;
     [self _updateOperationsProgress];
 }
 
@@ -760,7 +761,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (!self->pendingPBXOperation)
     {
         self->pendingPBXOperation = [[XCCPPXOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self->taskLauncher];
-        self.operationsTotal++;
         needsEnqueue = YES;
     }
 
@@ -1103,7 +1103,13 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (IBAction)resetProject:(id)aSender
 {
     [self _stopListeningToProject];
-    [self _resetProject];
+    [self _removeXcodeSupportDirectory];
+    [self _removeXcodeProject];
+    [self _reinitializeProjectController];
+
+    self.cappuccinoProject.autoStartListening = YES;
+    [self.cappuccinoProject saveSettings];
+
     [self _startListeningToProject];
 }
 

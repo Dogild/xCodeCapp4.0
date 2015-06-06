@@ -45,6 +45,7 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSString                      *objjIncludePath;
 @property NSMutableArray                *binaryPaths;
 @property NSString                      *XcodeCappIgnoreContent;
+@property BOOL                          processing;
 @property BOOL                          autoStartListening;
 @property BOOL                          processObjjWarnings;
 @property BOOL                          processCappLint;

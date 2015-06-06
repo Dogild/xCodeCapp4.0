@@ -41,6 +41,7 @@
 		0258005B1B1E91AF0000EB7D /* run-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800551B1E91AF0000EB7D /* run-white.png */; };
 		0258005C1B1E91AF0000EB7D /* stop-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800561B1E91AF0000EB7D /* stop-white.png */; };
 		0258005E1B1E937E0000EB7D /* open-in-editor-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258005D1B1E937E0000EB7D /* open-in-editor-white.png */; };
+		027539111B227D7500F6D824 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */; };
 		680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */; };
 		6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
@@ -145,6 +146,8 @@
 		025800551B1E91AF0000EB7D /* run-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "run-white.png"; sourceTree = "<group>"; };
 		025800561B1E91AF0000EB7D /* stop-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop-white.png"; sourceTree = "<group>"; };
 		0258005D1B1E937E0000EB7D /* open-in-editor-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-editor-white.png"; sourceTree = "<group>"; };
+		0275390F1B227D7500F6D824 /* YRKSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRKSpinningProgressIndicator.h; sourceTree = "<group>"; };
+		027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRKSpinningProgressIndicator.m; sourceTree = "<group>"; };
 		680621171B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectControllerDataView.h; sourceTree = "<group>"; };
 		680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCCappuccinoProjectControllerDataView.m; sourceTree = "<group>"; };
 		6815BBE31AFBE5A80030D8BB /* CappuccinoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappuccinoUtils.h; sourceTree = "<group>"; };
@@ -241,6 +244,24 @@
 			name = XIBs;
 			sourceTree = "<group>";
 		};
+		0275390D1B227D5900F6D824 /* Externals */ = {
+			isa = PBXGroup;
+			children = (
+				0275390E1B227D6700F6D824 /* YRKSpinningProgressIndicator */,
+				6841F25E1AF98DCB00CFE60E /* Lumberjack */,
+			);
+			name = Externals;
+			sourceTree = "<group>";
+		};
+		0275390E1B227D6700F6D824 /* YRKSpinningProgressIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				0275390F1B227D7500F6D824 /* YRKSpinningProgressIndicator.h */,
+				027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */,
+			);
+			name = YRKSpinningProgressIndicator;
+			sourceTree = "<group>";
+		};
 		680621161B015BDB00CB24CD /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -297,16 +318,16 @@
 		6841F23D1AF98CE600CFE60E /* XcodeCapp */ = {
 			isa = PBXGroup;
 			children = (
-				021B94721B20E41B00F12DDA /* XIBs */,
+				0275390D1B227D5900F6D824 /* Externals */,
 				6841F2401AF98CE600CFE60E /* AppDelegate.h */,
 				0255B83F1B1F71FB000CA4BC /* AppDelegate.m */,
+				021B94721B20E41B00F12DDA /* XIBs */,
 				6824CDDB1B0D976400F73447 /* Controllers */,
 				68F3B95A1B0CFBCF00A7EF70 /* Models */,
 				680621161B015BDB00CB24CD /* Views */,
 				6841F2C51AFADE7D00CFE60E /* Operations */,
 				6841F2C01AFABD0900CFE60E /* Utils */,
 				6841F2681AF98DDD00CFE60E /* Scripts */,
-				6841F25E1AF98DCB00CFE60E /* Lumberjack */,
 				6841F23E1AF98CE600CFE60E /* Supporting Files */,
 				6841F27E1AF9932300CFE60E /* Resources */,
 			);
@@ -594,6 +615,7 @@
 				6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */,
 				0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */,
 				6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */,
+				027539111B227D7500F6D824 /* YRKSpinningProgressIndicator.m in Sources */,
 				6841F2C41AFABD7200CFE60E /* XCCCappuccinoProject.m in Sources */,
 				6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */,
 				686ACD311B16397F0089EB03 /* XCCCappuccinoProjectController.m in Sources */,
