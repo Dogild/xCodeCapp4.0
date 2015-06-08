@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "XCCOperationError.h"
 
+@class XCCTaskLauncher;
+
 enum {
     XCCCappuccinoProjectStatusStopped       = 0,
     XCCCappuccinoProjectStatusListening     = 1
@@ -16,16 +18,17 @@ enum {
 typedef int XCCCappuccinoProjectStatus;
 
 
-@class XCCTaskLauncher;
+
+
+extern NSString * const XCCCompatibilityVersionKey;
+extern NSString * const XCCCappuccinoProjectBinPathsKey;
+extern NSString * const XCCCappuccinoProjectPreviousStatusKey;
+
 
 @interface XCCCappuccinoProject : NSObject
 {
     NSMutableDictionary             *settings;
 }
-
-extern NSString * const XCCCompatibilityVersionKey;
-extern NSString * const XCCCappuccinoProjectBinPathsKey;
-extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 
 @property NSString                      *supportPath;
 @property NSString                      *projectPath;
@@ -45,13 +48,12 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property NSString                      *objjIncludePath;
 @property NSMutableArray                *binaryPaths;
 @property NSString                      *XcodeCappIgnoreContent;
-@property BOOL                          processing;
-@property BOOL                          autoStartListening;
 @property BOOL                          processObjjWarnings;
 @property BOOL                          processCappLint;
 @property BOOL                          processObjj2ObjcSkeleton;
 @property BOOL                          processNib2Cib;
 @property XCCCappuccinoProjectStatus    status;
+@property XCCCappuccinoProjectStatus    previousSavedStatus;
 
 + (BOOL)isObjjFile:(NSString *)path;
 + (BOOL)isXibFile:(NSString *)path;
@@ -69,7 +71,6 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)reinitialize;
-- (void)updateProjectPath:(NSString *)path;
 - (void)addOperationError:(XCCOperationError *)operationError;
 - (void)removeOperationError:(XCCOperationError *)operationError;
 - (void)removeAllOperationErrors;

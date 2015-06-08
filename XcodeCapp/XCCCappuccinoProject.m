@@ -30,7 +30,7 @@ NSString * const XCCCompatibilityVersionKey                 = @"XCCCompatibility
 NSString * const XCCCappuccinoProjectBinPathsKey            = @"XCCCappuccinoProjectBinPathsKey";
 NSString * const XCCCappuccinoObjjIncludePathKey            = @"XCCCappuccinoObjjIncludePathKey";
 NSString * const XCCCappuccinoProjectNicknameKey            = @"XCCCappuccinoProjectNicknameKey";
-NSString * const XCCCappuccinoProjectAutoStartListeningKey  = @"XCCCappuccinoProjectAutoStartListeningKey";
+NSString * const XCCCappuccinoProjectPreviousStatusKey      = @"XCCCappuccinoProjectPreviousStatusKey";
 NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoProjectLastEventIDKey";
 
 
@@ -63,7 +63,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
                                           XCCCappuccinoProjectBinPathsKey: [XCCDefaultBinaryPaths valueForKeyPath:@"name"],
                                           XCCCappuccinoObjjIncludePathKey: @"",
                                           XCCCappuccinoProjectNicknameKey: @"",
-                                          XCCCappuccinoProjectAutoStartListeningKey: @NO};
+                                          XCCCappuccinoProjectPreviousStatusKey: @0};
 
     XCCCappuccinoProjectDefaultIgnoredPaths = @[
                                                 @"Frameworks/*",
@@ -269,33 +269,24 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 {
     if (self = [super init])
     {
-        self.numberOfErrors         = 0;
-        self.processing             = NO;
         self.name                   = [aPath lastPathComponent];
         self.nickname               = self.name;
+        self.projectPath            = aPath;
+        self.numberOfErrors         = 0;
         self.PBXModifierScriptPath  = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
-        
-        [self updateProjectPath:aPath];
+        self.XcodeProjectPath       = [self.projectPath stringByAppendingPathComponent:[[self.projectPath lastPathComponent] stringByAppendingString:@".xcodeproj"]];
+        self.XcodeCappIgnorePath    = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
+        self.supportPath            = [self.projectPath stringByAppendingPathComponent:@".XcodeSupport"];
+        self.settingsPath           = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
+
+        [self _loadSettings];
+
+        [self reloadXcodeCappIgnoreFile];
+
+        [self reinitialize];
     }
     
     return self;
-}
-
-- (void)updateProjectPath:(NSString *)path
-{
-    self.projectPath            = path;
-    self.XcodeProjectPath       = [self.projectPath stringByAppendingPathComponent:[[self.projectPath lastPathComponent] stringByAppendingString:@".xcodeproj"]];
-    self.XcodeCappIgnorePath    = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
-    self.supportPath            = [self.projectPath stringByAppendingPathComponent:@".XcodeSupport"];
-    self.settingsPath           = [self.supportPath stringByAppendingPathComponent:@"Info.plist"];
-    
-    if (self->settings)
-        [self saveSettings];
-    else
-        [self _loadSettings];
-    
-    [self reloadXcodeCappIgnoreFile];
-    [self reinitialize];
 }
 
 - (void)reinitialize
@@ -350,7 +341,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     self.processCappLint          = [self->settings[XCCCappuccinoProcessCappLintKey] boolValue];
     self.processObjj2ObjcSkeleton = [self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
     self.processNib2Cib           = [self->settings[XCCCappuccinoProcessNib2CibKey] boolValue];
-    self.autoStartListening       = [self->settings[XCCCappuccinoProjectAutoStartListeningKey] boolValue];
+    self.previousSavedStatus      = [self->settings[XCCCappuccinoProjectPreviousStatusKey] intValue];
     
     if (self->settings[XCCCappuccinoProjectLastEventIDKey])
         self.lastEventID = self->settings[XCCCappuccinoProjectLastEventIDKey];
@@ -373,7 +364,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     self->settings[XCCCappuccinoProcessCappLintKey]              = [NSNumber numberWithBool:self.processCappLint];
     self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.processObjj2ObjcSkeleton];
     self->settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.processNib2Cib];
-    self->settings[XCCCappuccinoProjectAutoStartListeningKey]    = [NSNumber numberWithBool:self.autoStartListening];
+    self->settings[XCCCappuccinoProjectPreviousStatusKey]        = [NSNumber numberWithInt:self.status];
     
     if ([self.lastEventID boolValue])
         self->settings[XCCCappuccinoProjectLastEventIDKey]           = self.lastEventID;

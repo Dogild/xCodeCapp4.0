@@ -90,36 +90,34 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     switch (self.controller.cappuccinoProject.status)
     {
         case XCCCappuccinoProjectStatusStopped:
-
             self->boxStatus.fillColor                   = XCCCappuccinoProjectDataViewColorStopped;
             self->buttonSwitchStatus.image              = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
             self->operationsProgressIndicator.hidden    = YES;
+            self->waitingProgressIndicator.hidden       = YES;
             break;
 
         case XCCCappuccinoProjectStatusListening:
-
             self->boxStatus.fillColor       = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
             self->buttonSwitchStatus.image  = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
+
+            if (self.controller.operationsTotal == 0)
+            {
+                self->operationsProgressIndicator.hidden = YES;
+                self->waitingProgressIndicator.hidden = YES;
+            }
+            else if (self.controller.operationsTotal <= 4)
+            {
+                self->operationsProgressIndicator.hidden = YES;
+                self->waitingProgressIndicator.hidden = NO;
+            }
+            else if (self.controller.operationsTotal > 4)
+            {
+                self->operationsProgressIndicator.hidden = NO;
+                self->operationsProgressIndicator.currentValue = self.controller.operationsProgress;
+                
+                self->waitingProgressIndicator.hidden = YES;
+            }
             break;
-    }
-
-    if (self.controller.operationsTotal == 0)
-    {
-        self->operationsProgressIndicator.hidden = YES;
-        self->waitingProgressIndicator.hidden = YES;
-    }
-    else if (self.controller.operationsTotal <= 4)
-    {
-        self->operationsProgressIndicator.hidden = YES;
-        self->waitingProgressIndicator.hidden = NO;
-    }
-    else if (self.controller.operationsTotal > 4)
-    {
-        self->operationsProgressIndicator.hidden = NO;
-        self->operationsProgressIndicator.currentValue = self.controller.operationsProgress;
-
-        self->waitingProgressIndicator.hidden = YES;
-        [self->waitingProgressIndicator startAnimation:self];
     }
 }
 

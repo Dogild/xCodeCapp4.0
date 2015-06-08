@@ -108,45 +108,20 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_startListeningToProject
 {
-    if (![self _projectPathExists])
+    if (![self _projectPathExists] || self.cappuccinoProject.status == XCCCappuccinoProjectStatusListening)
         return;
-
-    if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusListening)
-        return;
-
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
 
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
 
     [self _synchronizeXcodeSupport];
-
-    NSArray                 *pathsToWatch   = [XCCCappuccinoProject getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
-    void                    *appPointer     = (__bridge void *)self;
-    FSEventStreamContext    context         = { 0, appPointer, NULL, NULL, NULL };
-    CFTimeInterval          latency         = 2.0;
-    
-    UInt64 lastEvenID = self.cappuccinoProject.lastEventID.unsignedLongLongValue;
-    
-    if (!self.cappuccinoProject.lastEventID)
-        lastEvenID = kFSEventStreamEventIdSinceNow;
-
-    self->stream = FSEventStreamCreate(NULL,
-                                      &fsevents_callback,
-                                      &context,
-                                      (__bridge CFArrayRef) pathsToWatch,
-                                      lastEvenID,
-                                      latency,
-                                      XCCProjectControllerFSEventFlags);
-    
-    FSEventStreamScheduleWithRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     [self _startFSEventStream];
 
-    // yep, so, this is needed in order to ensure we get a FS event, so we actually get a valid last event ID.
+    // this is needed in order to ensure we get a FS event, so we actually get a valid last event ID.
     [self->taskLauncher runTaskWithCommand:@"touch" arguments:@[self.cappuccinoProject.settingsPath] returnType:kTaskReturnTypeNone];
 
-    [self.cappuccinoProject saveSettings];
+    self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
 
-    DDLogVerbose(@"FSEventStream started for paths: %@", pathsToWatch);
+    [self.cappuccinoProject saveSettings];
 }
 
 - (void)_stopListeningToProject
@@ -155,24 +130,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self _cancelAllProjectRelatedOperations];
+    [self _stopFSEventStream];
+
     [self.mainXcodeCappController.errorsViewController cleanProjectErrors:self];
-    
-    if (self->stream)
-    {
-        DDLogInfo(@"Stop listen project: %@", self.cappuccinoProject.projectPath);
-        
-        [self _updateUserDefaultsWithLastFSEventID];
-        [self _stopFSEventStream];
-
-        FSEventStreamUnscheduleFromRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-        FSEventStreamInvalidate(self->stream);
-        FSEventStreamRelease(self->stream);
-        self->stream = NULL;
-    }
-
-    [self.cappuccinoProject saveSettings];
 
     self.cappuccinoProject.status = XCCCappuccinoProjectStatusStopped;
+    [self.cappuccinoProject saveSettings];
 }
 
 
@@ -608,7 +571,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         self->currentFindSourceOperation = nil;
         [self _updateXcodeSupportFilesWithModifiedPaths:userInfo[@"sourcePaths"]];
-        self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
     }
     else if ([aType isEqualToString:XCCConversionDidEndNotification])
     {
@@ -617,10 +579,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     else if ([aType isEqualToString:XCCPBXOperationDidEndNotification])
     {
         self->pendingPBXOperation = nil;
-
-        if (self->stream)
-            self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
     }
+
+    if (self->stream)
+        self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
 
     [self.mainXcodeCappController.operationsViewController reload];
     [self.mainXcodeCappController.errorsViewController reload];
@@ -649,10 +611,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     self.operationsRemainingString = [NSString stringWithFormat:@"%d total operations, %d remaining", (int)self.operationsTotal, (int)self.operationsRemaining];
 
     if (self.operationsProgress == 1.0)
-    {
-        self.cappuccinoProject.processing = NO;
         [self _reinitializeOperationsCounters];
-    }
 }
 
 - (void)_registerSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
@@ -685,7 +644,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self->operationQueue addOperation:anOperation];
-    self.cappuccinoProject.processing = YES;
 
     if ([anOperation isKindOfClass:[XCCSourceProcessingOperation class]])
         [self _registerSourceProcessingOperation:(XCCSourceProcessingOperation *)anOperation];
@@ -787,12 +745,41 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_startFSEventStream
 {
+    if (self->stream)
+        return;
+
+    NSArray                 *pathsToWatch   = [XCCCappuccinoProject getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
+    void                    *appPointer     = (__bridge void *)self;
+    FSEventStreamContext    context         = { 0, appPointer, NULL, NULL, NULL };
+    CFTimeInterval          latency         = 2.0;
+    UInt64                  lastEventID     = self.cappuccinoProject.lastEventID ? self.cappuccinoProject.lastEventID.unsignedLongLongValue : kFSEventStreamEventIdSinceNow;
+
+    self->stream = FSEventStreamCreate(NULL, &fsevents_callback, &context, (__bridge CFArrayRef) pathsToWatch, lastEventID, latency, XCCProjectControllerFSEventFlags);
+
+    FSEventStreamScheduleWithRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     FSEventStreamStart(self->stream);
+
+    DDLogVerbose(@"FSEventStream started for paths: %@", pathsToWatch);
 }
 
 - (void)_stopFSEventStream
 {
+    if (!self->stream)
+        return;
+
+    UInt64 lastEventID = FSEventStreamGetLatestEventId(self->stream);
+
+    if (lastEventID != 0 && lastEventID != UINT64_MAX)
+        self.cappuccinoProject.lastEventID = [NSNumber numberWithUnsignedLongLong:lastEventID];
+
     FSEventStreamStop(self->stream);
+    FSEventStreamUnscheduleFromRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    FSEventStreamInvalidate(self->stream);
+    FSEventStreamRelease(self->stream);
+
+    self->stream = NULL;
+
+    DDLogVerbose(@"FSEventStream stopped");
 }
 
 - (void)_handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds
@@ -930,18 +917,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     NSRunAlertPanel(self.cappuccinoProject.nickname, @"The project directory changed. This project will be removed", @"OK", nil, nil, nil);
 
     [self.mainXcodeCappController unmanageCappuccinoProjectController:self];
-}
-
-- (void)_updateUserDefaultsWithLastFSEventID
-{
-    UInt64 lastEventId = FSEventStreamGetLatestEventId(self->stream);
-    
-    // Just in case the stream callback was never called...
-    if (lastEventId != 0 && lastEventId != UINT64_MAX)
-    {
-        self.cappuccinoProject.lastEventID = [NSNumber numberWithUnsignedLongLong:lastEventId];
-        [self.cappuccinoProject saveSettings];
-    }
 }
 
 
@@ -1103,10 +1078,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _removeXcodeSupportDirectory];
     [self _removeXcodeProject];
     [self _reinitializeProjectController];
-
-    self.cappuccinoProject.autoStartListening = YES;
-    [self.cappuccinoProject saveSettings];
-
     [self _startListeningToProject];
 }
 
@@ -1182,15 +1153,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (IBAction)switchProjectListeningStatus:(id)sender
 {
     if (self.cappuccinoProject.status == XCCCappuccinoProjectStatusStopped)
-    {
         [self _startListeningToProject];
-        self.cappuccinoProject.autoStartListening = YES;
-    }
     else
-    {
         [self _stopListeningToProject];
-        self.cappuccinoProject.autoStartListening = NO;
-    }
 
     [self.cappuccinoProject saveSettings];
 }

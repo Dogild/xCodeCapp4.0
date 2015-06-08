@@ -187,7 +187,7 @@
 
     for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
     {
-        if (controller.cappuccinoProject.autoStartListening)
+        if (controller.cappuccinoProject.previousSavedStatus)
             [controller switchProjectListeningStatus:self];
     }
 
