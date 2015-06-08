@@ -574,7 +574,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
     else if ([aType isEqualToString:XCCConversionDidEndNotification])
     {
-        [self->pendingPBXOperation registerPathToAddInPBX:userInfo[@"sourcePath"]];
+        if ([XCCCappuccinoProject isObjjFile:userInfo[@"sourcePath"]])
+            [self->pendingPBXOperation registerPathToAddInPBX:userInfo[@"sourcePath"]];
     }
     else if ([aType isEqualToString:XCCPBXOperationDidEndNotification])
     {
@@ -1045,7 +1046,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)applicationIsClosing
 {
-    [self _stopListeningToProject];
     [self.cappuccinoProject saveSettings];
 }
 
@@ -1155,8 +1155,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self _startListeningToProject];
     else
         [self _stopListeningToProject];
-
-    [self.cappuccinoProject saveSettings];
 }
 
 @end

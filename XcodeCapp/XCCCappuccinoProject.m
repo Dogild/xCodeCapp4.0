@@ -342,7 +342,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     self.processObjj2ObjcSkeleton = [self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey] boolValue];
     self.processNib2Cib           = [self->settings[XCCCappuccinoProcessNib2CibKey] boolValue];
     self.previousSavedStatus      = [self->settings[XCCCappuccinoProjectPreviousStatusKey] intValue];
-    
+
     if (self->settings[XCCCappuccinoProjectLastEventIDKey])
         self.lastEventID = self->settings[XCCCappuccinoProjectLastEventIDKey];
 }

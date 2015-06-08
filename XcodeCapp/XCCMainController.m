@@ -291,7 +291,6 @@
 - (IBAction)cleanAllErrors:(id)aSender
 {
     [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(cleanProjectErrors:) withObject:self];
-    [self reloadTotalNumberOfErrors];
 }
 
 - (IBAction)addProject:(id)aSender
