@@ -718,7 +718,7 @@
                     <imageView id="Q2t-aL-TDg">
                         <rect key="frame" x="107" y="89" width="82" height="82"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon_128x128" id="zF2-py-kAi"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon" id="zF2-py-kAi"/>
                     </imageView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="3j4-r5-Ybe">
                         <rect key="frame" x="74" y="64" width="149" height="17"/>
@@ -838,7 +838,7 @@
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="9iO-X5-hpo">
                                 <rect key="frame" x="26" y="75" width="186" height="186"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon_512x512" id="1zG-V8-6bF"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon-big" id="1zG-V8-6bF"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="lpR-ul-R4k">
                                 <rect key="frame" x="40" y="42" width="158" height="25"/>
@@ -913,7 +913,7 @@
                             <button focusRingType="none" id="wdl-kS-DYD">
                                 <rect key="frame" x="124" y="150" width="186" height="186"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="icon_512x512" imagePosition="only" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="OC7-Ci-3pt">
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="icon-big" imagePosition="only" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="OC7-Ci-3pt">
                                     <behavior key="behavior" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -965,8 +965,8 @@
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
-        <image name="icon_128x128" width="128" height="128"/>
-        <image name="icon_512x512" width="512" height="512"/>
+        <image name="icon" width="128" height="128"/>
+        <image name="icon-big" width="512" height="512"/>
         <image name="open-in-editor" width="32" height="32"/>
         <image name="open-in-finder" width="32" height="32"/>
         <image name="open-in-terminal" width="32" height="32"/>
