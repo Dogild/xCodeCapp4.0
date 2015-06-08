@@ -57,9 +57,9 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
 
         [self->fieldNickname bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"nickname" options:nil];
         [self->fieldPath bind:NSValueBinding toObject:self.controller.cappuccinoProject withKeyPath:@"projectPath" options:nil];
-
-        [self->waitingProgressIndicator startAnimation:self];
+        
         [self->operationsProgressIndicator startAnimation:self];
+        self->operationsProgressIndicator.maxValue = 1.0;
     }
     else
     {
@@ -72,7 +72,6 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         [self->fieldNickname unbind:NSValueBinding];
         [self->fieldPath unbind:NSValueBinding];
 
-        [self->waitingProgressIndicator stopAnimation:self];
         [self->operationsProgressIndicator stopAnimation:self];
 
     }
@@ -82,7 +81,9 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    [self _updateDataView];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _updateDataView];
+    });
 }
 
 - (void)_updateDataView
@@ -93,7 +94,6 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
             self->boxStatus.fillColor                   = XCCCappuccinoProjectDataViewColorStopped;
             self->buttonSwitchStatus.image              = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"run-white"] : [NSImage imageNamed:@"run"];
             self->operationsProgressIndicator.hidden    = YES;
-            self->waitingProgressIndicator.hidden       = YES;
             break;
 
         case XCCCappuccinoProjectStatusListening:
@@ -103,20 +103,22 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
             if (self.controller.operationsTotal == 0)
             {
                 self->operationsProgressIndicator.hidden = YES;
-                self->waitingProgressIndicator.hidden = YES;
+                [self->operationsProgressIndicator setNeedsDisplay:YES];
             }
             else if (self.controller.operationsTotal <= 4)
             {
-                self->operationsProgressIndicator.hidden = YES;
-                self->waitingProgressIndicator.hidden = NO;
+                self->operationsProgressIndicator.hidden = NO;
+                self->operationsProgressIndicator.indeterminate = YES;
+                [self->operationsProgressIndicator startAnimation:self];
             }
             else if (self.controller.operationsTotal > 4)
             {
                 self->operationsProgressIndicator.hidden = NO;
+                self->operationsProgressIndicator.indeterminate = NO;
                 self->operationsProgressIndicator.currentValue = self.controller.operationsProgress;
-                
-                self->waitingProgressIndicator.hidden = YES;
+                [self->operationsProgressIndicator setNeedsDisplay:YES];
             }
+            
             break;
     }
 }
@@ -153,7 +155,7 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         self->buttonOpenInEditor.image                      = [NSImage imageNamed:@"open-in-editor"];
         self->buttonOpenInTerminal.image                    = [NSImage imageNamed:@"open-in-terminal"];
         self->buttonOpenXcodeProject.image                  = [NSImage imageNamed:@"open-in-xcode"];
-        self->buttonResetProject.image                  = [NSImage imageNamed:@"resync"];
+        self->buttonResetProject.image                      = [NSImage imageNamed:@"resync"];
     }
 
     [super setBackgroundStyle:backgroundStyle];

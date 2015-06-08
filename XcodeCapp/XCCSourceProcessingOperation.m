@@ -214,7 +214,11 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
     }
     @finally
     {
-        [self dispatchNotificationName:XCCConversionDidEndNotification];
+        __block XCCSourceProcessingOperation *weakOperation = self;
+        
+        self.completionBlock = ^{
+            [weakOperation dispatchNotificationName:XCCConversionDidEndNotification];
+        };
     }
 	
 	DDLogVerbose(@"Conversion ended: %@", self.sourcePath);

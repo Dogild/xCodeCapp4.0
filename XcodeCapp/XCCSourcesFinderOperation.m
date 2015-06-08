@@ -161,7 +161,11 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     }
     @finally
     {
-        [self dispatchNotificationName:XCCSourcesFinderOperationDidEndNotification userInfo:@{@"cappuccinoProject": self.cappuccinoProject, @"sourcePaths" : sourcesPaths}];
+        __block XCCSourcesFinderOperation *weakOperation = self;
+        
+        self.completionBlock = ^{
+            [weakOperation dispatchNotificationName:XCCSourcesFinderOperationDidEndNotification userInfo:@{@"cappuccinoProject": weakOperation.cappuccinoProject, @"sourcePaths" : sourcesPaths}];
+        };
     }
     
     DDLogVerbose(@"Finding source files ended");

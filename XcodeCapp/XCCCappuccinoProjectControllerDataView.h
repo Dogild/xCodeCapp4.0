@@ -23,7 +23,6 @@
     IBOutlet NSButton                       *buttonOpenInTerminal;
     IBOutlet NSBox                          *boxStatus;
     IBOutlet YRKSpinningProgressIndicator   *operationsProgressIndicator;
-    IBOutlet NSProgressIndicator            *waitingProgressIndicator;
 }
 
 @property XCCCappuccinoProjectController    *controller;

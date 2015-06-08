@@ -604,7 +604,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
     else
     {
-        self.operationsRemaining =  [[self projectRelatedOperations] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cancelled = NO"]].count;
+        self.operationsRemaining =  (long)[[self projectRelatedOperations] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cancelled = NO"]].count;
         self.operationsProgress = 1.0 - (float)self.operationsRemaining / (float)self.operationsTotal;
     }
 
