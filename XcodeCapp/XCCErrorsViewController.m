@@ -67,6 +67,7 @@
 {
     [self.cappuccinoProjectController.cappuccinoProject removeAllOperationErrors];
     [self reload];
+    [self.cappuccinoProjectController.mainXcodeCappController reloadTotalNumberOfErrors];
 }
 
 - (IBAction)openErroredFileInEditor:(NSView *)sender

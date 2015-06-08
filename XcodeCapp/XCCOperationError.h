@@ -26,8 +26,6 @@ typedef int XCCOperationErrorType;
 @property (copy) NSString  *lineNumber;
 @property int              errorType;
 
-+ (instancetype)operationErrorWithInfo:(NSDictionary*)info type:(int)type;
-
 + (NSArray *)operationErrorsFromObjj2ObjcSkeletonInfo:(NSDictionary*)info;
 + (NSArray *)operationErrorsFromObjjInfo:(NSDictionary*)info;
 + (NSArray *)operationErrorsFromCappLintInfo:(NSDictionary *)info;

@@ -10,7 +10,7 @@
 
 static NSCharacterSet * XCCOperationErrorNonASCIICharactersSet;
 
-NSString * _cleanUpXMLString(NSString * aString)
+NSArray * parseCommandXMLString(NSString * aString)
 {
     if (!XCCOperationErrorNonASCIICharactersSet)
     {
@@ -19,25 +19,49 @@ NSString * _cleanUpXMLString(NSString * aString)
         for (NSInteger i = 32; i < 127; i++)
             [ASCIICharacters appendFormat:@"%c", (char)i];
 
+        [ASCIICharacters appendString:@"\n\t"];
+
         XCCOperationErrorNonASCIICharactersSet = [[NSCharacterSet characterSetWithCharactersInString:ASCIICharacters] invertedSet];
 
     }
     aString = [[aString componentsSeparatedByCharactersInSet:XCCOperationErrorNonASCIICharactersSet] componentsJoinedByString:@""];
     aString = [aString stringByReplacingOccurrencesOfString:@"[0m" withString:@""];
 
-    return aString;
+    NSInteger i = 0;
+    while ((i < [aString length]) && [[NSCharacterSet newlineCharacterSet] characterIsMember:[aString characterAtIndex:i]])
+        i++;
+
+    NSArray *info;
+
+    @try
+    {
+        info = [aString propertyList];
+    }
+    @catch (NSException *exception)
+    {
+        info = @[
+                 @{
+                     @"lineNumber": @"0",
+                     @"sourcePath": @"Unknown",
+                     @"message": [NSString stringWithFormat:@"Unable to parse: %@", aString]
+                }
+                ];
+    }
+
+    return info;
 }
 
 
 
 @implementation XCCOperationError
 
-+ (instancetype)operationErrorWithInfo:(NSDictionary*)info type:(int)type
+#pragma mark - Class Methods
+
++ (instancetype)_operationErrorWithInfo:(NSDictionary*)info type:(int)type
 {
     XCCOperationError *operationError = [self new];
 
     operationError.fileName     = info[@"sourcePath"];
-    operationError.message      = info[@"errors"];
     operationError.errorType    = type;
 
     switch (type)
@@ -45,18 +69,23 @@ NSString * _cleanUpXMLString(NSString * aString)
         case XCCObjj2ObjcSkeletonOperationErrorType:
             operationError.command      = @"objj2objc2skeleton";
             operationError.lineNumber   = info[@"line"];
+            operationError.message      = info[@"message"];
             break;
 
         case XCCObjjOperationErrorType:
             operationError.command      = @"objj";
             operationError.lineNumber   = info[@"line"];
+            operationError.message      = info[@"message"];
             break;
 
         case XCCNib2CibOperationErrorType:
             operationError.command      = @"nib2cib";
+            operationError.message      = info[@"errors"];
+            break;
 
         case XCCCappLintOperationErrorType:
             operationError.command      = @"capp_lint";
+            operationError.message      = info[@"message"];
             operationError.lineNumber   = info[@"line"];
             break;
     }
@@ -66,22 +95,23 @@ NSString * _cleanUpXMLString(NSString * aString)
 
 + (NSArray*)operationErrorsFromObjj2ObjcSkeletonInfo:(NSDictionary*)info
 {
-    NSArray         *errors = [_cleanUpXMLString(info[@"errors"]) propertyList];
+
+    NSArray         *errors = parseCommandXMLString(info[@"errors"]);
     NSMutableArray  *ret    = [NSMutableArray array];
 
     for (NSDictionary *error in errors)
-        [ret addObject:[XCCOperationError operationErrorWithInfo:error type:XCCObjj2ObjcSkeletonOperationErrorType]];
+        [ret addObject:[XCCOperationError _operationErrorWithInfo:error type:XCCObjj2ObjcSkeletonOperationErrorType]];
     
     return ret;
 }
 
 + (NSArray*)operationErrorsFromObjjInfo:(NSDictionary*)info
 {
-    NSArray         *errors = [_cleanUpXMLString(info[@"errors"]) propertyList];
+    NSArray         *errors = parseCommandXMLString(info[@"errors"]);
     NSMutableArray  *ret    = [NSMutableArray array];
 
     for (NSDictionary *error in errors)
-        [ret addObject:[XCCOperationError operationErrorWithInfo:error type:XCCObjjOperationErrorType]];
+        [ret addObject:[XCCOperationError _operationErrorWithInfo:error type:XCCObjjOperationErrorType]];
 
     return ret;
 }
@@ -118,7 +148,7 @@ NSString * _cleanUpXMLString(NSString * aString)
                                @"message": message,
                                @"sourcePath": sourcePath};
 
-        XCCOperationError *operationError = [XCCOperationError operationErrorWithInfo:info type:XCCCappLintOperationErrorType];
+        XCCOperationError *operationError = [XCCOperationError _operationErrorWithInfo:info type:XCCCappLintOperationErrorType];
 
         [operationErrors addObject:operationError];
     }
@@ -128,8 +158,11 @@ NSString * _cleanUpXMLString(NSString * aString)
 
 + (XCCOperationError *)operationErrorFromNib2CibInfo:(NSDictionary*)info
 {
-    return [XCCOperationError operationErrorWithInfo:info type:XCCNib2CibOperationErrorType];
+    return [XCCOperationError _operationErrorWithInfo:info type:XCCNib2CibOperationErrorType];
 }
+
+
+#pragma mark - Overrides
 
 - (BOOL)isEqualTo:(XCCOperationError*)object
 {

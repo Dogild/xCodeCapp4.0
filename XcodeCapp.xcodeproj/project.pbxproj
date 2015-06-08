@@ -150,8 +150,8 @@
 		6815BBE61AFBE6B00030D8BB /* XCCCappuccinoProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectController.h; sourceTree = "<group>"; };
 		6815BBE91AFC24430030D8BB /* XcodeProjectCloser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XcodeProjectCloser.h; sourceTree = "<group>"; };
 		6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XcodeProjectCloser.m; sourceTree = "<group>"; };
-		681ADE8D1B0D032C00FC8E08 /* XCCPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XCCPath.h; path = XcodeCapp/XCCPath.h; sourceTree = "<group>"; };
-		681ADE8E1B0D032C00FC8E08 /* XCCPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XCCPath.m; path = XcodeCapp/XCCPath.m; sourceTree = "<group>"; };
+		681ADE8D1B0D032C00FC8E08 /* XCCPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCPath.h; sourceTree = "<group>"; };
+		681ADE8E1B0D032C00FC8E08 /* XCCPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCPath.m; sourceTree = "<group>"; };
 		6824CDD81B0D5AA700F73447 /* XCCOperationDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCOperationDataView.h; sourceTree = "<group>"; };
 		6824CDD91B0D5AA700F73447 /* XCCOperationDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCOperationDataView.m; sourceTree = "<group>"; };
 		6824CDDC1B0DA34500F73447 /* XCCMainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCMainController.h; sourceTree = "<group>"; };
@@ -414,6 +414,8 @@
 		6841F2C01AFABD0900CFE60E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				681ADE8D1B0D032C00FC8E08 /* XCCPath.h */,
+				681ADE8E1B0D032C00FC8E08 /* XCCPath.m */,
 				6841F2B61AFA83D500CFE60E /* XCCUserDefaults.m */,
 				6841F2B81AFA83E900CFE60E /* XCCUserDefaults.h */,
 				6841F2BD1AFA965300CFE60E /* XCCTaskLauncher.h */,
@@ -450,8 +452,6 @@
 			children = (
 				6841F2C21AFABD7200CFE60E /* XCCCappuccinoProject.h */,
 				6841F2C31AFABD7200CFE60E /* XCCCappuccinoProject.m */,
-				681ADE8D1B0D032C00FC8E08 /* XCCPath.h */,
-				681ADE8E1B0D032C00FC8E08 /* XCCPath.m */,
 				6824CDEE1B0E9F1400F73447 /* XCCOperationError.h */,
 				6824CDEF1B0E9F1400F73447 /* XCCOperationError.m */,
 			);
