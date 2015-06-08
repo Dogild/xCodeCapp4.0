@@ -39,12 +39,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
         self.sourcePath             = sourcePath;
         self.operationName          = @"Pending source processing";
         self.operationDescription   = [self.sourcePath stringByReplacingOccurrencesOfString:projectPath withString:@""];
-
-        __block XCCSourceProcessingOperation *weakOperation = self;
-
-        self.completionBlock = ^{
-            [weakOperation dispatchNotificationName:XCCConversionDidEndNotification];
-        };
     }
 
     return self;
@@ -219,6 +213,10 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
     @catch (NSException *exception)
     {
         DDLogVerbose(@"Conversion failed: %@", exception);
+    }
+    @finally
+    {
+        [self dispatchNotificationName:XCCConversionDidEndNotification];
     }
 }
 

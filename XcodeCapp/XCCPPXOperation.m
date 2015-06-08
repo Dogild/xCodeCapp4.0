@@ -29,12 +29,6 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
         self->PBXOperations             = [NSMutableDictionary new];
         self->PBXOperations[@"add"]     = [NSMutableArray array];
         self->PBXOperations[@"remove"]  = [NSMutableArray array];
-
-        __block XCCPPXOperation *weakOperation = self;
-
-        self.completionBlock = ^{
-            [weakOperation dispatchNotificationName:XCCPBXOperationDidEndNotification];
-        };
     }
     
     return self;
@@ -113,6 +107,10 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
     {
         [self dispatchNotificationName:XCCPbxCreationGenerateErrorNotification];
         DDLogVerbose(@"Pbx creation failed: %@", exception);
+    }
+    @finally
+    {
+        [self dispatchNotificationName:XCCPBXOperationDidEndNotification];
     }
 }
 
