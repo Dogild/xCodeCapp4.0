@@ -207,8 +207,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
             if (self.cappuccinoProject.processCappLint)
                 [self launchCappLintCommandForPath:self.sourcePath];
         }
-
-        DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
     }
     @catch (NSException *exception)
     {
@@ -218,6 +216,8 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
     {
         [self dispatchNotificationName:XCCConversionDidEndNotification];
     }
+	
+	DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
 }
 
 @end

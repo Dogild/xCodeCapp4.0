@@ -158,7 +158,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_synchronizeXcodeSupport
 {
-    DDLogInfo(@"Loading project: %@", self.cappuccinoProject.projectPath);
+    DDLogInfo(@"Synchronize project: %@", self.cappuccinoProject.projectPath);
 
     [self _reinitializeProjectController];
     [self _reinitializeTaskLauncher];
@@ -738,7 +738,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     [self _enqueueOperation:operation];
 }
-
 
 
 #pragma mark - FS Event Management
