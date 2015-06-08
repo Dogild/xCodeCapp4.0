@@ -53,9 +53,9 @@
         
         // This is used to get the env var of $CAPP_BUILD
         NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
-        NSArray *arguments = [NSArray arrayWithObjects:@"-l", @"-c", @"echo $CAPP_BUILD", nil];
+        NSArray *arguments = @[@"-l", @"-c", @"echo $CAPP_BUILD"];
         
-        NSDictionary *taskResult = [self runTaskWithCommand:[processEnvironment objectForKey:@"SHELL"]
+        NSDictionary *taskResult = [self runTaskWithCommand:processEnvironment[@"SHELL"]
                                                   arguments:arguments
                                                  returnType:kTaskReturnTypeStdOut];
         
@@ -76,12 +76,12 @@
 
 - (BOOL)executablesAreAccessible
 {
-    NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
-    NSMutableArray *arguments = [NSMutableArray array];
+    NSDictionary    *processEnvironment = [[NSProcessInfo processInfo] environment];
+    NSMutableArray  *arguments          = [@[] mutableCopy];
     
     [arguments addObject:[[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"supawhich"]];
     [arguments addObjectsFromArray:self.executables];
-    NSDictionary *taskResult = [self runTaskWithCommand:[processEnvironment objectForKey:@"SHELL"]
+    NSDictionary *taskResult = [self runTaskWithCommand:processEnvironment[@"SHELL"]
                                               arguments:arguments
                                              returnType:kTaskReturnTypeStdOut];
     

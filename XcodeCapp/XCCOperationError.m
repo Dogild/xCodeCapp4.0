@@ -95,9 +95,8 @@ NSArray * parseCommandXMLString(NSString * aString)
 
 + (NSArray*)operationErrorsFromObjj2ObjcSkeletonInfo:(NSDictionary*)info
 {
-
     NSArray         *errors = parseCommandXMLString(info[@"errors"]);
-    NSMutableArray  *ret    = [NSMutableArray array];
+    NSMutableArray  *ret    = [@[] mutableCopy];
 
     for (NSDictionary *error in errors)
         [ret addObject:[XCCOperationError _operationErrorWithInfo:error type:XCCObjj2ObjcSkeletonOperationErrorType]];
@@ -108,7 +107,7 @@ NSArray * parseCommandXMLString(NSString * aString)
 + (NSArray*)operationErrorsFromObjjInfo:(NSDictionary*)info
 {
     NSArray         *errors = parseCommandXMLString(info[@"errors"]);
-    NSMutableArray  *ret    = [NSMutableArray array];
+    NSMutableArray  *ret    = [@[] mutableCopy];
 
     for (NSDictionary *error in errors)
         [ret addObject:[XCCOperationError _operationErrorWithInfo:error type:XCCObjjOperationErrorType]];
@@ -118,10 +117,10 @@ NSArray * parseCommandXMLString(NSString * aString)
 
 + (NSArray*)operationErrorsFromCappLintInfo:(NSDictionary *)info
 {
-    NSString        *response           = [info objectForKey:@"errors"];
-    NSString        *sourcePath         = [info objectForKey:@"sourcePath"];
-    NSMutableArray  *operationErrors    = [NSMutableArray array];
-    NSMutableArray  *errors             = [NSMutableArray arrayWithArray:[response componentsSeparatedByString:@"\n\n"]];
+    NSString        *response           = info[@"errors"];
+    NSString        *sourcePath         = info[@"sourcePath"];
+    NSMutableArray  *operationErrors    = [@[] mutableCopy];
+    NSMutableArray  *errors             = [[response componentsSeparatedByString:@"\n\n"] mutableCopy];
 
     // We need to remove the first object who is the number of errors and the last object who is an empty line
     [errors removeLastObject];

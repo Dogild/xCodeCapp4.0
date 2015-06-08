@@ -26,9 +26,9 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
         self.operationDescription       = self.cappuccinoProject.projectPath;
         self.operationName              = @"Updating the Xcode project";
 
-        self->PBXOperations             = [NSMutableDictionary new];
-        self->PBXOperations[@"add"]     = [NSMutableArray array];
-        self->PBXOperations[@"remove"]  = [NSMutableArray array];
+        self->PBXOperations             = [@{} mutableCopy];
+        self->PBXOperations[@"add"]     = [@[] mutableCopy];
+        self->PBXOperations[@"remove"]  = [@[] mutableCopy];
     }
     
     return self;
@@ -72,8 +72,7 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
     @try
     {
         BOOL            shouldLaunchTask    = NO;
-        NSMutableArray *arguments           = [[NSMutableArray alloc] initWithObjects:self.cappuccinoProject.PBXModifierScriptPath,
-                                               @"update", self.cappuccinoProject.projectPath, nil];
+        NSMutableArray *arguments           = [@[self.cappuccinoProject.PBXModifierScriptPath, @"update", self.cappuccinoProject.projectPath] mutableCopy];
 
         for (NSString *action in self->PBXOperations)
         {

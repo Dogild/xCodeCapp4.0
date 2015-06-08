@@ -61,7 +61,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
         self.cappuccinoProject              = [[XCCCappuccinoProject alloc] initWithPath:aPath];
         self.mainXcodeCappController        = aController;
-        self->sourceProcessingOperations    = [NSMutableDictionary new];
+        self->sourceProcessingOperations    = [@{} mutableCopy];
         self->operationQueue                = [[NSApp delegate] mainOperationQueue];
         
         [self _reinitializeProjectController];
@@ -79,7 +79,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_reinitializeTaskLauncher
 {
-    NSArray *binaryPaths = [NSArray array];
+    NSArray *binaryPaths = @[];
     
     if ([self.cappuccinoProject.binaryPaths count])
         binaryPaths = [self.cappuccinoProject.binaryPaths valueForKeyPath:@"name"];
@@ -263,7 +263,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_removeXcodeSupportOrphanFiles
 {
     NSArray         *subpaths       = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.cappuccinoProject.supportPath error:nil];
-    NSMutableArray  *orphanFiles    = [NSMutableArray new];
+    NSMutableArray  *orphanFiles    = [@[] mutableCopy];
     NSFileManager   *fm             = [NSFileManager defaultManager];
     
     for (NSString *path in subpaths)
@@ -618,10 +618,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_registerSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
 {
-    if (![self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath])
-        self->sourceProcessingOperations[sourceOperation.sourcePath] = [NSMutableArray new];
+    if (!self->sourceProcessingOperations[sourceOperation.sourcePath])
+        self->sourceProcessingOperations[sourceOperation.sourcePath] = [@[] mutableCopy];
 
-    NSMutableArray *operations = [self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath];
+    NSMutableArray *operations = self->sourceProcessingOperations[sourceOperation.sourcePath];
 
     if (![operations containsObject:sourceOperation])
         [operations addObject:sourceOperation];
@@ -629,15 +629,15 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_unregisterSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
 {
-    [[self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath] removeObject:sourceOperation];
+    [self->sourceProcessingOperations[sourceOperation.sourcePath] removeObject:sourceOperation];
 
-    if (![self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath])
+    if (!self->sourceProcessingOperations[sourceOperation.sourcePath])
         [self->sourceProcessingOperations removeObjectForKey:sourceOperation.sourcePath];
 }
 
 - (NSArray *)_sourceProcessingOperationsForPath:(NSString *)path
 {
-    return [self->sourceProcessingOperations objectForKey:path];
+    return self->sourceProcessingOperations[path];
 }
 
 - (void)_enqueueOperation:(NSOperation *)anOperation
@@ -676,7 +676,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_cancelAllProjectRelatedOperations
 {
     [[self projectRelatedOperations] makeObjectsPerformSelector:@selector(cancel)];
-    self->sourceProcessingOperations = [NSMutableDictionary new];
+    self->sourceProcessingOperations = [@{} mutableCopy];
     self->pendingPBXOperation = nil;
 }
 
@@ -785,8 +785,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds
 {
-    NSMutableArray *modifiedPaths       = [NSMutableArray new];
-    NSMutableArray *renamedDirectories  = [NSMutableArray new];
+    NSMutableArray *modifiedPaths       = [@[] mutableCopy];
+    NSMutableArray *renamedDirectories  = [@[] mutableCopy];
     NSFileManager  *fm                  = [NSFileManager defaultManager];
     
     BOOL needUpdate = NO;

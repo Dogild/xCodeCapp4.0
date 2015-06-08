@@ -94,7 +94,7 @@
 {
     if (object == [NSUserDefaults standardUserDefaults] && [keyPath isEqualToString:XCCUserDefaultsMaxNumberOfConcurrentOperations])
     {
-        [self.mainOperationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
+        [self.mainOperationQueue setMaxConcurrentOperationCount:[change[NSKeyValueChangeNewKey] intValue]];
     }
     else
     {

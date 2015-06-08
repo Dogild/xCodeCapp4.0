@@ -150,11 +150,11 @@
 - (void)_restoreManagedProjects
 {
     DDLogVerbose(@"restore managed projects");
-    self.cappuccinoProjectControllers = [NSMutableArray new];
+    self.cappuccinoProjectControllers = [@[] mutableCopy];
     
     NSArray         *projectHistory  = [[NSUserDefaults standardUserDefaults] arrayForKey:XCCUserDefaultsManagedProjects];
     NSFileManager   *fm              = [NSFileManager defaultManager];
-    NSMutableArray  *missingProjects = [NSMutableArray new];
+    NSMutableArray  *missingProjects = [@[] mutableCopy];
     
     for (NSString *path in projectHistory)
     {
@@ -206,7 +206,7 @@
 
 - (void)_saveManagedProjectsToUserDefaults
 {
-    NSMutableArray *historyProjectPaths = [NSMutableArray array];
+    NSMutableArray *historyProjectPaths = [@[] mutableCopy];
 
     for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
@@ -397,7 +397,7 @@
 - (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)rowsIndexes toPasteboard:(NSPasteboard*)pasteboard
 {
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rowsIndexes];
-    [pasteboard declareTypes:[NSArray arrayWithObject:@"projects"] owner:self];
+    [pasteboard declareTypes:@[@"projects"] owner:self];
     [pasteboard setData:data forType:@"projects"];
     
     return YES;

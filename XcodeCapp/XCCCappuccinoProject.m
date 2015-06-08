@@ -49,7 +49,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     if (self != [XCCCappuccinoProject class])
         return;
     
-    XCCDefaultBinaryPaths = [NSArray arrayWithObjects:[[XCCPath alloc] initWithName:@"~/bin"], nil];
+    XCCDefaultBinaryPaths = @[[[XCCPath alloc] initWithName:@"~/bin"]];
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
 
@@ -146,7 +146,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 + (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath
 {
-    NSMutableArray *parsedPaths = [NSMutableArray array];
+    NSMutableArray *parsedPaths = [@[] mutableCopy];
     NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
 
     for (NSString *pattern in paths)
@@ -192,9 +192,9 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 + (NSArray *)getPathsToWatchForCappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
 {
-    NSMutableArray *pathsToWatch = [NSMutableArray arrayWithObject:aCappuccinoProject.projectPath];
-    NSArray *otherPathsToWatch = @[@"", @"Frameworks/Debug", @"Frameworks/Source"];
-    NSFileManager *fm = [NSFileManager defaultManager];
+    NSMutableArray  *pathsToWatch       = [@[aCappuccinoProject.projectPath] mutableCopy];
+    NSArray         *otherPathsToWatch  = @[@"", @"Frameworks/Debug", @"Frameworks/Source"];
+    NSFileManager   *fm                 = [NSFileManager defaultManager];
 
     for (NSString *path in otherPathsToWatch)
     {
@@ -291,8 +291,8 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)reinitialize
 {
-    self.projectPathsForSourcePaths = [NSMutableDictionary new];
-    self.errors                     = [NSMutableDictionary new];
+    self.projectPathsForSourcePaths = [@{} mutableCopy];
+    self.errors                     = [@{} mutableCopy];
     self.status                     = XCCCappuccinoProjectStatusStopped;
 }
 
@@ -316,7 +316,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     if (!self->settings)
         self->settings = [[self _defaultSettings] mutableCopy];
     
-    NSMutableArray *mutablePaths = [NSMutableArray array];
+    NSMutableArray *mutablePaths = [@[] mutableCopy];
     NSArray        *paths        = self->settings[XCCCappuccinoProjectBinPathsKey];
     
     if (paths)
@@ -392,11 +392,11 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)_updateXcodeCappIgnorePredicates
 {
-    self.ignoredPathPredicates = [NSMutableArray new];
+    self.ignoredPathPredicates = [@[] mutableCopy];
     
     @try
     {
-        NSMutableArray *ignoredPatterns = [NSMutableArray new];
+        NSMutableArray *ignoredPatterns = [@[] mutableCopy];
         
         for (NSString *pattern in XCCCappuccinoProjectDefaultIgnoredPaths)
             [ignoredPatterns addObject:pattern];
@@ -413,7 +413,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     @catch(NSException *exception)
     {
         DDLogVerbose(@"Content of xcodecapp-ignorepath does not math the expected input");
-        self.ignoredPathPredicates = [NSMutableArray array];
+        self.ignoredPathPredicates = [@[] mutableCopy];
     }
 }
 
@@ -476,10 +476,10 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     
     [self willChangeValueForKey:@"errors"];
     
-    if (![self.errors objectForKey:operationError.fileName])
-        [self.errors setValue:[NSMutableArray new] forKey:operationError.fileName];
+    if (!self.errors[operationError.fileName])
+        self.errors[operationError.fileName] = [@[] mutableCopy];
     
-    [[self.errors objectForKey:operationError.fileName] addObject:operationError];
+    [self.errors[operationError.fileName] addObject:operationError];
     
     [self didChangeValueForKey:@"errors"];
     self.numberOfErrors++;
@@ -492,9 +492,9 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
     [self willChangeValueForKey:@"errors"];
     
-    [[self.errors objectForKey:operationError.fileName] removeObject:operationError];
+    [self.errors[operationError.fileName] removeObject:operationError];
     
-    if (![[self.errors objectForKey:operationError.fileName] count])
+    if (![self.errors[operationError.fileName] count])
         [self.errors removeObjectForKey:operationError.fileName];
     
     [self didChangeValueForKey:@"errors"];
@@ -511,9 +511,9 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 - (void)removeOperationErrorsRelatedToSourcePath:(NSString *)aPath errorType:(int)anErrorType
 {
-    NSMutableArray *errorsToRemove = [NSMutableArray array];
+    NSMutableArray *errorsToRemove = [@[] mutableCopy];
     
-    for (XCCOperationError *operationError in [self.errors objectForKey:aPath])
+    for (XCCOperationError *operationError in self.errors[aPath])
         if ([operationError.fileName isEqualToString:aPath] && (operationError.errorType == anErrorType || anErrorType == XCCDefaultOperationErrorType))
             [errorsToRemove addObject:operationError];
     

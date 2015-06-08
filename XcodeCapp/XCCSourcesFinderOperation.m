@@ -43,7 +43,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     NSError         *error          = NULL;
     NSString        *projectPath    = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:aProjectPath];
     NSFileManager   *fm             = [NSFileManager defaultManager];
-    NSMutableArray  *sourcePaths    = [NSMutableArray array];
+    NSMutableArray  *sourcePaths    = [@[] mutableCopy];
     
     NSArray *urls = [fm contentsOfDirectoryAtURL:[NSURL fileURLWithPath:projectPath.stringByResolvingSymlinksInPath]
                       includingPropertiesForKeys:@[NSURLIsDirectoryKey, NSURLIsSymbolicLinkKey]
