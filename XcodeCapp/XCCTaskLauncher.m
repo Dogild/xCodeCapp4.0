@@ -179,7 +179,7 @@
     {
         [aTask waitUntilExit];
         
-        DDLogVerbose(@"Task exited: %@:%d", aTask.launchPath, aTask.terminationStatus);
+        DDLogVerbose(@"Task exited: %@\n%@\nExit code:%d", aTask.launchPath,  aTask.arguments, aTask.terminationStatus);
         
         NSData *data = nil;
         
