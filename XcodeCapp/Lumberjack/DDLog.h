@@ -487,11 +487,11 @@ NSString *DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy);
  * If you write custom loggers or formatters, you will be dealing with objects of this class.
 **/
 
-enum {
+typedef NS_OPTIONS(NSUInteger, DDLogMessageOptions)
+{
 	DDLogMessageCopyFile     = 1 << 0,
 	DDLogMessageCopyFunction = 1 << 1,
 };
-typedef int DDLogMessageOptions;
 
 @interface DDLogMessage : NSObject
 {

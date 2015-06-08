@@ -265,7 +265,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 #pragma mark - Init methods
 
-- (id)initWithPath:(NSString*)aPath
+- (instancetype)initWithPath:(NSString*)aPath
 {
     if (self = [super init])
     {

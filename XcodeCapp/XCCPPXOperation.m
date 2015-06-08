@@ -19,7 +19,7 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
 
 #pragma mark - Initialization
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher
+- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher
 {
     if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {

@@ -26,13 +26,14 @@
 
 static FSEventStreamCreateFlags const XCCProjectControllerFSEventFlags = kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagWatchRoot
                                                                     | kFSEventStreamCreateFlagIgnoreSelf | kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagFileEvents;
-enum XCCLineSpecifier {
+typedef NS_ENUM(NSInteger, XCCLineSpecifier)
+{
     kLineSpecifierNone,
     kLineSpecifierColon,
     kLineSpecifierMinusL,
     kLineSpecifierPlus
 };
-typedef enum XCCLineSpecifier XCCLineSpecifier;
+
 
 @interface XCCCappuccinoProjectController ()
 - (void)_handleFSEventsWithPaths:(NSArray *)paths flags:(const FSEventStreamEventFlags[])eventFlags ids:(const FSEventStreamEventId[])eventIds;
@@ -52,7 +53,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 #pragma mark - Init methods
 
-- (id)initWithPath:(NSString*)aPath controller:(id)aController
+- (instancetype)initWithPath:(NSString*)aPath controller:(id)aController
 {
     if (self = [super init])
     {
@@ -618,7 +619,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_registerSourceProcessingOperation:(XCCSourceProcessingOperation *)sourceOperation
 {
     if (![self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath])
-        [self->sourceProcessingOperations setObject:[NSMutableArray new] forKey:sourceOperation.sourcePath];
+        self->sourceProcessingOperations[sourceOperation.sourcePath] = [NSMutableArray new];
 
     NSMutableArray *operations = [self->sourceProcessingOperations objectForKey:sourceOperation.sourcePath];
 

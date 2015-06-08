@@ -10,7 +10,7 @@
 
 @implementation XCCTaskLauncher
 
-- (id)init
+- (instancetype)init
 {
     if (self = [self initWithEnvironementPaths:@[]])
     {
@@ -20,7 +20,7 @@
     return self;
 }
 
-- (id)initWithEnvironementPaths:(NSArray*)environementPaths
+- (instancetype)initWithEnvironementPaths:(NSArray*)environementPaths
 {
     if (self = [super init])
     {

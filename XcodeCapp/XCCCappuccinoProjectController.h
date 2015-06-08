@@ -35,7 +35,7 @@
 @property XCCMainController     *mainXcodeCappController;
 
 
-- (id)initWithPath:(NSString*)aPath controller:(id)aController;
+- (instancetype)initWithPath:(NSString*)aPath controller:(id)aController;
 - (void)reinitializeProjectFromSettings;
 - (void)applicationIsClosing;
 - (void)cleanUpBeforeDeletion;

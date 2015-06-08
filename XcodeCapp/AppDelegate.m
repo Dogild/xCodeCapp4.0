@@ -19,7 +19,7 @@
 {
     NSDictionary *appDefaults = @{
                                 XCCUserDefaultsAutoOpenXcodeProject: @YES,
-                                XCCUserDefaultsLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN],
+                                XCCUserDefaultsLogLevel: @LOG_LEVEL_WARN,
                                 XCCUserDefaultsMaxNumberOfConcurrentOperations: @20
                                 };
 

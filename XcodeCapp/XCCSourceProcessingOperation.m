@@ -30,7 +30,7 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 #pragma mark - Initialization
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
+- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
 {
     if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {

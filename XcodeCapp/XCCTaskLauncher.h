@@ -8,15 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-// Type of output expected from runTaskWithLaunchPath:arguments:returnType:
-enum XCCTaskReturnType {
+typedef NS_ENUM(NSInteger, XCCTaskReturnType)
+{
     kTaskReturnTypeNone,
     kTaskReturnTypeStdOut,
     kTaskReturnTypeStdError,
     kTaskReturnTypeAny
 };
 
-typedef enum XCCTaskReturnType XCCTaskReturnType;
 
 @interface XCCTaskLauncher : NSObject
 {
@@ -31,7 +30,7 @@ typedef enum XCCTaskReturnType XCCTaskReturnType;
 @property NSArray *executables;
 @property NSMutableDictionary *executablePaths;
 
-- (id)initWithEnvironementPaths:(NSArray*)environementPaths;
+- (instancetype)initWithEnvironementPaths:(NSArray*)environementPaths;
 
 - (BOOL)executablesAreAccessible;
 

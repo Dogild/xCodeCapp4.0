@@ -11,13 +11,11 @@
 
 @class XCCTaskLauncher;
 
-enum {
-    XCCCappuccinoProjectStatusStopped       = 0,
-    XCCCappuccinoProjectStatusListening     = 1
+typedef NS_ENUM(NSInteger, XCCCappuccinoProjectStatus)
+{
+    XCCCappuccinoProjectStatusStopped,
+    XCCCappuccinoProjectStatusListening
 };
-typedef int XCCCappuccinoProjectStatus;
-
-
 
 
 extern NSString * const XCCCompatibilityVersionKey;
@@ -69,7 +67,7 @@ extern NSString * const XCCCappuccinoProjectPreviousStatusKey;
 + (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath;
 + (NSArray *)getPathsToWatchForCappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
 
-- (id)initWithPath:(NSString*)aPath;
+- (instancetype)initWithPath:(NSString*)aPath;
 - (void)reinitialize;
 - (void)addOperationError:(XCCOperationError *)operationError;
 - (void)removeOperationError:(XCCOperationError *)operationError;
