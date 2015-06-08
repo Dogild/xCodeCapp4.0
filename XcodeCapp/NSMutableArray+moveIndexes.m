@@ -31,7 +31,7 @@
             insertIndex --;
         }
         
-        object = [self objectAtIndex:removeIndex];
+        object = self[removeIndex];
         
         [self removeObjectAtIndex:removeIndex];
         [self insertObject:object atIndex:insertIndex];

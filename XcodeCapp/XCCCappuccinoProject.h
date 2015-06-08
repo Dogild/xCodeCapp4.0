@@ -67,7 +67,7 @@ extern NSString * const XCCCappuccinoProjectPreviousStatusKey;
 + (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath;
 + (NSArray *)getPathsToWatchForCappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
 
-- (instancetype)initWithPath:(NSString*)aPath;
+- (instancetype)initWithPath:(NSString*)aPath NS_DESIGNATED_INITIALIZER;
 - (void)reinitialize;
 - (void)addOperationError:(XCCOperationError *)operationError;
 - (void)removeOperationError:(XCCOperationError *)operationError;

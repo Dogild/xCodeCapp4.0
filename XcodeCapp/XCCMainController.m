@@ -84,8 +84,8 @@
         
         self->projectViewContainer.hidden = YES;
         
-        self->maskingView.frame = [[[self->splitView subviews] objectAtIndex:1] bounds];
-        [[[self->splitView subviews] objectAtIndex:1] addSubview:self->maskingView positioned:NSWindowAbove relativeTo:nil];
+        self->maskingView.frame = [[self->splitView subviews][1] bounds];
+        [[self->splitView subviews][1] addSubview:self->maskingView positioned:NSWindowAbove relativeTo:nil];
     }
     else
     {
@@ -316,7 +316,7 @@
     if (selectedCappuccinoProject == -1)
         return;
     
-    [self unmanageCappuccinoProjectController:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
+    [self unmanageCappuccinoProjectController:(self.cappuccinoProjectControllers)[selectedCappuccinoProject]];
 }
 
 - (IBAction)updateSelectedTab:(NSButton *)sender
@@ -367,7 +367,7 @@
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     XCCCappuccinoProjectControllerDataView  *dataView                    = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
-    XCCCappuccinoProjectController          *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
+    XCCCappuccinoProjectController          *cappuccinoProjectController = (self.cappuccinoProjectControllers)[row];
     
     dataView.controller = cappuccinoProjectController;
     
@@ -378,7 +378,7 @@
 {
     NSInteger selectedIndex = [self->projectTableView selectedRow];
 
-    self.currentCappuccinoProjectController                     = (selectedIndex == -1) ? nil : [self.cappuccinoProjectControllers objectAtIndex:selectedIndex];
+    self.currentCappuccinoProjectController                     = (selectedIndex == -1) ? nil : (self.cappuccinoProjectControllers)[selectedIndex];
 
     self.operationsViewController.cappuccinoProjectController   = self.currentCappuccinoProjectController;
     self.errorsViewController.cappuccinoProjectController       = self.currentCappuccinoProjectController;

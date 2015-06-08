@@ -191,7 +191,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     double appCompatibilityVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey] doubleValue];
     
-    NSNumber *projectCompatibilityVersion = [NSNumber numberWithInt:[self.cappuccinoProject.version intValue]];
+    NSNumber *projectCompatibilityVersion = @([self.cappuccinoProject.version intValue]);
     
     if (projectCompatibilityVersion == nil)
     {
@@ -771,7 +771,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     UInt64 lastEventID = FSEventStreamGetLatestEventId(self->stream);
 
     if (lastEventID != 0 && lastEventID != UINT64_MAX)
-        self.cappuccinoProject.lastEventID = [NSNumber numberWithUnsignedLongLong:lastEventID];
+        self.cappuccinoProject.lastEventID = @(lastEventID);
 
     FSEventStreamStop(self->stream);
     FSEventStreamUnscheduleFromRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);

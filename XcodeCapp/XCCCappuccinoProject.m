@@ -160,7 +160,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         NSString *regexPattern = [self globToRegexPattern:[NSString stringWithFormat:@"%@/%@", basePath, finalPattern]];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF matches %@", regexPattern];
         [parsedPaths addObject:@{ @"predicate": predicate,
-                                  @"exclude": [NSNumber numberWithBool:exclude]}];
+                                  @"exclude": @(exclude)}];
     }
 
     return parsedPaths;
@@ -360,10 +360,10 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     self->settings[XCCCappuccinoObjjIncludePathKey]              = self.objjIncludePath;
     self->settings[XCCCappuccinoProjectNicknameKey]              = self.nickname;
     self->settings[XCCCompatibilityVersionKey]                   = self.version;
-    self->settings[XCCCappuccinoProcessObjjKey]                  = [NSNumber numberWithBool:self.processObjjWarnings];
-    self->settings[XCCCappuccinoProcessCappLintKey]              = [NSNumber numberWithBool:self.processCappLint];
-    self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = [NSNumber numberWithBool:self.processObjj2ObjcSkeleton];
-    self->settings[XCCCappuccinoProcessNib2CibKey]               = [NSNumber numberWithBool:self.processNib2Cib];
+    self->settings[XCCCappuccinoProcessObjjKey]                  = @(self.processObjjWarnings);
+    self->settings[XCCCappuccinoProcessCappLintKey]              = @(self.processCappLint);
+    self->settings[XCCCappuccinoProcessObjj2ObjcSkeletonKey]     = @(self.processObjj2ObjcSkeleton);
+    self->settings[XCCCappuccinoProcessNib2CibKey]               = @(self.processNib2Cib);
     self->settings[XCCCappuccinoProjectPreviousStatusKey]        = [NSNumber numberWithInt:self.status];
     
     if ([self.lastEventID boolValue])

@@ -534,7 +534,7 @@ typedef NS_OPTIONS(NSUInteger, DDLogMessageOptions)
  * However, if you need them to be copied you may use the options parameter to specify this.
  * Options is a bitmask which supports DDLogMessageCopyFile and DDLogMessageCopyFunction.
 **/
-- (id)initWithLogMsg:(NSString *)logMsg
+- (instancetype)initWithLogMsg:(NSString *)logMsg
                level:(int)logLevel
                 flag:(int)logFlag
              context:(int)logContext
@@ -542,24 +542,24 @@ typedef NS_OPTIONS(NSUInteger, DDLogMessageOptions)
             function:(const char *)function
                 line:(int)line
                  tag:(id)tag
-             options:(DDLogMessageOptions)optionsMask;
+             options:(DDLogMessageOptions)optionsMask NS_DESIGNATED_INITIALIZER;
 
 /**
  * Returns the threadID as it appears in NSLog.
  * That is, it is a hexadecimal value which is calculated from the machThreadID.
 **/
-- (NSString *)threadID;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *threadID;
 
 /**
  * Convenience property to get just the file name, as the file variable is generally the full file path.
  * This method does not include the file extension, which is generally unwanted for logging purposes.
 **/
-- (NSString *)fileName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *fileName;
 
 /**
  * Returns the function variable in NSString form.
 **/
-- (NSString *)methodName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *methodName;
 
 @end
 
@@ -591,7 +591,6 @@ typedef NS_OPTIONS(NSUInteger, DDLogMessageOptions)
 	dispatch_queue_t loggerQueue;
 }
 
-- (id <DDLogFormatter>)logFormatter;
-- (void)setLogFormatter:(id <DDLogFormatter>)formatter;
+@property (NS_NONATOMIC_IOSONLY, strong) id<DDLogFormatter> logFormatter;
 
 @end

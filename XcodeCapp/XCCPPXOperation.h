@@ -22,7 +22,7 @@ extern NSString * const XCCPBXOperationDidEndNotification;
     NSTask              *task;
 }
 
-- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher;
+- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher NS_DESIGNATED_INITIALIZER;
 - (void)registerPathToAddInPBX:(NSString *)path;
 - (void)registerPathToRemoveFromPBX:(NSString *)path;
 @end

@@ -108,7 +108,7 @@
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     XCCOperationDataView *dataView = [tableView makeViewWithIdentifier:@"OperationDataView" owner:nil];
-    [dataView setOperation:[self->operationsSnaphsot objectAtIndex:row]];
+    [dataView setOperation:self->operationsSnaphsot[row]];
 
     return dataView;
 }

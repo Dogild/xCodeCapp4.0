@@ -129,7 +129,7 @@ NSArray * parseCommandXMLString(NSString * aString)
     for (int i = 0; i < [errors count]; i++)
     {
         NSString            *line;
-        NSMutableString     *error      = (NSMutableString*)[errors objectAtIndex:i];
+        NSMutableString     *error      = (NSMutableString*)errors[i];
         NSString            *firstChar  = [NSString stringWithFormat:@"%c" ,[error characterAtIndex:0]];
 
         if ([[NSScanner scannerWithString:firstChar] scanInt:nil])

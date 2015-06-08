@@ -190,7 +190,7 @@
             data = [[aTask.standardError fileHandleForReading] availableData];
         
         NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSNumber *status = [NSNumber numberWithInt:aTask.terminationStatus];
+        NSNumber *status = @(aTask.terminationStatus);
         
         return @{ @"status":status, @"response":response };
     }
@@ -237,7 +237,7 @@
     
     DDLogVerbose(@"Task exited: %@:%d", launchPath, task.terminationStatus);
     
-    NSNumber *status = [NSNumber numberWithInt:task.terminationStatus];
+    NSNumber *status = @(task.terminationStatus);
     NSData *data = nil;
     
     if ([status intValue] == 0)
@@ -255,7 +255,7 @@
 
 -(void)jakeReceivedData:(NSNotification*)notification
 {
-    NSData *data     = [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem];
+    NSData *data     = [notification userInfo][NSFileHandleNotificationDataItem];
     NSString *string = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     
     DDLogVerbose(@"Jake receive data\n %@", string);
@@ -265,7 +265,7 @@
 
 -(void)jakeReceivedError:(NSNotification*)notification
 {
-    NSData *data     = [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem];
+    NSData *data     = [notification userInfo][NSFileHandleNotificationDataItem];
     NSString *string = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     
     DDLogVerbose(@"Jake receive error\%@", string);
