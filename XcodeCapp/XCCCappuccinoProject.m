@@ -9,7 +9,6 @@
 #include <fcntl.h>
 
 #import "XCCCappuccinoProject.h"
-#import "CappuccinoUtils.h"
 #import "XCCPath.h"
 
 static NSArray * XCCDefaultBinaryPaths;
@@ -17,6 +16,9 @@ static NSDictionary* XCCCappuccinoProjectDefaultSettings;
 
 // we replace the "/" by a weird unicode "/" in order to generate file names with "/" in .XcodeSupport. very clear huh?
 static NSString * const XCCSlashReplacement                 = @"∕";  // DIVISION SLASH, Unicode: U+2215
+
+static NSPredicate * XCCDirectoriesToIgnorePredicate = nil;
+static NSString * const XCCDirectoriesToIgnorePattern = @"^(?:Build|F(?:rameworks|oundation)|AppKit|Objective-J|(?:Browser|CommonJS)\\.environment|Resources|XcodeSupport|.+\\.xcodeproj)$";
 
 static NSArray *XCCCappuccinoProjectDefaultIgnoredPaths = nil;
 
@@ -50,7 +52,9 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     XCCDefaultBinaryPaths = [NSArray arrayWithObjects:[[XCCPath alloc] initWithName:@"~/bin"], nil];
     
     NSNumber *appCompatibilityVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:XCCCompatibilityVersionKey];
-    
+
+    XCCDirectoriesToIgnorePredicate = [NSPredicate predicateWithFormat:@"SELF matches %@", XCCDirectoriesToIgnorePattern];
+
     XCCCappuccinoProjectDefaultSettings = @{XCCCompatibilityVersionKey: appCompatibilityVersion,
                                           XCCCappuccinoProcessCappLintKey: @NO,
                                           XCCCappuccinoProcessObjjKey: @NO,
@@ -79,6 +83,185 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 {
     return XCCDefaultBinaryPaths;
 }
+
++ (BOOL)isObjjFile:(NSString *)path
+{
+    return [path.pathExtension.lowercaseString isEqual:@"j"];
+}
+
++ (BOOL)isCibFile:(NSString *)path
+{
+    return [path.pathExtension.lowercaseString isEqual:@"cib"];
+}
+
++ (BOOL)isHeaderFile:(NSString *)path
+{
+    return [path.pathExtension.lowercaseString isEqual:@"h"];
+}
+
++ (BOOL)isXibFile:(NSString *)path
+{
+    NSString *extension = path.pathExtension.lowercaseString;
+
+    if ([extension isEqual:@"xib"] || [extension isEqual:@"nib"])
+    {
+        // Xcode creates temp files called <filename>~.xib. Filter those out.
+        NSString *baseFilename = path.lastPathComponent.stringByDeletingPathExtension;
+
+        return [baseFilename characterAtIndex:baseFilename.length - 1] != '~';
+    }
+
+    return NO;
+}
+
++ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
+{
+    return [path isEqualToString:aCappuccinoProject.XcodeCappIgnorePath];
+}
+
++ (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
+{
+    return ([self isXibFile:path] || [self isObjjFile:path]) && ![self pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:aCappuccinoProject.ignoredPathPredicates];
+}
+
++ (BOOL)shouldIgnoreDirectoryNamed:(NSString *)filename
+{
+    return [XCCDirectoriesToIgnorePredicate evaluateWithObject:filename];
+}
+
++ (BOOL)pathMatchesIgnoredPaths:(NSString*)aPath cappuccinoProjectIgnoredPathPredicates:(NSMutableArray*)cappuccinoProjectIgnoredPathPredicates
+{
+    BOOL ignore = NO;
+
+    for (NSDictionary *ignoreInfo in cappuccinoProjectIgnoredPathPredicates)
+    {
+        BOOL matches = [ignoreInfo[@"predicate"] evaluateWithObject:aPath];
+
+        if (matches)
+            ignore = [ignoreInfo[@"exclude"] boolValue];
+    }
+
+    return ignore;
+}
+
++ (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath
+{
+    NSMutableArray *parsedPaths = [NSMutableArray array];
+    NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
+
+    for (NSString *pattern in paths)
+    {
+        if ([pattern stringByTrimmingCharactersInSet:whitespace].length == 0)
+            continue;
+
+        BOOL        exclude       = [pattern characterAtIndex:0] != '!';
+        NSString    *finalPattern = exclude ? pattern : [pattern substringFromIndex:1];
+
+        NSString *regexPattern = [self globToRegexPattern:[NSString stringWithFormat:@"%@/%@", basePath, finalPattern]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF matches %@", regexPattern];
+        [parsedPaths addObject:@{ @"predicate": predicate,
+                                  @"exclude": [NSNumber numberWithBool:exclude]}];
+    }
+
+    return parsedPaths;
+}
+
++ (NSString *)globToRegexPattern:(NSString *)glob
+{
+    NSMutableString *regex = [glob mutableCopy];
+
+    if ([regex characterAtIndex:0] == '!')
+        [regex deleteCharactersInRange:NSMakeRange(0, 1)];
+
+    [regex replaceOccurrencesOfString:@"."
+                           withString:@"\\."
+                              options:0
+                                range:NSMakeRange(0, [regex length])];
+
+    [regex replaceOccurrencesOfString:@"*"
+                           withString:@".*"
+                              options:0
+                                range:NSMakeRange(0, [regex length])];
+
+    // If the glob ends with "/", match that directory and anything below it.
+    if ([regex characterAtIndex:regex.length - 1] == '/')
+        [regex replaceCharactersInRange:NSMakeRange(regex.length - 1, 1) withString:@"(?:/.*)?"];
+
+    return [NSString stringWithFormat:@"^%@$", regex];
+}
+
++ (NSArray *)getPathsToWatchForCappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
+{
+    NSMutableArray *pathsToWatch = [NSMutableArray arrayWithObject:aCappuccinoProject.projectPath];
+    NSArray *otherPathsToWatch = @[@"", @"Frameworks/Debug", @"Frameworks/Source"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    for (NSString *path in otherPathsToWatch)
+    {
+        NSString *fullPath = [aCappuccinoProject.projectPath stringByAppendingPathComponent:path];
+
+        BOOL exists, isDirectory;
+        exists = [fm fileExistsAtPath:fullPath isDirectory:&isDirectory];
+
+        if (exists && isDirectory)
+            [self watchSymlinkedDirectoriesAtPath:path pathsToWatch:pathsToWatch cappuccinoProject:aCappuccinoProject];
+    }
+
+    return [pathsToWatch copy];
+}
+
++ (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject
+{
+    NSString *fullProjectPath = [aCappuccinoProject.projectPath stringByAppendingPathComponent:projectPath];
+    NSError *error = NULL;
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    NSArray *urls = [fm contentsOfDirectoryAtURL:[NSURL fileURLWithPath:fullProjectPath]
+                      includingPropertiesForKeys:@[NSURLIsDirectoryKey, NSURLIsSymbolicLinkKey]
+                                         options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                           error:&error];
+
+    for (NSURL *url in urls)
+    {
+        NSNumber *isSymlink;
+        [url getResourceValue:&isSymlink forKey:NSURLIsSymbolicLinkKey error:nil];
+
+        if (isSymlink.boolValue == NO)
+            continue;
+
+        NSURL *resolvedURL = [url URLByResolvingSymlinksInPath];
+
+        if (![resolvedURL checkResourceIsReachableAndReturnError:nil])
+            continue;
+
+        NSNumber *isDirectory;
+        [resolvedURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+
+        if (isDirectory.boolValue == NO)
+            continue;
+
+        NSString *path = resolvedURL.path;
+        NSString *filename = path.lastPathComponent;
+
+        if (![self shouldIgnoreDirectoryNamed:filename] && ![self pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:aCappuccinoProject.ignoredPathPredicates])
+        {
+            DDLogVerbose(@"Watching symlinked directory: %@", path);
+
+            [pathsToWatch addObject:path];
+        }
+    }
+}
+
++ (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage
+{
+    NSUserNotification *note = [NSUserNotification new];
+
+    note.title = aTitle;
+    note.informativeText = aMessage;
+
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:note];
+}
+
 
 #pragma mark - Init methods
 
@@ -231,7 +414,7 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
             if ([pattern length])
                 [ignoredPatterns addObject:pattern];
 
-        NSArray *parsedPaths = [CappuccinoUtils parseIgnorePaths:ignoredPatterns basePath:self.projectPath];
+        NSArray *parsedPaths = [XCCCappuccinoProject parseIgnorePaths:ignoredPatterns basePath:self.projectPath];
         [self.ignoredPathPredicates addObjectsFromArray:parsedPaths];
         
         DDLogVerbose(@"Content of xcodecapp-ignorepath correctly updated %@", self.ignoredPathPredicates);

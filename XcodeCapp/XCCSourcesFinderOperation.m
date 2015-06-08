@@ -84,7 +84,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
         if (isDirectory.boolValue == YES)
         {
-            if ([CappuccinoUtils shouldIgnoreDirectoryNamed:filename])
+            if ([XCCCappuccinoProject shouldIgnoreDirectoryNamed:filename])
             {
                 DDLogVerbose(@"%@: ignored symlinked directory: %@", self.cappuccinoProject.name, projectRelativePath);
                 continue;
@@ -96,7 +96,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
             {
                 NSString *fullProjectPath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:projectRelativePath];
 
-                if (![realPath hasPrefix:fullProjectPath] && ![CappuccinoUtils pathMatchesIgnoredPaths:fullProjectPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
+                if (![realPath hasPrefix:fullProjectPath] && ![XCCCappuccinoProject pathMatchesIgnoredPaths:fullProjectPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
                 {
                     DDLogVerbose(@"%@: symlinked directory: %@ -> %@", self.cappuccinoProject.name, projectRelativePath, realPath);
 
@@ -116,18 +116,18 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
             continue;
         }
 
-        if ([CappuccinoUtils pathMatchesIgnoredPaths:realPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
+        if ([XCCCappuccinoProject pathMatchesIgnoredPaths:realPath cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
             continue;
 
         NSString *projectSourcePath = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:projectRelativePath];
 
-        if ([CappuccinoUtils isObjjFile:filename] || [CappuccinoUtils isXibFile:filename])
+        if ([XCCCappuccinoProject isObjjFile:filename] || [XCCCappuccinoProject isXibFile:filename])
         {
             DDLogVerbose(@"%@: found source file: %@", self.cappuccinoProject.name, filename);
 
             NSString *processedPath;
 
-            if ([CappuccinoUtils isObjjFile:filename])
+            if ([XCCCappuccinoProject isObjjFile:filename])
                 processedPath = [[self.cappuccinoProject shadowBasePathForProjectSourcePath:projectSourcePath] stringByAppendingPathExtension:@"h"];
             else
                 processedPath = [projectSourcePath.stringByDeletingPathExtension stringByAppendingPathExtension:@"cib"];

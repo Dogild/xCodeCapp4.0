@@ -11,7 +11,6 @@
 #import "XCCCappuccinoProject.h"
 #import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProjectControllerDataView.h"
-#import "CappuccinoUtils.h"
 #import "XCCUserDefaults.h"
 #import "XCCOperationsViewController.h"
 #import "XCCErrorsViewController.h"

@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 cappuccino-project. All rights reserved.
 //
 
-#import "CappLintUtils.h"
-#import "ObjjUtils.h"
 #import "XCCErrorsViewController.h"
 #import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProject.h"

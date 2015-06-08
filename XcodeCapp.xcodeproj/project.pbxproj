@@ -43,7 +43,6 @@
 		0258005E1B1E937E0000EB7D /* open-in-editor-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258005D1B1E937E0000EB7D /* open-in-editor-white.png */; };
 		027539111B227D7500F6D824 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */; };
 		680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */; };
-		6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
 		681ADE8F1B0D032C00FC8E08 /* XCCPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 681ADE8E1B0D032C00FC8E08 /* XCCPath.m */; };
 		6824CDDA1B0D5AA700F73447 /* XCCOperationDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDD91B0D5AA700F73447 /* XCCOperationDataView.m */; };
@@ -76,8 +75,6 @@
 		6863FBA31AFD55A900040C8E /* XCCFSEventLogUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6863FBA21AFD55A900040C8E /* XCCFSEventLogUtils.m */; };
 		686ACD311B16397F0089EB03 /* XCCCappuccinoProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = 686ACD301B16397F0089EB03 /* XCCCappuccinoProjectController.m */; };
 		686C69711B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69701B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m */; };
-		686C69741B0FC2EB0095BB3C /* CappLintUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69731B0FC2EB0095BB3C /* CappLintUtils.m */; };
-		686C697A1B0FC5930095BB3C /* ObjjUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69791B0FC5930095BB3C /* ObjjUtils.m */; };
 		68B6BF321B1E2546003B265B /* XCCPPXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B6BF311B1E2546003B265B /* XCCPPXOperation.m */; };
 /* End PBXBuildFile section */
 
@@ -150,8 +147,6 @@
 		027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRKSpinningProgressIndicator.m; sourceTree = "<group>"; };
 		680621171B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectControllerDataView.h; sourceTree = "<group>"; };
 		680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCCappuccinoProjectControllerDataView.m; sourceTree = "<group>"; };
-		6815BBE31AFBE5A80030D8BB /* CappuccinoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappuccinoUtils.h; sourceTree = "<group>"; };
-		6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappuccinoUtils.m; sourceTree = "<group>"; };
 		6815BBE61AFBE6B00030D8BB /* XCCCappuccinoProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectController.h; sourceTree = "<group>"; };
 		6815BBE91AFC24430030D8BB /* XcodeProjectCloser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XcodeProjectCloser.h; sourceTree = "<group>"; };
 		6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XcodeProjectCloser.m; sourceTree = "<group>"; };
@@ -207,10 +202,6 @@
 		686ACD331B1691AA0089EB03 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		686C696F1B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCOperationErrorHeaderDataView.h; sourceTree = "<group>"; };
 		686C69701B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCOperationErrorHeaderDataView.m; sourceTree = "<group>"; };
-		686C69721B0FC2EB0095BB3C /* CappLintUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CappLintUtils.h; sourceTree = "<group>"; };
-		686C69731B0FC2EB0095BB3C /* CappLintUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CappLintUtils.m; sourceTree = "<group>"; };
-		686C69781B0FC5930095BB3C /* ObjjUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjjUtils.h; sourceTree = "<group>"; };
-		686C69791B0FC5930095BB3C /* ObjjUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjjUtils.m; sourceTree = "<group>"; };
 		68B6BF301B1E2546003B265B /* XCCPPXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCPPXOperation.h; sourceTree = "<group>"; };
 		68B6BF311B1E2546003B265B /* XCCPPXOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCPPXOperation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -429,16 +420,10 @@
 				6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */,
 				6841F2761AF98FA300CFE60E /* DDLogLevel.h */,
 				6841F2771AF98FA300CFE60E /* DDLogLevel.m */,
-				6815BBE31AFBE5A80030D8BB /* CappuccinoUtils.h */,
-				6815BBE41AFBE5A80030D8BB /* CappuccinoUtils.m */,
 				6815BBE91AFC24430030D8BB /* XcodeProjectCloser.h */,
 				6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */,
 				6863FBA11AFD55A900040C8E /* XCCFSEventLogUtils.h */,
 				6863FBA21AFD55A900040C8E /* XCCFSEventLogUtils.m */,
-				686C69721B0FC2EB0095BB3C /* CappLintUtils.h */,
-				686C69731B0FC2EB0095BB3C /* CappLintUtils.m */,
-				686C69781B0FC5930095BB3C /* ObjjUtils.h */,
-				686C69791B0FC5930095BB3C /* ObjjUtils.m */,
 				0258003A1B1E1C470000EB7D /* NSMutableArray+moveIndexes.h */,
 				0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */,
 			);
@@ -612,7 +597,6 @@
 				68B6BF321B1E2546003B265B /* XCCPPXOperation.m in Sources */,
 				021B94701B20E31F00F12DDA /* XCCSettingsViewController.m in Sources */,
 				0255B8401B1F71FB000CA4BC /* AppDelegate.m in Sources */,
-				6815BBE51AFBE5A80030D8BB /* CappuccinoUtils.m in Sources */,
 				0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */,
 				6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */,
 				027539111B227D7500F6D824 /* YRKSpinningProgressIndicator.m in Sources */,
@@ -631,10 +615,8 @@
 				6824CDF01B0E9F1400F73447 /* XCCOperationError.m in Sources */,
 				021B94751B21112500F12DDA /* XCCWelcomeView.m in Sources */,
 				6841F2671AF98DCB00CFE60E /* DDTTYLogger.m in Sources */,
-				686C69741B0FC2EB0095BB3C /* CappLintUtils.m in Sources */,
 				6841F2441AF98CE600CFE60E /* main.m in Sources */,
 				6824CDDA1B0D5AA700F73447 /* XCCOperationDataView.m in Sources */,
-				686C697A1B0FC5930095BB3C /* ObjjUtils.m in Sources */,
 				6841F2CA1AFADEBC00CFE60E /* XCCSourcesFinderOperation.m in Sources */,
 				681ADE8F1B0D032C00FC8E08 /* XCCPath.m in Sources */,
 				6841F2651AF98DCB00CFE60E /* DDASLLogger.m in Sources */,

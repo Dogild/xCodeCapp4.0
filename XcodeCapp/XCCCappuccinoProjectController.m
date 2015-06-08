@@ -9,9 +9,6 @@
 #import "AppDelegate.h"
 #import "XCCCappuccinoProjectController.h"
 #import "XCCCappuccinoProject.h"
-#import "CappuccinoUtils.h"
-#import "CappLintUtils.h"
-#import "ObjjUtils.h"
 #import "XCCFSEventLogUtils.h"
 #import "XCCSourcesFinderOperation.h"
 #import "XCCPPXOperation.h"
@@ -123,7 +120,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
     [self _synchronizeXcodeSupport];
 
-    NSArray                 *pathsToWatch   = [CappuccinoUtils getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
+    NSArray                 *pathsToWatch   = [XCCCappuccinoProject getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
     void                    *appPointer     = (__bridge void *)self;
     FSEventStreamContext    context         = { 0, appPointer, NULL, NULL, NULL };
     CFTimeInterval          latency         = 2.0;
@@ -307,7 +304,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     
     for (NSString *path in subpaths)
     {
-        if ([CappuccinoUtils isHeaderFile:path] && ![path.lastPathComponent isEqualToString:@"xcc_general_include.h"])
+        if ([XCCCappuccinoProject isHeaderFile:path] && ![path.lastPathComponent isEqualToString:@"xcc_general_include.h"])
         {
             NSString *sourcePath = [self.cappuccinoProject sourcePathForShadowPath:path];
             
@@ -524,7 +521,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo type:XCCObjj2ObjcSkeletonOperationErrorType])
+    for (XCCOperationError *operationError in [XCCOperationError operationErrorsFromObjj2ObjcSkeletonInfo:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
 }
 
@@ -541,7 +538,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self.cappuccinoProject addOperationError:[XCCOperationError nib2cibOperationErrorFromDictionary:note.userInfo]];
+    [self.cappuccinoProject addOperationError:[XCCOperationError operationErrorFromNib2CibInfo:note.userInfo]];
 }
 
 - (void)_didReceiveObjjDidStartNotification:(NSNotification *)note
@@ -557,7 +554,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    for (XCCOperationError *operationError in [ObjjUtils operationErrorsFromDictionary:note.userInfo])
+    for (XCCOperationError *operationError in [XCCOperationError operationErrorsFromObjjInfo:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
 }
 
@@ -574,7 +571,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    for (XCCOperationError *operationError in [CappLintUtils operationErrorsFromDictionary:note.userInfo])
+    for (XCCOperationError *operationError in [XCCOperationError operationErrorsFromCappLintInfo:note.userInfo])
         [self.cappuccinoProject addOperationError:operationError];
 }
 
@@ -860,8 +857,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             
             if (renamed &&
                 !(created || removed) &&
-                ![CappuccinoUtils shouldIgnoreDirectoryNamed:path.lastPathComponent] &&
-                ![CappuccinoUtils pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
+                ![XCCCappuccinoProject shouldIgnoreDirectoryNamed:path.lastPathComponent] &&
+                ![XCCCappuccinoProject pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
             {
                 DDLogVerbose(@"Renamed directory: %@", path);
                 
@@ -872,7 +869,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         }
         else if ((isFile || isSymlink) &&
                  (created || modified || renamed || removed || inodeMetaModified) &&
-                 [CappuccinoUtils isSourceFile:path cappuccinoProject:self.cappuccinoProject])
+                 [XCCCappuccinoProject isSourceFile:path cappuccinoProject:self.cappuccinoProject])
         {
             DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [XCCFSEventLogUtils dumpFSEventFlags:flags]);
             
@@ -880,7 +877,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             {
                 [modifiedPaths addObject:path];
             }
-            else if ([CappuccinoUtils isXibFile:path])
+            else if ([XCCCappuccinoProject isXibFile:path])
             {
                 // If a xib is deleted, delete its cib. There is no need to update when a xib is deleted,
                 // it is inside a folder in Xcode, which updates automatically.
@@ -898,7 +895,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             
             needUpdate = YES;
         }
-        else if ((isFile || isSymlink) && (renamed || removed) && !(modified || created) && [CappuccinoUtils isCibFile:path])
+        else if ((isFile || isSymlink) && (renamed || removed) && !(modified || created) && [XCCCappuccinoProject isCibFile:path])
         {
             DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [XCCFSEventLogUtils dumpFSEventFlags:flags]);
             
@@ -913,7 +910,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         }
         else if ((isFile || isSymlink) &&
                  (created || modified || renamed || removed || inodeMetaModified) &&
-                 [CappuccinoUtils isXCCIgnoreFile:path cappuccinoProject:self.cappuccinoProject])
+                 [XCCCappuccinoProject isXCCIgnoreFile:path cappuccinoProject:self.cappuccinoProject])
         {
             DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [XCCFSEventLogUtils dumpFSEventFlags:flags]);
 
@@ -1177,7 +1174,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (IBAction)openProjectInTerminal:(id)sender;
 {
-    NSString *s = [NSString stringWithFormat:@"tell application \"Terminal\"\n do script \"cd %@\" \n activate\n end tell", self.cappuccinoProject.projectPath];
+    NSString *s = [NSString stringWithFormat:@"tell application \"Terminal\"\n do script \"cd %@; clear\" \n activate\n end tell", self.cappuccinoProject.projectPath];
     NSAppleScript *script = [[NSAppleScript alloc] initWithSource:s];
     [script executeAndReturnError:nil];
 }

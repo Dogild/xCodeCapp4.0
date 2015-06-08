@@ -53,7 +53,19 @@ extern NSString * const XCCCappuccinoProjectAutoStartListeningKey;
 @property BOOL                          processNib2Cib;
 @property XCCCappuccinoProjectStatus    status;
 
-+ (NSArray*)defaultBinaryPaths;
++ (BOOL)isObjjFile:(NSString *)path;
++ (BOOL)isXibFile:(NSString *)path;
++ (BOOL)isCibFile:(NSString *)path;
++ (BOOL)isHeaderFile:(NSString *)path;
++ (BOOL)isXCCIgnoreFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
++ (BOOL)isSourceFile:(NSString *)path cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
++ (BOOL)pathMatchesIgnoredPaths:(NSString*)aPath cappuccinoProjectIgnoredPathPredicates:(NSMutableArray*)cappuccinoProjectIgnoredPathPredicates;
++ (BOOL)shouldIgnoreDirectoryNamed:(NSString *)filename;
++ (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage;
++ (void)watchSymlinkedDirectoriesAtPath:(NSString *)projectPath pathsToWatch:(NSMutableArray *)pathsToWatch cappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
++ (NSArray *)defaultBinaryPaths;
++ (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath;
++ (NSArray *)getPathsToWatchForCappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
 
 - (id)initWithPath:(NSString*)aPath;
 - (void)reinitialize;

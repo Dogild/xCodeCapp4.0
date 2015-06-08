@@ -197,12 +197,12 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
     @try
     {
-        if ([CappuccinoUtils isXibFile:self.sourcePath])
+        if ([XCCCappuccinoProject isXibFile:self.sourcePath])
         {
             if (self.cappuccinoProject.processNib2Cib)
                 [self launchNib2CibCommandForPath:self.sourcePath];
         }
-        else if ([CappuccinoUtils isObjjFile:self.sourcePath])
+        else if ([XCCCappuccinoProject isObjjFile:self.sourcePath])
         {
             if (self.cappuccinoProject.processObjj2ObjcSkeleton)
                 [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];

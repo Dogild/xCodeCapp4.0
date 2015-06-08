@@ -8,7 +8,6 @@
 
 #import "XCCCappuccinoProjectControllerDataView.h"
 #import "XCCCappuccinoProject.h"
-#import "CappuccinoUtils.h"
 
 static NSColor * XCCCappuccinoProjectDataViewColorLoading;
 static NSColor * XCCCappuccinoProjectDataViewColorStopped;

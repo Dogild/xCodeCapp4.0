@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "XCCCappuccinoProject.h"
-#import "CappuccinoUtils.h"
 
 @class XCCCappuccinoProject;
 

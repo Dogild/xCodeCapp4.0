@@ -45,7 +45,7 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
 
 - (void)registerPathToAddInPBX:(NSString *)path
 {
-    if (![CappuccinoUtils isObjjFile:path])
+    if (![XCCCappuccinoProject isObjjFile:path])
         return;
 
     [self->PBXOperations[@"add"] addObject:path];
