@@ -114,6 +114,8 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
         [self dispatchNotificationName:XCCPbxCreationGenerateErrorNotification];
         DDLogVerbose(@"Pbx creation failed: %@", exception);
     }
+    
+    DDLogVerbose(@"Pbx creation ended: %@", self.cappuccinoProject.projectPath);
 }
 
 @end

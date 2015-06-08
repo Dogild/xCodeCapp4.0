@@ -213,13 +213,13 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
             if (self.cappuccinoProject.processCappLint)
                 [self launchCappLintCommandForPath:self.sourcePath];
         }
-
-        DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
     }
     @catch (NSException *exception)
     {
         DDLogVerbose(@"Conversion failed: %@", exception);
     }
+    
+    DDLogVerbose(@"Conversion ended: %@", self.sourcePath);
 }
 
 @end
