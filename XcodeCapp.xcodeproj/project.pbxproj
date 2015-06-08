@@ -61,7 +61,6 @@
 		6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2771AF98FA300CFE60E /* DDLogLevel.m */; };
 		6841F27C1AF990C300CFE60E /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27A1AF990C300CFE60E /* Debug.xcconfig */; };
 		6841F27D1AF990C300CFE60E /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27B1AF990C300CFE60E /* Release.xcconfig */; };
-		6841F29A1AF9932300CFE60E /* help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27F1AF9932300CFE60E /* help.pdf */; };
 		6841F2A31AF9932300CFE60E /* icon_128x128.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2881AF9932300CFE60E /* icon_128x128.png */; };
 		6841F2A41AF9932300CFE60E /* icon_128x128@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2891AF9932300CFE60E /* icon_128x128@2x.png */; };
 		6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */ = {isa = PBXBuildFile; fileRef = 6841F28A1AF9932300CFE60E /* project.pbxproj */; };
@@ -182,7 +181,6 @@
 		6841F2791AF9902B00CFE60E /* XcodeCapp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XcodeCapp-Prefix.pch"; sourceTree = "<group>"; };
 		6841F27A1AF990C300CFE60E /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		6841F27B1AF990C300CFE60E /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
-		6841F27F1AF9932300CFE60E /* help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = help.pdf; sourceTree = "<group>"; };
 		6841F2881AF9932300CFE60E /* icon_128x128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_128x128.png; sourceTree = "<group>"; };
 		6841F2891AF9932300CFE60E /* icon_128x128@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_128x128@2x.png"; sourceTree = "<group>"; };
 		6841F28A1AF9932300CFE60E /* project.pbxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.pbxproject; path = project.pbxproj; sourceTree = "<group>"; };
@@ -403,7 +401,6 @@
 				0247DCC21B17DDDD00192FEF /* run.png */,
 				0247DCC31B17DDDD00192FEF /* stop.png */,
 				0247DCC01B17DDC400192FEF /* open-in-editor.png */,
-				6841F27F1AF9932300CFE60E /* help.pdf */,
 				6841F2881AF9932300CFE60E /* icon_128x128.png */,
 				6841F2891AF9932300CFE60E /* icon_128x128@2x.png */,
 				6841F28A1AF9932300CFE60E /* project.pbxproj */,
@@ -547,7 +544,6 @@
 				0255B8551B1F7983000CA4BC /* status-icon-inactive.png in Resources */,
 				025800471B1E58A00000EB7D /* Icon.icns in Resources */,
 				6841F2461AF98CE600CFE60E /* Images.xcassets in Resources */,
-				6841F29A1AF9932300CFE60E /* help.pdf in Resources */,
 				0255B8541B1F7983000CA4BC /* status-icon-error@2x.png in Resources */,
 				021B94671B20D1F800F12DDA /* OperationsView.xib in Resources */,
 				025800571B1E91AF0000EB7D /* open-in-finder-white.png in Resources */,
