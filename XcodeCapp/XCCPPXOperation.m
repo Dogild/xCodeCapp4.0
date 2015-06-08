@@ -113,7 +113,7 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
         [self dispatchNotificationName:XCCPBXOperationDidEndNotification];
     }
 
-	DDLogVerbose(@"Pbx creation ended: %@", self.cappuccinoProject.projectPath)
+    DDLogVerbose(@"Pbx creation ended: %@", self.cappuccinoProject.projectPath);
 }
 
 @end
