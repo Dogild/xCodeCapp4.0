@@ -20,7 +20,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 #pragma mark - Initialization
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
+- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath
 {
     if (self = [super initWithCappuccinoProject:aCappuccinoProject taskLauncher:aTaskLauncher])
     {
@@ -35,7 +35,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 #pragma mark - Utilities
 
-- (NSArray*)_findSourceFilesAtProjectPath:(NSString *)aProjectPath
+- (NSArray *)_findSourceFilesAtProjectPath:(NSString *)aProjectPath
 {
     if (self.isCancelled)
         return @[];
@@ -43,7 +43,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     NSError         *error          = NULL;
     NSString        *projectPath    = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:aProjectPath];
     NSFileManager   *fm             = [NSFileManager defaultManager];
-    NSMutableArray  *sourcePaths    = [NSMutableArray array];
+    NSMutableArray  *sourcePaths    = [@[] mutableCopy];
     
     NSArray *urls = [fm contentsOfDirectoryAtURL:[NSURL fileURLWithPath:projectPath.stringByResolvingSymlinksInPath]
                       includingPropertiesForKeys:@[NSURLIsDirectoryKey, NSURLIsSymbolicLinkKey]

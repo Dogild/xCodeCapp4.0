@@ -35,14 +35,14 @@
 @property XCCMainController     *mainXcodeCappController;
 
 
-- (id)initWithPath:(NSString*)aPath controller:(id)aController;
+- (instancetype)initWithPath:(NSString*)aPath controller:(id)aController NS_DESIGNATED_INITIALIZER;
 - (void)reinitializeProjectFromSettings;
 - (void)applicationIsClosing;
 - (void)cleanUpBeforeDeletion;
 - (void)operationDidStart:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 - (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 - (void)launchEditorForPath:(NSString*)path line:(NSInteger)line;
-- (NSArray*)projectRelatedOperations;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *projectRelatedOperations;
 ;
 - (IBAction)cancelAllOperations:(id)aSender;
 - (IBAction)resetProject:(id)aSender;

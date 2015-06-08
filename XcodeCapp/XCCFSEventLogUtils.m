@@ -24,7 +24,7 @@
     BOOL isDir = (flags & kFSEventStreamEventFlagItemIsDir) != 0;
     BOOL isSymlink = (flags & kFSEventStreamEventFlagItemIsSymlink) != 0;
     
-    NSMutableArray *flagNames = [NSMutableArray new];
+    NSMutableArray *flagNames = [@[] mutableCopy];
     
     if (created)
         [flagNames addObject:@"created"];

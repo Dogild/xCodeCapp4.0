@@ -142,12 +142,12 @@
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    return ((XCCPath *)[self.cappuccinoProjectController.cappuccinoProject.binaryPaths objectAtIndex:row]).name;
+    return ((XCCPath *)(self.cappuccinoProjectController.cappuccinoProject.binaryPaths)[row]).name;
 }
 
 - (void)tableView:(NSTableView *)tableView setObjectValue:(id)value forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    ((XCCPath *)[self.cappuccinoProjectController.cappuccinoProject.binaryPaths objectAtIndex:row]).name = value;
+    ((XCCPath *)(self.cappuccinoProjectController.cappuccinoProject.binaryPaths)[row]).name = value;
 
     [self.cappuccinoProjectController reinitializeProjectFromSettings];
 }

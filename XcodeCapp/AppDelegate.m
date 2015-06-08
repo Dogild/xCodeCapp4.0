@@ -19,7 +19,7 @@
 {
     NSDictionary *appDefaults = @{
                                 XCCUserDefaultsAutoOpenXcodeProject: @YES,
-                                XCCUserDefaultsLogLevel: [NSNumber numberWithInt:LOG_LEVEL_WARN],
+                                XCCUserDefaultsLogLevel: @LOG_LEVEL_WARN,
                                 XCCUserDefaultsMaxNumberOfConcurrentOperations: @20
                                 };
 
@@ -94,7 +94,7 @@
 {
     if (object == [NSUserDefaults standardUserDefaults] && [keyPath isEqualToString:XCCUserDefaultsMaxNumberOfConcurrentOperations])
     {
-        [self.mainOperationQueue setMaxConcurrentOperationCount:[[change objectForKey:NSKeyValueChangeNewKey] intValue]];
+        [self.mainOperationQueue setMaxConcurrentOperationCount:[change[NSKeyValueChangeNewKey] intValue]];
     }
     else
     {

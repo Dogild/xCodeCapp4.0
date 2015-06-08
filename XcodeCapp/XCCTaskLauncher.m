@@ -10,7 +10,7 @@
 
 @implementation XCCTaskLauncher
 
-- (id)init
+- (instancetype)init
 {
     if (self = [self initWithEnvironementPaths:@[]])
     {
@@ -20,7 +20,7 @@
     return self;
 }
 
-- (id)initWithEnvironementPaths:(NSArray*)environementPaths
+- (instancetype)initWithEnvironementPaths:(NSArray*)environementPaths
 {
     if (self = [super init])
     {
@@ -53,9 +53,9 @@
         
         // This is used to get the env var of $CAPP_BUILD
         NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
-        NSArray *arguments = [NSArray arrayWithObjects:@"-l", @"-c", @"echo $CAPP_BUILD", nil];
+        NSArray *arguments = @[@"-l", @"-c", @"echo $CAPP_BUILD"];
         
-        NSDictionary *taskResult = [self runTaskWithCommand:[processEnvironment objectForKey:@"SHELL"]
+        NSDictionary *taskResult = [self runTaskWithCommand:processEnvironment[@"SHELL"]
                                                   arguments:arguments
                                                  returnType:kTaskReturnTypeStdOut];
         
@@ -76,12 +76,12 @@
 
 - (BOOL)executablesAreAccessible
 {
-    NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
-    NSMutableArray *arguments = [NSMutableArray array];
+    NSDictionary    *processEnvironment = [[NSProcessInfo processInfo] environment];
+    NSMutableArray  *arguments          = [@[] mutableCopy];
     
     [arguments addObject:[[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"supawhich"]];
     [arguments addObjectsFromArray:self.executables];
-    NSDictionary *taskResult = [self runTaskWithCommand:[processEnvironment objectForKey:@"SHELL"]
+    NSDictionary *taskResult = [self runTaskWithCommand:processEnvironment[@"SHELL"]
                                               arguments:arguments
                                              returnType:kTaskReturnTypeStdOut];
     
@@ -190,7 +190,7 @@
             data = [[aTask.standardError fileHandleForReading] availableData];
         
         NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSNumber *status = [NSNumber numberWithInt:aTask.terminationStatus];
+        NSNumber *status = @(aTask.terminationStatus);
         
         return @{ @"status":status, @"response":response };
     }
@@ -237,7 +237,7 @@
     
     DDLogVerbose(@"Task exited: %@:%d", launchPath, task.terminationStatus);
     
-    NSNumber *status = [NSNumber numberWithInt:task.terminationStatus];
+    NSNumber *status = @(task.terminationStatus);
     NSData *data = nil;
     
     if ([status intValue] == 0)
@@ -255,7 +255,7 @@
 
 -(void)jakeReceivedData:(NSNotification*)notification
 {
-    NSData *data     = [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem];
+    NSData *data     = [notification userInfo][NSFileHandleNotificationDataItem];
     NSString *string = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     
     DDLogVerbose(@"Jake receive data\n %@", string);
@@ -265,7 +265,7 @@
 
 -(void)jakeReceivedError:(NSNotification*)notification
 {
-    NSData *data     = [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem];
+    NSData *data     = [notification userInfo][NSFileHandleNotificationDataItem];
     NSString *string = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     
     DDLogVerbose(@"Jake receive error\%@", string);

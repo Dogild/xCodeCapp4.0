@@ -36,6 +36,6 @@ extern NSString * const XCCNib2CibDidGenerateErrorNotification;
 @property NSString  *sourcePath;
 
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath;
+- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath NS_DESIGNATED_INITIALIZER;
 
 @end

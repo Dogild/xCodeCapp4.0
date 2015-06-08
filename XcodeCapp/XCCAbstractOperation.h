@@ -20,9 +20,9 @@
 @property NSString              *operationDescription;
 @property XCCCappuccinoProject  *cappuccinoProject;
 
-- (id)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher;
+- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)aCappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher NS_DESIGNATED_INITIALIZER;
 - (void)dispatchNotificationName:(NSString *)notificationName userInfo:(id)userInfo;
 - (void)dispatchNotificationName:(NSString *)notificationName;
-- (NSMutableDictionary *)operationInformations;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSMutableDictionary *operationInformations;
 
 @end

@@ -12,6 +12,6 @@
 
 @property NSString *name;
 
-- (instancetype)initWithName:(NSString*)aName;
+- (instancetype)initWithName:(NSString*)aName NS_DESIGNATED_INITIALIZER;
 
 @end

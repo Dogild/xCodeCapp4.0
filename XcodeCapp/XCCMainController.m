@@ -84,8 +84,8 @@
         
         self->projectViewContainer.hidden = YES;
         
-        self->maskingView.frame = [[[self->splitView subviews] objectAtIndex:1] bounds];
-        [[[self->splitView subviews] objectAtIndex:1] addSubview:self->maskingView positioned:NSWindowAbove relativeTo:nil];
+        self->maskingView.frame = [[self->splitView subviews][1] bounds];
+        [[self->splitView subviews][1] addSubview:self->maskingView positioned:NSWindowAbove relativeTo:nil];
     }
     else
     {
@@ -150,11 +150,11 @@
 - (void)_restoreManagedProjects
 {
     DDLogVerbose(@"restore managed projects");
-    self.cappuccinoProjectControllers = [NSMutableArray new];
+    self.cappuccinoProjectControllers = [@[] mutableCopy];
     
     NSArray         *projectHistory  = [[NSUserDefaults standardUserDefaults] arrayForKey:XCCUserDefaultsManagedProjects];
     NSFileManager   *fm              = [NSFileManager defaultManager];
-    NSMutableArray  *missingProjects = [NSMutableArray new];
+    NSMutableArray  *missingProjects = [@[] mutableCopy];
     
     for (NSString *path in projectHistory)
     {
@@ -206,7 +206,7 @@
 
 - (void)_saveManagedProjectsToUserDefaults
 {
-    NSMutableArray *historyProjectPaths = [NSMutableArray array];
+    NSMutableArray *historyProjectPaths = [@[] mutableCopy];
 
     for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         [historyProjectPaths addObject:controller.cappuccinoProject.projectPath];
@@ -291,7 +291,6 @@
 - (IBAction)cleanAllErrors:(id)aSender
 {
     [self.cappuccinoProjectControllers makeObjectsPerformSelector:@selector(cleanProjectErrors:) withObject:self];
-    [self reloadTotalNumberOfErrors];
 }
 
 - (IBAction)addProject:(id)aSender
@@ -317,7 +316,7 @@
     if (selectedCappuccinoProject == -1)
         return;
     
-    [self unmanageCappuccinoProjectController:[self.cappuccinoProjectControllers objectAtIndex:selectedCappuccinoProject]];
+    [self unmanageCappuccinoProjectController:(self.cappuccinoProjectControllers)[selectedCappuccinoProject]];
 }
 
 - (IBAction)updateSelectedTab:(NSButton *)sender
@@ -368,7 +367,7 @@
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     XCCCappuccinoProjectControllerDataView  *dataView                    = [tableView makeViewWithIdentifier:@"MainCell" owner:nil];
-    XCCCappuccinoProjectController          *cappuccinoProjectController = [self.cappuccinoProjectControllers objectAtIndex:row];
+    XCCCappuccinoProjectController          *cappuccinoProjectController = (self.cappuccinoProjectControllers)[row];
     
     dataView.controller = cappuccinoProjectController;
     
@@ -379,7 +378,7 @@
 {
     NSInteger selectedIndex = [self->projectTableView selectedRow];
 
-    self.currentCappuccinoProjectController                     = (selectedIndex == -1) ? nil : [self.cappuccinoProjectControllers objectAtIndex:selectedIndex];
+    self.currentCappuccinoProjectController                     = (selectedIndex == -1) ? nil : (self.cappuccinoProjectControllers)[selectedIndex];
 
     self.operationsViewController.cappuccinoProjectController   = self.currentCappuccinoProjectController;
     self.errorsViewController.cappuccinoProjectController       = self.currentCappuccinoProjectController;
@@ -398,7 +397,7 @@
 - (BOOL)tableView:(NSTableView *)tableView writeRowsWithIndexes:(NSIndexSet *)rowsIndexes toPasteboard:(NSPasteboard*)pasteboard
 {
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rowsIndexes];
-    [pasteboard declareTypes:[NSArray arrayWithObject:@"projects"] owner:self];
+    [pasteboard declareTypes:@[@"projects"] owner:self];
     [pasteboard setData:data forType:@"projects"];
     
     return YES;

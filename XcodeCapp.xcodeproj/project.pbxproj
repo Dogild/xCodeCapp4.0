@@ -14,33 +14,11 @@
 		021B94701B20E31F00F12DDA /* XCCSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B946E1B20E31F00F12DDA /* XCCSettingsViewController.m */; };
 		021B94711B20E31F00F12DDA /* SettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 021B946F1B20E31F00F12DDA /* SettingsView.xib */; };
 		021B94751B21112500F12DDA /* XCCWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B94741B21112500F12DDA /* XCCWelcomeView.m */; };
-		0247DCC11B17DDC400192FEF /* open-in-editor.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC01B17DDC400192FEF /* open-in-editor.png */; };
-		0247DCC41B17DDDD00192FEF /* run.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC21B17DDDD00192FEF /* run.png */; };
-		0247DCC51B17DDDD00192FEF /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC31B17DDDD00192FEF /* stop.png */; };
-		0247DCC71B17DF2400192FEF /* resync.png in Resources */ = {isa = PBXBuildFile; fileRef = 0247DCC61B17DF2400192FEF /* resync.png */; };
 		0255B8401B1F71FB000CA4BC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0255B83F1B1F71FB000CA4BC /* AppDelegate.m */; };
-		0255B8531B1F7983000CA4BC /* status-icon-error.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B84D1B1F7983000CA4BC /* status-icon-error.png */; };
-		0255B8541B1F7983000CA4BC /* status-icon-error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B84E1B1F7983000CA4BC /* status-icon-error@2x.png */; };
-		0255B8551B1F7983000CA4BC /* status-icon-inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B84F1B1F7983000CA4BC /* status-icon-inactive.png */; };
-		0255B8561B1F7983000CA4BC /* status-icon-inactive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B8501B1F7983000CA4BC /* status-icon-inactive@2x.png */; };
-		0255B8571B1F7983000CA4BC /* status-icon-working.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B8511B1F7983000CA4BC /* status-icon-working.png */; };
-		0255B8581B1F7983000CA4BC /* status-icon-working@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0255B8521B1F7983000CA4BC /* status-icon-working@2x.png */; };
 		0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */; };
-		0258003F1B1E29620000EB7D /* open-in-finder.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258003D1B1E29620000EB7D /* open-in-finder.png */; };
-		025800401B1E29620000EB7D /* open-in-xcode.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258003E1B1E29620000EB7D /* open-in-xcode.png */; };
-		025800421B1E30DD0000EB7D /* open-in-terminal.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800411B1E30DD0000EB7D /* open-in-terminal.png */; };
 		025800451B1E3F010000EB7D /* XCCAbstractOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 025800441B1E3F010000EB7D /* XCCAbstractOperation.m */; };
-		025800471B1E58A00000EB7D /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 025800461B1E58A00000EB7D /* Icon.icns */; };
-		025800491B1E58DF0000EB7D /* icon_512x512.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800481B1E58DF0000EB7D /* icon_512x512.png */; };
 		0258004B1B1E67090000EB7D /* supawhich in Resources */ = {isa = PBXBuildFile; fileRef = 0258004A1B1E67090000EB7D /* supawhich */; };
 		0258004C1B1E67770000EB7D /* supawhich in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0258004A1B1E67090000EB7D /* supawhich */; };
-		025800571B1E91AF0000EB7D /* open-in-finder-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800511B1E91AF0000EB7D /* open-in-finder-white.png */; };
-		025800581B1E91AF0000EB7D /* open-in-terminal-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800521B1E91AF0000EB7D /* open-in-terminal-white.png */; };
-		025800591B1E91AF0000EB7D /* open-in-xcode-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800531B1E91AF0000EB7D /* open-in-xcode-white.png */; };
-		0258005A1B1E91AF0000EB7D /* resync-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800541B1E91AF0000EB7D /* resync-white.png */; };
-		0258005B1B1E91AF0000EB7D /* run-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800551B1E91AF0000EB7D /* run-white.png */; };
-		0258005C1B1E91AF0000EB7D /* stop-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 025800561B1E91AF0000EB7D /* stop-white.png */; };
-		0258005E1B1E937E0000EB7D /* open-in-editor-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 0258005D1B1E937E0000EB7D /* open-in-editor-white.png */; };
 		027539111B227D7500F6D824 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */; };
 		680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
@@ -61,8 +39,6 @@
 		6841F2781AF98FA300CFE60E /* DDLogLevel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2771AF98FA300CFE60E /* DDLogLevel.m */; };
 		6841F27C1AF990C300CFE60E /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27A1AF990C300CFE60E /* Debug.xcconfig */; };
 		6841F27D1AF990C300CFE60E /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6841F27B1AF990C300CFE60E /* Release.xcconfig */; };
-		6841F2A31AF9932300CFE60E /* icon_128x128.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2881AF9932300CFE60E /* icon_128x128.png */; };
-		6841F2A41AF9932300CFE60E /* icon_128x128@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2891AF9932300CFE60E /* icon_128x128@2x.png */; };
 		6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */ = {isa = PBXBuildFile; fileRef = 6841F28A1AF9932300CFE60E /* project.pbxproj */; };
 		6841F2B71AFA83D500CFE60E /* XCCUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2B61AFA83D500CFE60E /* XCCUserDefaults.m */; };
 		6841F2BF1AFA965300CFE60E /* XCCTaskLauncher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2BE1AFA965300CFE60E /* XCCTaskLauncher.m */; };
@@ -114,34 +90,12 @@
 		021B946F1B20E31F00F12DDA /* SettingsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsView.xib; sourceTree = "<group>"; };
 		021B94731B21112500F12DDA /* XCCWelcomeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCWelcomeView.h; sourceTree = "<group>"; };
 		021B94741B21112500F12DDA /* XCCWelcomeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCWelcomeView.m; sourceTree = "<group>"; };
-		0247DCC01B17DDC400192FEF /* open-in-editor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-editor.png"; sourceTree = "<group>"; };
-		0247DCC21B17DDDD00192FEF /* run.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = run.png; sourceTree = "<group>"; };
-		0247DCC31B17DDDD00192FEF /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
-		0247DCC61B17DF2400192FEF /* resync.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = resync.png; sourceTree = "<group>"; };
 		0255B83F1B1F71FB000CA4BC /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		0255B84D1B1F7983000CA4BC /* status-icon-error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-error.png"; sourceTree = "<group>"; };
-		0255B84E1B1F7983000CA4BC /* status-icon-error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-error@2x.png"; sourceTree = "<group>"; };
-		0255B84F1B1F7983000CA4BC /* status-icon-inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-inactive.png"; sourceTree = "<group>"; };
-		0255B8501B1F7983000CA4BC /* status-icon-inactive@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-inactive@2x.png"; sourceTree = "<group>"; };
-		0255B8511B1F7983000CA4BC /* status-icon-working.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-working.png"; sourceTree = "<group>"; };
-		0255B8521B1F7983000CA4BC /* status-icon-working@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-icon-working@2x.png"; sourceTree = "<group>"; };
 		0258003A1B1E1C470000EB7D /* NSMutableArray+moveIndexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+moveIndexes.h"; sourceTree = "<group>"; };
 		0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+moveIndexes.m"; sourceTree = "<group>"; };
-		0258003D1B1E29620000EB7D /* open-in-finder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-finder.png"; sourceTree = "<group>"; };
-		0258003E1B1E29620000EB7D /* open-in-xcode.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-xcode.png"; sourceTree = "<group>"; };
-		025800411B1E30DD0000EB7D /* open-in-terminal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-terminal.png"; sourceTree = "<group>"; };
 		025800431B1E3F010000EB7D /* XCCAbstractOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCAbstractOperation.h; sourceTree = "<group>"; };
 		025800441B1E3F010000EB7D /* XCCAbstractOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCAbstractOperation.m; sourceTree = "<group>"; };
-		025800461B1E58A00000EB7D /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
-		025800481B1E58DF0000EB7D /* icon_512x512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_512x512.png; sourceTree = "<group>"; };
 		0258004A1B1E67090000EB7D /* supawhich */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = supawhich; sourceTree = "<group>"; };
-		025800511B1E91AF0000EB7D /* open-in-finder-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-finder-white.png"; sourceTree = "<group>"; };
-		025800521B1E91AF0000EB7D /* open-in-terminal-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-terminal-white.png"; sourceTree = "<group>"; };
-		025800531B1E91AF0000EB7D /* open-in-xcode-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-xcode-white.png"; sourceTree = "<group>"; };
-		025800541B1E91AF0000EB7D /* resync-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "resync-white.png"; sourceTree = "<group>"; };
-		025800551B1E91AF0000EB7D /* run-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "run-white.png"; sourceTree = "<group>"; };
-		025800561B1E91AF0000EB7D /* stop-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop-white.png"; sourceTree = "<group>"; };
-		0258005D1B1E937E0000EB7D /* open-in-editor-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "open-in-editor-white.png"; sourceTree = "<group>"; };
 		0275390F1B227D7500F6D824 /* YRKSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRKSpinningProgressIndicator.h; sourceTree = "<group>"; };
 		027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRKSpinningProgressIndicator.m; sourceTree = "<group>"; };
 		680621171B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCCappuccinoProjectControllerDataView.h; sourceTree = "<group>"; };
@@ -181,8 +135,6 @@
 		6841F2791AF9902B00CFE60E /* XcodeCapp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XcodeCapp-Prefix.pch"; sourceTree = "<group>"; };
 		6841F27A1AF990C300CFE60E /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		6841F27B1AF990C300CFE60E /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
-		6841F2881AF9932300CFE60E /* icon_128x128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_128x128.png; sourceTree = "<group>"; };
-		6841F2891AF9932300CFE60E /* icon_128x128@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_128x128@2x.png"; sourceTree = "<group>"; };
 		6841F28A1AF9932300CFE60E /* project.pbxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.pbxproject; path = project.pbxproj; sourceTree = "<group>"; };
 		6841F2B61AFA83D500CFE60E /* XCCUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCCUserDefaults.m; sourceTree = "<group>"; };
 		6841F2B81AFA83E900CFE60E /* XCCUserDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCCUserDefaults.h; sourceTree = "<group>"; };
@@ -307,10 +259,8 @@
 		6841F23D1AF98CE600CFE60E /* XcodeCapp */ = {
 			isa = PBXGroup;
 			children = (
-				0275390D1B227D5900F6D824 /* Externals */,
 				6841F2401AF98CE600CFE60E /* AppDelegate.h */,
 				0255B83F1B1F71FB000CA4BC /* AppDelegate.m */,
-				021B94721B20E41B00F12DDA /* XIBs */,
 				6824CDDB1B0D976400F73447 /* Controllers */,
 				68F3B95A1B0CFBCF00A7EF70 /* Models */,
 				680621161B015BDB00CB24CD /* Views */,
@@ -318,7 +268,9 @@
 				6841F2C01AFABD0900CFE60E /* Utils */,
 				6841F2681AF98DDD00CFE60E /* Scripts */,
 				6841F23E1AF98CE600CFE60E /* Supporting Files */,
+				021B94721B20E41B00F12DDA /* XIBs */,
 				6841F27E1AF9932300CFE60E /* Resources */,
+				0275390D1B227D5900F6D824 /* Externals */,
 			);
 			path = XcodeCapp;
 			sourceTree = "<group>";
@@ -378,31 +330,7 @@
 		6841F27E1AF9932300CFE60E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0255B84D1B1F7983000CA4BC /* status-icon-error.png */,
-				0255B84E1B1F7983000CA4BC /* status-icon-error@2x.png */,
-				0255B84F1B1F7983000CA4BC /* status-icon-inactive.png */,
-				0255B8501B1F7983000CA4BC /* status-icon-inactive@2x.png */,
-				0255B8511B1F7983000CA4BC /* status-icon-working.png */,
 				6841F2451AF98CE600CFE60E /* Images.xcassets */,
-				0255B8521B1F7983000CA4BC /* status-icon-working@2x.png */,
-				0258005D1B1E937E0000EB7D /* open-in-editor-white.png */,
-				025800511B1E91AF0000EB7D /* open-in-finder-white.png */,
-				025800521B1E91AF0000EB7D /* open-in-terminal-white.png */,
-				025800531B1E91AF0000EB7D /* open-in-xcode-white.png */,
-				025800541B1E91AF0000EB7D /* resync-white.png */,
-				025800551B1E91AF0000EB7D /* run-white.png */,
-				025800561B1E91AF0000EB7D /* stop-white.png */,
-				025800481B1E58DF0000EB7D /* icon_512x512.png */,
-				025800461B1E58A00000EB7D /* Icon.icns */,
-				025800411B1E30DD0000EB7D /* open-in-terminal.png */,
-				0258003D1B1E29620000EB7D /* open-in-finder.png */,
-				0258003E1B1E29620000EB7D /* open-in-xcode.png */,
-				0247DCC61B17DF2400192FEF /* resync.png */,
-				0247DCC21B17DDDD00192FEF /* run.png */,
-				0247DCC31B17DDDD00192FEF /* stop.png */,
-				0247DCC01B17DDC400192FEF /* open-in-editor.png */,
-				6841F2881AF9932300CFE60E /* icon_128x128.png */,
-				6841F2891AF9932300CFE60E /* icon_128x128@2x.png */,
 				6841F28A1AF9932300CFE60E /* project.pbxproj */,
 			);
 			path = Resources;
@@ -537,41 +465,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0258005E1B1E937E0000EB7D /* open-in-editor-white.png in Resources */,
-				0247DCC11B17DDC400192FEF /* open-in-editor.png in Resources */,
-				0258003F1B1E29620000EB7D /* open-in-finder.png in Resources */,
-				6841F2A31AF9932300CFE60E /* icon_128x128.png in Resources */,
-				0255B8551B1F7983000CA4BC /* status-icon-inactive.png in Resources */,
-				025800471B1E58A00000EB7D /* Icon.icns in Resources */,
 				6841F2461AF98CE600CFE60E /* Images.xcassets in Resources */,
-				0255B8541B1F7983000CA4BC /* status-icon-error@2x.png in Resources */,
 				021B94671B20D1F800F12DDA /* OperationsView.xib in Resources */,
-				025800571B1E91AF0000EB7D /* open-in-finder-white.png in Resources */,
 				021B94711B20E31F00F12DDA /* SettingsView.xib in Resources */,
-				025800421B1E30DD0000EB7D /* open-in-terminal.png in Resources */,
-				0258005B1B1E91AF0000EB7D /* run-white.png in Resources */,
 				0258004B1B1E67090000EB7D /* supawhich in Resources */,
 				6841F27C1AF990C300CFE60E /* Debug.xcconfig in Resources */,
 				6841F26E1AF98DDD00CFE60E /* pbxprojModifier.py in Resources */,
-				0255B8561B1F7983000CA4BC /* status-icon-inactive@2x.png in Resources */,
-				0255B8531B1F7983000CA4BC /* status-icon-error.png in Resources */,
-				0247DCC41B17DDDD00192FEF /* run.png in Resources */,
-				0247DCC51B17DDDD00192FEF /* stop.png in Resources */,
-				6841F2A41AF9932300CFE60E /* icon_128x128@2x.png in Resources */,
-				025800401B1E29620000EB7D /* open-in-xcode.png in Resources */,
-				0258005C1B1E91AF0000EB7D /* stop-white.png in Resources */,
-				025800491B1E58DF0000EB7D /* icon_512x512.png in Resources */,
 				6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */,
-				0255B8571B1F7983000CA4BC /* status-icon-working.png in Resources */,
-				025800581B1E91AF0000EB7D /* open-in-terminal-white.png in Resources */,
-				025800591B1E91AF0000EB7D /* open-in-xcode-white.png in Resources */,
 				6841F2491AF98CE600CFE60E /* MainMenu.xib in Resources */,
 				6841F27D1AF990C300CFE60E /* Release.xcconfig in Resources */,
-				0247DCC71B17DF2400192FEF /* resync.png in Resources */,
 				6841F26C1AF98DDD00CFE60E /* mod_pbxproj.py in Resources */,
-				0255B8581B1F7983000CA4BC /* status-icon-working@2x.png in Resources */,
 				021B94691B20D6FC00F12DDA /* ErrorsView.xib in Resources */,
-				0258005A1B1E91AF0000EB7D /* resync-white.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -736,6 +640,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = XcodeCapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -748,6 +653,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = XcodeCapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";

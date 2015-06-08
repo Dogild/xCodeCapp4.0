@@ -8,14 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-enum {
-    XCCDefaultOperationErrorType            = 0,
-    XCCCappLintOperationErrorType           = 1,
-    XCCObjjOperationErrorType               = 2,
-    XCCObjj2ObjcSkeletonOperationErrorType  = 3,
-    XCCNib2CibOperationErrorType            = 4,
+typedef NS_ENUM(NSInteger, XCCOperationErrorType)
+{
+    XCCDefaultOperationErrorType,
+    XCCCappLintOperationErrorType,
+    XCCObjjOperationErrorType,
+    XCCObjj2ObjcSkeletonOperationErrorType,
+    XCCNib2CibOperationErrorType
 };
-typedef int XCCOperationErrorType;
 
 
 @interface XCCOperationError : NSObject
