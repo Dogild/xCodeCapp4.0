@@ -15,7 +15,7 @@ static NSArray * XCCDefaultBinaryPaths;
 static NSDictionary* XCCCappuccinoProjectDefaultSettings;
 
 // we replace the "/" by a weird unicode "/" in order to generate file names with "/" in .XcodeSupport. very clear huh?
-static NSString * const XCCSlashReplacement                 = @"∕";  // DIVISION SLASH, Unicode: U+2215
+static NSString * const XCCSlashReplacement                 = @"-[sub]-";  // DIVISION SLASH, Unicode: U+2215
 
 static NSPredicate * XCCDirectoriesToIgnorePredicate = nil;
 static NSString * const XCCDirectoriesToIgnorePattern = @"^(?:Build|F(?:rameworks|oundation)|AppKit|Objective-J|(?:Browser|CommonJS)\\.environment|Resources|XcodeSupport|.+\\.xcodeproj)$";
