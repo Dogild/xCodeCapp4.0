@@ -283,6 +283,11 @@
     [self willChangeValueForKey:@"totalNumberOfErrors"];
     self.totalNumberOfErrors = totalErrors;
     [self didChangeValueForKey:@"totalNumberOfErrors"];
+
+    if (self.totalNumberOfErrors)
+        [[[NSApplication sharedApplication] dockTile] setBadgeLabel:@(self.totalNumberOfErrors).description];
+    else
+        [[[NSApplication sharedApplication] dockTile] setBadgeLabel:nil];
 }
 
 

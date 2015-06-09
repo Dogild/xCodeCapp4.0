@@ -319,7 +319,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _updateOperationsProgress];
 }
 
-
 - (void)_updateXcodeSupportFilesWithRenamedDirectories:(NSArray *)directories
 {
     DDLogVerbose(@"Renamed directories: %@", directories);
@@ -769,7 +768,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     UInt64 lastEventID = FSEventStreamGetLatestEventId(self->stream);
 
     if (lastEventID != 0 && lastEventID != UINT64_MAX)
+    {
         self.cappuccinoProject.lastEventID = @(lastEventID);
+        [self.cappuccinoProject saveSettings];
+    }
 
     FSEventStreamStop(self->stream);
     FSEventStreamUnscheduleFromRunLoop(self->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
@@ -1039,7 +1041,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)applicationIsClosing
 {
-    [self.cappuccinoProject saveSettings];
+    [self _stopFSEventStream];
 }
 
 - (void)cleanUpBeforeDeletion
