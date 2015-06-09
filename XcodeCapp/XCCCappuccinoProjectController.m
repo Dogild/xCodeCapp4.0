@@ -276,7 +276,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                 [orphanFiles addObject:sourcePath];
         }
     }
-    
+
+    NSMutableArray *pathsToRemove = [@[] mutableCopy];
+
     for (NSString *sourcePath in orphanFiles)
     {
         NSString *shadowBasePath            = [self.cappuccinoProject shadowBasePathForProjectSourcePath:sourcePath];
@@ -287,19 +289,21 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [fm removeItemAtPath:shadowImplementationPath error:nil];
         
         [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:sourcePath errorType:XCCDefaultOperationErrorType];
-        [self.mainXcodeCappController.errorsViewController reload];
 
-        [self->pendingPBXOperation registerPathToRemoveFromPBX:sourcePath];
+        [pathsToRemove addObject:sourcePath];
     }
     
     [self.mainXcodeCappController.errorsViewController reload];
+
+    if (self->pendingPBXOperation)
+        [self->pendingPBXOperation registerPathsToRemoveFromPBX:pathsToRemove];
+    else
+        [self _schedulePBXOperationWithPathsToAdd:nil pathsToRemove:pathsToRemove];
+
 }
 
 - (void)_updateXcodeSupportFilesWithModifiedPaths:(NSArray *)modifiedPaths
 {
-    [self _schedulePBXOperation];
-    [self _removeXcodeSupportOrphanFiles];
-
     DDLogVerbose(@"Modified files: %@", modifiedPaths);
 
     for (NSString *path in modifiedPaths)
@@ -310,6 +314,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [self _scheduleSourceProcessingOperationForPath:path];
     }
 
+    [self _removeXcodeSupportOrphanFiles];
+
     [self _updateOperationsProgress];
 }
 
@@ -317,9 +323,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_updateXcodeSupportFilesWithRenamedDirectories:(NSArray *)directories
 {
     DDLogVerbose(@"Renamed directories: %@", directories);
-
-    [self _schedulePBXOperation];
-    [self _removeXcodeSupportOrphanFiles];
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -339,6 +342,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             }
         }
     }
+
+    [self _removeXcodeSupportOrphanFiles];
 }
 
 
@@ -420,8 +425,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     [self _schedulePBXOperation];
-
-    [self->pendingPBXOperation registerPathToAddInPBX:note.userInfo[@"sourcePath"]];
+    [self->pendingPBXOperation registerPathsToAddInPBX:@[note.userInfo[@"sourcePath"]]];
 
     [self operationDidStart:note.object type:note.name userInfo:note.userInfo];
 }
@@ -696,6 +700,11 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_schedulePBXOperation
 {
+    [self _schedulePBXOperationWithPathsToAdd:nil pathsToRemove:nil];
+}
+
+- (void)_schedulePBXOperationWithPathsToAdd:(NSArray *)pathsToAdd pathsToRemove:(NSArray *)pathsToRemove;
+{
     BOOL needsEnqueue = NO;
 
     if (!self->pendingPBXOperation)
@@ -703,6 +712,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         self->pendingPBXOperation = [[XCCPPXOperation alloc] initWithCappuccinoProject:self.cappuccinoProject taskLauncher:self->taskLauncher];
         needsEnqueue = YES;
     }
+
+    if (pathsToAdd)
+        [self->pendingPBXOperation registerPathsToAddInPBX:pathsToAdd];
+
+    if (pathsToRemove)
+        [self->pendingPBXOperation registerPathsToRemoveFromPBX:pathsToRemove];
 
     for (XCCSourceProcessingOperation *operation in [self projectRelatedSourceProcessingOperations])
         [self->pendingPBXOperation addDependency:operation];

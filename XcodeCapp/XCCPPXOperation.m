@@ -37,17 +37,20 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
 
 #pragma mark - PBX Operations
 
-- (void)registerPathToAddInPBX:(NSString *)path
+- (void)registerPathsToAddInPBX:(NSArray *)paths
 {
-    if (![XCCCappuccinoProject isObjjFile:path])
-        return;
+    NSMutableArray *finalPaths = [@[] mutableCopy];
 
-    [self->PBXOperations[@"add"] addObject:path];
+    for (NSString *path in paths)
+        if ([XCCCappuccinoProject isObjjFile:path])
+            [finalPaths addObject:path];
+
+    [self->PBXOperations[@"add"] addObjectsFromArray:finalPaths];
 }
 
-- (void)registerPathToRemoveFromPBX:(NSString *)path
+- (void)registerPathsToRemoveFromPBX:(NSArray *)paths
 {
-    [self->PBXOperations[@"remove"] addObject:path];
+    [self->PBXOperations[@"remove"] addObjectsFromArray:paths];
 }
 
 
@@ -84,6 +87,8 @@ NSString * const XCCPBXOperationDidEndNotification = @"XCCPbxCreationDidEndNotif
     
                 shouldLaunchTask = YES;
             }
+
+            DDLogVerbose(@"PBX: path to %@ : %@", action, paths);
         }
         
         if (shouldLaunchTask)

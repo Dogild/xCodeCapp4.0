@@ -423,6 +423,8 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     
     if ([fm fileExistsAtPath:self.XcodeCappIgnorePath])
         self.XcodeCappIgnoreContent = [NSString stringWithContentsOfFile:self.XcodeCappIgnorePath encoding:NSASCIIStringEncoding error:nil];
+    else
+        self.XcodeCappIgnoreContent = @""; //otherwise we prepare the xcc ignore with the default values
 }
 
 
