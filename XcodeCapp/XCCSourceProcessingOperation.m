@@ -77,9 +77,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 - (void)_postProcessingErrorNotificationName:(NSString *)notificationName error:(NSString *)errors
 {
-    if (self.isCancelled)
-        return;
-
     if (errors.length == 0)
         errors = @"An unspecified error occurred";
 
@@ -106,9 +103,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 - (void)launchObjj2ObjcSkeletonCommandForPath:(NSString*)aPath
 {
-    if (self.isCancelled)
-        return;
-    
     [self dispatchNotificationName:XCCObjj2ObjcSkeletonDidStartNotification];
 
     NSString        *targetName = [self.cappuccinoProject flattenedXcodeSupportFileNameForPath:aPath];
@@ -123,9 +117,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 - (void)launchNib2CibCommandForPath:(NSString*)aPath
 {
-    if (self.isCancelled)
-        return;
-
     [self dispatchNotificationName:XCCNib2CibDidStartNotification];
 
     NSArray         *arguments  = @[@"--no-colors", self.sourcePath];
@@ -139,9 +130,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 - (void)launchObjjCommandForPath:(NSString*)aPath
 {
-    if (self.isCancelled)
-        return;
-    
     [self dispatchNotificationName:XCCObjjDidStartNotification];
 
     NSArray         *arguments  = @[@"--xml", @"-I", [self.cappuccinoProject objjIncludePath], self.sourcePath];
@@ -154,10 +142,7 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 }
 
 - (void)launchCappLintCommandForPath:(NSString*)aPath
-{
-    if (self.isCancelled)
-        return;
-    
+{    
     [self dispatchNotificationName:XCCCappLintDidStartNotification];
 
     NSString        *baseDirectory  = [NSString stringWithFormat:@"--basedir='%@'", self.cappuccinoProject.projectPath];

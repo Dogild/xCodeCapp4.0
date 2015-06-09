@@ -37,9 +37,6 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
 
 - (NSArray *)_findSourceFilesAtProjectPath:(NSString *)aProjectPath
 {
-    if (self.isCancelled)
-        return @[];
-    
     NSError         *error          = NULL;
     NSString        *projectPath    = [self.cappuccinoProject.projectPath stringByAppendingPathComponent:aProjectPath];
     NSFileManager   *fm             = [NSFileManager defaultManager];
@@ -51,13 +48,10 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
                                            error:&error];
 
     if (!urls)
-        return @[];
+        return [@[] mutableCopy];
 
     for (NSURL *url in urls)
     {
-        if (self.isCancelled)
-            return @[];
-
         NSString    *filename               = url.lastPathComponent;
         NSString    *projectRelativePath    = [aProjectPath stringByAppendingPathComponent:filename];
         NSString    *realPath               = url.path;
@@ -136,7 +130,7 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
                 [sourcePaths addObject:projectSourcePath];
         }
     }
-    
+
     return sourcePaths;
 }
 
@@ -162,9 +156,10 @@ NSString * const XCCNeedSourceToProjectPathMappingNotification = @"XCCNeedSource
     @finally
     {
         __block XCCSourcesFinderOperation *weakOperation = self;
+        __block NSArray * weakSourcesPaths = sourcesPaths;
         
         self.completionBlock = ^{
-            [weakOperation dispatchNotificationName:XCCSourcesFinderOperationDidEndNotification userInfo:@{@"cappuccinoProject": weakOperation.cappuccinoProject, @"sourcePaths" : sourcesPaths}];
+            [weakOperation dispatchNotificationName:XCCSourcesFinderOperationDidEndNotification userInfo:@{@"cappuccinoProject": weakOperation.cappuccinoProject, @"sourcePaths" : weakSourcesPaths}];
         };
     }
     
