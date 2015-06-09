@@ -338,7 +338,7 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="224" y="158" width="806" height="589"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
-            <value key="minSize" type="size" width="806" height="710"/>
+            <value key="minSize" type="size" width="806" height="600"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="806" height="589"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -564,10 +564,10 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <box autoresizesSubviews="NO" borderWidth="0.0" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="SrB-rO-09w">
-                                                <rect key="frame" x="0.0" y="544" width="575" height="45"/>
+                                                <rect key="frame" x="0.0" y="543" width="575" height="46"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                 <view key="contentView">
-                                                    <rect key="frame" x="0.0" y="0.0" width="575" height="45"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="575" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="QMT-Ui-fxI">
@@ -578,7 +578,7 @@
                                                             <font key="titleFont" metaFont="system"/>
                                                         </box>
                                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="krM-95-waf">
-                                                            <rect key="frame" x="14" y="23" width="540" height="17"/>
+                                                            <rect key="frame" x="14" y="24" width="540" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" focusRingType="none" title="Project Name" id="ylH-C3-MHM">
                                                                 <font key="font" metaFont="system"/>
@@ -590,7 +590,7 @@
                                                             </connections>
                                                         </textField>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="0c3-NS-t4n">
-                                                            <rect key="frame" x="14" y="7" width="540" height="14"/>
+                                                            <rect key="frame" x="14" y="8" width="540" height="14"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                             <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="Project Path" id="NvI-dv-Vcf">
                                                                 <font key="font" metaFont="smallSystem"/>
@@ -607,7 +607,7 @@
                                                 <color key="fillColor" red="0.34509803921568627" green="0.34509803921568627" blue="0.34509803921568627" alpha="1" colorSpace="calibratedRGB"/>
                                             </box>
                                             <box autoresizesSubviews="NO" borderWidth="0.0" title="Box" boxType="custom" borderType="line" id="ic3-Xg-i5j">
-                                                <rect key="frame" x="0.0" y="518" width="559" height="26"/>
+                                                <rect key="frame" x="0.0" y="517" width="559" height="26"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                 <view key="contentView">
                                                     <rect key="frame" x="0.0" y="0.0" width="559" height="26"/>
@@ -674,7 +674,7 @@
                                                 <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             </box>
                                             <tabView drawsBackground="NO" type="noTabsNoBorder" id="00d-fn-q41">
-                                                <rect key="frame" x="0.0" y="0.0" width="559" height="518"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="559" height="517"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <font key="font" metaFont="system"/>
                                                 <tabViewItems/>
