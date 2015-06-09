@@ -55,6 +55,8 @@
     [self->projectTableView setAllowsEmptySelection:YES];
 
     [self->welcomeViewMask showLoading:NO];
+    
+    [NSUserNotificationCenter defaultUserNotificationCenter].delegate = self;
 
     [self _restoreManagedProjects];
     [self _restoreLastSelectedProject];
@@ -125,15 +127,22 @@
 {
     DDLogVerbose(@"Start : selecting last selected project");
     
-    NSUserDefaults  *defaults                = [NSUserDefaults standardUserDefaults];
-    NSString        *lastSelectedProjectPath = [defaults valueForKey:XCCUserDefaultsSelectedProjectPath];
+    NSString        *lastSelectedProjectPath = [[NSUserDefaults standardUserDefaults] valueForKey:XCCUserDefaultsSelectedProjectPath];
+    
+    [self _selectCappuccinoProjectControllerWithPath:lastSelectedProjectPath];
+    
+    DDLogVerbose(@"Stop : selecting last selected project");
+}
+
+- (void)_selectCappuccinoProjectControllerWithPath:(NSString*)aCappuccinoProjectPath
+{
     NSInteger       indexToSelect            = 0;
     
-    if ([lastSelectedProjectPath length])
+    if ([aCappuccinoProjectPath length])
     {
         for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
         {
-            if ([controller.cappuccinoProject.projectPath isEqualToString:lastSelectedProjectPath])
+            if ([controller.cappuccinoProject.projectPath isEqualToString:aCappuccinoProjectPath])
             {
                 indexToSelect = [self.cappuccinoProjectControllers indexOfObject:controller];
                 break;
@@ -142,9 +151,6 @@
         
         [self->projectTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:indexToSelect] byExtendingSelection:NO];
     }
-    
-    
-    DDLogVerbose(@"Stop : selecting last selected project");
 }
 
 - (void)_restoreManagedProjects
@@ -278,7 +284,7 @@
     int totalErrors = 0;
 
     for (XCCCappuccinoProjectController *controller in self.cappuccinoProjectControllers)
-        totalErrors += controller.cappuccinoProject.errors.count;
+        totalErrors += controller.errors.count;
 
     [self willChangeValueForKey:@"totalNumberOfErrors"];
     self.totalNumberOfErrors = totalErrors;
@@ -340,6 +346,18 @@
         [self->tabViewProject selectTabViewItemAtIndex:2];
 }
 
+
+#pragma mark - NSUserNotificationCenter delegate
+
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+{
+    NSDictionary *userInfo = [notification userInfo];
+    [center removeDeliveredNotification:notification];
+    
+    [self _selectCappuccinoProjectControllerWithPath:userInfo[@"cappuccinoProjectPath"]];
+    [self updateSelectedTab:self->buttonSelectErrorsTab];
+    [self.errorsViewController selectItem:userInfo[@"sourcePath"]];
+}
 
 
 #pragma mark - SplitView delegate

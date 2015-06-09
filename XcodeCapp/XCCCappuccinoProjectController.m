@@ -51,6 +51,8 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 @implementation XCCCappuccinoProjectController
 
+@synthesize numberOfErrors  = _numberOfErrors;
+
 #pragma mark - Init methods
 
 - (instancetype)initWithPath:(NSString*)aPath controller:(id)aController
@@ -74,6 +76,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     [self.cappuccinoProject reinitialize];
     [self _reinitializeOperationsCounters];
+    [self _reinitializeOperationErrors];
     [self _prepareXcodeSupport];
 }
 
@@ -288,7 +291,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         [fm removeItemAtPath:shadowHeaderPath error:nil];
         [fm removeItemAtPath:shadowImplementationPath error:nil];
         
-        [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:sourcePath errorType:XCCDefaultOperationErrorType];
+        [self removeOperationErrorsRelatedToSourcePath:sourcePath errorType:XCCDefaultOperationErrorType];
 
         [pathsToRemove addObject:sourcePath];
     }
@@ -469,7 +472,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjj2ObjcSkeletonOperationErrorType];
+    [self removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjj2ObjcSkeletonOperationErrorType];
 }
 
 - (void)_didReceiveObjj2ObjcSeleketonDidGenerateErrorNotification:(NSNotification *)note
@@ -478,7 +481,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     for (XCCOperationError *operationError in [XCCOperationError operationErrorsFromObjj2ObjcSkeletonInfo:note.userInfo])
-        [self.cappuccinoProject addOperationError:operationError];
+        [self addOperationError:operationError];
 }
 
 - (void)_didReceiveNib2CibDidStartNotifcation:(NSNotification *)note
@@ -486,7 +489,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCNib2CibOperationErrorType];
+    [self removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCNib2CibOperationErrorType];
 }
 
 - (void)_didReceiveNib2CibDidGenerateErrorNotification:(NSNotification *)note
@@ -494,7 +497,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self.cappuccinoProject addOperationError:[XCCOperationError operationErrorFromNib2CibInfo:note.userInfo]];
+    [self addOperationError:[XCCOperationError operationErrorFromNib2CibInfo:note.userInfo]];
 }
 
 - (void)_didReceiveObjjDidStartNotification:(NSNotification *)note
@@ -502,7 +505,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjjOperationErrorType];
+    [self removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCObjjOperationErrorType];
 }
 
 - (void)_didReceiveObjjDidGenerateErrorNotification:(NSNotification *)note
@@ -511,7 +514,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     for (XCCOperationError *operationError in [XCCOperationError operationErrorsFromObjjInfo:note.userInfo])
-        [self.cappuccinoProject addOperationError:operationError];
+        [self addOperationError:operationError];
 }
 
 - (void)_didReceiveCappLintDidStartNotification:(NSNotification *)note
@@ -519,7 +522,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
 
-    [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCCappLintOperationErrorType];
+    [self removeOperationErrorsRelatedToSourcePath:note.userInfo[@"sourcePath"] errorType:XCCCappLintOperationErrorType];
 }
 
 - (void)_didReceiveCappLintDidGenerateErrorNotification:(NSNotification *)note
@@ -528,7 +531,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
 
     for (XCCOperationError *operationError in [XCCOperationError operationErrorsFromCappLintInfo:note.userInfo])
-        [self.cappuccinoProject addOperationError:operationError];
+        [self addOperationError:operationError];
 }
 
 - (void)_didReceiveUpdatePbxFileDidStartNotification:(NSNotification*)note
@@ -545,6 +548,93 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         return;
     
     [self operationDidEnd:note.object type:note.name userInfo:note.userInfo];
+}
+
+
+#pragma mark - OperationError Management
+
+- (void)addOperationError:(XCCOperationError *)operationError
+{
+    if (!operationError.fileName)
+        operationError.fileName = @"/No Filename";
+    
+    [self willChangeValueForKey:@"errors"];
+    
+    if (!self.errors[operationError.fileName])
+        self.errors[operationError.fileName] = [@[] mutableCopy];
+    
+    [self.errors[operationError.fileName] addObject:operationError];
+    
+    [self didChangeValueForKey:@"errors"];
+    self.numberOfErrors++;
+    
+    [self _notifyUserWithOperationError:operationError];
+}
+
+- (void)removeOperationError:(XCCOperationError *)operationError
+{
+    if (!operationError.fileName)
+        operationError.fileName = @"/No Filename";
+    
+    [self willChangeValueForKey:@"errors"];
+    
+    [self.errors[operationError.fileName] removeObject:operationError];
+    
+    if (![self.errors[operationError.fileName] count])
+        [self.errors removeObjectForKey:operationError.fileName];
+    
+    [self didChangeValueForKey:@"errors"];
+    self.numberOfErrors--;
+}
+
+- (void)removeAllOperationErrors
+{
+    [self willChangeValueForKey:@"errors"];
+    [self.errors removeAllObjects];
+    [self didChangeValueForKey:@"errors"];
+    self.numberOfErrors = 0;
+}
+
+- (void)removeOperationErrorsRelatedToSourcePath:(NSString *)aPath errorType:(int)anErrorType
+{
+    NSMutableArray *errorsToRemove = [@[] mutableCopy];
+    
+    for (XCCOperationError *operationError in self.errors[aPath])
+        if ([operationError.fileName isEqualToString:aPath] && (operationError.errorType == anErrorType || anErrorType == XCCDefaultOperationErrorType))
+            [errorsToRemove addObject:operationError];
+    
+    for (XCCOperationError *error in errorsToRemove)
+        [self removeOperationError:error];
+}
+
+- (NSInteger)numberOfErrors
+{
+    return _numberOfErrors;
+}
+
+- (void)setNumberOfErrors:(NSInteger)numberOfErrors
+{
+    if (numberOfErrors == _numberOfErrors)
+        return;
+    
+    [self willChangeValueForKey:@"numberOfErrors"];
+    _numberOfErrors = numberOfErrors;
+    [self didChangeValueForKey:@"numberOfErrors"];
+    
+    if (!_numberOfErrors)
+        self.errorsCountString = @"";
+    else
+    {
+        NSString *plural1 = self.numberOfErrors > 1 ? @"s" : @"";
+        NSString *plural2 = self.errors.count > 1 ? @"s" : @"";
+        self.errorsCountString = [NSString stringWithFormat:@"%d issue%@ in %d file%@", (int)self.numberOfErrors, plural1, (int)self.errors.count, plural2];
+    }
+}
+
+- (void)_reinitializeOperationErrors
+{
+    self.errors         = [@{} mutableCopy];
+    self.numberOfErrors = 0;
 }
 
 
@@ -1019,6 +1109,21 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     }
     
     [self->taskLauncher runTaskWithCommand:executablePath arguments:args returnType:kTaskReturnTypeNone];
+}
+
+
+#pragma mark - NSUserNotificationCenter Utilities
+
+- (void)_notifyUserWithOperationError:(XCCOperationError*)anOperationError
+{
+    NSUserNotification *note = [NSUserNotification new];
+    note.title = [[anOperationError.fileName stringByReplacingOccurrencesOfString:self.cappuccinoProject.projectPath withString:@""] substringFromIndex:1];
+    note.informativeText = anOperationError.description;
+    note.actionButtonTitle = @"Show";
+    note.otherButtonTitle = @"Close";
+    note.userInfo = @{@"cappuccinoProjectPath" : self.cappuccinoProject.projectPath, @"sourcePath": anOperationError.fileName};
+        
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:note];
 }
 
 

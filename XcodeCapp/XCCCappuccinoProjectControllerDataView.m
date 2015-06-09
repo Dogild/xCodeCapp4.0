@@ -50,7 +50,7 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         self->boxStatus.fillColor    = [NSColor colorWithCalibratedRed:217.0/255.0 green:217.0/255.0 blue:217.0/255.0 alpha:1.0];
 
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-        [self.controller.cappuccinoProject addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
+        [self.controller addObserver:self forKeyPath:@"errors" options:NSKeyValueObservingOptionNew context:nil];
         [self.controller.cappuccinoProject addObserver:self forKeyPath:@"processing" options:NSKeyValueObservingOptionNew context:nil];
         [self.controller addObserver:self forKeyPath:@"operationsTotal" options:NSKeyValueObservingOptionNew context:nil];
         [self.controller addObserver:self forKeyPath:@"operationsProgress" options:NSKeyValueObservingOptionNew context:nil];
@@ -64,7 +64,7 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
     else
     {
         [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"status"];
-        [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"errors"];
+        [self.controller removeObserver:self forKeyPath:@"errors"];
         [self.controller.cappuccinoProject removeObserver:self forKeyPath:@"processing"];
         [self.controller removeObserver:self forKeyPath:@"operationsTotal"];
         [self.controller removeObserver:self forKeyPath:@"operationsProgress"];
@@ -73,7 +73,6 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
         [self->fieldPath unbind:NSValueBinding];
 
         [self->operationsProgressIndicator stopAnimation:self];
-
     }
 
     [self _updateDataView];
@@ -97,7 +96,7 @@ static NSColor * XCCCappuccinoProjectDataViewColorError;
             break;
 
         case XCCCappuccinoProjectStatusListening:
-            self->boxStatus.fillColor       = [self.controller.cappuccinoProject.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
+            self->boxStatus.fillColor       = [self.controller.errors count] ? XCCCappuccinoProjectDataViewColorError : XCCCappuccinoProjectDataViewColorListening;
             self->buttonSwitchStatus.image  = self.backgroundStyle == NSBackgroundStyleDark ? [NSImage imageNamed:@"stop-white"] : [NSImage imageNamed:@"stop"];
 
             if (self.controller.operationsTotal == 0)

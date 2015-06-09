@@ -27,10 +27,13 @@
     XCCSourcesFinderOperation   *currentFindSourceOperation;
 }
 
-@property NSInteger             operationsTotal;
 @property CGFloat               operationsProgress;
+@property NSInteger             numberOfErrors;
+@property NSInteger             operationsTotal;
+@property NSMutableDictionary   *errors;
 @property NSInteger             operationsRemaining;
 @property NSString              *operationsRemainingString;
+@property NSString              *errorsCountString;
 @property XCCCappuccinoProject  *cappuccinoProject;
 @property XCCMainController     *mainXcodeCappController;
 
@@ -42,6 +45,7 @@
 - (void)operationDidStart:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 - (void)operationDidEnd:(XCCAbstractOperation*)anOperation type:(NSString*)aType userInfo:(NSDictionary*)userInfo;
 - (void)launchEditorForPath:(NSString*)path line:(NSInteger)line;
+- (void)removeAllOperationErrors;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *projectRelatedOperations;
 ;
 - (IBAction)cancelAllOperations:(id)aSender;

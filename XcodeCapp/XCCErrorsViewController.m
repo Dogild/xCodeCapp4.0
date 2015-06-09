@@ -57,15 +57,55 @@
     [self->errorOutlineView reloadData];
     [self->errorOutlineView expandItem:nil expandChildren:YES];
 
-    [self _showMaskingView:!self.cappuccinoProjectController.cappuccinoProject.errors.count];
+    [self _showMaskingView:!self.cappuccinoProjectController.errors.count];
 }
 
+- (void)selectItem:(id)anItem
+{
+    NSInteger indexOfItem = [self _indexOfItem:anItem];
+    
+    if (indexOfItem == NSNotFound)
+        return;
+    
+    [self->errorOutlineView scrollRowToVisible:indexOfItem];
+}
+
+- (NSInteger)_indexOfItem:(id)anItem
+{
+    NSInteger index = 0;
+    
+    NSArray *keys = [self.cappuccinoProjectController.errors allKeys];
+    
+    for (int i = 0; i < [keys count]; i++)
+    {
+        NSString *key = [[self.cappuccinoProjectController.errors allKeys] objectAtIndex:i];
+        
+        if ([key isEqual:anItem])
+            return index;
+        
+        index++;
+        
+        NSArray *operationErrors = [self.cappuccinoProjectController.errors objectForKey:key];
+        
+        for (int j = 0; j < [operationErrors count]; j++)
+        {
+            XCCOperationError *operationError = [operationErrors objectAtIndex:j];
+            
+            if ([operationError isEqual:anItem])
+                return index;
+            
+            index++;
+        }
+    }
+    
+    return NSNotFound;
+}
 
 #pragma mark - Actions
 
 - (IBAction)cleanProjectErrors:(id)aSender
 {
-    [self.cappuccinoProjectController.cappuccinoProject removeAllOperationErrors];
+    [self.cappuccinoProjectController removeAllOperationErrors];
     [self reload];
     [self.cappuccinoProjectController.mainXcodeCappController reloadTotalNumberOfErrors];
 }
@@ -90,9 +130,9 @@
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
 {
     if (!item)
-        return self.cappuccinoProjectController.cappuccinoProject.errors.allKeys.count;
+        return self.cappuccinoProjectController.errors.allKeys.count;
 
-    return ((NSArray *)self.cappuccinoProjectController.cappuccinoProject.errors[item]).count;
+    return ((NSArray *)self.cappuccinoProjectController.errors[item]).count;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
@@ -103,9 +143,9 @@
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
 {
     if (!item)
-        return self.cappuccinoProjectController.cappuccinoProject.errors.allKeys[index];
+        return self.cappuccinoProjectController.errors.allKeys[index];
 
-    return self.cappuccinoProjectController.cappuccinoProject.errors[item][index];
+    return self.cappuccinoProjectController.errors[item][index];
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
