@@ -168,4 +168,21 @@ NSArray * parseCommandXMLString(NSString * aString)
     return object.errorType == self.errorType && [object.fileName isEqualToString:self.fileName];
 }
 
+- (NSString*)description
+{
+    if (self.errorType == XCCNib2CibOperationErrorType)
+        return @"Converting Interface Files has failed";
+    
+    if (self.errorType == XCCObjjOperationErrorType)
+        return @"Verifying compilation Warnings has failed";
+
+    if (self.errorType == XCCCappLintOperationErrorType)
+        return @"Verifying coding style has failed";
+    
+    if (self.errorType == XCCObjj2ObjcSkeletonOperationErrorType)
+        return @"Creating Objective-C Class Pair has failed";
+    
+    return @"An Unknown Error has been caught"; 
+}
+
 @end

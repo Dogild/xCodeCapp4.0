@@ -19,6 +19,7 @@
 
 @property XCCCappuccinoProjectController *cappuccinoProjectController;
 
+- (void)selectItem:(id)anItem;
 - (void)reload;
 
 - (IBAction)openErroredFileInEditor:(id)sender;

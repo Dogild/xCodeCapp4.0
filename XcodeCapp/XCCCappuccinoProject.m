@@ -38,7 +38,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 
 @synthesize XcodeCappIgnoreContent  = _XcodeCappIgnoreContent;
 @synthesize status                  = _status;
-@synthesize numberOfErrors          = _numberOfErrors;
 
 #pragma mark - Class methods
 
@@ -250,16 +249,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     }
 }
 
-+ (void)notifyUserWithTitle:(NSString *)aTitle message:(NSString *)aMessage
-{
-    NSUserNotification *note = [NSUserNotification new];
-
-    note.title = aTitle;
-    note.informativeText = aMessage;
-
-    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:note];
-}
-
 
 #pragma mark - Init methods
 
@@ -270,7 +259,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
         self.name                   = [aPath lastPathComponent];
         self.nickname               = self.name;
         self.projectPath            = aPath;
-        self.numberOfErrors         = 0;
         self.PBXModifierScriptPath  = [[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"pbxprojModifier.py"];
         self.XcodeProjectPath       = [self.projectPath stringByAppendingPathComponent:[[self.projectPath lastPathComponent] stringByAppendingString:@".xcodeproj"]];
         self.XcodeCappIgnorePath    = [self.projectPath stringByAppendingPathComponent:@".xcodecapp-ignore"];
@@ -290,7 +278,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 - (void)reinitialize
 {
     self.projectPathsForSourcePaths = [@{} mutableCopy];
-    self.errors                     = [@{} mutableCopy];
     self.status                     = XCCCappuccinoProjectStatusStopped;
 }
 
@@ -467,61 +454,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
 }
 
 
-#pragma marks Operation Management
-
-- (void)addOperationError:(XCCOperationError *)operationError
-{
-    if (!operationError.fileName)
-        operationError.fileName = @"/No Filename";
-    
-    [self willChangeValueForKey:@"errors"];
-    
-    if (!self.errors[operationError.fileName])
-        self.errors[operationError.fileName] = [@[] mutableCopy];
-    
-    [self.errors[operationError.fileName] addObject:operationError];
-    
-    [self didChangeValueForKey:@"errors"];
-    self.numberOfErrors++;
-}
-
-- (void)removeOperationError:(XCCOperationError *)operationError
-{
-    if (!operationError.fileName)
-        operationError.fileName = @"/No Filename";
-
-    [self willChangeValueForKey:@"errors"];
-    
-    [self.errors[operationError.fileName] removeObject:operationError];
-    
-    if (![self.errors[operationError.fileName] count])
-        [self.errors removeObjectForKey:operationError.fileName];
-    
-    [self didChangeValueForKey:@"errors"];
-    self.numberOfErrors--;
-}
-
-- (void)removeAllOperationErrors
-{
-    [self willChangeValueForKey:@"errors"];
-    [self.errors removeAllObjects];
-    [self didChangeValueForKey:@"errors"];
-    self.numberOfErrors = 0;
-}
-
-- (void)removeOperationErrorsRelatedToSourcePath:(NSString *)aPath errorType:(int)anErrorType
-{
-    NSMutableArray *errorsToRemove = [@[] mutableCopy];
-    
-    for (XCCOperationError *operationError in self.errors[aPath])
-        if ([operationError.fileName isEqualToString:aPath] && (operationError.errorType == anErrorType || anErrorType == XCCDefaultOperationErrorType))
-            [errorsToRemove addObject:operationError];
-    
-    for (XCCOperationError *error in errorsToRemove)
-        [self removeOperationError:error];
-}
-
-
 #pragma mark - Custom Getters and Setters
 
 - (NSString *)XcodeCappIgnoreContent
@@ -538,30 +470,6 @@ NSString * const XCCCappuccinoProjectLastEventIDKey         = @"XCCCappuccinoPro
     _XcodeCappIgnoreContent = XcodeCappIgnoreContent;
     [self _updateXcodeCappIgnorePredicates];
     [self didChangeValueForKey:@"XcodeCappIgnoreContent"];
-}
-
-- (NSInteger)numberOfErrors
-{
-    return _numberOfErrors;
-}
-
-- (void)setNumberOfErrors:(NSInteger)numberOfErrors
-{
-    if (numberOfErrors == _numberOfErrors)
-        return;
-
-    [self willChangeValueForKey:@"numberOfErrors"];
-    _numberOfErrors = numberOfErrors;
-    [self didChangeValueForKey:@"numberOfErrors"];
-
-    if (!_numberOfErrors)
-        self.errorsCountString = @"";
-    else
-    {
-        NSString *plural1 = self.numberOfErrors > 1 ? @"s" : @"";
-        NSString *plural2 = self.errors.count > 1 ? @"s" : @"";
-        self.errorsCountString = [NSString stringWithFormat:@"%d issue%@ in %d file%@", (int)self.numberOfErrors, plural1, (int)self.errors.count, plural2];
-    }
 }
 
 @end
