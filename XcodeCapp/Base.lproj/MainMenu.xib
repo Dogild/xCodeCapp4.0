@@ -710,11 +710,6 @@
                 <rect key="frame" x="0.0" y="0.0" width="296" height="191"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView id="Q2t-aL-TDg">
-                        <rect key="frame" x="107" y="89" width="82" height="82"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon" id="zF2-py-kAi"/>
-                    </imageView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="3j4-r5-Ybe">
                         <rect key="frame" x="74" y="64" width="149" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -745,6 +740,11 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <imageView id="Q2t-aL-TDg">
+                        <rect key="frame" x="107" y="89" width="82" height="82"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="zF2-py-kAi"/>
+                    </imageView>
                 </subviews>
             </view>
             <point key="canvasLocation" x="-218" y="94.5"/>
@@ -967,13 +967,12 @@
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
-        <image name="icon" width="128" height="128"/>
         <image name="icon-big" width="512" height="512"/>
-        <image name="open-in-editor" width="32" height="32"/>
-        <image name="open-in-finder" width="32" height="32"/>
-        <image name="open-in-terminal" width="32" height="32"/>
-        <image name="open-in-xcode" width="32" height="32"/>
-        <image name="resync" width="32" height="32"/>
-        <image name="run" width="32" height="32"/>
+        <image name="open-in-editor" width="16" height="16"/>
+        <image name="open-in-finder" width="16" height="16"/>
+        <image name="open-in-terminal" width="16" height="16"/>
+        <image name="open-in-xcode" width="16" height="16"/>
+        <image name="resync" width="16" height="16"/>
+        <image name="run" width="16" height="16"/>
     </resources>
 </document>

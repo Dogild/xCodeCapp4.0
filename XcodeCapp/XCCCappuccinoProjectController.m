@@ -1033,8 +1033,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     [self _cancelAllProjectRelatedOperations];
     [self.cappuccinoProject saveSettings];
 
+    int previousStatus = self.cappuccinoProject.status;
     [self _stopListeningToProject];
     [self _reinitializeTaskLauncher];
+
+    if (previousStatus == XCCCappuccinoProjectStatusListening)
+        [self _startListeningToProject];
 
     DDLogVerbose(@"Cappuccino configuration project %@ has been saved", self.cappuccinoProject.projectPath);
 }
@@ -1047,7 +1051,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)cleanUpBeforeDeletion
 {
     [self cancelAllOperations:self];
-
     [self _stopListeningToOperationsNotifications];
     [self _stopListeningToProject];
     [self _removeXcodeProject];
