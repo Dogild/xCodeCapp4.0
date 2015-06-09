@@ -288,7 +288,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         
         [self.cappuccinoProject removeOperationErrorsRelatedToSourcePath:sourcePath errorType:XCCDefaultOperationErrorType];
         [self.mainXcodeCappController.errorsViewController reload];
-        
+
         [self->pendingPBXOperation registerPathToRemoveFromPBX:sourcePath];
     }
     
@@ -297,14 +297,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 
 - (void)_updateXcodeSupportFilesWithModifiedPaths:(NSArray *)modifiedPaths
 {
-    if (!modifiedPaths.count)
-        return;
-
-    DDLogVerbose(@"Modified files: %@", modifiedPaths);
-
+    [self _schedulePBXOperation];
     [self _removeXcodeSupportOrphanFiles];
 
-    NSInteger additionalOperations = 0;
+    DDLogVerbose(@"Modified files: %@", modifiedPaths);
 
     for (NSString *path in modifiedPaths)
     {
@@ -312,12 +308,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             continue;
 
         [self _scheduleSourceProcessingOperationForPath:path];
-
-        additionalOperations++;
     }
-
-    if (additionalOperations)
-        [self _schedulePBXOperation];
 
     [self _updateOperationsProgress];
 }
@@ -326,31 +317,24 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void)_updateXcodeSupportFilesWithRenamedDirectories:(NSArray *)directories
 {
     DDLogVerbose(@"Renamed directories: %@", directories);
-    
+
+    [self _schedulePBXOperation];
     [self _removeXcodeSupportOrphanFiles];
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
     for (NSString *directory in directories)
     {
-        // if this is the project directory itself, it is handled by another method
         if ([directory isEqualToString:self.cappuccinoProject.projectPath])
             continue;
         
-        // If it doesn't exist, it's the old name. Nothing to do.
-        // If it does exist, populate the project with the directory.
-        
         if ([fm fileExistsAtPath:directory])
         {
-            // If the directory is within the project, we can populate it directly.
-            // Otherwise we have to start at the top level and repopulate everything.
             if ([directory hasPrefix:self.cappuccinoProject.projectPath])
                 [self _synchronizeXcodeSupportFromPath:[self.cappuccinoProject projectRelativePathForPath:directory]];
             else
             {
                 [self _synchronizeXcodeSupportFromPath:@""];
-                
-                // Since everything has been repopulated, no point in continuing
                 break;
             }
         }
@@ -434,6 +418,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 {
     if (![self _doesNotificationBelongToCurrentProject:note])
         return;
+
+    [self _schedulePBXOperation];
+
+    [self->pendingPBXOperation registerPathToAddInPBX:note.userInfo[@"sourcePath"]];
 
     [self operationDidStart:note.object type:note.name userInfo:note.userInfo];
 }
@@ -572,11 +560,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     {
         self->currentFindSourceOperation = nil;
         [self _updateXcodeSupportFilesWithModifiedPaths:userInfo[@"sourcePaths"]];
-    }
-    else if ([aType isEqualToString:XCCConversionDidEndNotification])
-    {
-        if ([XCCCappuccinoProject isObjjFile:userInfo[@"sourcePath"]])
-            [self->pendingPBXOperation registerPathToAddInPBX:userInfo[@"sourcePath"]];
     }
     else if ([aType isEqualToString:XCCPBXOperationDidEndNotification])
     {
@@ -835,16 +818,10 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
         
         if (isDir)
         {
-            /*
-             When a project is opened for the first time after it is created,
-             we get an event where the first path is a create for the root directory.
-             In that case all of the paths have been processed, and we ignore the event.
-             */
             if (created && [path isEqualToString:self.cappuccinoProject.projectPath.stringByResolvingSymlinksInPath])
                 return;
             
-            if (renamed &&
-                !(created || removed) &&
+            if ((renamed || created || removed) &&
                 ![XCCCappuccinoProject shouldIgnoreDirectoryNamed:path.lastPathComponent] &&
                 ![XCCCappuccinoProject pathMatchesIgnoredPaths:path cappuccinoProjectIgnoredPathPredicates:self.cappuccinoProject.ignoredPathPredicates])
             {
@@ -860,7 +837,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                  [XCCCappuccinoProject isSourceFile:path cappuccinoProject:self.cappuccinoProject])
         {
             DDLogVerbose(@"FSEvent accepted: %@ (%@)", path, [XCCFSEventLogUtils dumpFSEventFlags:flags]);
-            
+
             if ([fm fileExistsAtPath:path])
             {
                 [modifiedPaths addObject:path];
