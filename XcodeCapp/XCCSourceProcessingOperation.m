@@ -77,6 +77,9 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 - (void)_postProcessingErrorNotificationName:(NSString *)notificationName error:(NSString *)errors
 {
+    if (self.isCancelled)
+        return;
+
     if (errors.length == 0)
         errors = @"An unspecified error occurred";
 
@@ -84,7 +87,6 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
     info[@"errors"]           = errors;
 
     [self dispatchNotificationName:notificationName userInfo:info];
-    [self cancel];
 }
 
 - (NSDictionary*)_launchTaskWithCommand:(NSString*)aCommand arguments:(NSArray*)arguments
@@ -101,58 +103,70 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
 
 #pragma Task Launcher
 
-- (void)launchObjj2ObjcSkeletonCommandForPath:(NSString*)aPath
+- (BOOL)launchObjj2ObjcSkeletonCommandForPath:(NSString*)aPath
 {
     [self dispatchNotificationName:XCCObjj2ObjcSkeletonDidStartNotification];
 
     NSString        *targetName = [self.cappuccinoProject flattenedXcodeSupportFileNameForPath:aPath];
     NSArray         *arguments  = @[aPath, self.cappuccinoProject.supportPath, @"-n", targetName];
     NSDictionary    *result     = [self _launchTaskWithCommand:@"objj2objcskeleton" arguments:arguments];
-    
-    if ([result[@"status"] intValue] != 0)
+    int             code        = [result[@"status"] intValue];
+
+    if (code != 0)
         [self _postProcessingErrorNotificationName:XCCObjj2ObjcSkeletonDidGenerateErrorNotification error:result[@"response"]];
 
     [self dispatchNotificationName:XCCObjj2ObjcSkeletonDidEndNotification];
+
+    return code == 0;
 }
 
-- (void)launchNib2CibCommandForPath:(NSString*)aPath
+- (BOOL)launchNib2CibCommandForPath:(NSString*)aPath
 {
     [self dispatchNotificationName:XCCNib2CibDidStartNotification];
 
     NSArray         *arguments  = @[@"--no-colors", self.sourcePath];
     NSDictionary    *result     = [self _launchTaskWithCommand:@"nib2cib" arguments:arguments];
+    int             code        = [result[@"status"] intValue];
 
-    if ([result[@"status"] intValue] != 0)
+    if (code != 0)
         [self _postProcessingErrorNotificationName:XCCNib2CibDidGenerateErrorNotification error:result[@"response"]];
 
     [self dispatchNotificationName:XCCNib2CibDidEndNotification];
+
+    return code == 0;
 }
 
-- (void)launchObjjCommandForPath:(NSString*)aPath
+- (BOOL)launchObjjCommandForPath:(NSString*)aPath
 {
     [self dispatchNotificationName:XCCObjjDidStartNotification];
 
     NSArray         *arguments  = @[@"--xml", @"-I", [self.cappuccinoProject objjIncludePath], self.sourcePath];
     NSDictionary    *result     = [self _launchTaskWithCommand:@"objj" arguments:arguments];
-    
-    if ([result[@"response"] length] != 0)
+    int             code        = [result[@"status"] intValue];
+
+    if (code != 0)
         [self _postProcessingErrorNotificationName:XCCObjjDidGenerateErrorNotification error:result[@"response"]];
 
     [self dispatchNotificationName:XCCObjjDidEndNotification];
+
+    return code == 0;
 }
 
-- (void)launchCappLintCommandForPath:(NSString*)aPath
-{    
+- (BOOL)launchCappLintCommandForPath:(NSString*)aPath
+{
     [self dispatchNotificationName:XCCCappLintDidStartNotification];
 
     NSString        *baseDirectory  = [NSString stringWithFormat:@"--basedir='%@'", self.cappuccinoProject.projectPath];
     NSArray         *arguments      = @[baseDirectory, self.sourcePath];
     NSDictionary    *result         = [self _launchTaskWithCommand:@"capp_lint" arguments:arguments];
-    
-    if ([result[@"status"] intValue] != 0)
+    int             code            = [result[@"status"] intValue];
+
+    if (code != 0)
         [self _postProcessingErrorNotificationName:XCCCappLintDidGenerateErrorNotification error:result[@"response"]];
 
     [self dispatchNotificationName:XCCCappLintDidEndNotification];
+
+    return code == 0;
 }
 
 
@@ -183,13 +197,15 @@ NSString * const XCCNib2CibDidEndNotification                       = @"XCCNib2C
         }
         else if ([XCCCappuccinoProject isObjjFile:self.sourcePath])
         {
+            BOOL shouldContinue = YES;
+
             if (self.cappuccinoProject.processObjj2ObjcSkeleton)
-                [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
+                shouldContinue = [self launchObjj2ObjcSkeletonCommandForPath:self.sourcePath];
 
-            if (self.cappuccinoProject.processObjjWarnings)
-                [self launchObjjCommandForPath:self.sourcePath];
+            if (shouldContinue &&  self.cappuccinoProject.processObjjWarnings)
+                shouldContinue = [self launchObjjCommandForPath:self.sourcePath];
 
-            if (self.cappuccinoProject.processCappLint)
+            if (shouldContinue && self.cappuccinoProject.processCappLint)
                 [self launchCappLintCommandForPath:self.sourcePath];
         }
     }

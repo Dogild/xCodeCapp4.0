@@ -42,7 +42,7 @@ NSArray * parseCommandXMLString(NSString * aString)
         info = @[
                  @{
                      @"lineNumber": @"0",
-                     @"sourcePath": @"Unknown",
+                     @"sourcePath": @"/Unknown",
                      @"message": [NSString stringWithFormat:@"Unable to parse: %@", aString]
                 }
                 ];

@@ -289,6 +289,11 @@
     [self willChangeValueForKey:@"totalNumberOfErrors"];
     self.totalNumberOfErrors = totalErrors;
     [self didChangeValueForKey:@"totalNumberOfErrors"];
+
+    if (self.totalNumberOfErrors)
+        [[[NSApplication sharedApplication] dockTile] setBadgeLabel:@(self.totalNumberOfErrors).description];
+    else
+        [[[NSApplication sharedApplication] dockTile] setBadgeLabel:nil];
 }
 
 
@@ -362,16 +367,22 @@
 
 #pragma mark - SplitView delegate
 
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
+- (CGFloat)splitView:(NSSplitView *)aSplitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    return 300;
+    return 300.0;
 }
 
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
+- (CGFloat)splitView:(NSSplitView *)aSplitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    return 300;
+    return 350.0;
 }
 
+- (void)splitView:(NSSplitView *)aSplitView resizeSubviewsWithOldSize:(NSSize)oldSize
+{
+    [aSplitView adjustSubviews];
+
+    [aSplitView setPosition:((NSView *)splitView.subviews.firstObject).frame.size.width ofDividerAtIndex:0];
+}
 
 #pragma mark - TableView DataSource
 
