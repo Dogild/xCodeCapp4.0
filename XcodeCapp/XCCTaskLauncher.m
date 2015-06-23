@@ -49,25 +49,8 @@
         // Make sure to not do something in sudo
         self.environment[@"CAPP_NOSUDO"] = @"1";
         
-        self.executables = @[@"python", @"objj", @"nib2cib",@"objj2objcskeleton", @"capp_lint", @"touch", @"cat"]; // do not remove cat, or try to debug what going on...
-        
-        // This is used to get the env var of $CAPP_BUILD
-        NSDictionary *processEnvironment = [[NSProcessInfo processInfo] environment];
-        NSArray *arguments = @[@"-l", @"-c", @"echo $CAPP_BUILD"];
-        
-        NSDictionary *taskResult = [self runTaskWithCommand:processEnvironment[@"SHELL"]
-                                                  arguments:arguments
-                                                 returnType:kTaskReturnTypeStdOut];
-        
-        // Make sure to remove the \n at the end of the response
-        NSString *response = [taskResult[@"response"] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-        
-        self.environment[@"CAPP_BUILD"] = response;
-        
-        // Make sure we have found a CAPP_BUILD
-        if ([response length] == 0 || [taskResult[@"status"] intValue] == -1)
-            _isCappBuildDefined = NO;
-        
+        self.executables = @[@"python", @"objj", @"nib2cib",@"objj2objcskeleton", @"capp_lint", @"touch"]; // do not remove cat, or try to debug what going on...
+
         self.isValid = [self executablesAreAccessible];
     }
     
@@ -76,12 +59,11 @@
 
 - (BOOL)executablesAreAccessible
 {
-    NSDictionary    *processEnvironment = [[NSProcessInfo processInfo] environment];
     NSMutableArray  *arguments          = [@[] mutableCopy];
     
-    [arguments addObject:[[NSBundle mainBundle].sharedSupportPath stringByAppendingPathComponent:@"supawhich"]];
+    [arguments addObject:[[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"supawhich"]];
     [arguments addObjectsFromArray:self.executables];
-    NSDictionary *taskResult = [self runTaskWithCommand:processEnvironment[@"SHELL"]
+    NSDictionary *taskResult = [self runTaskWithCommand:@"/bin/bash"
                                               arguments:arguments
                                              returnType:kTaskReturnTypeStdOut];
     
@@ -178,16 +160,16 @@
     if (returnType != kTaskReturnTypeNone)
     {
         [aTask waitUntilExit];
-        
+
         DDLogVerbose(@"Task exited: %@\n%@\nExit code:%d", aTask.launchPath,  aTask.arguments, aTask.terminationStatus);
         
         NSData *data = nil;
         
         if (returnType == kTaskReturnTypeStdOut || returnType == kTaskReturnTypeAny)
-            data = [[aTask.standardOutput fileHandleForReading] availableData];
+            data = [[aTask.standardOutput fileHandleForReading] readDataToEndOfFile];
         
         if (returnType == kTaskReturnTypeStdError || (returnType == kTaskReturnTypeAny && [data length] == 0))
-            data = [[aTask.standardError fileHandleForReading] availableData];
+            data = [[aTask.standardError fileHandleForReading] readDataToEndOfFile];
         
         NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSNumber *status = @(aTask.terminationStatus);

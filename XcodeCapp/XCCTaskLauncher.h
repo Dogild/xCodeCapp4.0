@@ -18,9 +18,6 @@ typedef NS_ENUM(NSInteger, XCCTaskReturnType)
 
 
 @interface XCCTaskLauncher : NSObject
-{
-    BOOL _isCappBuildDefined;
-}
 
 @property BOOL isValid;
 

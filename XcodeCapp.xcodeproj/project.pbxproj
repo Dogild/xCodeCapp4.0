@@ -18,7 +18,6 @@
 		0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */; };
 		025800451B1E3F010000EB7D /* XCCAbstractOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 025800441B1E3F010000EB7D /* XCCAbstractOperation.m */; };
 		0258004B1B1E67090000EB7D /* supawhich in Resources */ = {isa = PBXBuildFile; fileRef = 0258004A1B1E67090000EB7D /* supawhich */; };
-		0258004C1B1E67770000EB7D /* supawhich in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0258004A1B1E67090000EB7D /* supawhich */; };
 		027539111B227D7500F6D824 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 027539101B227D7500F6D824 /* YRKSpinningProgressIndicator.m */; };
 		680621191B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680621181B015BF400CB24CD /* XCCCappuccinoProjectControllerDataView.m */; };
 		6815BBEB1AFC24430030D8BB /* XcodeProjectCloser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6815BBEA1AFC24430030D8BB /* XcodeProjectCloser.m */; };
@@ -45,8 +44,6 @@
 		6841F2C41AFABD7200CFE60E /* XCCCappuccinoProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C31AFABD7200CFE60E /* XCCCappuccinoProject.m */; };
 		6841F2CA1AFADEBC00CFE60E /* XCCSourcesFinderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C71AFADEBC00CFE60E /* XCCSourcesFinderOperation.m */; };
 		6841F2CB1AFADEBC00CFE60E /* XCCSourceProcessingOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2C91AFADEBC00CFE60E /* XCCSourceProcessingOperation.m */; };
-		684228C71B016AFA00493AD3 /* mod_pbxproj.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6841F2691AF98DDD00CFE60E /* mod_pbxproj.py */; };
-		684228C81B016AFA00493AD3 /* pbxprojModifier.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6841F26B1AF98DDD00CFE60E /* pbxprojModifier.py */; };
 		6863FBA31AFD55A900040C8E /* XCCFSEventLogUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6863FBA21AFD55A900040C8E /* XCCFSEventLogUtils.m */; };
 		686ACD311B16397F0089EB03 /* XCCCappuccinoProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = 686ACD301B16397F0089EB03 /* XCCCappuccinoProjectController.m */; };
 		686C69711B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 686C69701B0FAE620095BB3C /* XCCOperationErrorHeaderDataView.m */; };
@@ -62,21 +59,6 @@
 			remoteInfo = XcodeCapp;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		684228C61B016AE700493AD3 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 12;
-			files = (
-				684228C71B016AFA00493AD3 /* mod_pbxproj.py in CopyFiles */,
-				684228C81B016AFA00493AD3 /* pbxprojModifier.py in CopyFiles */,
-				0258004C1B1E67770000EB7D /* supawhich in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		021B94631B20CECA00F12DDA /* XCCOperationsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCCOperationsViewController.h; sourceTree = "<group>"; };
@@ -394,7 +376,6 @@
 				6841F2371AF98CE600CFE60E /* Sources */,
 				6841F2381AF98CE600CFE60E /* Frameworks */,
 				6841F2391AF98CE600CFE60E /* Resources */,
-				684228C61B016AE700493AD3 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -434,6 +415,11 @@
 				TargetAttributes = {
 					6841F23A1AF98CE600CFE60E = {
 						CreatedOnToolsVersion = 6.3.1;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
 					};
 					6841F24D1AF98CE600CFE60E = {
 						CreatedOnToolsVersion = 6.3.1;
