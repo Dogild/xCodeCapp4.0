@@ -15,6 +15,7 @@
 		021B94711B20E31F00F12DDA /* SettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 021B946F1B20E31F00F12DDA /* SettingsView.xib */; };
 		021B94751B21112500F12DDA /* XCCWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B94741B21112500F12DDA /* XCCWelcomeView.m */; };
 		0255B8401B1F71FB000CA4BC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0255B83F1B1F71FB000CA4BC /* AppDelegate.m */; };
+		0257A65B1B3A2B0000015C1F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2471AF98CE600CFE60E /* MainMenu.xib */; };
 		0258003C1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0258003B1B1E1C470000EB7D /* NSMutableArray+moveIndexes.m */; };
 		025800451B1E3F010000EB7D /* XCCAbstractOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 025800441B1E3F010000EB7D /* XCCAbstractOperation.m */; };
 		0258004B1B1E67090000EB7D /* supawhich in Resources */ = {isa = PBXBuildFile; fileRef = 0258004A1B1E67090000EB7D /* supawhich */; };
@@ -28,7 +29,6 @@
 		6824CDF01B0E9F1400F73447 /* XCCOperationError.m in Sources */ = {isa = PBXBuildFile; fileRef = 6824CDEF1B0E9F1400F73447 /* XCCOperationError.m */; };
 		6841F2441AF98CE600CFE60E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2431AF98CE600CFE60E /* main.m */; };
 		6841F2461AF98CE600CFE60E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2451AF98CE600CFE60E /* Images.xcassets */; };
-		6841F2491AF98CE600CFE60E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6841F2471AF98CE600CFE60E /* MainMenu.xib */; };
 		6841F2551AF98CE600CFE60E /* XcodeCappTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2541AF98CE600CFE60E /* XcodeCappTests.m */; };
 		6841F2651AF98DCB00CFE60E /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2601AF98DCB00CFE60E /* DDASLLogger.m */; };
 		6841F2661AF98DCB00CFE60E /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 6841F2621AF98DCB00CFE60E /* DDLog.m */; };
@@ -458,8 +458,8 @@
 				6841F27C1AF990C300CFE60E /* Debug.xcconfig in Resources */,
 				6841F26E1AF98DDD00CFE60E /* pbxprojModifier.py in Resources */,
 				6841F2A51AF9932300CFE60E /* project.pbxproj in Resources */,
-				6841F2491AF98CE600CFE60E /* MainMenu.xib in Resources */,
 				6841F27D1AF990C300CFE60E /* Release.xcconfig in Resources */,
+				0257A65B1B3A2B0000015C1F /* MainMenu.xib in Resources */,
 				6841F26C1AF98DDD00CFE60E /* mod_pbxproj.py in Resources */,
 				021B94691B20D6FC00F12DDA /* ErrorsView.xib in Resources */,
 			);

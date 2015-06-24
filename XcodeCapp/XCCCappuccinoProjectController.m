@@ -839,7 +839,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     NSArray                 *pathsToWatch   = [XCCCappuccinoProject getPathsToWatchForCappuccinoProject:self.cappuccinoProject];
     void                    *appPointer     = (__bridge void *)self;
     FSEventStreamContext    context         = { 0, appPointer, NULL, NULL, NULL };
-    CFTimeInterval          latency         = 2.0;
+    CFTimeInterval          latency         = 0.5;
     UInt64                  lastEventID     = self.cappuccinoProject.lastEventID ? self.cappuccinoProject.lastEventID.unsignedLongLongValue : kFSEventStreamEventIdSinceNow;
 
     self->stream = FSEventStreamCreate(NULL, &fsevents_callback, &context, (__bridge CFArrayRef) pathsToWatch, lastEventID, latency, XCCProjectControllerFSEventFlags);
