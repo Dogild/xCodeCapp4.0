@@ -22,6 +22,6 @@ extern NSString * const XCCSourcesFinderOperationDidEndNotification;
     NSString *searchPath;
 }
 
-- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)cappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCappuccinoProject:(XCCCappuccinoProject *)cappuccinoProject taskLauncher:(XCCTaskLauncher*)aTaskLauncher sourcePath:(NSString *)sourcePath;
 
 @end

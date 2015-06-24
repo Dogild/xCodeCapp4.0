@@ -27,9 +27,7 @@ typedef NS_ENUM(NSInteger, XCCTaskReturnType)
 @property NSArray *executables;
 @property NSMutableDictionary *executablePaths;
 
-- (instancetype)initWithEnvironementPaths:(NSArray*)environementPaths NS_DESIGNATED_INITIALIZER;
-
-@property (NS_NONATOMIC_IOSONLY, readonly) BOOL executablesAreAccessible;
+- (instancetype)initWithEnvironmentPaths:(NSArray*)environementPaths NS_DESIGNATED_INITIALIZER;
 
 - (NSTask*)taskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments;
 - (NSTask*)taskWithCommand:(NSString *)aCommand arguments:(NSArray *)arguments currentDirectoryPath:(NSString*)aCurrentDirectoryPath;

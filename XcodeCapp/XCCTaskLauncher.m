@@ -12,15 +12,10 @@
 
 - (instancetype)init
 {
-    if (self = [self initWithEnvironementPaths:@[]])
-    {
-        
-    }
-    
-    return self;
+    return [self initWithEnvironmentPaths:@[]];
 }
 
-- (instancetype)initWithEnvironementPaths:(NSArray*)environementPaths
+- (instancetype)initWithEnvironmentPaths:(NSArray*)environementPaths
 {
     if (self = [super init])
     {
@@ -41,31 +36,26 @@
         for (NSInteger i = 0; i < paths.count; ++i)
             paths[i] = [paths[i] stringByExpandingTildeInPath];
         
-        self.environment[@"PATH"] = [[paths componentsJoinedByString:@":"] stringByAppendingFormat:@":%@", self.environment[@"PATH"]];
-        
-        // Make sure we are using jsc as the narwhal engine!
+        self.environment[@"PATH"]           = [[paths componentsJoinedByString:@":"] stringByAppendingFormat:@":%@", self.environment[@"PATH"]];
         self.environment[@"NARWHAL_ENGINE"] = @"jsc";
+        self.environment[@"CAPP_NOSUDO"]    = @"1";
         
-        // Make sure to not do something in sudo
-        self.environment[@"CAPP_NOSUDO"] = @"1";
-        
-        self.executables = @[@"python", @"objj", @"nib2cib",@"objj2objcskeleton", @"capp_lint", @"touch"]; // do not remove cat, or try to debug what going on...
+        self.executables = @[@"python", @"objj", @"nib2cib",@"objj2objcskeleton", @"capp_lint", @"touch"];
 
-        self.isValid = [self executablesAreAccessible];
+        self.isValid = [self _checkExecutables];
     }
     
     return self;
 }
 
-- (BOOL)executablesAreAccessible
+- (BOOL)_checkExecutables
 {
-    NSMutableArray  *arguments          = [@[] mutableCopy];
+    NSMutableArray  *arguments = [@[] mutableCopy];
     
     [arguments addObject:[[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"supawhich"]];
     [arguments addObjectsFromArray:self.executables];
-    NSDictionary *taskResult = [self runTaskWithCommand:@"/bin/bash"
-                                              arguments:arguments
-                                             returnType:kTaskReturnTypeStdOut];
+
+    NSDictionary *taskResult = [self runTaskWithCommand:@"/bin/bash" arguments:arguments returnType:kTaskReturnTypeStdOut];
     
     if ([taskResult[@"status"] integerValue] != 0)
     {

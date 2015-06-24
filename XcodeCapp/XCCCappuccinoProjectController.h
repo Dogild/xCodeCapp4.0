@@ -37,8 +37,7 @@
 @property XCCCappuccinoProject  *cappuccinoProject;
 @property XCCMainController     *mainXcodeCappController;
 
-
-- (instancetype)initWithPath:(NSString*)aPath controller:(id)aController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPath:(NSString*)aPath controller:(id)aController;
 - (void)reinitializeProjectFromSettings;
 - (void)applicationIsClosing;
 - (void)cleanUpBeforeDeletion;

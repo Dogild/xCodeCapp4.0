@@ -50,6 +50,7 @@ extern NSString * const XCCCappuccinoProjectPreviousStatusKey;
 @property XCCCappuccinoProjectStatus    status;
 @property XCCCappuccinoProjectStatus    previousSavedStatus;
 
+
 + (BOOL)isObjjFile:(NSString *)path;
 + (BOOL)isXibFile:(NSString *)path;
 + (BOOL)isCibFile:(NSString *)path;
@@ -63,7 +64,7 @@ extern NSString * const XCCCappuccinoProjectPreviousStatusKey;
 + (NSArray *)parseIgnorePaths:(NSArray *)paths basePath:(NSString *)basePath;
 + (NSArray *)getPathsToWatchForCappuccinoProject:(XCCCappuccinoProject*)aCappuccinoProject;
 
-- (instancetype)initWithPath:(NSString*)aPath NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPath:(NSString*)aPath;
 - (void)reinitialize;
 - (void)saveSettings;
 - (void)reloadXcodeCappIgnoreFile;

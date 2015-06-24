@@ -87,7 +87,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     if ([self.cappuccinoProject.binaryPaths count])
         binaryPaths = [self.cappuccinoProject.binaryPaths valueForKeyPath:@"name"];
     
-    self->taskLauncher = [[XCCTaskLauncher alloc] initWithEnvironementPaths:binaryPaths];
+    self->taskLauncher = [[XCCTaskLauncher alloc] initWithEnvironmentPaths:binaryPaths];
     
     if (!self->taskLauncher.isValid)
     {
@@ -118,12 +118,16 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     DDLogInfo(@"Start to listen project: %@", self.cappuccinoProject.projectPath);
 
     [self _synchronizeXcodeSupport];
-    [self _startFSEventStream];
 
-    // this is needed in order to ensure we get a FS event, so we actually get a valid last event ID.
-    [self->taskLauncher runTaskWithCommand:@"touch" arguments:@[self.cappuccinoProject.settingsPath] returnType:kTaskReturnTypeNone];
+    if (self->taskLauncher.isValid)
+    {
+        [self _startFSEventStream];
 
-    self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
+        // this is needed in order to ensure we get a FS event, so we actually get a valid last event ID.
+        [self->taskLauncher runTaskWithCommand:@"touch" arguments:@[self.cappuccinoProject.settingsPath] returnType:kTaskReturnTypeNone];
+
+        self.cappuccinoProject.status = XCCCappuccinoProjectStatusListening;
+    }
 
     [self.cappuccinoProject saveSettings];
 }
@@ -1141,6 +1145,9 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
     int previousStatus = self.cappuccinoProject.status;
     [self _stopListeningToProject];
     [self _reinitializeTaskLauncher];
+
+    if (!self->taskLauncher.isValid)
+        return;
 
     if (previousStatus == XCCCappuccinoProjectStatusListening)
         [self _startListeningToProject];

@@ -542,7 +542,7 @@ typedef NS_OPTIONS(NSUInteger, DDLogMessageOptions)
             function:(const char *)function
                 line:(int)line
                  tag:(id)tag
-             options:(DDLogMessageOptions)optionsMask NS_DESIGNATED_INITIALIZER;
+             options:(DDLogMessageOptions)optionsMask;
 
 /**
  * Returns the threadID as it appears in NSLog.
